@@ -8,32 +8,32 @@
 
 :root {
     /* Color Palette */
-    --primary-teal: #0c5354;
-    --primary-teal-light: #166e70;
-    --primary-teal-dark: #062b2c;
-    --secondary-teal: #135859;
-    --accent-orange: #e85c24;
-    --accent-orange-hover: #c94917;
-    --mint-green: #48c0a4;
-    --mint-green-light: #5ccbb3;
+    --primary-teal: #0b1e36; /* Dark Navy */
+    --primary-teal-light: #153459; /* Lighter Navy */
+    --primary-teal-dark: #071526; /* Deepest Navy */
+    --secondary-teal: #0072bc; /* Royal Blue */
+    --accent-orange: #e82c2a; /* Accent Red */
+    --accent-orange-hover: #cc1e1b; /* Accent Red Hover */
+    --mint-green: #0072bc; /* Primary Royal Blue */
+    --mint-green-light: #3ba6ec; /* Accent Light Blue */
     
     /* Neutral Shades */
-    --bg-light: #f4f8f8;
+    --bg-light: #f0f4f8; /* Light Blue-Gray */
     --bg-white: #ffffff;
-    --bg-dark: #062627;
-    --bg-dark-card: #0b3d3e;
-    --text-dark: #112222;
-    --text-muted: #4e6565;
+    --bg-dark: #071526; /* Dark Navy */
+    --bg-dark-card: #0b2545; /* Navy Card Background */
+    --text-dark: #0b1e36; /* Dark Navy text */
+    --text-muted: #5c6f84; /* Slate Gray */
     --text-light: #ffffff;
-    --text-light-muted: #b2cece;
-    --border-color: #e2ecec;
-    --border-dark: #154e50;
+    --text-light-muted: #9bc2e6;
+    --border-color: #d2e1f0; /* Light blue-gray border */
+    --border-dark: #1b3b5f; /* Darker blue border */
     
     /* Shadows */
-    --shadow-sm: 0 4px 6px rgba(12, 83, 84, 0.04);
-    --shadow-md: 0 12px 24px rgba(12, 83, 84, 0.08);
-    --shadow-lg: 0 24px 48px rgba(12, 83, 84, 0.12);
-    --shadow-orange: 0 8px 20px rgba(232, 92, 36, 0.25);
+    --shadow-sm: 0 4px 6px rgba(11, 30, 54, 0.04);
+    --shadow-md: 0 12px 24px rgba(11, 30, 54, 0.08);
+    --shadow-lg: 0 24px 48px rgba(11, 30, 54, 0.12);
+    --shadow-orange: 0 8px 20px rgba(232, 44, 42, 0.25);
     
     /* Border Radii */
     --radius-sm: 8px;

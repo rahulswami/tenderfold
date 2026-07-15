@@ -224,6 +224,7 @@ function closeDialog(id) {
     const dialog = document.getElementById(id);
     if (dialog) {
         dialog.classList.remove('open');
+        dialog.style.display = 'none';
         document.body.style.overflow = ''; // restore scrolling
     }
 }

@@ -10,8 +10,8 @@
     <style>
         :root {
             --admin-sidebar-w: 260px;
-            --admin-dark-bg: #111b1c;
-            --admin-dark-sidebar: #0a1112;
+            --admin-dark-bg: #0b1e36;
+            --admin-dark-sidebar: #071526;
             --admin-border: rgba(255,255,255,0.08);
             --admin-text-muted: rgba(255,255,255,0.5);
             --admin-input-bg: rgba(255,255,255,0.04);
@@ -1607,6 +1607,40 @@
                                         @endif
                                     </div>
                                     @if(!empty($site['favicon_path']) && !str_starts_with($site['favicon_path'], 'http') && !str_starts_with($site['favicon_path'], '//'))
+                                        <span class="badge-webp">WebP Optimized</span>
+                                    @endif
+                                </div>
+                            </div>
+                    </div>
+
+                    <div class="admin-card" style="margin-top: 1.5rem;">
+                        <h2>Live Chat Widget Customization</h2>
+                        <div class="form-grid">
+                            <!-- Chat Assistant Name -->
+                            <div class="form-group">
+                                <label for="chat_assistant_name">Chat Assistant Display Name</label>
+                                <input type="text" id="chat_assistant_name" name="chat_assistant_name" class="form-control" value="{{ $site['chat_assistant_name'] ?? 'Clinic Assistant' }}" required>
+                            </div>
+                            
+                            <!-- Chat Assistant Avatar File -->
+                            <div class="form-group">
+                                <label>Chat Assistant Avatar (Upload File)</label>
+                                <input type="file" name="chat_assistant_avatar" class="form-control" accept="image/*">
+                                <div style="margin-top: 10px;">
+                                    <label>Or Paste Avatar Image URL</label>
+                                    <input type="text" name="chat_assistant_avatar_url" class="form-control" value="{{ !empty($site['chat_assistant_avatar']) && (str_starts_with($site['chat_assistant_avatar'], 'http') || str_starts_with($site['chat_assistant_avatar'], '//')) ? $site['chat_assistant_avatar'] : '' }}" placeholder="https://example.com/avatar.webp">
+                                </div>
+                                <div class="image-preview-container" style="margin-top: 15px; display: flex; align-items: center; gap: 12px;">
+                                    <div class="image-preview" style="border-radius: 50%; overflow: hidden; width: 60px; height: 60px; border: 2px solid var(--admin-border); display: flex; align-items: center; justify-content: center;">
+                                        @if(!empty($site['chat_assistant_avatar']))
+                                            <img src="{{ site_image($site['chat_assistant_avatar']) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                                        @else
+                                            <div style="background-color: var(--secondary-teal); color: white; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 0.95rem; font-weight: bold; font-family: 'Outfit';">
+                                                CA
+                                            </div>
+                                        @endif
+                                    </div>
+                                    @if(!empty($site['chat_assistant_avatar']) && !str_starts_with($site['chat_assistant_avatar'], 'http') && !str_starts_with($site['chat_assistant_avatar'], '//'))
                                         <span class="badge-webp">WebP Optimized</span>
                                     @endif
                                 </div>
@@ -4602,6 +4636,13 @@
                 clearInterval(adminMessagesPoll);
             }
         };
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
 
         function loadAdminChatSessions() {
             fetch('/admin/chats')

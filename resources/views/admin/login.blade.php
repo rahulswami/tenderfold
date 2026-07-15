@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
         body {
-            background: linear-gradient(135deg, #0c5354 0%, #135859 50%, #182222 100%);
+            background: linear-gradient(135deg, #071526 0%, #0b1e36 50%, #0072bc 100%);
             height: 100vh;
             display: flex;
             align-items: center;

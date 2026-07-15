@@ -114,7 +114,7 @@ class AdminController extends Controller
             $request->merge(['recaptcha_enabled' => '0']);
         }
 
-        $data = $request->except(['_token', 'logo', 'favicon', 'logo_url', 'favicon_url']);
+        $data = $request->except(['_token', 'logo', 'favicon', 'logo_url', 'favicon_url', 'chat_assistant_avatar', 'chat_assistant_avatar_url']);
         
         foreach ($data as $key => $value) {
             $param = SiteParameter::find($key);
@@ -128,6 +128,27 @@ class AdminController extends Controller
                     'category' => $this->getParameterCategory($key),
                 ]);
             }
+        }
+
+        // Handle chat assistant avatar upload
+        if ($request->hasFile('chat_assistant_avatar')) {
+            $avatarPath = $this->uploadAndConvertToWebP($request->file('chat_assistant_avatar'), 'branding');
+            if ($avatarPath) {
+                $oldAvatar = SiteParameter::find('chat_assistant_avatar');
+                if ($oldAvatar && $oldAvatar->value && !str_starts_with($oldAvatar->value, 'http') && !str_starts_with($oldAvatar->value, '//')) {
+                    Storage::disk('public')->delete($oldAvatar->value);
+                }
+                
+                SiteParameter::updateOrCreate(
+                    ['id' => 'chat_assistant_avatar'],
+                    ['value' => $avatarPath, 'label' => 'Chat Assistant Avatar (WebP)', 'category' => 'branding']
+                );
+            }
+        } elseif ($request->has('chat_assistant_avatar_url')) {
+            SiteParameter::updateOrCreate(
+                ['id' => 'chat_assistant_avatar'],
+                ['value' => $request->input('chat_assistant_avatar_url'), 'label' => 'Chat Assistant Avatar (WebP)', 'category' => 'branding']
+            );
         }
 
         // Handle custom logo upload and conversion to WebP (keep SVG intact)

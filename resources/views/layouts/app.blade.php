@@ -329,7 +329,7 @@
     </script>
     
     <!-- Floating Chat Widget -->
-    <div id="clinic-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-family: 'Outfit', sans-serif;">
+    <div id="clinic-chat-widget" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000; font-family: 'Outfit', sans-serif;">
         <!-- Floating Toggle Button -->
         <button id="chat-toggle-btn" onclick="toggleChatWindow()" style="width: 60px; height: 60px; border-radius: 50%; background-color: var(--primary-teal); color: white; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: relative;">
             <i data-lucide="message-square" id="chat-icon-open" style="width: 28px; height: 28px;"></i>
@@ -338,12 +338,21 @@
         </button>
 
         <!-- Chat Window -->
-        <div id="chat-window" style="position: absolute; bottom: 75px; right: 0; width: 350px; height: 480px; background-color: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.3s ease;">
+        <div id="chat-window" style="position: absolute; bottom: 75px; left: 0; width: 350px; height: 480px; background-color: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.3s ease;">
             <!-- Chat Header -->
-            <div style="background: linear-gradient(135deg, var(--primary-teal) 0%, #163638 100%); color: white; padding: 1.25rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div style="width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e;"></div>
+            <div style="background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-teal-light) 100%); color: white; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div style="position: relative; flex-shrink: 0;">
+                    @if(!empty($site['chat_assistant_avatar']))
+                        <img src="{{ site_image($site['chat_assistant_avatar']) }}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+                    @else
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--secondary-teal); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; font-size: 0.9rem;">
+                            {{ substr($site['chat_assistant_name'] ?? 'Clinic Assistant', 0, 1) }}{{ substr(strrchr($site['chat_assistant_name'] ?? 'Clinic Assistant', ' '), 1, 1) }}
+                        </div>
+                    @endif
+                    <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background-color: #22c55e; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px #22c55e;"></div>
+                </div>
                 <div>
-                    <strong style="display: block; font-size: 1rem; font-weight: 700;">Clinic Assistant</strong>
+                    <strong style="display: block; font-size: 1rem; font-weight: 700;">{{ $site['chat_assistant_name'] ?? 'Clinic Assistant' }}</strong>
                     <span style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">SumitZ Live Chat support</span>
                 </div>
             </div>

@@ -33,6 +33,8 @@ class SiteSeeder extends Seeder
             ['id' => 'header_scripts', 'value' => null, 'label' => 'Custom Header Scripts', 'category' => 'general'],
             ['id' => 'logo_path', 'value' => null, 'label' => 'Custom Logo Image (WebP)', 'category' => 'branding'],
             ['id' => 'favicon_path', 'value' => null, 'label' => 'Custom Favicon Image (WebP)', 'category' => 'branding'],
+            ['id' => 'chat_assistant_name', 'value' => 'Clinic Assistant', 'label' => 'Chat Assistant Display Name', 'category' => 'general'],
+            ['id' => 'chat_assistant_avatar', 'value' => null, 'label' => 'Chat Assistant Avatar Image (WebP)', 'category' => 'branding'],
             ['id' => 'recaptcha_enabled', 'value' => '0', 'label' => 'Enable Google reCAPTCHA', 'category' => 'general'],
             ['id' => 'recaptcha_site_key', 'value' => null, 'label' => 'reCAPTCHA Site Key', 'category' => 'general'],
             ['id' => 'recaptcha_secret_key', 'value' => null, 'label' => 'reCAPTCHA Secret Key', 'category' => 'general'],
