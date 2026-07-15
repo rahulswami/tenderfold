@@ -43,6 +43,11 @@ Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase
 // Live server DB setup — creates all missing tables in one request
 Route::get('/setup-database', [AdminController::class, 'setupLiveDatabase']);
 
+// Instant Live Chat Routes (Public)
+Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+Route::get('/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->name('chat.history');
+Route::post('/chat/auto-trigger', [App\Http\Controllers\ChatController::class, 'autoTrigger'])->name('chat.auto-trigger');
+
 // Admin CMS Auth
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('login');
 Route::post('/admin/login', [AdminController::class, 'login']);
@@ -131,7 +136,11 @@ Route::middleware(['auth'])->group(function () {
     // GMB Sharing & Sitemap Routes
     Route::post('/admin/sitemap/generate', [AdminController::class, 'generateSitemap'])->name('admin.sitemap.generate');
     Route::post('/admin/ai/draft-gmb-post', [AdminController::class, 'aiDraftGmbPost'])->name('admin.ai.gmb-draft');
-    Route::post('/admin/gmb/publish-post', [AdminController::class, 'publishGmbPost'])->name('admin.gmb.publish');
+    // Live Chat Administration
+    Route::get('/admin/chats', [App\Http\Controllers\ChatController::class, 'adminListSessions'])->name('admin.chats.list');
+    Route::get('/admin/chats/{session_id}', [App\Http\Controllers\ChatController::class, 'adminGetSessionMessages'])->name('admin.chats.messages');
+    Route::post('/admin/chats/{session_id}/reply', [App\Http\Controllers\ChatController::class, 'adminSendReply'])->name('admin.chats.reply');
+    Route::delete('/admin/chats/{session_id}', [App\Http\Controllers\ChatController::class, 'adminDeleteChat'])->name('admin.chats.delete');
 });
 
 // CMS catch-all route (placed at the end to prevent conflicts)

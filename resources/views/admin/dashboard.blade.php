@@ -914,6 +914,12 @@
         <ul class="sidebar-menu">
             <li class="menu-item"><button onclick="switchTab('general')" class="tab-btn" id="btn-general"><i data-lucide="settings"></i> General Settings</button></li>
             <li class="menu-item"><button onclick="switchTab('leads')" class="tab-btn active" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</button></li>
+            <li class="menu-item">
+                <button onclick="switchTab('livechat')" class="tab-btn" id="btn-livechat" style="position: relative;">
+                    <i data-lucide="message-square"></i> Live Chat Support
+                    <span id="admin-chat-total-badge" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #ef4444; color: white; font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span>
+                </button>
+            </li>
             <li class="menu-item"><button onclick="switchTab('branding')" class="tab-btn" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</button></li>
             <li class="menu-item"><button onclick="switchTab('slider')" class="tab-btn" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</button></li>
             <li class="menu-item"><button onclick="switchTab('testimonials')" class="tab-btn" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</button></li>
@@ -964,6 +970,7 @@
         <div class="mobile-tabs-scroll">
             <button onclick="switchTab('general')" class="mobile-tab-btn" id="m-btn-general"><i data-lucide="settings" style="width: 14px; height: 14px;"></i> General</button>
             <button onclick="switchTab('leads')" class="mobile-tab-btn" id="m-btn-leads"><i data-lucide="inbox" style="width: 14px; height: 14px;"></i> Leads</button>
+            <button onclick="switchTab('livechat')" class="mobile-tab-btn" id="m-btn-livechat" style="position: relative;"><i data-lucide="message-square" style="width: 14px; height: 14px;"></i> Live Chat <span id="admin-chat-mobile-badge" style="position: absolute; right: 2px; top: 2px; background-color: #ef4444; color: white; font-size: 0.6rem; font-weight: 700; width: 14px; height: 14px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span></button>
             <button onclick="switchTab('branding')" class="mobile-tab-btn" id="m-btn-branding"><i data-lucide="image" style="width: 14px; height: 14px;"></i> Branding</button>
             <button onclick="switchTab('slider')" class="mobile-tab-btn" id="m-btn-slider"><i data-lucide="sliders" style="width: 14px; height: 14px;"></i> Slider</button>
             <button onclick="switchTab('testimonials')" class="mobile-tab-btn" id="m-btn-testimonials"><i data-lucide="users" style="width: 14px; height: 14px;"></i> Testimonials</button>
@@ -1481,6 +1488,57 @@
                             @endif
                         </div>
                     @endif
+                </div>
+            </div>
+
+            <!-- LIVE CHAT MANAGER TAB -->
+            <div class="tab-panel" id="tab-livechat">
+                <div class="admin-card" style="padding: 0; overflow: hidden; display: flex; height: calc(100vh - 160px); min-height: 500px; border: 1px solid var(--admin-border); background-color: var(--admin-dark-sidebar); border-radius: var(--radius-lg);">
+                    
+                    <!-- Chat Sessions List (Sidebar) -->
+                    <div style="width: 320px; border-right: 1px solid var(--admin-border); display: flex; flex-direction: column; background-color: var(--admin-dark-sidebar);">
+                        <div style="padding: 1.25rem; border-bottom: 1px solid var(--admin-border);">
+                            <h2 style="margin: 0; font-size: 1.2rem;">Live Support Chats</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--admin-text-muted);">Real-time patient chat sessions</p>
+                        </div>
+                        <div id="admin-chat-sessions-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column;">
+                            <!-- Active sessions loaded dynamically -->
+                            <div style="padding: 2rem; text-align: center; color: var(--admin-text-muted); font-size: 0.9rem;">
+                                Loading chat sessions...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Window (Main) -->
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; background-color: var(--admin-dark-bg);">
+                        <!-- Conversation Header -->
+                        <div id="admin-chat-header" style="padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center; background-color: var(--admin-dark-sidebar);">
+                            <div>
+                                <h3 id="admin-chat-header-title" style="margin: 0; font-size: 1.05rem; color: var(--mint-green);">Select a Chat</h3>
+                                <p id="admin-chat-header-subtitle" style="margin: 2px 0 0 0; font-size: 0.8rem; color: var(--admin-text-muted);">Please pick a patient chat session from the list to start responding.</p>
+                            </div>
+                            <button type="button" id="admin-chat-delete-btn" onclick="deleteCurrentChat()" class="btn-action delete" style="display: none; align-items: center; gap: 4px; padding: 6px 12px; font-size: 0.8rem; height: auto; background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; cursor: pointer;">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Close & Delete Chat
+                            </button>
+                        </div>
+
+                        <!-- Messages Content area -->
+                        <div id="admin-chat-messages-wrap" style="flex-grow: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="margin: auto; text-align: center; color: var(--admin-text-muted);">
+                                <i data-lucide="message-square" style="width: 48px; height: 48px; stroke-width: 1.25; margin-bottom: 0.75rem; color: var(--admin-border);"></i>
+                                <p style="font-size: 0.95rem; margin: 0;">No Chat Selected</p>
+                            </div>
+                        </div>
+
+                        <!-- Chat Reply Input area -->
+                        <div id="admin-chat-input-wrap" style="padding: 1rem 1.5rem; border-top: 1px solid var(--admin-border); background-color: var(--admin-dark-sidebar); display: none; gap: 10px;">
+                            <input type="text" id="admin-chat-reply-input" placeholder="Type your reply here..." onkeydown="handleAdminChatKey(event)" style="flex-grow: 1; background-color: var(--admin-input-bg); border: 1px solid var(--admin-border); color: white; padding: 0.75rem 1rem; border-radius: 24px; outline: none; font-size: 0.9rem;">
+                            <button type="button" onclick="sendAdminReply()" class="btn" style="background-color: var(--primary-teal); color: white; border: none; padding: 0 1.25rem; border-radius: 24px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                Send <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -4509,6 +4567,258 @@
                 document.getElementById('bulk-delete-form').submit();
             }
         }
+
+        // Admin Live Chat Variables
+        let currentAdminSessionId = null;
+        let adminSessionsPoll = null;
+        let adminMessagesPoll = null;
+
+        // Override switchTab function to trigger chat load
+        const originalSwitchTab = window.switchTab;
+        window.switchTab = function(tabId) {
+            if (typeof originalSwitchTab === 'function') {
+                originalSwitchTab(tabId);
+            } else {
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.tab-btn, .mobile-tab-btn').forEach(b => b.classList.remove('active'));
+                
+                const targetPanel = document.getElementById('tab-' + tabId);
+                const targetBtn = document.getElementById('btn-' + tabId);
+                const mobileBtn = document.getElementById('m-btn-' + tabId);
+                
+                if (targetPanel) targetPanel.classList.add('active');
+                if (targetBtn) targetBtn.classList.add('active');
+                if (mobileBtn) mobileBtn.classList.add('active');
+                localStorage.setItem('active_tab', tabId);
+            }
+            
+            // Manage chat pollings
+            if (tabId === 'livechat') {
+                loadAdminChatSessions();
+                clearInterval(adminSessionsPoll);
+                adminSessionsPoll = setInterval(loadAdminChatSessions, 5000);
+            } else {
+                clearInterval(adminSessionsPoll);
+                clearInterval(adminMessagesPoll);
+            }
+        };
+
+        function loadAdminChatSessions() {
+            fetch('/admin/chats')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        renderAdminChatSessions(data.sessions);
+                    }
+                })
+                .catch(err => console.error('Error fetching admin chat sessions:', err));
+        }
+
+        function renderAdminChatSessions(sessions) {
+            const list = document.getElementById('admin-chat-sessions-list');
+            
+            // Update sidebar unread totals for menu badges
+            let totalUnread = 0;
+            sessions.forEach(s => totalUnread += s.unread_count);
+            
+            const totalBadge = document.getElementById('admin-chat-total-badge');
+            const mobileBadge = document.getElementById('admin-chat-mobile-badge');
+            
+            if (totalUnread > 0) {
+                totalBadge.textContent = totalUnread;
+                totalBadge.style.display = 'inline-flex';
+                mobileBadge.textContent = totalUnread;
+                mobileBadge.style.display = 'inline-flex';
+            } else {
+                totalBadge.style.display = 'none';
+                mobileBadge.style.display = 'none';
+            }
+
+            if (sessions.length === 0) {
+                list.innerHTML = `<div style="padding: 3rem 1.5rem; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem;">No active chat conversations.</div>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            sessions.forEach(s => {
+                const isSelected = s.session_id === currentAdminSessionId;
+                const time = new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.onclick = () => selectAdminChat(s.session_id);
+                itemDiv.style.padding = '1rem 1.25rem';
+                itemDiv.style.borderBottom = '1px solid var(--admin-border)';
+                itemDiv.style.cursor = 'pointer';
+                itemDiv.style.backgroundColor = isSelected ? 'rgba(92, 203, 179, 0.08)' : 'transparent';
+                itemDiv.style.borderLeft = isSelected ? '4px solid var(--primary-teal)' : '4px solid transparent';
+                itemDiv.style.transition = 'all 0.2s';
+                
+                itemDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <strong style="color: ${isSelected ? 'var(--mint-green)' : '#ffffff'}; font-size: 0.9rem; font-family: 'Outfit';">Session ${s.session_id.substr(5, 6)}</strong>
+                        <span style="font-size: 0.7rem; color: var(--admin-text-muted);">${time}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.8rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                            ${s.sender === 'admin' ? 'You: ' : ''}${escapeHTML(s.message)}
+                        </span>
+                        ${s.unread_count > 0 ? `<span style="background-color: #ef4444; color: white; font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">${s.unread_count}</span>` : ''}
+                    </div>
+                `;
+                
+                itemDiv.onmouseover = () => { if (!isSelected) itemDiv.style.backgroundColor = 'rgba(255,255,255,0.02)'; };
+                itemDiv.onmouseout = () => { if (!isSelected) itemDiv.style.backgroundColor = 'transparent'; };
+                
+                list.appendChild(itemDiv);
+            });
+        }
+
+        function selectAdminChat(sessionId) {
+            currentAdminSessionId = sessionId;
+            loadAdminChatSessions();
+            
+            document.getElementById('admin-chat-input-wrap').style.display = 'flex';
+            document.getElementById('admin-chat-delete-btn').style.display = 'inline-flex';
+            
+            document.getElementById('admin-chat-header-title').textContent = `Session ${sessionId.substr(5, 6)}`;
+            document.getElementById('admin-chat-header-subtitle').textContent = `Full Session ID: ${sessionId}`;
+            
+            loadAdminChatMessages();
+            
+            clearInterval(adminMessagesPoll);
+            adminMessagesPoll = setInterval(loadAdminChatMessages, 3000);
+        }
+
+        function loadAdminChatMessages() {
+            if (!currentAdminSessionId) return;
+            
+            fetch(`/admin/chats/${currentAdminSessionId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        renderAdminChatMessages(data.messages);
+                    }
+                })
+                .catch(err => console.error('Error fetching admin session messages:', err));
+        }
+
+        function renderAdminChatMessages(messages) {
+            const wrap = document.getElementById('admin-chat-messages-wrap');
+            wrap.innerHTML = '';
+            
+            messages.forEach(msg => {
+                const isMsgAdmin = msg.sender === 'admin';
+                const msgDiv = document.createElement('div');
+                msgDiv.style.display = 'flex';
+                msgDiv.style.justifyContent = isMsgAdmin ? 'flex-end' : 'flex-start';
+                
+                const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                msgDiv.innerHTML = `
+                    <div style="max-width: 70%; background-color: ${isMsgAdmin ? 'var(--primary-teal)' : 'var(--admin-dark-sidebar)'}; color: white; padding: 0.65rem 1rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.9rem; line-height: 1.4; margin-bottom: 4px;">
+                        <div style="word-break: break-word;">${escapeHTML(msg.message)}</div>
+                        <div style="font-size: 0.65rem; text-align: right; margin-top: 4px; color: ${isMsgAdmin ? 'rgba(255,255,255,0.7)' : 'var(--admin-text-muted)'};">${time}</div>
+                    </div>
+                `;
+                wrap.appendChild(msgDiv);
+            });
+            
+            wrap.scrollTop = wrap.scrollHeight;
+        }
+
+        function handleAdminChatKey(e) {
+            if (e.key === 'Enter') {
+                sendAdminReply();
+            }
+        }
+
+        function sendAdminReply() {
+            if (!currentAdminSessionId) return;
+            
+            const input = document.getElementById('admin-chat-reply-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            input.value = '';
+            
+            fetch(`/admin/chats/${currentAdminSessionId}/reply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ message: msg })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    loadAdminChatMessages();
+                    loadAdminChatSessions();
+                }
+            })
+            .catch(err => console.error('Error sending admin reply:', err));
+        }
+
+        function deleteCurrentChat() {
+            if (!currentAdminSessionId) return;
+            
+            if (confirm('Are you sure you want to permanently delete this chat session and all its messages?')) {
+                fetch(`/admin/chats/${currentAdminSessionId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        currentAdminSessionId = null;
+                        clearInterval(adminMessagesPoll);
+                        
+                        document.getElementById('admin-chat-messages-wrap').innerHTML = `
+                            <div style="margin: auto; text-align: center; color: var(--admin-text-muted);">
+                                <i data-lucide="message-square" style="width: 48px; height: 48px; stroke-width: 1.25; margin-bottom: 0.75rem; color: var(--admin-border);"></i>
+                                <p style="font-size: 0.95rem; margin: 0;">No Chat Selected</p>
+                            </div>
+                        `;
+                        document.getElementById('admin-chat-header-title').textContent = 'Select a Chat';
+                        document.getElementById('admin-chat-header-subtitle').textContent = 'Please pick a patient chat session from the list to start responding.';
+                        document.getElementById('admin-chat-delete-btn').style.display = 'none';
+                        document.getElementById('admin-chat-input-wrap').style.display = 'none';
+                        
+                        setTimeout(() => lucide.createIcons(), 10);
+                        loadAdminChatSessions();
+                    }
+                })
+                .catch(err => console.error('Error deleting chat:', err));
+            }
+        }
+
+        // Initialize background silent badge checkers
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (localStorage.getItem('active_tab') === 'livechat') {
+                    switchTab('livechat');
+                } else {
+                    fetch('/admin/chats')
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                let totalUnread = 0;
+                                data.sessions.forEach(s => totalUnread += s.unread_count);
+                                const totalBadge = document.getElementById('admin-chat-total-badge');
+                                const mobileBadge = document.getElementById('admin-chat-mobile-badge');
+                                if (totalUnread > 0) {
+                                    totalBadge.textContent = totalUnread;
+                                    totalBadge.style.display = 'inline-flex';
+                                    mobileBadge.textContent = totalUnread;
+                                    mobileBadge.style.display = 'inline-flex';
+                                }
+                            }
+                        });
+                }
+            }, 2000);
+        });
 
         // Initialize CKEditor
         let blogEditor;
