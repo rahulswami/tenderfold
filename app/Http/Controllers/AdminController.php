@@ -86,8 +86,8 @@ class AdminController extends Controller
             // Silently fail
         }
 
-        // Fetch all leads
-        $leads = \App\Models\Lead::orderBy('created_at', 'desc')->get();
+        // Fetch all leads paginated
+        $leads = \App\Models\Lead::orderBy('created_at', 'desc')->paginate(15, ['*'], 'leads_page');
 
         // Fetch all page contents to let user edit them
         $pageContents = \App\Models\PageContent::all();
@@ -908,6 +908,56 @@ class AdminController extends Controller
         $lead->delete();
 
         return redirect()->back()->with('success', 'Lead deleted successfully!');
+    }
+
+    public function exportLeads()
+    {
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=leads_export_" . date('Ymd_His') . ".csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF");
+            
+            fputcsv($file, ['ID', 'Name', 'Phone', 'Email', 'Source', 'Status', 'Message', 'Notes', 'Created At']);
+
+            \App\Models\Lead::orderBy('created_at', 'desc')->chunk(100, function($leads) use ($file) {
+                foreach ($leads as $lead) {
+                    fputcsv($file, [
+                        $lead->id,
+                        $lead->name,
+                        $lead->phone,
+                        $lead->email,
+                        $lead->source,
+                        $lead->status,
+                        $lead->message,
+                        $lead->notes,
+                        $lead->created_at ? $lead->created_at->toDateTimeString() : '',
+                    ]);
+                }
+            });
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function bulkDeleteLeads(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:leads,id',
+        ]);
+
+        \App\Models\Lead::whereIn('id', $request->ids)->delete();
+
+        return redirect()->back()->with('success', count($request->ids) . ' leads deleted successfully!');
     }
 
     private function getParameterCategory($key)

@@ -168,7 +168,47 @@ class MigrateDrSumitzData extends Command
             ]);
         }
 
-        // 8. Seed/Update Site Settings
+        // 8. Migrate Leads
+        $this->info('Migrating leads...');
+        DB::table('leads')->truncate();
+        
+        // Migrate from contactus
+        $stmt = $sourcePdo->query("SELECT * FROM contactus");
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            DB::table('leads')->insert([
+                'name' => $row['name'],
+                'phone' => $row['phone'] ?: 'N/A',
+                'email' => $row['email'],
+                'message' => $row['message'],
+                'source' => Str::limit('Contact Us: ' . ($row['subject'] ?: 'General Inquiry'), 250),
+                'status' => 'New',
+                'notes' => null,
+                'created_at' => $row['created_at'] ?: now(),
+                'updated_at' => $row['updated_at'] ?: now(),
+            ]);
+        }
+
+        // Migrate from appointments
+        $stmt = $sourcePdo->query("SELECT * FROM appointments");
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $notes = "Age: " . $row['age'] . "\n";
+            $notes .= "Requested Service ID: " . $row['requestedservice'] . "\n";
+            $notes .= "Preferred Date: " . $row['requestdate'] . ", Time: " . $row['requesttime'];
+
+            DB::table('leads')->insert([
+                'name' => $row['name'],
+                'phone' => $row['phone'] ?: 'N/A',
+                'email' => $row['email'],
+                'message' => $row['message'],
+                'source' => 'Appointment Request Form',
+                'status' => 'New',
+                'notes' => $notes,
+                'created_at' => $row['created_at'] ?: now(),
+                'updated_at' => $row['updated_at'] ?: now(),
+            ]);
+        }
+
+        // 9. Seed/Update Site Settings
         $this->info('Seeding clinic contact settings...');
         SiteParameter::updateOrCreate(['id' => 'site_name'], ['value' => 'SumitZ Clinic', 'label' => 'Site Name', 'category' => 'general']);
         SiteParameter::updateOrCreate(['id' => 'site_tagline'], ['value' => 'Orthopedic & Physiotherapy Specialists', 'label' => 'Site Tagline', 'category' => 'general']);
