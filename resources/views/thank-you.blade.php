@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Thank You | Lead Submitted | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Thank you for submitting your lead details. One of our expert loan advisors will reach out to you within 2 hours.')
+@section('title', 'Thank You | Appointment Requested | ' . ($site['site_name'] ?? 'SumitZ Clinic'))
+@section('meta_description', 'Thank you for submitting your details. One of our clinical coordinators will reach out to you shortly.')
 
 @section('content')
     <section class="section" style="min-height: calc(100vh - 400px); display: flex; align-items: center; justify-content: center; padding: 4rem 1rem;">
@@ -13,7 +13,7 @@
             <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-teal-dark); font-weight: 800;">Thank You!</h1>
             
             <p style="font-size: 1.15rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 2rem;">
-                Your request has been successfully submitted and saved. One of our senior loan advisors will review your requirements and call you back shortly (typically within 2 hours).
+                Your request has been successfully submitted and saved. One of our clinical coordinators will review your details and call you back shortly (typically within 2 hours).
             </p>
  
             <div style="background: rgba(12, 83, 84, 0.03); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2.5rem; text-align: left;">
@@ -21,9 +21,9 @@
                     <i data-lucide="info" style="width: 16px; height: 16px; color: var(--mint-green);"></i> What happens next?
                 </h4>
                 <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
-                    <li style="margin-bottom: 6px;">We analyze your request against current interest rates from 30+ partner banks.</li>
-                    <li style="margin-bottom: 6px;">An expert contacts you to gather details and explain the eligibility process.</li>
-                    <li>We pick up your documents from your doorstep and handle the processing end-to-end.</li>
+                    <li style="margin-bottom: 6px;">We evaluate your symptoms and preferred date against current doctor schedules.</li>
+                    <li style="margin-bottom: 6px;">A clinic coordinator contacts you to confirm the time slot and provide preparation details.</li>
+                    <li>You receive confirmation details and clinic directions directly on your phone.</li>
                 </ol>
             </div>
  

@@ -36,11 +36,6 @@ class HomeController extends Controller
         abort(404);
     }
 
-    public function compare()
-    {
-        $banks = \App\Models\ComparisonBank::orderBy('sort_order')->orderBy('id')->get();
-        return view('compare-loans', compact('banks'));
-    }
 
     public function testimonials()
     {
@@ -54,9 +49,21 @@ class HomeController extends Controller
         return view('faq', compact('services'));
     }
 
-    public function blog()
+    public function blog(Request $request)
     {
-        $blogs = \App\Models\Blog::orderBy('published_at', 'desc')->orderBy('id', 'desc')->get();
+        $blogs = \App\Models\Blog::orderBy('published_at', 'desc')->orderBy('id', 'desc')->paginate(9);
+        
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($blogs as $blog) {
+                $html .= view('blog.partials.card', compact('blog'))->render();
+            }
+            return response()->json([
+                'html' => $html,
+                'next_page' => $blogs->nextPageUrl()
+            ]);
+        }
+        
         return view('blog.index', compact('blogs'));
     }
 
@@ -65,9 +72,6 @@ class HomeController extends Controller
         $blog = \App\Models\Blog::where('slug', $slug)->first();
         if ($blog) {
             return view('blog.show', compact('blog'));
-        }
-        if (view()->exists("blog.{$slug}")) {
-            return view("blog.{$slug}");
         }
         abort(404);
     }
@@ -265,5 +269,41 @@ class HomeController extends Controller
     public function thankYou()
     {
         return view('thank-you');
+    }
+
+    /* Clinic Specialists */
+    public function specialists()
+    {
+        $specialists = \App\Models\TeamMember::where('status', true)->get();
+        return view('specialists.index', compact('specialists'));
+    }
+
+    public function specialistdetails($slug)
+    {
+        $specialist = \App\Models\TeamMember::where('slug', $slug)->where('status', true)->firstOrFail();
+        return view('specialists.show', compact('specialist'));
+    }
+
+    /* Clinic Treatments */
+    public function treatments()
+    {
+        $treatments = \App\Models\Treatment::where('status', true)->get();
+        return view('treatments.index', compact('treatments'));
+    }
+
+    public function treatmentDetail($slug)
+    {
+        $treatment = \App\Models\Treatment::where('slug', $slug)->where('status', true)->firstOrFail();
+        return view('treatments.show', compact('treatment'));
+    }
+
+    /* CMS Pages catch-all */
+    public function cmsPageShow($slug)
+    {
+        $page = \App\Models\CmsPage::where('slug', $slug)->where('status', true)->first();
+        if ($page) {
+            return view('cms-page', compact('page'));
+        }
+        abort(404);
     }
 }

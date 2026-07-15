@@ -19,18 +19,18 @@
               "provider": {
                 "{{ '@type' }}": "Organization",
                 "{{ '@id' }}": "{{ route('home') }}/#organization",
-                "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
+                "name": "{{ $site['site_name'] ?? 'SumitZ Clinic' }}",
                 "url": "{{ route('home') }}"
               },
               "areaServed": {
                 "{{ '@type' }}": "State",
-                "name": "Rajasthan"
+                "name": "Maharashtra"
               },
-              "serviceType": "FinancialService",
+              "serviceType": "MedicalService",
               "offers": {
                 "{{ '@type' }}": "Offer",
                 "priceCurrency": "INR",
-                "description": "Interest rates starting from {{ $service->rate_value ?? 'Lowest Rates' }}"
+                "description": "Consultation details: {{ $service->rate_value ?? 'Standard slots' }}"
               }
             }
             @if(!empty($service->faqs) && is_array($service->faqs))
@@ -68,13 +68,13 @@
             <p style="color: var(--text-light-muted); max-width: 600px; margin-top: 10px;">{{ $service->hero_subtitle }}</p>
             <div class="details-hero-meta" style="margin-top: 20px;">
                 @if($service->rate_value)
-                    <div class="meta-item"><i data-lucide="percent"></i> Rate: {{ $service->rate_value }}</div>
+                    <div class="meta-item"><i data-lucide="check"></i> {{ $service->rate_value }}</div>
                 @endif
                 @if($service->max_loan)
-                    <div class="meta-item"><i data-lucide="wallet"></i> {{ $service->max_loan }}</div>
+                    <div class="meta-item"><i data-lucide="info"></i> {{ $service->max_loan }}</div>
                 @endif
                 @if($service->tenure)
-                    <div class="meta-item"><i data-lucide="calendar"></i> {{ $service->tenure }}</div>
+                    <div class="meta-item"><i data-lucide="clock"></i> {{ $service->tenure }}</div>
                 @endif
             </div>
         </div>
@@ -82,16 +82,18 @@
 
     <!-- Section 2: Detailed Overview & Introduction -->
     <section class="section">
-        <div class="container details-layout">
+        <div class="container details-layout animate-on-scroll">
             <div class="details-content">
                 <h2>{{ $service->intro_title }}</h2>
                 {!! $service->intro_content !!}
                 
                 <!-- Section 3: Feature Blocks (Eligibility & Docs) -->
+                @if($service->eligibility_criteria || $service->documents_required)
                 <div class="details-grid-cards" style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
                     <!-- Eligibility Card -->
+                    @if($service->eligibility_criteria)
                     <div class="details-list-card">
-                        <h3><i data-lucide="shield-alert" style="color: var(--accent-orange);"></i> Eligibility Criteria</h3>
+                        <h3><i data-lucide="check-circle" style="color: var(--accent-teal);"></i> Requirements & Preparation</h3>
                         <ul class="sol-features-list" style="list-style: none; padding: 0;">
                             @foreach(explode("\n", str_replace("\r", "", $service->eligibility_criteria)) as $item)
                                 @if(trim($item))
@@ -100,10 +102,12 @@
                             @endforeach
                         </ul>
                     </div>
+                    @endif
 
                     <!-- Documents Card -->
+                    @if($service->documents_required)
                     <div class="details-list-card">
-                        <h3><i data-lucide="file-text" style="color: var(--accent-teal);"></i> Documents Required</h3>
+                        <h3><i data-lucide="file-text" style="color: var(--accent-teal);"></i> Diagnostics / Prep Work</h3>
                         <ul class="sol-features-list" style="list-style: none; padding: 0;">
                             @foreach(explode("\n", str_replace("\r", "", $service->documents_required)) as $item)
                                 @if(trim($item))
@@ -112,7 +116,9 @@
                             @endforeach
                         </ul>
                     </div>
+                    @endif
                 </div>
+                @endif
 
                 <!-- Section 4: Optimization Tips -->
                 @if($service->tips_title)
@@ -162,13 +168,13 @@
                                 <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
                             </div>
                         @endif
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Apply Now</button>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Request Slot</button>
                     </form>
                 </div>
                 
                 <div class="sidebar-box sidebar-contact-card">
                     <h3 style="border:none; padding:0; margin-bottom:0.75rem;">Need Quick Help?</h3>
-                    <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1.5rem;">Speak directly to our senior retail credit advisor.</p>
+                    <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1.5rem;">Speak directly to our clinical coordinator.</p>
                     <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary" style="width: 100%;"><i data-lucide="phone"></i> {{ $site['phone'] ?? '+91 96727 77749' }}</a>
                 </div>
             </div>

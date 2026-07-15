@@ -8,6 +8,8 @@ class Service extends Model
 {
     protected $fillable = [
         'slug',
+        'image_path',
+        'icon_path',
         'service_name',
         'hero_category',
         'hero_title',

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Our Loan Services Overview | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Explore MLG Finedge\'s wide array of loan advisory services: Personal, Home, Car, Business, Working Capital, Project Funding, LAP, and Gold Loans in Jaipur.')
+@section('title', 'Our Clinical & Diagnostic Services | SumitZ Clinic')
+@section('meta_description', 'Explore the wide range of services offered by SumitZ Clinic including Physiotherapy, Digital OPG, pathology diagnostics, Pediatric Orthopaedics, and X-Ray.')
 
 @section('schema')
 <script type="application/ld+json">
@@ -12,8 +12,8 @@
       "{{ '@type' }}": "WebPage",
       "{{ '@id' }}": "{{ route('services') }}/#webpage",
       "url": "{{ route('services') }}",
-      "name": "Our Loan Services Overview | {{ $site['site_name'] ?? 'MLG Finedge' }}",
-      "description": "Explore MLG Finedge's wide array of loan advisory services: Personal, Home, Car, Business, Working Capital, Project Funding, LAP, and Gold Loans in Jaipur.",
+      "name": "Our Clinical & Diagnostic Services | {{ $site['site_name'] ?? 'SumitZ Clinic' }}",
+      "description": "Explore the wide range of services offered by SumitZ Clinic including Physiotherapy, Digital OPG, pathology diagnostics, Pediatric Orthopaedics, and X-Ray.",
       "isPartOf": {
         "{{ '@type' }}": "WebSite",
         "{{ '@id' }}": "{{ route('home') }}/#website"
@@ -42,9 +42,9 @@
     <!-- Details Hero -->
     <section class="details-hero">
         <div class="container text-center">
-            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">OUR OFFERS</span>
-            <h1>Our Loan Consultation Services</h1>
-            <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">We compare, analyze, and assist you in selecting the ideal loan products with the lowest interest burdens.</p>
+            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">CLINICAL FACILITIES</span>
+            <h1>Our Clinical Services & Diagnostics</h1>
+            <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">We combine state-of-the-art diagnostic machinery with expert clinical consultation to ensure a holistic recovery journey.</p>
         </div>
     </section>
 
@@ -60,12 +60,12 @@
                                 <p>{{ $service->hero_category }}</p>
                             </div>
                             @if($service->badge)
-                                <span class="sol-badge">{{ $service->badge }}</span>
+                                <span class="sol-badge" style="background-color: var(--primary-teal-dark); color: #fff;">{{ $service->badge }}</span>
                             @endif
                         </div>
                         <div class="sol-body">
                             <p class="text-muted" style="margin-bottom:1.5rem;">{{ $service->summary }}</p>
-                            <div class="sol-features-title">Core Benefits</div>
+                            <div class="sol-features-title">Highlights & Value</div>
                             <ul class="sol-features-list">
                                 @if($service->rate_value)
                                     <li class="sol-feature-item"><i data-lucide="check"></i> {{ $service->rate_value }}</li>
@@ -77,13 +77,15 @@
                                     <li class="sol-feature-item"><i data-lucide="check"></i> {{ $service->tenure }}</li>
                                 @endif
                             </ul>
+                            @if($service->eligibility_criteria)
                             <div class="sol-eligibility-box">
-                                <p>Eligibility: <strong>{{ \Illuminate\Support\Str::limit($service->eligibility_criteria, 80) }}</strong></p>
+                                <p>Availability: <strong>{{ \Illuminate\Support\Str::limit($service->eligibility_criteria, 80) }}</strong></p>
                             </div>
+                            @endif
                         </div>
                         <div class="sol-footer">
                             <a href="{{ route('services.show', $service->slug) }}" class="btn btn-secondary">Learn More</a>
-                            <button onclick="triggerCallbackModal()" class="btn btn-primary">Enquire Now</button>
+                            <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-primary">Enquire Now</button>
                         </div>
                     </div>
                 @endforeach

@@ -55,5 +55,27 @@ class AppServiceProvider extends ServiceProvider
         } else {
             \Illuminate\Support\Facades\View::share('globalServices', collect());
         }
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('treatments')) {
+            try {
+                $globalTreatments = \App\Models\Treatment::where('status', true)->orderBy('id')->get();
+                \Illuminate\Support\Facades\View::share('globalTreatments', $globalTreatments);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\View::share('globalTreatments', collect());
+            }
+        } else {
+            \Illuminate\Support\Facades\View::share('globalTreatments', collect());
+        }
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('team_members')) {
+            try {
+                $globalSpecialists = \App\Models\TeamMember::where('status', true)->orderBy('id')->get();
+                \Illuminate\Support\Facades\View::share('globalSpecialists', $globalSpecialists);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\View::share('globalSpecialists', collect());
+            }
+        } else {
+            \Illuminate\Support\Facades\View::share('globalSpecialists', collect());
+        }
     }
 }

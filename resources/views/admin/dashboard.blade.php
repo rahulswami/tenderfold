@@ -921,7 +921,9 @@
             <li class="menu-item"><button onclick="switchTab('pagecontents')" class="tab-btn" id="btn-pagecontents"><i data-lucide="file-text"></i> Page Editor</button></li>
             <li class="menu-item"><button onclick="switchTab('landing')" class="tab-btn" id="btn-landing"><i data-lucide="layout"></i> AI Landing Pages</button></li>
             <li class="menu-item"><button onclick="switchTab('services')" class="tab-btn" id="btn-services"><i data-lucide="layers"></i> Services Manager</button></li>
-            <li class="menu-item"><button onclick="switchTab('banks')" class="tab-btn" id="btn-banks"><i data-lucide="landmark"></i> Bank Comparison</button></li>
+            <li class="menu-item"><button onclick="switchTab('treatments')" class="tab-btn" id="btn-treatments"><i data-lucide="activity"></i> Treatments Manager</button></li>
+            <li class="menu-item"><button onclick="switchTab('specialists')" class="tab-btn" id="btn-specialists"><i data-lucide="user-check"></i> Specialists Manager</button></li>
+            <li class="menu-item"><button onclick="switchTab('cms_pages')" class="tab-btn" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('blogs')" class="tab-btn" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('media')" class="tab-btn" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</button></li>
             <li class="menu-item"><button onclick="switchTab('analytics')" class="tab-btn" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</button></li>
@@ -969,7 +971,9 @@
             <button onclick="switchTab('pagecontents')" class="mobile-tab-btn" id="m-btn-pagecontents"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Pages</button>
             <button onclick="switchTab('landing')" class="mobile-tab-btn" id="m-btn-landing"><i data-lucide="layout" style="width: 14px; height: 14px;"></i> AI Pages</button>
             <button onclick="switchTab('services')" class="mobile-tab-btn" id="m-btn-services"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Services</button>
-            <button onclick="switchTab('banks')" class="mobile-tab-btn" id="m-btn-banks"><i data-lucide="landmark" style="width: 14px; height: 14px;"></i> Banks</button>
+            <button onclick="switchTab('treatments')" class="mobile-tab-btn" id="m-btn-treatments"><i data-lucide="activity" style="width: 14px; height: 14px;"></i> Treatments</button>
+            <button onclick="switchTab('specialists')" class="mobile-tab-btn" id="m-btn-specialists"><i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Specialists</button>
+            <button onclick="switchTab('cms_pages')" class="mobile-tab-btn" id="m-btn-cms_pages"><i data-lucide="files" style="width: 14px; height: 14px;"></i> CMS Pages</button>
             <button onclick="switchTab('blogs')" class="mobile-tab-btn" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</button>
             <button onclick="switchTab('media')" class="mobile-tab-btn" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</button>
             <button onclick="switchTab('analytics')" class="mobile-tab-btn" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</button>
@@ -1041,32 +1045,7 @@
                         </div>
                     </div>
 
-                    <div class="admin-card">
-                        <h2>Active Starting Interest Rates</h2>
-                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">These rates automatically populate the homepage cards and the comparison parameters.</p>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="home_loan_rate">Home Loan Rate</label>
-                                <input type="text" id="home_loan_rate" name="home_loan_rate" class="form-control" value="{{ $site['home_loan_rate'] ?? '' }}" placeholder="8.4%">
-                            </div>
-                            <div class="form-group">
-                                <label for="personal_loan_rate">Personal Loan Rate</label>
-                                <input type="text" id="personal_loan_rate" name="personal_loan_rate" class="form-control" value="{{ $site['personal_loan_rate'] ?? '' }}" placeholder="10.5%">
-                            </div>
-                            <div class="form-group">
-                                <label for="business_loan_rate">Business Loan Rate</label>
-                                <input type="text" id="business_loan_rate" name="business_loan_rate" class="form-control" value="{{ $site['business_loan_rate'] ?? '' }}" placeholder="12.0%">
-                            </div>
-                            <div class="form-group">
-                                <label for="car_loan_rate">Car Loan Rate</label>
-                                <input type="text" id="car_loan_rate" name="car_loan_rate" class="form-control" value="{{ $site['car_loan_rate'] ?? '' }}" placeholder="8.7%">
-                            </div>
-                            <div class="form-group">
-                                <label for="lap_rate">Loan Against Property (LAP) Rate</label>
-                                <input type="text" id="lap_rate" name="lap_rate" class="form-control" value="{{ $site['lap_rate'] ?? '' }}" placeholder="9.0%">
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="admin-card">
                         <h2>SEO & Tracking Codes</h2>
                         <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Configure global tracking and verification tags.</p>
@@ -1889,8 +1868,8 @@
                                 <input type="text" name="contents[header][menu][services]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'services')->first()->value ?? 'Services' }}">
                             </div>
                             <div class="form-group">
-                                <label>Compare Loans Menu Label</label>
-                                <input type="text" name="contents[header][menu][compare]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'compare')->first()->value ?? 'Compare Loans' }}">
+                                <label>Treatments Menu Label</label>
+                                <input type="text" name="contents[header][menu][compare]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'compare')->first()->value ?? 'Treatments' }}">
                             </div>
                             <div class="form-group">
                                 <label>Testimonials Menu Label</label>
@@ -1927,8 +1906,8 @@
                                 <input type="text" name="contents[footer][headings][quick_links]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'quick_links')->first()->value ?? 'Quick Links' }}">
                             </div>
                             <div class="form-group">
-                                <label>Column 3 Heading (Loan Services)</label>
-                                <input type="text" name="contents[footer][headings][services]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'services')->first()->value ?? 'Loan Services' }}">
+                                <label>Column 3 Heading (Clinic Services)</label>
+                                <input type="text" name="contents[footer][headings][services]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'services')->first()->value ?? 'Clinic Services' }}">
                             </div>
                             <div class="form-group">
                                 <label>Column 4 Heading (Contact Info)</label>
@@ -2019,79 +1998,7 @@
                         </div>
                     </div>
 
-                    <div class="admin-card">
-                        <h2>About Us Page - Advisory Team Section</h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Team Section Title</label>
-                                <input type="text" name="contents[about][team][title]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'title')->first()->value ?? 'Our Advisory Team' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Team Section Subtitle</label>
-                                <input type="text" name="contents[about][team][subtitle]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'subtitle')->first()->value ?? '' }}">
-                            </div>
-                        </div>
-                        
-                        <h4 style="margin: 1.5rem 0 0.5rem 0; color: var(--mint-green); font-size: 0.9rem; text-transform: uppercase;">Advisor 1 Profile</h4>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" name="contents[about][team][advisor1_name]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_name')->first()->value ?? 'Mahendra Gupta' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Role / Subtitle</label>
-                                <input type="text" name="contents[about][team][advisor1_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_role')->first()->value ?? 'Founder & Principal Advisor' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Initials</label>
-                                <input type="text" name="contents[about][team][advisor1_initials]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_initials')->first()->value ?? 'MG' }}" placeholder="MG">
-                            </div>
-                            <div class="form-group" style="grid-column: span 3; margin-top: 0.5rem;">
-                                <label>Bio / Description summary</label>
-                                <textarea name="contents[about][team][advisor1_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor1_bio')->first()->value ?? '' }}</textarea>
-                            </div>
-                        </div>
 
-                        <h4 style="margin: 1.5rem 0 0.5rem 0; color: var(--mint-green); font-size: 0.9rem; text-transform: uppercase;">Advisor 2 Profile</h4>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" name="contents[about][team][advisor2_name]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_name')->first()->value ?? 'Ritu Sharma' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Role / Subtitle</label>
-                                <input type="text" name="contents[about][team][advisor2_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_role')->first()->value ?? 'Senior Retail Loan Head' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Initials</label>
-                                <input type="text" name="contents[about][team][advisor2_initials]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_initials')->first()->value ?? 'RS' }}" placeholder="RS">
-                            </div>
-                            <div class="form-group" style="grid-column: span 3; margin-top: 0.5rem;">
-                                <label>Bio / Description summary</label>
-                                <textarea name="contents[about][team][advisor2_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor2_bio')->first()->value ?? '' }}</textarea>
-                            </div>
-                        </div>
-
-                        <h4 style="margin: 1.5rem 0 0.5rem 0; color: var(--mint-green); font-size: 0.9rem; text-transform: uppercase;">Advisor 3 Profile</h4>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" name="contents[about][team][advisor3_name]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_name')->first()->value ?? 'Amit Jain' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Role / Subtitle</label>
-                                <input type="text" name="contents[about][team][advisor3_role]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_role')->first()->value ?? 'Business Finance Specialist' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Initials</label>
-                                <input type="text" name="contents[about][team][advisor3_initials]" class="form-control" value="{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_initials')->first()->value ?? 'AJ' }}" placeholder="AJ">
-                            </div>
-                            <div class="form-group" style="grid-column: span 3; margin-top: 0.5rem;">
-                                <label>Bio / Description summary</label>
-                                <textarea name="contents[about][team][advisor3_bio]" class="form-control" rows="2">{{ $pageContents->where('page', 'about')->where('section', 'team')->where('key', 'advisor3_bio')->first()->value ?? '' }}</textarea>
-                            </div>
-                        </div>
-                    </div>
 
                     <button type="submit" class="btn-submit">Save Page Content</button>
                 </form>
@@ -2107,18 +2014,34 @@
                             <i data-lucide="sparkles"></i> Generate with AI
                         </button>
                     </h2>
-                    <form id="service-form" action="{{ route('admin.services.store') }}" method="POST">
+                    <form id="service-form" action="{{ route('admin.services.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="_method" id="service-form-method" value="POST">
                         
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="ser_service_name">Service Name (e.g. Personal Loan)</label>
-                                <input type="text" id="ser_service_name" name="service_name" class="form-control" required placeholder="Personal Loan">
+                                <label for="ser_service_name">Service Name (e.g. Physiotherapy)</label>
+                                <input type="text" id="ser_service_name" name="service_name" class="form-control" required placeholder="Physiotherapy">
                             </div>
                             <div class="form-group">
                                 <label for="ser_slug">URL Slug (leave empty to auto-generate)</label>
-                                <input type="text" id="ser_slug" name="slug" class="form-control" placeholder="personal-loan">
+                                <input type="text" id="ser_slug" name="slug" class="form-control" placeholder="physiotherapy">
+                            </div>
+                            <div class="form-group">
+                                <label for="ser_image">Featured Image File</label>
+                                <input type="file" id="ser_image" name="image" class="form-control" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="ser_image_url">Or Image URL</label>
+                                <input type="text" id="ser_image_url" name="image_url" class="form-control" placeholder="uploads/category/image.jpg">
+                            </div>
+                            <div class="form-group">
+                                <label for="ser_icon">Service Icon File</label>
+                                <input type="file" id="ser_icon" name="icon" class="form-control" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="ser_icon_url">Or Icon URL</label>
+                                <input type="text" id="ser_icon_url" name="icon_url" class="form-control" placeholder="uploads/category/icon.png">
                             </div>
                             <div class="form-group">
                                 <label for="ser_badge">Badge / Promo Tag (optional)</label>
@@ -2270,95 +2193,112 @@
                 </div>
             </div>
 
-            <!-- 9. BANK COMPARISON TAB -->
-            <div class="tab-panel" id="tab-banks">
-                <!-- Add/Edit Bank Card -->
-                <div class="admin-card" id="bank-form-container">
-                    <h2 id="bank-form-title">Add New Lender / Bank</h2>
-                    <form id="bank-form" action="{{ route('admin.banks.store') }}" method="POST">
+            <!-- 9. TREATMENTS MANAGER TAB -->
+            <div class="tab-panel" id="tab-treatments">
+                <div class="admin-card">
+                    <h2 id="treatment-form-title-text">Add New Treatment Page</h2>
+                    <form id="treatment-form" action="{{ route('admin.treatments.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="_method" id="bank-form-method" value="POST">
+                        <input type="hidden" name="_method" id="treatment-form-method" value="POST">
                         
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="bank_name">Bank / Lender Name</label>
-                                <input type="text" id="bank_name" name="name" class="form-control" required placeholder="HDFC Bank">
+                                <label for="treat_name">Treatment Name</label>
+                                <input type="text" id="treat_name" name="name" class="form-control" required placeholder="Knee Replacement Surgery">
                             </div>
                             <div class="form-group">
-                                <label for="bank_sector">Sector</label>
-                                <select id="bank_sector" name="sector" class="form-control" required>
-                                    <option value="Private">Private Bank</option>
-                                    <option value="Public">Public Bank</option>
-                                    <option value="NBFC">NBFC</option>
-                                </select>
+                                <label for="treat_slug">Custom Slug (optional)</label>
+                                <input type="text" id="treat_slug" name="slug" class="form-control" placeholder="knee-replacement-surgery">
                             </div>
                             <div class="form-group">
-                                <label for="bank_home_rate">Home Loan Rate (% p.a.)</label>
-                                <input type="number" step="0.01" min="0" max="100" id="bank_home_rate" name="home_rate" class="form-control" required placeholder="8.40">
+                                <label for="treat_image">Featured Image File</label>
+                                <input type="file" id="treat_image" name="image" class="form-control" accept="image/*">
                             </div>
                             <div class="form-group">
-                                <label for="bank_personal_rate">Personal Loan Rate (% p.a.)</label>
-                                <input type="number" step="0.01" min="0" max="100" id="bank_personal_rate" name="personal_rate" class="form-control" required placeholder="10.50">
+                                <label for="treat_image_url">Or Image URL</label>
+                                <input type="text" id="treat_image_url" name="image_url" class="form-control" placeholder="uploads/category/image.jpg">
                             </div>
                             <div class="form-group">
-                                <label for="bank_business_rate">Business Loan Rate (% p.a.)</label>
-                                <input type="number" step="0.01" min="0" max="100" id="bank_business_rate" name="business_rate" class="form-control" required placeholder="13.00">
+                                <label for="treat_metatitle">Meta Title (SEO)</label>
+                                <input type="text" id="treat_metatitle" name="metatitle" class="form-control" placeholder="Best Knee Replacement Surgery in Pune">
                             </div>
                             <div class="form-group">
-                                <label for="bank_fee_percent">Processing Fee (%)</label>
-                                <input type="number" step="0.01" min="0" max="100" id="bank_fee_percent" name="fee_percent" class="form-control" required placeholder="1.00">
-                            </div>
-                            <div class="form-group">
-                                <label for="bank_sort_order">Sort Order</label>
-                                <input type="number" id="bank_sort_order" name="sort_order" class="form-control" value="0">
+                                <label for="treat_tags">Tags / Keywords (comma separated)</label>
+                                <input type="text" id="treat_tags" name="tags" class="form-control" placeholder="knee, surgery, replacement">
                             </div>
                         </div>
 
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="treat_metadescription">Meta Description (SEO)</label>
+                            <textarea id="treat_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Looking for Knee Replacement Surgery in Baner, Pune? Consult Dr. Sumit at SumitZ Clinic."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="treat_description">Detailed Treatment Content</label>
+                            <textarea id="treat_description" name="description" class="form-control richtext" rows="10" placeholder="Write treatment overview, symptoms, process..."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="treat_schema_markup">Custom Schema Markup (JSON-LD)</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 0.5rem;">
+                                <button type="button" class="btn-submit" style="background-color: var(--accent-blue); padding: 4px 10px; font-size: 0.8rem;" onclick="generateAiSchemaForType('treatment')">
+                                    <i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Generate with AI
+                                </button>
+                            </div>
+                            <textarea id="treat_schema_markup" name="schema_markup" class="form-control" rows="4" placeholder="<script type='application/ld+json'>...</script>"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="treat_status" name="status" value="1" checked style="width: 18px; height: 18px; cursor: pointer;">
+                            <label for="treat_status" style="margin-bottom: 0; cursor: pointer;">Is Active / Published</label>
+                        </div>
+
                         <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
-                            <button type="submit" class="btn-submit" id="bank-submit-btn">Add Bank Comparison</button>
-                            <button type="button" class="btn-submit" id="bank-cancel-btn" style="background-color: var(--admin-input-bg); color: #fff; display: none;" onclick="cancelBankEdit()">Cancel Edit</button>
+                            <button type="submit" class="btn-submit">Save Treatment Page</button>
+                            <button type="button" class="btn-submit" id="treat-cancel-btn" style="background-color: var(--admin-input-bg); color: #fff; display: none;" onclick="cancelTreatmentEdit()">Cancel Edit</button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Existing Banks Table -->
                 <div class="admin-card">
-                    <h2>Configured Comparison Lenders</h2>
+                    <h2>Active Treatments</h2>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Order</th>
-                                    <th>Lender Name</th>
-                                    <th>Sector</th>
-                                    <th>Home Loan</th>
-                                    <th>Personal Loan</th>
-                                    <th>Business Loan</th>
-                                    <th>Processing Fee</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Slug</th>
+                                    <th>Status</th>
                                     <th style="text-align: right;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($banks as $b)
+                                @forelse($treatments as $t)
                                     <tr>
-                                        <td>{{ $b->sort_order }}</td>
-                                        <td style="font-weight: 500;">{{ $b->name }}</td>
                                         <td>
-                                            <span style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
-                                                {{ $b->sector }}
-                                            </span>
+                                            @if($t->image)
+                                                <img src="{{ site_image($t->image) }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                            @else
+                                                <span style="color: var(--admin-text-muted);">No image</span>
+                                            @endif
                                         </td>
-                                        <td>{{ number_format($b->home_rate, 2) }}%</td>
-                                        <td>{{ number_format($b->personal_rate, 2) }}%</td>
-                                        <td>{{ number_format($b->business_rate, 2) }}%</td>
-                                        <td>{{ number_format($b->fee_percent, 2) }}%</td>
+                                        <td style="font-weight: 500;">{{ $t->name }}</td>
+                                        <td style="color: var(--admin-text-muted);">{{ $t->slug }}</td>
+                                        <td>
+                                            @if($t->status)
+                                                <span style="color: var(--accent-teal); font-size: 0.85rem; font-weight: 600;">● Active</span>
+                                            @else
+                                                <span style="color: var(--admin-text-muted); font-size: 0.85rem;">● Inactive</span>
+                                            @endif
+                                        </td>
                                         <td style="text-align: right;">
                                             <div class="action-btns" style="justify-content: flex-end;">
                                                 <button class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: var(--admin-input-bg); color: #fff;" 
-                                                    onclick="editBank({{ json_encode($b) }})">
+                                                    onclick="editTreatment({{ json_encode($t) }})">
                                                     Edit
                                                 </button>
-                                                <form action="{{ route('admin.banks.delete', $b->id) }}" method="POST" onsubmit="return confirm('Delete this lender from comparison database?')">
+                                                <form action="{{ route('admin.treatments.delete', $t->id) }}" method="POST" onsubmit="return confirm('Delete this treatment page? This action cannot be undone.')">
                                                     @csrf
                                                     <button type="submit" class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: rgba(239, 68, 68, 0.2); color: #f87171;">
                                                         Delete
@@ -2369,7 +2309,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" style="text-align: center; color: var(--admin-text-muted);">No comparison lenders configured.</td>
+                                        <td colspan="5" style="text-align: center; color: var(--admin-text-muted);">No treatments configured.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -2377,6 +2317,272 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 10. SPECIALISTS TAB -->
+            <div class="tab-panel" id="tab-specialists">
+                <div class="admin-card">
+                    <h2 id="specialist-form-title-text">Add New Clinic Specialist</h2>
+                    <form id="specialist-form" action="{{ route('admin.specialists.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="_method" id="specialist-form-method" value="POST">
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="spec_name">Full Name</label>
+                                <input type="text" id="spec_name" name="name" class="form-control" required placeholder="Dr. Sumit Diwan">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_designation">Designation / Degree</label>
+                                <input type="text" id="spec_designation" name="designation" class="form-control" required placeholder="Orthopedic Surgeon, MBBS, MS">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_slug">Custom Slug (optional)</label>
+                                <input type="text" id="spec_slug" name="slug" class="form-control" placeholder="dr-sumit-diwan">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_image">Profile Picture</label>
+                                <input type="file" id="spec_image" name="image" class="form-control" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_image_url">Or Image URL</label>
+                                <input type="text" id="spec_image_url" name="image_url" class="form-control" placeholder="uploads/collection/dr-sumit.jpg">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_phone">Phone / Contact</label>
+                                <input type="text" id="spec_phone" name="phone" class="form-control" placeholder="+91 9545559434">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_facebook">Facebook Profile URL</label>
+                                <input type="text" id="spec_facebook" name="facebook" class="form-control" placeholder="https://facebook.com/...">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_twitter">Twitter/X Profile URL</label>
+                                <input type="text" id="spec_twitter" name="twitter" class="form-control" placeholder="https://twitter.com/...">
+                            </div>
+                        </div>
+
+                        <div class="form-grid" style="margin-top: 1rem;">
+                            <div class="form-group">
+                                <label for="spec_metatitle">Meta Title (SEO)</label>
+                                <input type="text" id="spec_metatitle" name="metatitle" class="form-control" placeholder="Dr. Sumit Diwan - Best Orthopedic Doctor in Baner, Pune">
+                            </div>
+                            <div class="form-group">
+                                <label for="spec_tags">Tags (SEO)</label>
+                                <input type="text" id="spec_tags" name="tags" class="form-control" placeholder="orthopedic doctor, clinic specialist">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="spec_metadescription">Meta Description (SEO)</label>
+                            <textarea id="spec_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Meet Dr. Sumit Diwan, orthopedic specialist at SumitZ Clinic, Pune."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="spec_description">Detailed Bio / Description</label>
+                            <textarea id="spec_description" name="description" class="form-control" rows="6" placeholder="Write doctor qualifications, background, timings..."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="spec_schema_markup">Custom Schema Markup (JSON-LD)</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 0.5rem;">
+                                <button type="button" class="btn-submit" style="background-color: var(--accent-blue); padding: 4px 10px; font-size: 0.8rem;" onclick="generateAiSchemaForType('specialist')">
+                                    <i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Generate with AI
+                                </button>
+                            </div>
+                            <textarea id="spec_schema_markup" name="schema_markup" class="form-control" rows="4" placeholder="<script type='application/ld+json'>...</script>"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="spec_status" name="status" value="1" checked style="width: 18px; height: 18px; cursor: pointer;">
+                            <label for="spec_status" style="margin-bottom: 0; cursor: pointer;">Is Active / Published</label>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
+                            <button type="submit" class="btn-submit">Save Specialist</button>
+                            <button type="button" class="btn-submit" id="spec-cancel-btn" style="background-color: var(--admin-input-bg); color: #fff; display: none;" onclick="cancelSpecialistEdit()">Cancel Edit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="admin-card">
+                    <h2>Clinic Specialists</h2>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Designation</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($specialists as $sp)
+                                    <tr>
+                                        <td>
+                                            @if($sp->image)
+                                                <img src="{{ site_image($sp->image) }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                            @else
+                                                <span style="color: var(--admin-text-muted);">No image</span>
+                                            @endif
+                                        </td>
+                                        <td style="font-weight: 500;">{{ $sp->name }}</td>
+                                        <td>{{ $sp->designation }}</td>
+                                        <td>{{ $sp->phone ?: 'N/A' }}</td>
+                                        <td>
+                                            @if($sp->status)
+                                                <span style="color: var(--accent-teal); font-size: 0.85rem; font-weight: 600;">● Active</span>
+                                            @else
+                                                <span style="color: var(--admin-text-muted); font-size: 0.85rem;">● Inactive</span>
+                                            @endif
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <div class="action-btns" style="justify-content: flex-end;">
+                                                <button class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: var(--admin-input-bg); color: #fff;" 
+                                                    onclick="editSpecialist({{ json_encode($sp) }})">
+                                                    Edit
+                                                </button>
+                                                <form action="{{ route('admin.specialists.delete', $sp->id) }}" method="POST" onsubmit="return confirm('Delete this team specialist?')">
+                                                    @csrf
+                                                    <button type="submit" class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: rgba(239, 68, 68, 0.2); color: #f87171;">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; color: var(--admin-text-muted);">No specialists configured.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 11. CMS PAGES MANAGER TAB -->
+            <div class="tab-panel" id="tab-cms_pages">
+                <div class="admin-card">
+                    <h2 id="cms-form-title-text">Add New CMS Page</h2>
+                    <form id="cms-form" action="{{ route('admin.cms_pages.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="_method" id="cms-form-method" value="POST">
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="cms_title">Page Title</label>
+                                <input type="text" id="cms_title" name="title" class="form-control" required placeholder="Disclaimer">
+                            </div>
+                            <div class="form-group">
+                                <label for="cms_slug">Custom Slug</label>
+                                <input type="text" id="cms_slug" name="slug" class="form-control" required placeholder="disclaimer">
+                            </div>
+                            <div class="form-group">
+                                <label for="cms_image">Page Header/Featured Image</label>
+                                <input type="file" id="cms_image" name="image" class="form-control" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="cms_image_url">Or Image URL</label>
+                                <input type="text" id="cms_image_url" name="image_url" class="form-control" placeholder="uploads/page/disclaimer.jpg">
+                            </div>
+                            <div class="form-group">
+                                <label for="cms_metatitle">Meta Title (SEO)</label>
+                                <input type="text" id="cms_metatitle" name="metatitle" class="form-control" placeholder="Disclaimer | SumitZ Clinic">
+                            </div>
+                            <div class="form-group">
+                                <label for="cms_metakeywords">Meta Keywords (comma separated)</label>
+                                <input type="text" id="cms_metakeywords" name="metakeywords" class="form-control" placeholder="disclaimer, clinic rules">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="cms_metadescription">Meta Description (SEO)</label>
+                            <textarea id="cms_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Disclaimer for SumitZ Clinic services."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="cms_description">Page HTML Content</label>
+                            <textarea id="cms_description" name="description" class="form-control" rows="10" placeholder="Write page content here..."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="cms_schema_markup">Custom Schema Markup (JSON-LD)</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 0.5rem;">
+                                <button type="button" class="btn-submit" style="background-color: var(--accent-blue); padding: 4px 10px; font-size: 0.8rem;" onclick="generateAiSchemaForType('cms_page')">
+                                    <i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline; vertical-align: middle;"></i> Generate with AI
+                                </button>
+                            </div>
+                            <textarea id="cms_schema_markup" name="schema_markup" class="form-control" rows="4" placeholder="<script type='application/ld+json'>...</script>"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="cms_status" name="status" value="1" checked style="width: 18px; height: 18px; cursor: pointer;">
+                            <label for="cms_status" style="margin-bottom: 0; cursor: pointer;">Is Active / Published</label>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
+                            <button type="submit" class="btn-submit">Save Page</button>
+                            <button type="button" class="btn-submit" id="cms-cancel-btn" style="background-color: var(--admin-input-bg); color: #fff; display: none;" onclick="cancelCmsPageEdit()">Cancel Edit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="admin-card">
+                    <h2>CMS Pages</h2>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Slug</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($cmsPages as $cp)
+                                    <tr>
+                                        <td style="font-weight: 500;">{{ $cp->title }}</td>
+                                        <td style="color: var(--admin-text-muted);">{{ $cp->slug }}</td>
+                                        <td>
+                                            @if($cp->status)
+                                                <span style="color: var(--accent-teal); font-size: 0.85rem; font-weight: 600;">● Active</span>
+                                            @else
+                                                <span style="color: var(--admin-text-muted); font-size: 0.85rem;">● Inactive</span>
+                                            @endif
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <div class="action-btns" style="justify-content: flex-end;">
+                                                <button class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: var(--admin-input-bg); color: #fff;" 
+                                                    onclick="editCmsPage({{ json_encode($cp) }})">
+                                                    Edit
+                                                </button>
+                                                <form action="{{ route('admin.cms_pages.delete', $cp->id) }}" method="POST" onsubmit="return confirm('Delete this CMS page?')">
+                                                    @csrf
+                                                    <button type="submit" class="btn-submit" style="padding: 4px 10px; font-size: 0.8rem; background-color: rgba(239, 68, 68, 0.2); color: #f87171;">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: var(--admin-text-muted);">No CMS pages configured.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DUMMY BANKS TAB Panel (hidden to prevent JS errors if any script references switchTab('banks')) -->
+            <div class="tab-panel" id="tab-banks" style="display: none;"></div>
 
             <!-- 7. BLOG MANAGER TAB -->
             <div class="tab-panel" id="tab-blogs">
@@ -2394,20 +2600,21 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="blog_title">Article Title</label>
-                                <input type="text" id="blog_title" name="title" class="form-control" required placeholder="The Ultimate Guide to Securing a Loan">
+                                <input type="text" id="blog_title" name="title" class="form-control" required placeholder="Preventing Back Pain in Desk Workers">
                             </div>
                             <div class="form-group">
                                 <label for="blog_slug">URL Slug (leave empty to auto-generate)</label>
-                                <input type="text" id="blog_slug" name="slug" class="form-control" placeholder="ultimate-loan-guide">
+                                <input type="text" id="blog_slug" name="slug" class="form-control" placeholder="preventing-back-pain-desk-workers">
                             </div>
                             <div class="form-group">
                                 <label for="blog_category">Category</label>
                                 <select id="blog_category" name="category" class="form-control" required>
-                                    <option value="Personal Loans">Personal Loans</option>
-                                    <option value="Home Loans">Home Loans</option>
-                                    <option value="Business Loans">Business Loans</option>
-                                    <option value="Loan Against Property">Loan Against Property</option>
-                                    <option value="Financial Tips">Financial Tips</option>
+                                    <option value="Orthopaedics">Orthopaedics</option>
+                                    <option value="Physiotherapy">Physiotherapy</option>
+                                    <option value="Spine & Disc Care">Spine & Disc Care</option>
+                                    <option value="Sports Injuries">Sports Injuries</option>
+                                    <option value="Joint Recovery">Joint Recovery</option>
+                                    <option value="Healthy Tips">Healthy Tips</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -2446,7 +2653,7 @@
                 <!-- Existing Blogs List -->
                 <div class="admin-card">
                     <h2>Published Blog Articles</h2>
-                    <div class="admin-table-wrap">
+                    <div class="admin-table-wrap" id="blogs-table-wrap">
                         <table class="admin-table">
                             <thead>
                                 <tr>
@@ -2458,9 +2665,9 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="blogs-table-body">
                                 @forelse($blogs as $b)
-                                    <tr>
+                                    <tr id="blog-row-{{ $b->id }}">
                                         <td>
                                             <div class="image-preview">
                                                 @if($b->image_path)
@@ -2476,20 +2683,9 @@
                                         <td>{{ $b->published_at ? $b->published_at->format('M d, Y H:i') : $b->created_at->format('M d, Y H:i') }}</td>
                                         <td>
                                             <div class="action-btns">
-                                                <button type="button" class="btn-action edit" title="Edit Article" 
-                                                    onclick="editBlog({
-                                                        id: {{ $b->id }},
-                                                        title: '{{ addslashes($b->title) }}',
-                                                        slug: '{{ addslashes($b->slug) }}',
-                                                        category: '{{ addslashes($b->category) }}',
-                                                        published_at: '{{ $b->published_at ? $b->published_at->format('Y-m-d\TH:i') : $b->created_at->format('Y-m-d\TH:i') }}',
-                                                        summary: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->summary)) }}',
-                                                        content: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->content)) }}',
-                                                        image_path: '{{ addslashes($b->image_path) }}',
-                                                        schema_markup: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->schema_markup)) }}'
-                                                    })"><i data-lucide="edit"></i></button>
+                                                <button type="button" class="btn-action edit" title="Edit Article" onclick="editBlog({{ $b->id }})"><i data-lucide="edit"></i></button>
                                                 <button type="button" class="btn-action" style="background-color: rgba(66, 133, 244, 0.1); color: #4285f4; border: 1px solid rgba(66, 133, 244, 0.3);" title="Share to Google Business Profile" 
-                                                    onclick="openGmbShareModal('blog', {id: {{ $b->id }}, title: '{{ addslashes($b->title) }}', summary: '{{ addslashes(str_replace(["\r", "\n"], ' ', $b->summary)) }}'})"><i data-lucide="share-2"></i></button>
+                                                    onclick="openGmbShareModal('blog', {id: {{ $b->id }}, title: '{{ addslashes($b->title) }}', summary: ''})"><i data-lucide="share-2"></i></button>
                                                 <form action="{{ route('admin.blogs.delete', $b->id) }}" method="POST" onsubmit="return confirm('Delete this blog post?')">
                                                     @csrf
                                                     <button type="submit" class="btn-action delete" title="Delete"><i data-lucide="trash-2"></i></button>
@@ -2504,6 +2700,22 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <div class="admin-pagination" style="margin-top: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 1rem;">
+                        @if ($blogs->onFirstPage())
+                            <span class="btn-action" style="opacity: 0.5; cursor: not-allowed; padding: 0.5rem 1rem;"><i data-lucide="chevron-left"></i> Previous</span>
+                        @else
+                            <a href="{{ $blogs->previousPageUrl() }}#tab-blogs" class="btn-action" style="padding: 0.5rem 1rem; color: #fff; background: var(--admin-input-bg); border-radius: var(--radius-md);"><i data-lucide="chevron-left"></i> Previous</a>
+                        @endif
+
+                        <span style="color: var(--admin-text-muted); font-size: 0.9rem;">Page {{ $blogs->currentPage() }} of {{ $blogs->lastPage() }}</span>
+
+                        @if ($blogs->hasMorePages())
+                            <a href="{{ $blogs->nextPageUrl() }}#tab-blogs" class="btn-action" style="padding: 0.5rem 1rem; color: #fff; background: var(--admin-input-bg); border-radius: var(--radius-md);">Next <i data-lucide="chevron-right"></i></a>
+                        @else
+                            <span class="btn-action" style="opacity: 0.5; cursor: not-allowed; padding: 0.5rem 1rem;">Next <i data-lucide="chevron-right"></i></span>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -3565,6 +3777,8 @@
                 fetchCloudflareAnalytics();
             }
 
+
+
             // Close sidebar on mobile
             const sidebar = document.querySelector('.sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
@@ -4261,29 +4475,77 @@
                 console.error(error);
             });
 
-        // Blog Edit functions
-        function editBlog(data) {
-            document.getElementById('blog-form-title-text').innerText = 'Edit Blog Article: ' + data.title;
-            document.getElementById('blog-ai-btn').style.display = 'none';
-            document.getElementById('blog-form').action = '/admin/blogs/' + data.id + '/update';
-            document.getElementById('blog-form-method').value = 'POST';
-            document.getElementById('blog_title').value = data.title;
-            document.getElementById('blog_slug').value = data.slug;
-            document.getElementById('blog_category').value = data.category;
-            document.getElementById('blog_published_at').value = data.published_at;
-            document.getElementById('blog_summary').value = data.summary;
-            document.getElementById('blog_schema_markup').value = data.schema_markup || '';
-            if (blogEditor) {
-                blogEditor.setData(data.content);
-            } else {
-                document.getElementById('blog_content').value = data.content;
-            }
-            document.getElementById('blog-submit-btn').innerText = 'Update Blog Article';
-            document.getElementById('blog_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
-            document.getElementById('blog-cancel-btn').style.display = 'inline-block';
-            
-            document.getElementById('blog-form-container').scrollIntoView({ behavior: 'smooth' });
+        let treatmentEditor;
+        ClassicEditor
+            .create(document.querySelector('#treat_description'))
+            .then(editor => {
+                treatmentEditor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        let specialistEditor;
+        ClassicEditor
+            .create(document.querySelector('#spec_description'))
+            .then(editor => {
+                specialistEditor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        let cmsEditor;
+        ClassicEditor
+            .create(document.querySelector('#cms_description'))
+            .then(editor => {
+                cmsEditor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        function escapeJsString(str) {
+            if (!str) return '';
+            return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
+
+        // Blog Edit functions via dynamic AJAX
+        function editBlog(id) {
+            document.getElementById('blog-form-title-text').innerText = 'Loading Blog details...';
+            
+            fetch('/admin/blogs/' + id + '/detail')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('blog-form-title-text').innerText = 'Edit Blog Article: ' + data.title;
+                    document.getElementById('blog-ai-btn').style.display = 'none';
+                    document.getElementById('blog-form').action = '/admin/blogs/' + data.id + '/update';
+                    document.getElementById('blog-form-method').value = 'POST';
+                    document.getElementById('blog_title').value = data.title;
+                    document.getElementById('blog_slug').value = data.slug;
+                    document.getElementById('blog_category').value = data.category;
+                    document.getElementById('blog_published_at').value = data.published_at;
+                    document.getElementById('blog_summary').value = data.summary;
+                    document.getElementById('blog_schema_markup').value = data.schema_markup || '';
+                    if (blogEditor) {
+                        blogEditor.setData(data.content || '');
+                    } else {
+                        document.getElementById('blog_content').value = data.content || '';
+                    }
+                    document.getElementById('blog-submit-btn').innerText = 'Update Blog Article';
+                    document.getElementById('blog_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
+                    document.getElementById('blog-cancel-btn').style.display = 'inline-block';
+                    
+                    document.getElementById('blog-form-container').scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(err => {
+                    console.error('Error fetching blog details:', err);
+                    alert('Failed to load blog details. Please try again.');
+                    cancelBlogEdit();
+                });
+        }
+
+
 
         function cancelBlogEdit() {
             document.getElementById('blog-form-title-text').innerText = 'Create New Blog Article';
@@ -4379,6 +4641,8 @@
             document.getElementById('ser_summary').value = data.summary || '';
             document.getElementById('ser_schema_markup').value = data.schema_markup || '';
             document.getElementById('ser_is_active').checked = !!data.is_active;
+            document.getElementById('ser_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
+            document.getElementById('ser_icon_url').value = (data.icon_path && (data.icon_path.startsWith('http') || data.icon_path.startsWith('//'))) ? data.icon_path : '';
             
             // Clear and rebuild FAQs
             const container = document.getElementById('faq-repeater-container');
@@ -4444,6 +4708,8 @@
             document.getElementById('ser_summary').value = '';
             document.getElementById('ser_schema_markup').value = '';
             document.getElementById('ser_is_active').checked = true;
+            document.getElementById('ser_image_url').value = '';
+            document.getElementById('ser_icon_url').value = '';
             
             document.getElementById('faq-repeater-container').innerHTML = '';
             
@@ -4452,40 +4718,149 @@
         }
 
         // Bank Edit functions
-        function editBank(data) {
-            document.getElementById('bank-form-title').innerText = 'Edit Lender: ' + data.name;
-            document.getElementById('bank-form').action = '/admin/banks/' + data.id + '/update';
-            document.getElementById('bank-form-method').value = 'POST';
+        // Treatment Edit functions
+        function editTreatment(data) {
+            document.getElementById('treatment-form-title-text').innerText = 'Edit Treatment Page: ' + data.name;
+            document.getElementById('treatment-form').action = '/admin/treatments/' + data.id + '/update';
+            document.getElementById('treatment-form-method').value = 'POST';
+            document.getElementById('treat_name').value = data.name;
+            document.getElementById('treat_slug').value = data.slug;
+            document.getElementById('treat_metatitle').value = data.metatitle || '';
+            document.getElementById('treat_tags').value = data.tags || '';
+            document.getElementById('treat_metadescription').value = data.metadescription || '';
+            document.getElementById('treat_schema_markup').value = data.schema_markup || '';
+            document.getElementById('treat_status').checked = !!data.status;
             
-            document.getElementById('bank_name').value = data.name;
-            document.getElementById('bank_sector').value = data.sector;
-            document.getElementById('bank_home_rate').value = data.home_rate;
-            document.getElementById('bank_personal_rate').value = data.personal_rate;
-            document.getElementById('bank_business_rate').value = data.business_rate;
-            document.getElementById('bank_fee_percent').value = data.fee_percent;
-            document.getElementById('bank_sort_order').value = data.sort_order || 0;
+            if (treatmentEditor) {
+                treatmentEditor.setData(data.description || '');
+            } else {
+                document.getElementById('treat_description').value = data.description || '';
+            }
+            document.getElementById('treat_image_url').value = (data.image && (data.image.startsWith('http') || data.image.startsWith('//'))) ? data.image : '';
+            document.getElementById('treat-cancel-btn').style.display = 'inline-block';
             
-            document.getElementById('bank-submit-btn').innerText = 'Update Bank Comparison';
-            document.getElementById('bank-cancel-btn').style.display = 'inline-block';
-            document.getElementById('bank-form-container').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('treatment-form').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function cancelBankEdit() {
-            document.getElementById('bank-form-title').innerText = 'Add New Lender / Bank';
-            document.getElementById('bank-form').action = "{{ route('admin.banks.store') }}";
-            document.getElementById('bank-form-method').value = 'POST';
-            
-            document.getElementById('bank_name').value = '';
-            document.getElementById('bank_sector').selectedIndex = 0;
-            document.getElementById('bank_home_rate').value = '';
-            document.getElementById('bank_personal_rate').value = '';
-            document.getElementById('bank_business_rate').value = '';
-            document.getElementById('bank_fee_percent').value = '';
-            document.getElementById('bank_sort_order').value = 0;
-            
-            document.getElementById('bank-submit-btn').innerText = 'Add Bank Comparison';
-            document.getElementById('bank-cancel-btn').style.display = 'none';
+        function cancelTreatmentEdit() {
+            document.getElementById('treatment-form-title-text').innerText = 'Add New Treatment Page';
+            document.getElementById('treatment-form').action = "{{ route('admin.treatments.store') }}";
+            document.getElementById('treatment-form-method').value = 'POST';
+            document.getElementById('treat_name').value = '';
+            document.getElementById('treat_slug').value = '';
+            document.getElementById('treat_metatitle').value = '';
+            document.getElementById('treat_tags').value = '';
+            document.getElementById('treat_metadescription').value = '';
+            document.getElementById('treat_schema_markup').value = '';
+            document.getElementById('treat_status').checked = true;
+            if (treatmentEditor) {
+                treatmentEditor.setData('');
+            } else {
+                document.getElementById('treat_description').value = '';
+            }
+            document.getElementById('treat_image_url').value = '';
+            document.getElementById('treat-cancel-btn').style.display = 'none';
         }
+
+        // Specialist Edit functions
+        function editSpecialist(data) {
+            document.getElementById('specialist-form-title-text').innerText = 'Edit Specialist: ' + data.name;
+            document.getElementById('specialist-form').action = '/admin/specialists/' + data.id + '/update';
+            document.getElementById('specialist-form-method').value = 'POST';
+            document.getElementById('spec_name').value = data.name;
+            document.getElementById('spec_designation').value = data.designation;
+            document.getElementById('spec_slug').value = data.slug;
+            document.getElementById('spec_phone').value = data.phone || '';
+            document.getElementById('spec_facebook').value = data.facebook || '';
+            document.getElementById('spec_twitter').value = data.twitter || '';
+            document.getElementById('spec_metatitle').value = data.metatitle || '';
+            document.getElementById('spec_tags').value = data.tags || '';
+            document.getElementById('spec_metadescription').value = data.metadescription || '';
+            document.getElementById('spec_schema_markup').value = data.schema_markup || '';
+            document.getElementById('spec_status').checked = !!data.status;
+            
+            if (specialistEditor) {
+                specialistEditor.setData(data.description || '');
+            } else {
+                document.getElementById('spec_description').value = data.description || '';
+            }
+            document.getElementById('spec_image_url').value = (data.image && (data.image.startsWith('http') || data.image.startsWith('//'))) ? data.image : '';
+            document.getElementById('spec-cancel-btn').style.display = 'inline-block';
+            
+            document.getElementById('specialist-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelSpecialistEdit() {
+            document.getElementById('specialist-form-title-text').innerText = 'Add New Clinic Specialist';
+            document.getElementById('specialist-form').action = "{{ route('admin.specialists.store') }}";
+            document.getElementById('specialist-form-method').value = 'POST';
+            document.getElementById('spec_name').value = '';
+            document.getElementById('spec_designation').value = '';
+            document.getElementById('spec_slug').value = '';
+            document.getElementById('spec_phone').value = '';
+            document.getElementById('spec_facebook').value = '';
+            document.getElementById('spec_twitter').value = '';
+            document.getElementById('spec_metatitle').value = '';
+            document.getElementById('spec_tags').value = '';
+            document.getElementById('spec_metadescription').value = '';
+            document.getElementById('spec_schema_markup').value = '';
+            document.getElementById('spec_status').checked = true;
+            if (specialistEditor) {
+                specialistEditor.setData('');
+            } else {
+                document.getElementById('spec_description').value = '';
+            }
+            document.getElementById('spec_image_url').value = '';
+            document.getElementById('spec-cancel-btn').style.display = 'none';
+        }
+
+        // CMS Page Edit functions
+        function editCmsPage(data) {
+            document.getElementById('cms-form-title-text').innerText = 'Edit CMS Page: ' + data.title;
+            document.getElementById('cms-form').action = '/admin/cms-pages/' + data.id + '/update';
+            document.getElementById('cms-form-method').value = 'POST';
+            document.getElementById('cms_title').value = data.title;
+            document.getElementById('cms_slug').value = data.slug;
+            document.getElementById('cms_metatitle').value = data.metatitle || '';
+            document.getElementById('cms_metakeywords').value = data.metakeywords || '';
+            document.getElementById('cms_metadescription').value = data.metadescription || '';
+            document.getElementById('cms_schema_markup').value = data.schema_markup || '';
+            document.getElementById('cms_status').checked = !!data.status;
+            
+            if (cmsEditor) {
+                cmsEditor.setData(data.description || '');
+            } else {
+                document.getElementById('cms_description').value = data.description || '';
+            }
+            document.getElementById('cms_image_url').value = (data.image && (data.image.startsWith('http') || data.image.startsWith('//'))) ? data.image : '';
+            document.getElementById('cms-cancel-btn').style.display = 'inline-block';
+            
+            document.getElementById('cms-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelCmsPageEdit() {
+            document.getElementById('cms-form-title-text').innerText = 'Add New CMS Page';
+            document.getElementById('cms-form').action = "{{ route('admin.cms_pages.store') }}";
+            document.getElementById('cms-form-method').value = 'POST';
+            document.getElementById('cms_title').value = '';
+            document.getElementById('cms_slug').value = '';
+            document.getElementById('cms_metatitle').value = '';
+            document.getElementById('cms_metakeywords').value = '';
+            document.getElementById('cms_metadescription').value = '';
+            document.getElementById('cms_schema_markup').value = '';
+            document.getElementById('cms_status').checked = true;
+            if (cmsEditor) {
+                cmsEditor.setData('');
+            } else {
+                document.getElementById('cms_description').value = '';
+            }
+            document.getElementById('cms_image_url').value = '';
+            document.getElementById('cms-cancel-btn').style.display = 'none';
+        }
+
+        // Dummy bank methods to prevent errors
+        function editBank(data) {}
+        function cancelBankEdit() {}
 
         // Copy URL Helper
         function copyToClipboard(text, button) {
@@ -4987,6 +5362,73 @@
             })
             .catch(err => {
                 showToast("AI Generation Failed", "Network error during background image generation.", "error", jobId);
+            });
+        }
+
+        // dynamic AI Schema generation helper
+        function generateAiSchemaForType(type) {
+            let id = null;
+            let textarea = null;
+            let schemaTypes = [];
+
+            if (type === 'treatment') {
+                textarea = document.getElementById('treat_schema_markup');
+                const actionUrl = document.getElementById('treatment-form').action;
+                const parts = actionUrl.split('/');
+                // Action URL is e.g. /admin/treatments/{id}/update
+                id = parts[parts.length - 2];
+                if (isNaN(parseInt(id))) id = null;
+                schemaTypes = ['MedicalCondition', 'MedicalProcedure'];
+            } else if (type === 'specialist') {
+                textarea = document.getElementById('spec_schema_markup');
+                const actionUrl = document.getElementById('specialist-form').action;
+                const parts = actionUrl.split('/');
+                id = parts[parts.length - 2];
+                if (isNaN(parseInt(id))) id = null;
+                schemaTypes = ['Physician', 'MedicalBusiness'];
+            } else if (type === 'cms_page') {
+                textarea = document.getElementById('cms_schema_markup');
+                const actionUrl = document.getElementById('cms-form').action;
+                const parts = actionUrl.split('/');
+                id = parts[parts.length - 2];
+                if (isNaN(parseInt(id))) id = null;
+                schemaTypes = ['WebPage'];
+            }
+
+            if (!textarea) return;
+
+            // Show a simple loading indicator in textarea
+            const originalVal = textarea.value;
+            textarea.value = 'Generating Schema with Gemini AI... Please wait...';
+            textarea.disabled = true;
+
+            fetch('/admin/ai/generate-schema', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    type: type,
+                    id: id,
+                    schema_types: schemaTypes
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                textarea.disabled = false;
+                if (res.success) {
+                    textarea.value = res.schema;
+                    showToast('AI Schema generated successfully!', 'success');
+                } else {
+                    textarea.value = originalVal;
+                    alert('AI Generation failed: ' + (res.error || 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                textarea.disabled = false;
+                textarea.value = originalVal;
+                alert('Network error generating schema: ' + err.message);
             });
         }
     </script>

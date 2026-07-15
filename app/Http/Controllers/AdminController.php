@@ -51,7 +51,7 @@ class AdminController extends Controller
         $parameters = SiteParameter::all()->groupBy('category');
         $slides = HomeSlide::orderBy('sort_order')->orderBy('id')->get();
         $testimonials = Testimonial::orderBy('sort_order')->orderBy('id')->get();
-        $blogs = \App\Models\Blog::orderBy('published_at', 'desc')->orderBy('id', 'desc')->get();
+        $blogs = \App\Models\Blog::orderBy('published_at', 'desc')->orderBy('id', 'desc')->paginate(15, ['*'], 'blogs_page');
         
         // Scan public storage for media files
         $mediaFiles = [];
@@ -98,8 +98,13 @@ class AdminController extends Controller
         
         // Fetch all landing pages
         $landingPages = \App\Models\LandingPage::orderBy('id', 'desc')->get();
+
+        // Fetch clinic-specific objects for Dr. Sumit
+        $treatments = \App\Models\Treatment::orderBy('id', 'desc')->get();
+        $specialists = \App\Models\TeamMember::orderBy('id', 'desc')->get();
+        $cmsPages = \App\Models\CmsPage::orderBy('id', 'desc')->get();
         
-        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages'));
+        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages'));
     }
 
     public function updateParameters(Request $request)
@@ -314,6 +319,45 @@ class AdminController extends Controller
     }
 
     /* Blogs CRUD */
+    public function listBlogs(Request $request)
+    {
+        $blogs = \App\Models\Blog::orderBy('published_at', 'desc')->orderBy('id', 'desc')->paginate(15);
+        
+        $items = [];
+        foreach ($blogs as $b) {
+            $items[] = [
+                'id' => $b->id,
+                'title' => $b->title,
+                'category' => $b->category,
+                'slug' => $b->slug,
+                'published_at' => $b->published_at ? $b->published_at->format('M d, Y H:i') : ($b->created_at ? $b->created_at->format('M d, Y H:i') : ''),
+                'image_url' => $b->image_path ? site_image($b->image_path) : null,
+                'delete_url' => route('admin.blogs.delete', $b->id),
+            ];
+        }
+
+        return response()->json([
+            'data' => $items,
+            'next_page_url' => $blogs->nextPageUrl(),
+        ]);
+    }
+
+    public function detailBlog($id)
+    {
+        $blog = \App\Models\Blog::findOrFail($id);
+        return response()->json([
+            'id' => $blog->id,
+            'title' => $blog->title,
+            'slug' => $blog->slug,
+            'category' => $blog->category,
+            'published_at' => $blog->published_at ? $blog->published_at->format('Y-m-d\TH:i') : ($blog->created_at ? $blog->created_at->format('Y-m-d\TH:i') : null),
+            'summary' => $blog->summary,
+            'content' => $blog->content,
+            'image_path' => $blog->image_path,
+            'schema_markup' => $blog->schema_markup,
+        ]);
+    }
+
     public function storeBlog(Request $request)
     {
         $request->validate([
@@ -647,11 +691,31 @@ class AdminController extends Controller
             'summary' => 'nullable|string',
             'sort_order' => 'nullable|integer',
             'schema_markup' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'icon' => 'nullable|image|max:5000',
+            'icon_url' => 'nullable|string',
         ]);
 
         if (empty($validated['slug'])) {
             $validated['slug'] = \Illuminate\Support\Str::slug($validated['service_name']);
         }
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'category');
+        } elseif ($request->filled('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image_path'] = $imagePath;
+
+        $iconPath = null;
+        if ($request->hasFile('icon')) {
+            $iconPath = $this->uploadAndConvertToWebP($request->file('icon'), 'category');
+        } elseif ($request->filled('icon_url')) {
+            $iconPath = $request->input('icon_url');
+        }
+        $validated['icon_path'] = $iconPath;
 
         // Handle FAQs
         $faqs = [];
@@ -696,7 +760,33 @@ class AdminController extends Controller
             'summary' => 'nullable|string',
             'sort_order' => 'nullable|integer',
             'schema_markup' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'icon' => 'nullable|image|max:5000',
+            'icon_url' => 'nullable|string',
         ]);
+
+        $imagePath = $service->image_path;
+        if ($request->hasFile('image')) {
+            if ($service->image_path && !str_starts_with($service->image_path, 'http') && !str_starts_with($service->image_path, '//')) {
+                Storage::disk('public')->delete($service->image_path);
+            }
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'category');
+        } elseif ($request->has('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image_path'] = $imagePath;
+
+        $iconPath = $service->icon_path;
+        if ($request->hasFile('icon')) {
+            if ($service->icon_path && !str_starts_with($service->icon_path, 'http') && !str_starts_with($service->icon_path, '//')) {
+                Storage::disk('public')->delete($service->icon_path);
+            }
+            $iconPath = $this->uploadAndConvertToWebP($request->file('icon'), 'category');
+        } elseif ($request->has('icon_url')) {
+            $iconPath = $request->input('icon_url');
+        }
+        $validated['icon_path'] = $iconPath;
 
         $faqs = [];
         $questions = $request->input('faq_questions', []);
@@ -720,6 +810,12 @@ class AdminController extends Controller
     public function deleteService($id)
     {
         $service = \App\Models\Service::findOrFail($id);
+        if ($service->image_path) {
+            Storage::disk('public')->delete($service->image_path);
+        }
+        if ($service->icon_path) {
+            Storage::disk('public')->delete($service->icon_path);
+        }
         $service->delete();
 
         return redirect()->back()->with('success', 'Service page deleted successfully!');
@@ -2109,5 +2205,458 @@ Strict Instructions:
             return response()->json(['error' => 'Publishing failed: ' . $e->getMessage()], 500);
         }
     }
+
+    public function aiGenerateSchema(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:home,service,blog,landing,treatment,specialist,cms_page',
+            'id' => 'nullable|integer',
+            'schema_types' => 'required|array',
+            'schema_types.*' => 'string'
+        ]);
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $type = $request->type;
+        $id = $request->id;
+        $schemaTypes = $request->schema_types;
+
+        // Gather page context
+        $pageTitle = '';
+        $pageUrl = '';
+        $pageDescription = '';
+        $extraContext = '';
+
+        $baseUrl = rtrim(config('app.url') ?? 'https://www.drsumitz.com', '/');
+
+        if ($type === 'home') {
+            $pageTitle = 'Home Page | SumitZ Clinic';
+            $pageUrl = $baseUrl . '/';
+            $pageDescription = 'SumitZ is one of the leading Orthopaedic & Physiotherapy clinics in Baner, Pune.';
+            
+            // Fetch branding parameters
+            $siteParams = SiteParameter::all()->pluck('value', 'id')->toArray();
+            $extraContext = "Clinic Name: " . ($siteParams['site_name'] ?? 'SumitZ Clinic') . "\n" .
+                            "Phone: " . ($siteParams['phone'] ?? '+91 9545559434') . "\n" .
+                            "Email: " . ($siteParams['email'] ?? 'drgsumit@gmail.com') . "\n" .
+                            "Address: " . ($siteParams['address'] ?? 'Baner, Pune');
+        } elseif ($type === 'service') {
+            $service = \App\Models\Service::find($id);
+            if (!$service) {
+                return response()->json(['error' => 'Service not found'], 404);
+            }
+            $pageTitle = $service->service_name;
+            $pageUrl = $baseUrl . '/services/' . $service->slug;
+            $pageDescription = $service->summary ?: '';
+            $extraContext = "Service: " . $service->service_name . "\n" .
+                            "Intro: " . ($service->intro_content ?? '') . "\n" .
+                            "Details: " . ($service->summary ?? '');
+        } elseif ($type === 'blog') {
+            $blog = \App\Models\Blog::find($id);
+            if (!$blog) {
+                return response()->json(['error' => 'Blog not found'], 404);
+            }
+            $pageTitle = $blog->title;
+            $pageUrl = $baseUrl . '/blogs/' . $blog->slug;
+            $pageDescription = $blog->summary ?: '';
+            $extraContext = "Category: " . $blog->category . "\n" .
+                            "Published Date: " . ($blog->published_at ? $blog->published_at->toDateString() : '') . "\n" .
+                            "Content: " . strip_tags($blog->content);
+        } elseif ($type === 'landing') {
+            $lp = \App\Models\LandingPage::find($id);
+            if (!$lp) {
+                return response()->json(['error' => 'Landing page not found'], 404);
+            }
+            $pageTitle = $lp->title;
+            $pageUrl = $baseUrl . '/l/' . $lp->slug;
+            $pageDescription = $lp->meta_description ?: '';
+            $extraContext = "Layout: " . $lp->layout_type;
+        } elseif ($type === 'treatment') {
+            $treatment = \App\Models\Treatment::find($id);
+            if (!$treatment) {
+                return response()->json(['error' => 'Treatment not found'], 404);
+            }
+            $pageTitle = $treatment->name;
+            $pageUrl = $baseUrl . '/treatments/' . $treatment->slug;
+            $pageDescription = $treatment->metadescription ?: '';
+            $extraContext = "Treatment Name: " . $treatment->name . "\n" .
+                            "Description: " . strip_tags($treatment->description);
+        } elseif ($type === 'specialist') {
+            $specialist = \App\Models\TeamMember::find($id);
+            if (!$specialist) {
+                return response()->json(['error' => 'Specialist not found'], 404);
+            }
+            $pageTitle = $specialist->name;
+            $pageUrl = $baseUrl . '/specialists/' . $specialist->slug;
+            $pageDescription = $specialist->metadescription ?: '';
+            $extraContext = "Specialist Name: " . $specialist->name . "\n" .
+                            "Designation: " . $specialist->designation . "\n" .
+                            "Description: " . strip_tags($specialist->description);
+        } elseif ($type === 'cms_page') {
+            $page = \App\Models\CmsPage::find($id);
+            if (!$page) {
+                return response()->json(['error' => 'CMS Page not found'], 404);
+            }
+            $pageTitle = $page->title;
+            $pageUrl = $baseUrl . '/' . $page->slug;
+            $pageDescription = $page->metadescription ?: '';
+            $extraContext = "Page Title: " . $page->title . "\n" .
+                            "Description: " . strip_tags($page->description);
+        }
+
+        $schemaTypesList = implode(', ', $schemaTypes);
+
+        $systemPrompt = "You are a professional SEO expert and web structured data specialist.
+Generate a single, comprehensive and perfectly valid JSON-LD script for the page details provided below.
+The user wants to apply and combine the following schema types in a single graph or block: {$schemaTypesList}.
+
+Provide EXACTLY the JSON-LD script starting with '<script type=\"application/ld+json\">' and ending with '</script>'.
+Generate no other conversational text, explanations, or markdown code blocks (do not wrap with ```html or ```json). Return ONLY the direct raw HTML string containing the JSON-LD script block.
+Ensure all URLs are fully qualified HTTPS URLs, all JSON keys are properly quoted, special characters are properly escaped, and structural fields ('@context', '@type', etc.) are correct.
+
+Page Details:
+- Title: {$pageTitle}
+- URL: {$pageUrl}
+- Description: {$pageDescription}
+- Additional Context:
+{$extraContext}
+
+Direct JSON-LD Script Output:";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API Error: ' . $response->body()], 500);
+            }
+
+            $resultText = $response->json('candidates.0.content.parts.0.text');
+            if (empty($resultText)) {
+                return response()->json(['error' => 'No content received from Gemini.'], 500);
+            }
+
+            // Clean up any accidental markdown blocks returned by AI
+            $cleanMarkup = trim($resultText);
+            if (preg_match('/<script[\s\S]*?>[\s\S]*?<\/script>/i', $cleanMarkup, $matches)) {
+                $cleanMarkup = $matches[0];
+            } else {
+                // If it outputted raw JSON without script tag, wrap it
+                if (str_starts_with($cleanMarkup, '```json')) {
+                    $cleanMarkup = trim(str_replace(['```json', '```'], '', $cleanMarkup));
+                }
+                if (str_starts_with($cleanMarkup, '```html')) {
+                    $cleanMarkup = trim(str_replace(['```html', '```'], '', $cleanMarkup));
+                }
+                if (str_starts_with($cleanMarkup, '{')) {
+                    $cleanMarkup = '<script type="application/ld+json">' . "\n" . $cleanMarkup . "\n" . '</script>';
+                }
+            }
+
+            return response()->json(['success' => true, 'schema' => $cleanMarkup]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Schema generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function saveSchemaMarkup(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:home,service,blog,landing,treatment,specialist,cms_page',
+            'id' => 'nullable|integer',
+            'schema_markup' => 'nullable|string'
+        ]);
+
+        $type = $request->type;
+        $id = $request->id;
+        $markup = $request->schema_markup;
+
+        try {
+            if ($type === 'home') {
+                SiteParameter::updateOrCreate(
+                    ['id' => 'home_schema_markup'],
+                    [
+                        'value' => $markup,
+                        'label' => 'Home Page Custom Schema Markup',
+                        'category' => 'SEO'
+                    ]
+                );
+            } elseif ($type === 'service') {
+                $service = \App\Models\Service::findOrFail($id);
+                $service->update(['schema_markup' => $markup]);
+            } elseif ($type === 'blog') {
+                $blog = \App\Models\Blog::findOrFail($id);
+                $blog->update(['schema_markup' => $markup]);
+            } elseif ($type === 'landing') {
+                $lp = \App\Models\LandingPage::findOrFail($id);
+                $lp->update(['schema_markup' => $markup]);
+            } elseif ($type === 'treatment') {
+                $t = \App\Models\Treatment::findOrFail($id);
+                $t->update(['schema_markup' => $markup]);
+            } elseif ($type === 'specialist') {
+                $s = \App\Models\TeamMember::findOrFail($id);
+                $s->update(['schema_markup' => $markup]);
+            } elseif ($type === 'cms_page') {
+                $p = \App\Models\CmsPage::findOrFail($id);
+                $p->update(['schema_markup' => $markup]);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Schema markup successfully saved and applied!']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to save schema: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /* Treatments CRUD */
+    public function storeTreatment(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:treatments,slug',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
+            'tags' => 'nullable|string',
+            'schema_markup' => 'nullable|string',
+        ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+        }
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'category');
+        } elseif ($request->filled('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image'] = $imagePath;
+        $validated['status'] = $request->boolean('status', true);
+
+        \App\Models\Treatment::create($validated);
+
+        return redirect()->back()->with('success', 'Treatment page created successfully!');
+    }
+
+    public function updateTreatment(Request $request, $id)
+    {
+        $treatment = \App\Models\Treatment::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:treatments,slug,' . $id,
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
+            'tags' => 'nullable|string',
+            'schema_markup' => 'nullable|string',
+        ]);
+
+        $imagePath = $treatment->image;
+        if ($request->hasFile('image')) {
+            if ($treatment->image && !str_starts_with($treatment->image, 'http') && !str_starts_with($treatment->image, '//')) {
+                Storage::disk('public')->delete($treatment->image);
+            }
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'category');
+        } elseif ($request->has('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image'] = $imagePath;
+        $validated['status'] = $request->boolean('status', true);
+
+        $treatment->update($validated);
+
+        return redirect()->back()->with('success', 'Treatment page updated successfully!');
+    }
+
+    public function deleteTreatment($id)
+    {
+        $treatment = \App\Models\Treatment::findOrFail($id);
+        if ($treatment->image) {
+            Storage::disk('public')->delete($treatment->image);
+        }
+        $treatment->delete();
+
+        return redirect()->back()->with('success', 'Treatment page deleted successfully!');
+    }
+
+    /* Specialists CRUD */
+    public function storeSpecialist(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'designation' => 'nullable|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:team_members,slug',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'facebook' => 'nullable|string|max:255',
+            'twitter' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:255',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
+            'tags' => 'nullable|string',
+            'schema_markup' => 'nullable|string',
+        ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+        }
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'collection');
+        } elseif ($request->filled('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image'] = $imagePath;
+        $validated['status'] = $request->boolean('status', true);
+
+        \App\Models\TeamMember::create($validated);
+
+        return redirect()->back()->with('success', 'Specialist added successfully!');
+    }
+
+    public function updateSpecialist(Request $request, $id)
+    {
+        $specialist = \App\Models\TeamMember::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'designation' => 'nullable|string|max:255',
+            'slug' => 'required|string|max:255|unique:team_members,slug,' . $id,
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'facebook' => 'nullable|string|max:255',
+            'twitter' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:255',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
+            'tags' => 'nullable|string',
+            'schema_markup' => 'nullable|string',
+        ]);
+
+        $imagePath = $specialist->image;
+        if ($request->hasFile('image')) {
+            if ($specialist->image && !str_starts_with($specialist->image, 'http') && !str_starts_with($specialist->image, '//')) {
+                Storage::disk('public')->delete($specialist->image);
+            }
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'collection');
+        } elseif ($request->has('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image'] = $imagePath;
+        $validated['status'] = $request->boolean('status', true);
+
+        $specialist->update($validated);
+
+        return redirect()->back()->with('success', 'Specialist updated successfully!');
+    }
+
+    public function deleteSpecialist($id)
+    {
+        $specialist = \App\Models\TeamMember::findOrFail($id);
+        if ($specialist->image) {
+            Storage::disk('public')->delete($specialist->image);
+        }
+        $specialist->delete();
+
+        return redirect()->back()->with('success', 'Specialist deleted successfully!');
+    }
+
+    /* CMS Pages CRUD */
+    public function storeCmsPage(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:cms_pages,slug',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
+            'schema_markup' => 'nullable|string',
+        ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = \Illuminate\Support\Str::slug($validated['title']);
+        }
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'page');
+        } elseif ($request->filled('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image'] = $imagePath;
+        $validated['status'] = $request->boolean('status', true);
+
+        \App\Models\CmsPage::create($validated);
+
+        return redirect()->back()->with('success', 'CMS page created successfully!');
+    }
+
+    public function updateCmsPage(Request $request, $id)
+    {
+        $page = \App\Models\CmsPage::findOrFail($id);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:cms_pages,slug,' . $id,
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:5000',
+            'image_url' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
+            'schema_markup' => 'nullable|string',
+        ]);
+
+        $imagePath = $page->image;
+        if ($request->hasFile('image')) {
+            if ($page->image && !str_starts_with($page->image, 'http') && !str_starts_with($page->image, '//')) {
+                Storage::disk('public')->delete($page->image);
+            }
+            $imagePath = $this->uploadAndConvertToWebP($request->file('image'), 'page');
+        } elseif ($request->has('image_url')) {
+            $imagePath = $request->input('image_url');
+        }
+        $validated['image'] = $imagePath;
+        $validated['status'] = $request->boolean('status', true);
+
+        $page->update($validated);
+
+        return redirect()->back()->with('success', 'CMS page updated successfully!');
+    }
+
+    public function deleteCmsPage($id)
+    {
+        $page = \App\Models\CmsPage::findOrFail($id);
+        if ($page->image) {
+            Storage::disk('public')->delete($page->image);
+        }
+        $page->delete();
+
+        return redirect()->back()->with('success', 'CMS page deleted successfully!');
+    }
 }
+
 

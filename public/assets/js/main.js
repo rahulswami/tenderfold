@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollAnimations();
     initWidgets();
     initCounters();
+    initParallax();
 });
 
 /* --- Navigation & Menu --- */
@@ -50,7 +51,7 @@ function initNavigation() {
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', (e) => {
                 const isDropdownParent = link.closest('.nav-dropdown-item') && link.classList.contains('nav-item');
-                if (isDropdownParent && window.innerWidth <= 768) {
+                if (isDropdownParent && window.innerWidth <= 1100) {
                     const parent = link.closest('.nav-dropdown-item');
                     const isOpen = parent.classList.contains('active-mobile');
                     if (!isOpen) {
@@ -398,5 +399,44 @@ function initCounters() {
         if (statsRow) observer.observe(statsRow);
     } else {
         counters.forEach(c => animateCounter(c));
+    }
+}
+
+/* --- Premium Parallax Fallback for Unsupported Browsers --- */
+function initParallax() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
+        const shapes = document.querySelectorAll('.parallax-shape');
+        const bgLayers = document.querySelectorAll('.parallax-bg-layer');
+
+        if (shapes.length === 0 && bgLayers.length === 0) return;
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+
+            shapes.forEach(shape => {
+                const parentHero = shape.closest('.hero');
+                if (!parentHero) return;
+
+                const rect = parentHero.getBoundingClientRect();
+                if (rect.bottom > 0 && rect.top < window.innerHeight) {
+                    const scrollFactor = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+                    const speed = shape.classList.contains('shape-1') ? -80 : 80;
+                    shape.style.transform = `translateY(${scrollFactor * speed}px)`;
+                }
+            });
+
+            bgLayers.forEach(bgLayer => {
+                const parentSection = bgLayer.closest('.final-cta-section');
+                if (!parentSection) return;
+
+                const rect = parentSection.getBoundingClientRect();
+                if (rect.bottom > 0 && rect.top < window.innerHeight) {
+                    const scrollFactor = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+                    bgLayer.style.transform = `translateY(${scrollFactor * 80}px)`;
+                }
+            });
+        });
     }
 }

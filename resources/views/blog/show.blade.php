@@ -22,13 +22,13 @@
               "image": "{{ $blog->image_path ? site_image($blog->image_path) : asset('assets/images/blog-default.jpg') }}",
               "author": {
                 "{{ '@type' }}": "Organization",
-                "name": "MLG Finedge Advisory Team",
+                "name": "SumitZ Medical Team",
                 "url": "{{ route('home') }}"
               },
               "publisher": {
                 "{{ '@type' }}": "Organization",
                 "{{ '@id' }}": "{{ route('home') }}/#organization",
-                "name": "{{ $site['site_name'] ?? 'MLG Finedge' }}",
+                "name": "{{ $site['site_name'] ?? 'SumitZ Clinic' }}",
                 "url": "{{ route('home') }}"
               }
             }
@@ -43,7 +43,7 @@
     <!-- Blog Header -->
     <header class="blog-article-header" style="padding: 100px 0 40px; background-color: var(--bg-light); text-align: center;">
         <div class="container">
-            <span class="color-accent font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $blog->category }}</span>
+            <span class="color-accent font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $blog->category ?? 'Orthopaedics' }}</span>
             <h1 style="margin-top: 10px; font-size: 2.5rem; color: var(--primary-teal-dark);">{{ $blog->title }}</h1>
             <div class="blog-article-meta" style="margin-top: 15px; color: var(--text-light-muted); font-size: 0.9rem;">
                 <span>Published on</span>
@@ -61,14 +61,14 @@
             </div>
         @endif
         
-        <div class="blog-content">
+        <div class="blog-content animate-on-scroll">
             {!! $blog->content !!}
         </div>
 
-        <div style="background-color: var(--bg-light); padding: 2rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent-orange); margin: 3rem 0;">
-            <h3 style="margin-bottom:0.5rem; color:var(--primary-teal-dark);">Unlock Your Loan Eligibility</h3>
-            <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:1.5rem;">Speak to our senior mortgage specialists today. Get a side-by-side comparison of top rates.</p>
-            <button onclick="triggerCallbackModal()" class="btn btn-primary">Request Call Back</button>
+        <div style="background-color: var(--bg-light); padding: 2rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent-teal); margin: 3rem 0;">
+            <h3 style="margin-bottom:0.5rem; color:var(--primary-teal-dark);">Consult Dr. Sumit Today</h3>
+            <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:1.5rem;">Schedule a physical consultation or physiotherapy appointment for joint pain, spine issues, or general orthopaedic conditions.</p>
+            <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-primary">Book Appointment</button>
         </div>
     </article>
 
