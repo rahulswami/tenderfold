@@ -136,6 +136,8 @@ Route::middleware(['auth'])->group(function () {
     // GMB Sharing & Sitemap Routes
     Route::post('/admin/sitemap/generate', [AdminController::class, 'generateSitemap'])->name('admin.sitemap.generate');
     Route::post('/admin/ai/draft-gmb-post', [AdminController::class, 'aiDraftGmbPost'])->name('admin.ai.gmb-draft');
+    Route::post('/admin/gmb/publish-post', [AdminController::class, 'publishGmbPost'])->name('admin.gmb.publish');
+
     // Live Chat Administration
     Route::get('/admin/chats', [App\Http\Controllers\ChatController::class, 'adminListSessions'])->name('admin.chats.list');
     Route::get('/admin/chats/{session_id}', [App\Http\Controllers\ChatController::class, 'adminGetSessionMessages'])->name('admin.chats.messages');
