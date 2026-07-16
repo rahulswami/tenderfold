@@ -3912,7 +3912,7 @@
         }
 
         // Initialize active tab from URL segment or activeTab passed from controller
-        window.addEventListener('DOMContentLoaded', () => {
+        function initActiveTab() {
             const activeTab = "{{ $activeTab }}";
 
             // Sync layout classes with the active tab
@@ -3935,21 +3935,30 @@
 
             // Manage analytics pageviews loading
             if (activeTab === 'analytics') {
-                fetchCloudflareAnalytics();
+                if (typeof fetchCloudflareAnalytics === 'function') {
+                    fetchCloudflareAnalytics();
+                }
             }
 
             // Manage chat pollings
             if (activeTab === 'livechat') {
                 if (typeof loadAdminChatSessions === 'function') {
                     loadAdminChatSessions();
-                    clearInterval(adminSessionsPoll);
+                    if (typeof adminSessionsPoll !== 'undefined') clearInterval(adminSessionsPoll);
                     adminSessionsPoll = setInterval(loadAdminChatSessions, 5000);
                 }
             } else {
-                clearInterval(adminSessionsPoll);
-                clearInterval(adminMessagesPoll);
+                if (typeof adminSessionsPoll !== 'undefined') clearInterval(adminSessionsPoll);
+                if (typeof adminMessagesPoll !== 'undefined') clearInterval(adminMessagesPoll);
             }
-        });
+        }
+
+        // Initialize defensively on page load or immediately if DOM is ready
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', initActiveTab);
+        } else {
+            initActiveTab();
+        }
 
         // SEO Recommendations Switch Result Tab
         function switchSeoResultTab(tabId) {
@@ -4847,8 +4856,9 @@
         });
 
         // Initialize CKEditor defensively
+        // Initialize CKEditor defensively
         let blogEditor;
-        if (document.querySelector('#blog_content')) {
+        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#blog_content')) {
             ClassicEditor
                 .create(document.querySelector('#blog_content'))
                 .then(editor => {
@@ -4861,7 +4871,7 @@
 
         let serviceIntroEditor;
         let serviceTipsEditor;
-        if (document.querySelector('#ser_intro_content')) {
+        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#ser_intro_content')) {
             ClassicEditor
                 .create(document.querySelector('#ser_intro_content'))
                 .then(editor => {
@@ -4872,7 +4882,7 @@
                 });
         }
 
-        if (document.querySelector('#ser_tips_content')) {
+        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#ser_tips_content')) {
             ClassicEditor
                 .create(document.querySelector('#ser_tips_content'))
                 .then(editor => {
@@ -4884,7 +4894,7 @@
         }
 
         let treatmentEditor;
-        if (document.querySelector('#treat_description')) {
+        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#treat_description')) {
             ClassicEditor
                 .create(document.querySelector('#treat_description'))
                 .then(editor => {
@@ -4896,7 +4906,7 @@
         }
 
         let specialistEditor;
-        if (document.querySelector('#spec_description')) {
+        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#spec_description')) {
             ClassicEditor
                 .create(document.querySelector('#spec_description'))
                 .then(editor => {
@@ -4908,7 +4918,7 @@
         }
 
         let cmsEditor;
-        if (document.querySelector('#cms_description')) {
+        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#cms_description')) {
             ClassicEditor
                 .create(document.querySelector('#cms_description'))
                 .then(editor => {
