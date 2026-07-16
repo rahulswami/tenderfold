@@ -138,6 +138,7 @@ if ($envReadable) {
 
 // 8. Try booting bootstrap/app.php in a try-catch to find syntax/boot errors
 if ($vendorExists) {
+    require_once $vendorAutoload;
     echo "<h3>Attempting to boot Laravel application...</h3>";
     try {
         // Disable output buffering to catch early errors

@@ -969,8 +969,8 @@
             </div>
             <div style="display: flex; gap: 1.5rem; align-items: center;">
                 <div class="admin-user">
-                    <span>{{ Auth::user()->name }}</span>
-                    <div class="admin-user-avatar">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                    <span>{{ Auth::user() ? Auth::user()->name : 'Admin' }}</span>
+                    <div class="admin-user-avatar">{{ Auth::user() ? substr(Auth::user()->name, 0, 1) : 'A' }}</div>
                 </div>
             </div>
         </div>
@@ -1625,6 +1625,7 @@
                                 </div>
                             </div>
                     </div>
+                </div>
 
                     <div class="admin-card" style="margin-top: 1.5rem;">
                         <h2>Live Chat Widget Customization</h2>
