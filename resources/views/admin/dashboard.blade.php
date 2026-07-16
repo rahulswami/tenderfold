@@ -3664,7 +3664,11 @@
     <script>
         lucide.createIcons();
 
+        // Global variables declared at the top to prevent Temporal Dead Zone (TDZ) ReferenceErrors
         let cloudflareChartInstance = null;
+        let currentAdminSessionId = null;
+        let adminSessionsPoll = null;
+        let adminMessagesPoll = null;
 
         function syncLocalImagesToR2(btn) {
             const originalHtml = btn.innerHTML;
@@ -4624,10 +4628,7 @@
             }
         }
 
-        // Admin Live Chat Variables
-        let currentAdminSessionId = null;
-        let adminSessionsPoll = null;
-        let adminMessagesPoll = null;
+        // Admin Live Chat Variables (declared at the top of script)
 
         // Chat pollings are managed globally inside the unified DOMContentLoaded listener
 
