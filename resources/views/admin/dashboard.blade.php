@@ -1012,7 +1012,7 @@
             @endif
 
             <!-- 1. GENERAL & CONTACT SETTINGS TAB -->
-            <div class="tab-panel" id="tab-general">
+            <div class="tab-panel @if($activeTab === 'general') active @endif" id="tab-general">
                 <form action="{{ route('admin.parameters.update') }}" method="POST">
                     @csrf
                     
@@ -1303,7 +1303,7 @@
             </div>
 
             <!-- LEADS MANAGER TAB -->
-            <div class="tab-panel active" id="tab-leads">
+            <div class="tab-panel @if($activeTab === 'leads') active @endif" id="tab-leads">
                 <!-- Stats Overview Grid -->
                 <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
                     <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
@@ -1505,7 +1505,7 @@
             </div>
 
             <!-- LIVE CHAT MANAGER TAB -->
-            <div class="tab-panel" id="tab-livechat">
+            <div class="tab-panel @if($activeTab === 'livechat') active @endif" id="tab-livechat">
                 <div class="admin-card" style="padding: 0; overflow: hidden; display: flex; height: calc(100vh - 160px); min-height: 500px; border: 1px solid var(--admin-border); background-color: var(--admin-dark-sidebar); border-radius: var(--radius-lg);">
                     
                     <!-- Chat Sessions List (Sidebar) -->
@@ -1556,7 +1556,7 @@
             </div>
 
             <!-- 2. BRANDING & LOGOS TAB -->
-            <div class="tab-panel" id="tab-branding">
+            <div class="tab-panel @if($activeTab === 'branding') active @endif" id="tab-branding">
                 <form action="{{ route('admin.parameters.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
@@ -1666,7 +1666,7 @@
             </div>
 
             <!-- 3. HOMEPAGE SLIDER TAB -->
-            <div class="tab-panel" id="tab-slider">
+            <div class="tab-panel @if($activeTab === 'slider') active @endif" id="tab-slider">
                 <!-- Add New Slide -->
                 <div class="admin-card">
                     <h2>Add New Homepage Hero Slide</h2>
@@ -1764,7 +1764,7 @@
             </div>
 
             <!-- 4. TESTIMONIALS TAB -->
-            <div class="tab-panel" id="tab-testimonials">
+            <div class="tab-panel @if($activeTab === 'testimonials') active @endif" id="tab-testimonials">
                 <!-- AI Sync Testimonials Card -->
                 <div class="admin-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -1884,7 +1884,7 @@
             </div>
 
             <!-- 5. SECTION STYLING & BACKGROUNDS TAB -->
-            <div class="tab-panel" id="tab-styling">
+            <div class="tab-panel @if($activeTab === 'styling') active @endif" id="tab-styling">
                 <form action="{{ route('admin.parameters.update') }}" method="POST">
                     @csrf
                     <div class="admin-card">
@@ -1929,7 +1929,7 @@
             </div>
 
             <!-- 6. PAGE EDITOR TAB -->
-            <div class="tab-panel" id="tab-pagecontents">
+            <div class="tab-panel @if($activeTab === 'pagecontents') active @endif" id="tab-pagecontents">
                 <form action="{{ route('admin.page-contents.update') }}" method="POST">
                     @csrf
                     
@@ -2146,7 +2146,7 @@
             </div>
 
             <!-- 8. SERVICES MANAGER TAB -->
-            <div class="tab-panel" id="tab-services">
+            <div class="tab-panel @if($activeTab === 'services') active @endif" id="tab-services">
                 <!-- Add/Edit Service Card -->
                 <div class="admin-card" id="service-form-container">
                     <h2 id="service-form-title">
@@ -2335,7 +2335,7 @@
             </div>
 
             <!-- 9. TREATMENTS MANAGER TAB -->
-            <div class="tab-panel" id="tab-treatments">
+            <div class="tab-panel @if($activeTab === 'treatments') active @endif" id="tab-treatments">
                 <div class="admin-card">
                     <h2 id="treatment-form-title-text">Add New Treatment Page</h2>
                     <form id="treatment-form" action="{{ route('admin.treatments.store') }}" method="POST" enctype="multipart/form-data">
@@ -2460,7 +2460,7 @@
             </div>
 
             <!-- 10. SPECIALISTS TAB -->
-            <div class="tab-panel" id="tab-specialists">
+            <div class="tab-panel @if($activeTab === 'specialists') active @endif" id="tab-specialists">
                 <div class="admin-card">
                     <h2 id="specialist-form-title-text">Add New Clinic Specialist</h2>
                     <form id="specialist-form" action="{{ route('admin.specialists.store') }}" method="POST" enctype="multipart/form-data">
@@ -2606,7 +2606,7 @@
             </div>
 
             <!-- 11. CMS PAGES MANAGER TAB -->
-            <div class="tab-panel" id="tab-cms_pages">
+            <div class="tab-panel @if($activeTab === 'cms_pages') active @endif" id="tab-cms_pages">
                 <div class="admin-card">
                     <h2 id="cms-form-title-text">Add New CMS Page</h2>
                     <form id="cms-form" action="{{ route('admin.cms_pages.store') }}" method="POST" enctype="multipart/form-data">
@@ -2726,7 +2726,7 @@
             <div class="tab-panel" id="tab-banks" style="display: none;"></div>
 
             <!-- 7. BLOG MANAGER TAB -->
-            <div class="tab-panel" id="tab-blogs">
+            <div class="tab-panel @if($activeTab === 'blogs') active @endif" id="tab-blogs">
                 <!-- Add Blog Card -->
                 <div class="admin-card" id="blog-form-container">
                     <h2 id="blog-form-title">
@@ -2862,7 +2862,7 @@
             </div>
 
             <!-- 8. MEDIA MANAGER TAB -->
-            <div class="tab-panel" id="tab-media">
+            <div class="tab-panel @if($activeTab === 'media') active @endif" id="tab-media">
                 <div class="admin-card">
                     <h2>
                         <span>Upload Media File</span>
@@ -2926,7 +2926,7 @@
             </div>
 
             <!-- WEB ANALYTICS TAB -->
-            <div class="tab-panel" id="tab-analytics">
+            <div class="tab-panel @if($activeTab === 'analytics') active @endif" id="tab-analytics">
                 <div class="admin-card">
                     <h2><i data-lucide="bar-chart-2" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Cloudflare Web Analytics</h2>
                     
@@ -2984,7 +2984,7 @@
             </div>
 
             <!-- LANDING PAGES TAB -->
-            <div class="tab-panel" id="tab-landing">
+            <div class="tab-panel @if($activeTab === 'landing') active @endif" id="tab-landing">
                 <!-- Create New Landing Page Card -->
                 <div class="admin-card">
                     <h2>Create New Landing Page</h2>
@@ -3246,7 +3246,7 @@
             </div>
 
             <!-- SEO OPTIMIZER TAB -->
-            <div class="tab-panel" id="tab-seo">
+            <div class="tab-panel @if($activeTab === 'seo') active @endif" id="tab-seo">
                 <div class="admin-card">
                     <h2><i data-lucide="trending-up" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> AI SEO Recommendations & Link-Building Blueprint</h2>
                     <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
