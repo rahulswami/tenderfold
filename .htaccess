@@ -41,15 +41,9 @@ ServerSignature Off
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # A. Force HTTPS & WWW (https://www.mlgfinedge.com) for production
-    # Redirect non-www to www
-    RewriteCond %{HTTP_HOST} ^mlgfinedge\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.mlgfinedge.com/$1 [L,R=301]
-    
-    # Redirect HTTP to HTTPS
+    # A. Force HTTPS globally
     RewriteCond %{HTTPS} off
-    RewriteCond %{HTTP_HOST} ^(www\.)?mlgfinedge\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.mlgfinedge.com/$1 [L,R=301]
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     # B. Prevent script injection / common exploits
     RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
