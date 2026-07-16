@@ -143,6 +143,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/chats/{session_id}', [App\Http\Controllers\ChatController::class, 'adminGetSessionMessages'])->name('admin.chats.messages');
     Route::post('/admin/chats/{session_id}/reply', [App\Http\Controllers\ChatController::class, 'adminSendReply'])->name('admin.chats.reply');
     Route::delete('/admin/chats/{session_id}', [App\Http\Controllers\ChatController::class, 'adminDeleteChat'])->name('admin.chats.delete');
+    
+    // Catch-all dashboard tab route
+    Route::get('/admin/{tab}', [AdminController::class, 'dashboard'])->name('admin.tab');
 });
 
 // CMS catch-all route (placed at the end to prevent conflicts)

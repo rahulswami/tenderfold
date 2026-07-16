@@ -48,19 +48,34 @@
                 <h2>Clinic Location & Details</h2>
                 <p class="text-muted" style="margin-bottom: 2rem;">We are based in Baner, Pune. Visit our facility for joint consultations, digital radiography, pathology, and advanced physiotherapy sessions.</p>
                 
-                <div class="contact-info-item">
-                    <div class="contact-info-icon" style="color: var(--accent-teal);"><i data-lucide="map-pin"></i></div>
+                <div class="contact-info-item" style="align-items: flex-start;">
+                    <div class="contact-info-icon" style="color: var(--accent-teal); margin-top: 5px;"><i data-lucide="map-pin"></i></div>
                     <div class="contact-info-content">
-                        <h3>Our Clinic</h3>
-                        <p>{{ $site['address'] ?? 'Krishna Avenue, Above Dominos, Baner Road, Baner, Pune - 411045' }}</p>
+                        <h3>Our Locations</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <strong style="color: var(--primary-teal); display: block; margin-bottom: 2px;">Baner Clinic (Main)</strong>
+                                <p style="margin: 0; line-height: 1.4;">First Floor, Krishna Avenue, Opposite D-Mart, Near Manipal Hospital, Baner, Pune, Maharashtra 411045, India</p>
+                            </div>
+                            <div style="border-top: 1px solid var(--border-color); padding-top: 10px;">
+                                <strong style="color: var(--primary-teal); display: block; margin-bottom: 2px;">Hinjewadi Clinic</strong>
+                                <p style="margin: 0; line-height: 1.4;">Atlanta Society, A1, 1205, Near Hinjewadi Wakad Bridge, Hinjewadi, Pune, Maharashtra - 411057</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="contact-info-item">
-                    <div class="contact-info-icon" style="color: var(--accent-teal);"><i data-lucide="phone"></i></div>
+                <div class="contact-info-item" style="align-items: flex-start;">
+                    <div class="contact-info-icon" style="color: var(--accent-teal); margin-top: 5px;"><i data-lucide="phone"></i></div>
                     <div class="contact-info-content">
                         <h3>Phone Support</h3>
-                        <p><a href="tel:{{ $site['phone'] ?? '+919672777749' }}">{{ $site['phone'] ?? '+91 96727 77749' }}</a> (Direct Support)</p>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <a href="tel:+919545559434" style="color: inherit; text-decoration: none; font-weight: 500;">+91 95455 59434</a>
+                            <a href="tel:+918855950433" style="color: inherit; text-decoration: none; font-weight: 500;">+91 88559 50433</a>
+                            <a href="tel:+919404963781" style="color: inherit; text-decoration: none; font-weight: 500;">+91 94049 63781</a>
+                            <a href="tel:+919158143325" style="color: inherit; text-decoration: none; font-weight: 500;">+91 91581 43325</a>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">(24/7 General inquiry)</span>
+                        </div>
                     </div>
                 </div>
                 

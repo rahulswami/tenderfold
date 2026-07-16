@@ -46,8 +46,25 @@ class AdminController extends Controller
         return redirect()->route('login');
     }
 
-    public function dashboard()
+    public function dashboard(Request $request, $tab = 'leads')
     {
+        $activeTab = $tab;
+        
+        // Normalize CMS page tab name
+        if ($activeTab === 'cms-pages') {
+            $activeTab = 'cms_pages';
+        }
+        
+        // Ensure activeTab is valid
+        $validTabs = [
+            'general', 'leads', 'livechat', 'branding', 'slider', 'testimonials', 
+            'styling', 'pagecontents', 'landing', 'services', 'treatments', 
+            'specialists', 'cms_pages', 'blogs', 'media', 'analytics', 'seo'
+        ];
+        if (!in_array($activeTab, $validTabs)) {
+            $activeTab = 'leads';
+        }
+
         $parameters = SiteParameter::all()->groupBy('category');
         $slides = HomeSlide::orderBy('sort_order')->orderBy('id')->get();
         $testimonials = Testimonial::orderBy('sort_order')->orderBy('id')->get();
@@ -104,7 +121,7 @@ class AdminController extends Controller
         $specialists = \App\Models\TeamMember::orderBy('id', 'desc')->get();
         $cmsPages = \App\Models\CmsPage::orderBy('id', 'desc')->get();
         
-        return view('admin.dashboard', compact('parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages'));
+        return view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages'));
     }
 
     public function updateParameters(Request $request)

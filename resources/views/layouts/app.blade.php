@@ -106,7 +106,7 @@
             </nav>
             
             <div class="nav-actions">
-                <a href="#appointment-section" class="btn btn-primary btn-sm" onclick="event.preventDefault(); document.getElementById('callback-dialog').style.display='flex';"><i data-lucide="calendar"></i> Book Appointment</a>
+                <a href="#appointment-section" class="btn btn-primary btn-sm" onclick="event.preventDefault(); openDialog('callback-dialog');"><i data-lucide="calendar"></i> Book Appointment</a>
             </div>
             
             <button class="mobile-toggle" aria-label="Toggle Menu">
@@ -139,18 +139,11 @@
                 </div>
                 <p>{{ $pageContents['footer']['about']['description'] ?? (($site['site_name'] ?? 'SumitZ Clinic') . " is Pune's leading Orthopaedic and Physiotherapy center. Directed by Dr. Sumit, we offer state-of-the-art treatments for joint pain, spine issues, fractures, and sports injuries.") }}</p>
                 <div class="social-links">
-                    @if(!empty($site['social_facebook']))
-                        <a href="{{ $site['social_facebook'] }}" target="_blank" class="social-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
-                    @endif
-                    @if(!empty($site['social_instagram']))
-                        <a href="{{ $site['social_instagram'] }}" target="_blank" class="social-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
-                    @endif
-                    @if(!empty($site['social_linkedin']))
-                        <a href="{{ $site['social_linkedin'] }}" target="_blank" class="social-icon" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
-                    @endif
-                    @if(!empty($site['social_twitter']))
-                        <a href="{{ $site['social_twitter'] }}" target="_blank" class="social-icon" aria-label="Twitter"><i data-lucide="twitter"></i></a>
-                    @endif
+                    <a href="{{ !empty($site['social_facebook']) ? $site['social_facebook'] : '#' }}" target="_blank" class="social-icon" aria-label="Facebook" title="Facebook"><i data-lucide="facebook"></i></a>
+                    <a href="{{ !empty($site['social_instagram']) ? $site['social_instagram'] : '#' }}" target="_blank" class="social-icon" aria-label="Instagram" title="Instagram"><i data-lucide="instagram"></i></a>
+                    <a href="{{ !empty($site['social_linkedin']) ? $site['social_linkedin'] : '#' }}" target="_blank" class="social-icon" aria-label="LinkedIn" title="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    <a href="{{ !empty($site['social_twitter']) ? $site['social_twitter'] : '#' }}" target="_blank" class="social-icon" aria-label="Twitter" title="Twitter"><i data-lucide="twitter"></i></a>
+                    <a href="{{ !empty($site['social_practo']) ? $site['social_practo'] : '#' }}" target="_blank" class="social-icon" aria-label="Practo" title="Practo"><i data-lucide="plus-circle"></i></a>
                 </div>
             </div>
             
@@ -179,13 +172,22 @@
             <div class="footer-col">
                 <h3>Contact Info</h3>
                 <ul class="footer-contact-info">
-                    <li>
-                        <i data-lucide="map-pin"></i>
-                        <span>{{ $site['address'] ?? 'Krishna Avenue, Above Dominos, Baner road, Baner, Pune, Maharashtra 411045' }}</span>
+                    <li style="align-items: flex-start;">
+                        <i data-lucide="map-pin" style="margin-top: 4px;"></i>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span><strong>Baner:</strong> First Floor, Krishna Avenue, Baner, Pune - 411045</span>
+                            <span><strong>Hinjewadi:</strong> Atlanta Society, Hinjewadi, Pune - 411057</span>
+                        </div>
                     </li>
-                    <li>
-                        <i data-lucide="phone"></i>
-                        <a href="tel:{{ $site['phone'] ?? '+919672777749' }}">{{ $site['phone'] ?? '+91 96727 77749' }}</a>
+                    <li style="align-items: flex-start;">
+                        <i data-lucide="phone" style="margin-top: 4px;"></i>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <a href="tel:+919545559434">+91 95455 59434</a>
+                            <a href="tel:+918855950433">+91 88559 50433</a>
+                            <a href="tel:+919404963781">+91 94049 63781</a>
+                            <a href="tel:+919158143325">+91 91581 43325</a>
+                            <span style="font-size: 0.8rem; opacity: 0.7; margin-top: 2px;">(24/7 General inquiry)</span>
+                        </div>
                     </li>
                     <li>
                         <i data-lucide="mail"></i>
@@ -226,7 +228,7 @@
     <!-- Callback Modals Overlay (Appointment) -->
     <div class="dialog-overlay" id="callback-dialog">
         <div class="dialog-modal">
-            <button class="dialog-close" aria-label="Close Modal">&times;</button>
+            <button class="dialog-close" aria-label="Close Modal" onclick="closeDialog('callback-dialog')">&times;</button>
             <div class="dialog-header">
                 <h3>Book an Appointment</h3>
                 <p>Provide your contact details and our medical coordinator will call you back to confirm your slot.</p>
@@ -267,7 +269,7 @@
     <!-- Exit Intent Modal Overlay -->
     <div class="dialog-overlay" id="exit-intent-dialog">
         <div class="dialog-modal">
-            <button class="dialog-close" aria-label="Close Modal">&times;</button>
+            <button class="dialog-close" aria-label="Close Modal" onclick="closeDialog('exit-intent-dialog')">&times;</button>
             <div class="dialog-header">
                 <h3 style="color: var(--accent-teal);">Schedule Your Joint Consultation!</h3>
                 <p>Get a comprehensive diagnostic plan & consultation slot with Dr. Sumit.</p>
@@ -323,22 +325,80 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         lucide.createIcons();
-        function closeDialog(id) {
-            document.getElementById(id).style.display = 'none';
+        
+        // Modal Control Functions
+        function openDialog(id) {
+            const dialog = document.getElementById(id);
+            if (dialog) {
+                dialog.style.display = 'flex';
+                setTimeout(() => {
+                    dialog.classList.add('open');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            }
         }
+        function closeDialog(id) {
+            const dialog = document.getElementById(id);
+            if (dialog) {
+                dialog.classList.remove('open');
+                setTimeout(() => {
+                    if (!dialog.classList.contains('open')) {
+                        dialog.style.display = 'none';
+                    }
+                }, 300);
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // 1-Minute Auto-Popup Trigger for Appointment Booking
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const hasOpenedCallback = sessionStorage.getItem('callback_auto_triggered');
+                const hasInteractedWithForm = sessionStorage.getItem('form_interacted');
+                if (!hasOpenedCallback && !hasInteractedWithForm) {
+                    sessionStorage.setItem('callback_auto_triggered', 'true');
+                    openDialog('callback-dialog');
+                }
+            }, 60000); // 1 minute (60,000 milliseconds)
+            
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('focus', () => {
+                    sessionStorage.setItem('form_interacted', 'true');
+                });
+            });
+        });
     </script>
     
     <!-- Floating Chat Widget -->
-    <div id="clinic-chat-widget" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000; font-family: 'Outfit', sans-serif;">
+    <div id="clinic-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-family: 'Outfit', sans-serif;">
         <!-- Floating Toggle Button -->
         <button id="chat-toggle-btn" onclick="toggleChatWindow()" style="width: 60px; height: 60px; border-radius: 50%; background-color: var(--primary-teal); color: white; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: relative;">
-            <i data-lucide="message-square" id="chat-icon-open" style="width: 28px; height: 28px;"></i>
+            <div id="chat-icon-open" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+                    <!-- Headband -->
+                    <path d="M16 32C16 19.85 23.16 10 32 10C40.84 10 48 19.85 48 32" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Shoulders/Body -->
+                    <path d="M16 54C16 47.37 21.37 42 28 42H36C42.63 42 48 47.37 48 54V56H16V54Z" fill="white"/>
+                    <!-- Neck -->
+                    <path d="M28 38V43H36V38H28Z" fill="#e2e8f0"/>
+                    <!-- Face -->
+                    <rect x="23" y="21" width="18" height="18" rx="9" fill="#f8fafc"/>
+                    <!-- Hair/Fringe -->
+                    <path d="M23 25C25 22 29 23 32 24C35 23 39 22 41 25C41 25 39 18 32 18C25 18 23 25 23 25Z" fill="#334155"/>
+                    <!-- Earcups -->
+                    <rect x="14" y="28" width="4" height="8" rx="2" fill="#334155"/>
+                    <rect x="46" y="28" width="4" height="8" rx="2" fill="#334155"/>
+                    <!-- Mic -->
+                    <path d="M46 34C41 38 37 38 37 38" stroke="#334155" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="36" cy="38" r="1.5" fill="#334155"/>
+                </svg>
+            </div>
             <i data-lucide="x" id="chat-icon-close" style="width: 28px; height: 28px; display: none;"></i>
             <span id="chat-unread-badge" style="position: absolute; top: -5px; right: -5px; background-color: #ef4444; color: white; font-size: 0.75rem; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 2px solid white;">0</span>
         </button>
 
         <!-- Chat Window -->
-        <div id="chat-window" style="position: absolute; bottom: 75px; left: 0; width: 350px; height: 480px; background-color: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.3s ease;">
+        <div id="chat-window" style="position: absolute; bottom: 75px; right: 0; width: 350px; height: 480px; background-color: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.3s ease;">
             <!-- Chat Header -->
             <div style="background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-teal-light) 100%); color: white; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
                 <div style="position: relative; flex-shrink: 0;">
@@ -403,7 +463,7 @@
 
             if (isChatOpen) {
                 chatWindow.style.display = 'none';
-                openIcon.style.display = 'block';
+                openIcon.style.display = 'flex';
                 closeIcon.style.display = 'none';
                 isChatOpen = false;
                 clearInterval(pollTimer);

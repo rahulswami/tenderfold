@@ -56,28 +56,63 @@
             <div class="parallax-shape shape-2"></div>
             <div class="hero-slider-track" style="display: flex; transition: transform 0.5s ease-in-out; width: {{ $slides->count() * 100 }}%;">
                 @foreach($slides as $index => $slide)
+                    @php
+                        $isInstagramReel = false;
+                        $reelEmbedUrl = '';
+                        if (!empty($slide->image_path) && (strpos($slide->image_path, 'instagram.com/reel/') !== false || strpos($slide->image_path, 'instagram.com/p/') !== false)) {
+                            $isInstagramReel = true;
+                            $cleanUrl = preg_replace('/(\/reel\/[A-Za-z0-9_-]+).*/', '$1', $slide->image_path);
+                            $cleanUrl = preg_replace('/(\/p\/[A-Za-z0-9_-]+).*/', '$1', $cleanUrl);
+                            $reelEmbedUrl = rtrim($cleanUrl, '/') . '/embed';
+                        }
+                    @endphp
                     <div class="hero-slide-item" style="width: calc(100% / {{ $slides->count() }}); flex-shrink: 0;">
-                        <div class="container" style="max-width: 900px; margin: 0 auto; padding: 0 1.5rem;">
-                            <div class="hero-content" style="text-align: center; width: 100%;">
-                                <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to SumitZ Clinic</span>
-                                <h1 style="font-size: 3.2rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
-                                    {{ $slide->title }}
-                                </h1>
-                                <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6; max-width: 700px; margin-left: auto; margin-right: auto;">
-                                    {{ $slide->subtitle }}
-                                </p>
-                                <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: center;">
-                                    @if($slide->button_text)
-                                        <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-primary">{{ $slide->button_text }} <i data-lucide="arrow-right"></i></button>
+                        <div class="container">
+                            <div class="hero-grid">
+                                <div class="hero-content" style="text-align: left;">
+                                    <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.95rem; display: block; margin-bottom: 1rem;">Welcome to SumitZ Clinic</span>
+                                    <h1 style="font-size: 3.2rem; line-height: 1.2; margin-bottom: 1.5rem; color: var(--primary-teal-dark); font-weight: 800; letter-spacing: -0.5px;">
+                                        {{ $slide->title }}
+                                    </h1>
+                                    <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6;">
+                                        {{ $slide->subtitle }}
+                                    </p>
+                                    <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: flex-start; flex-wrap: wrap;">
+                                        @if($slide->button_text)
+                                            <button onclick="openDialog('callback-dialog');" class="btn btn-primary">{{ $slide->button_text }} <i data-lucide="arrow-right"></i></button>
+                                        @endif
+                                        <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Doctor</a>
+                                    </div>
+                                </div>
+                                <div class="hero-visual">
+                                    @if($isInstagramReel)
+                                        <div class="hero-card-container" style="width: 100%; max-width: 480px;">
+                                            <div style="width: 100%; height: 430px; overflow: hidden; border-radius: var(--radius-lg); border: 4px solid white; box-shadow: var(--shadow-lg); background: white;">
+                                                <iframe src="{{ $reelEmbedUrl }}" width="100%" height="100%" frameborder="0" scrolling="no" allowtransparency="true" allow="encrypted-media" style="border: none;"></iframe>
+                                            </div>
+                                        </div>
+                                    @elseif($slide->image_path)
+                                        <div class="hero-card-container" style="width: 100%; max-width: 480px;">
+                                            <div style="width: 100%; height: 380px; overflow: hidden; border-radius: var(--radius-lg); border: 4px solid white; box-shadow: var(--shadow-lg);">
+                                                <img src="{{ site_image($slide->image_path) }}" alt="{{ $slide->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                    @else
+                                        <!-- Fallback graphic if slide has no image -->
+                                        <div class="hero-card-container" style="width: 100%; max-width: 480px;">
+                                            <div style="width: 100%; height: 380px; background: linear-gradient(135deg, var(--accent-teal) 0%, var(--primary-teal-dark) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; border-radius: var(--radius-lg); border: 4px solid white; box-shadow: var(--shadow-lg); padding: 2rem; text-align: center;">
+                                                <i data-lucide="heart-pulse" style="width: 70px; height: 70px; color: var(--accent-orange); margin-bottom: 1.5rem;"></i>
+                                                <h3 style="color: white; margin-bottom: 0.5rem;">SumitZ Care</h3>
+                                                <p style="font-size: 0.9rem; opacity: 0.8; margin: 0;">Specialist Orthopaedic & Physiotherapy Clinic</p>
+                                            </div>
+                                        </div>
                                     @endif
-                                    <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Doctor</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
-
             <!-- Slider controls -->
             @if($slides->count() > 1)
                 <button class="hero-slider-btn prev" onclick="moveHeroSlide(-1)"><i data-lucide="chevron-left"></i></button>
@@ -88,7 +123,6 @@
                     @endforeach
                 </div>
             @endif
-
             <!-- Global Static Trust Badges -->
             <div class="container hero-global-trust" style="margin-top: 4rem; position: relative; z-index: 5;">
                 <div class="hero-trust">
@@ -122,13 +156,75 @@
                         Specialist Orthopaedic treatments and customized Physiotherapy rehabilitation programs designed to restore your pain-free active lifestyle.
                     </p>
                     <div class="hero-buttons" style="display: flex; gap: 1.25rem; justify-content: center;">
-                        <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-primary">Book Consultation <i data-lucide="arrow-right"></i></button>
+                        <button onclick="openDialog('callback-dialog');" class="btn btn-primary">Book Consultation <i data-lucide="arrow-right"></i></button>
                         <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary"><i data-lucide="phone"></i> Call Doctor</a>
                     </div>
                 </div>
             </div>
         </section>
     @endif
+
+    <!-- Inline Appointment Form Section -->
+    <section class="section" id="quick-appointment-section" style="background: #f0fcf9; padding: 4rem 0; border-bottom: 1px solid var(--border-color);">
+        <div class="container" style="max-width: 900px;">
+            <div style="background: white; padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color);">
+                <div class="text-center" style="margin-bottom: 2rem;">
+                    <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.85rem; display: block; margin-bottom: 5px;">DIRECT APPOINTMENT BOOKING</span>
+                    <h2 style="color: var(--primary-teal-dark); font-size: 2rem; font-weight: 800; margin: 0 0 10px 0;">Request Your Consultation</h2>
+                    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 0.95rem;">Select your preferred service and date below. Our medical coordinator will call you back to confirm your appointment slot.</p>
+                </div>
+                <form action="{{ route('contact.submit') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="source" value="Home Page Inline Form">
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="h-name" style="font-weight: 600; margin-bottom: 0.4rem; display: block; font-size: 0.9rem;">Full Name</label>
+                            <input type="text" id="h-name" name="name" class="form-control" placeholder="Enter your name" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);" required>
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="h-phone" style="font-weight: 600; margin-bottom: 0.4rem; display: block; font-size: 0.9rem;">Phone Number</label>
+                            <input type="tel" id="h-phone" name="phone" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);" required>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="h-dept" style="font-weight: 600; margin-bottom: 0.4rem; display: block; font-size: 0.9rem;">Preferred Treatment / Service</label>
+                            <select id="h-dept" name="service" class="form-control" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background-color: white;" required>
+                                <option value="">-- Select Treatment/Service --</option>
+                                <option value="physiotherapy">Physiotherapy Care</option>
+                                <option value="joint-replacement">Joint Replacement Surgery</option>
+                                <option value="spine-care">Spine & Back Care</option>
+                                <option value="fracture-treatment">Fracture Treatment</option>
+                                <option value="sports-injury">Sports Injury Rehabilitation</option>
+                                <option value="other">Other Consultation</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="h-date" style="font-weight: 600; margin-bottom: 0.4rem; display: block; font-size: 0.9rem;">Preferred Date</label>
+                            <input type="date" id="h-date" name="appointment_date" class="form-control" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label for="h-message" style="font-weight: 600; margin-bottom: 0.4rem; display: block; font-size: 0.9rem;">Symptoms / Medical History (Optional)</label>
+                        <textarea id="h-message" name="message" class="form-control" rows="3" placeholder="Briefly specify your pain details or symptoms..." style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); resize: vertical;"></textarea>
+                    </div>
+                    
+                    @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
+                        <div class="form-group" style="margin-bottom: 1.5rem; display: flex; justify-content: center;">
+                            <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
+                        </div>
+                    @endif
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.9rem 2.5rem; font-size: 1rem; min-width: 250px;">Submit Booking Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
 
     <!-- Services Overview Section -->
     <section class="section" id="services" style="background: #ffffff;">
@@ -384,7 +480,7 @@
             <h2>Struggling with Joint or Muscle Pain?</h2>
             <p>Speak to our medical coordinator today. Get a customized treatment plan or book an expert consult session.</p>
             <div class="final-cta-buttons">
-                <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-white">Book Appointment Now</button>
+                <button onclick="openDialog('callback-dialog');" class="btn btn-white">Book Appointment Now</button>
                 <a href="{{ route('contact') }}" class="btn btn-outline-white"><i data-lucide="phone"></i> Contact Clinic</a>
             </div>
             <div class="final-cta-trust">

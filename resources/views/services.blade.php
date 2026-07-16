@@ -85,7 +85,7 @@
                         </div>
                         <div class="sol-footer">
                             <a href="{{ route('services.show', $service->slug) }}" class="btn btn-secondary">Learn More</a>
-                            <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-primary">Enquire Now</button>
+                            <button onclick="openDialog('callback-dialog');" class="btn btn-primary">Enquire Now</button>
                         </div>
                     </div>
                 @endforeach

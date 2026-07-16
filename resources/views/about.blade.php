@@ -125,7 +125,7 @@
             <h2>Ready to Consult a Specialist?</h2>
             <p>Skip the waiting queues. Book a prioritized slots consultation with Dr. Sumit or our physiotherapists today.</p>
             <div class="final-cta-buttons">
-                <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-white">Book Appointment</button>
+                <button onclick="openDialog('callback-dialog');" class="btn btn-white">Book Appointment</button>
                 <a href="{{ route('contact') }}" class="btn btn-outline-white"><i data-lucide="phone"></i> Contact Clinic</a>
             </div>
         </div>

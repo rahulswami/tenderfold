@@ -68,7 +68,7 @@
             flex-grow: 1;
         }
 
-        .menu-item button {
+        .menu-item button, .menu-item a {
             width: 100%;
             background: none;
             border: none;
@@ -84,9 +84,11 @@
             gap: 12px;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
+            text-decoration: none;
+            box-sizing: border-box;
         }
 
-        .menu-item button:hover, .menu-item button.active {
+        .menu-item button:hover, .menu-item button.active, .menu-item a:hover, .menu-item a.active {
             color: var(--mint-green);
             background-color: rgba(92, 203, 179, 0.05);
             border-left-color: var(--mint-green);
@@ -795,6 +797,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
         .mobile-tab-btn:hover, .mobile-tab-btn.active {
             color: var(--mint-green);
@@ -897,43 +900,49 @@
 
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <div class="sidebar-brand">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="25" y="45" width="12" height="30" rx="3" fill="#ffffff" />
-                <rect x="44" y="30" width="12" height="45" rx="3" fill="#ffffff" />
-                <rect x="63" y="15" width="12" height="60" rx="3" fill="#5ccbb3" />
-                <path d="M15 80 L35 60 L50 70 L85 35" stroke="#e85c24" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M72 35 H85 V48" stroke="#e85c24" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <span>MLG FINEDGE</span>
+        <div class="sidebar-brand" style="padding: 1.2rem 1rem;">
+            <a href="{{ route('home') }}" target="_blank" class="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: white;">
+                @if(!empty($site['logo_path']))
+                    <img src="{{ site_image($site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'SumitZ Clinic' }}" style="height: 38px; width: auto; object-fit: contain;">
+                @else
+                    <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="stroke: #5ccbb3; stroke-width: 6; width: 32px; height: 32px; flex-shrink: 0;">
+                        <circle cx="50" cy="50" r="40" stroke="currentColor" fill="none"/>
+                        <path d="M50 25 V75 M25 50 H75" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+                    </svg>
+                    <div style="text-align: left; display: flex; flex-direction: column;">
+                        <span class="logo-text" style="font-size: 1.05rem; font-weight: 800; line-height: 1.1; color: white; letter-spacing: -0.5px;">{{ $site['site_name'] ?? 'SumitZ Clinic' }}</span>
+                        <span class="logo-tagline" style="font-size: 0.58rem; opacity: 0.8; font-weight: 600; color: #a5f3fc; line-height: 1;">{{ Str::limit($site['site_tagline'] ?? 'Orthopaedic & Physiotherapy', 22) }}</span>
+                    </div>
+                @endif
+            </a>
             <button class="sidebar-close-btn" onclick="toggleSidebar()" aria-label="Close Sidebar">
                 <i data-lucide="x"></i>
             </button>
         </div>
         
         <ul class="sidebar-menu">
-            <li class="menu-item"><button onclick="switchTab('general')" class="tab-btn" id="btn-general"><i data-lucide="settings"></i> General Settings</button></li>
-            <li class="menu-item"><button onclick="switchTab('leads')" class="tab-btn active" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</button></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'general') }}" class="tab-btn {{ $activeTab === 'general' ? 'active' : '' }}" id="btn-general"><i data-lucide="settings"></i> General Settings</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'leads') }}" class="tab-btn {{ $activeTab === 'leads' ? 'active' : '' }}" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</a></li>
             <li class="menu-item">
-                <button onclick="switchTab('livechat')" class="tab-btn" id="btn-livechat" style="position: relative;">
+                <a href="{{ route('admin.tab', 'livechat') }}" class="tab-btn {{ $activeTab === 'livechat' ? 'active' : '' }}" id="btn-livechat" style="position: relative;">
                     <i data-lucide="message-square"></i> Live Chat Support
                     <span id="admin-chat-total-badge" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #ef4444; color: white; font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span>
-                </button>
+                </a>
             </li>
-            <li class="menu-item"><button onclick="switchTab('branding')" class="tab-btn" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</button></li>
-            <li class="menu-item"><button onclick="switchTab('slider')" class="tab-btn" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</button></li>
-            <li class="menu-item"><button onclick="switchTab('testimonials')" class="tab-btn" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</button></li>
-            <li class="menu-item"><button onclick="switchTab('styling')" class="tab-btn" id="btn-styling"><i data-lucide="palette"></i> Section Backgrounds</button></li>
-            <li class="menu-item"><button onclick="switchTab('pagecontents')" class="tab-btn" id="btn-pagecontents"><i data-lucide="file-text"></i> Page Editor</button></li>
-            <li class="menu-item"><button onclick="switchTab('landing')" class="tab-btn" id="btn-landing"><i data-lucide="layout"></i> AI Landing Pages</button></li>
-            <li class="menu-item"><button onclick="switchTab('services')" class="tab-btn" id="btn-services"><i data-lucide="layers"></i> Services Manager</button></li>
-            <li class="menu-item"><button onclick="switchTab('treatments')" class="tab-btn" id="btn-treatments"><i data-lucide="activity"></i> Treatments Manager</button></li>
-            <li class="menu-item"><button onclick="switchTab('specialists')" class="tab-btn" id="btn-specialists"><i data-lucide="user-check"></i> Specialists Manager</button></li>
-            <li class="menu-item"><button onclick="switchTab('cms_pages')" class="tab-btn" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</button></li>
-            <li class="menu-item"><button onclick="switchTab('blogs')" class="tab-btn" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</button></li>
-            <li class="menu-item"><button onclick="switchTab('media')" class="tab-btn" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</button></li>
-            <li class="menu-item"><button onclick="switchTab('analytics')" class="tab-btn" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</button></li>
-            <li class="menu-item"><button onclick="switchTab('seo')" class="tab-btn" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</button></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'branding') }}" class="tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'slider') }}" class="tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'testimonials') }}" class="tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'styling') }}" class="tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="btn-styling"><i data-lucide="palette"></i> Section Backgrounds</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'pagecontents') }}" class="tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="btn-pagecontents"><i data-lucide="file-text"></i> Page Editor</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'landing') }}" class="tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="btn-landing"><i data-lucide="layout"></i> AI Landing Pages</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'services') }}" class="tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="btn-services"><i data-lucide="layers"></i> Services Manager</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'treatments') }}" class="tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="btn-treatments"><i data-lucide="activity"></i> Treatments Manager</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'specialists') }}" class="tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="btn-specialists"><i data-lucide="user-check"></i> Specialists Manager</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'cms_pages') }}" class="tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'blogs') }}" class="tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'media') }}" class="tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'analytics') }}" class="tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</a></li>
+            <li class="menu-item"><a href="{{ route('admin.tab', 'seo') }}" class="tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</a></li>
         </ul>
         
         <div class="sidebar-footer">
@@ -968,23 +977,23 @@
 
         <!-- Mobile Quick-Switch Tabs -->
         <div class="mobile-tabs-scroll">
-            <button onclick="switchTab('general')" class="mobile-tab-btn" id="m-btn-general"><i data-lucide="settings" style="width: 14px; height: 14px;"></i> General</button>
-            <button onclick="switchTab('leads')" class="mobile-tab-btn" id="m-btn-leads"><i data-lucide="inbox" style="width: 14px; height: 14px;"></i> Leads</button>
-            <button onclick="switchTab('livechat')" class="mobile-tab-btn" id="m-btn-livechat" style="position: relative;"><i data-lucide="message-square" style="width: 14px; height: 14px;"></i> Live Chat <span id="admin-chat-mobile-badge" style="position: absolute; right: 2px; top: 2px; background-color: #ef4444; color: white; font-size: 0.6rem; font-weight: 700; width: 14px; height: 14px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span></button>
-            <button onclick="switchTab('branding')" class="mobile-tab-btn" id="m-btn-branding"><i data-lucide="image" style="width: 14px; height: 14px;"></i> Branding</button>
-            <button onclick="switchTab('slider')" class="mobile-tab-btn" id="m-btn-slider"><i data-lucide="sliders" style="width: 14px; height: 14px;"></i> Slider</button>
-            <button onclick="switchTab('testimonials')" class="mobile-tab-btn" id="m-btn-testimonials"><i data-lucide="users" style="width: 14px; height: 14px;"></i> Testimonials</button>
-            <button onclick="switchTab('styling')" class="mobile-tab-btn" id="m-btn-styling"><i data-lucide="palette" style="width: 14px; height: 14px;"></i> Styling</button>
-            <button onclick="switchTab('pagecontents')" class="mobile-tab-btn" id="m-btn-pagecontents"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Pages</button>
-            <button onclick="switchTab('landing')" class="mobile-tab-btn" id="m-btn-landing"><i data-lucide="layout" style="width: 14px; height: 14px;"></i> AI Pages</button>
-            <button onclick="switchTab('services')" class="mobile-tab-btn" id="m-btn-services"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Services</button>
-            <button onclick="switchTab('treatments')" class="mobile-tab-btn" id="m-btn-treatments"><i data-lucide="activity" style="width: 14px; height: 14px;"></i> Treatments</button>
-            <button onclick="switchTab('specialists')" class="mobile-tab-btn" id="m-btn-specialists"><i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Specialists</button>
-            <button onclick="switchTab('cms_pages')" class="mobile-tab-btn" id="m-btn-cms_pages"><i data-lucide="files" style="width: 14px; height: 14px;"></i> CMS Pages</button>
-            <button onclick="switchTab('blogs')" class="mobile-tab-btn" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</button>
-            <button onclick="switchTab('media')" class="mobile-tab-btn" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</button>
-            <button onclick="switchTab('analytics')" class="mobile-tab-btn" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</button>
-            <button onclick="switchTab('seo')" class="mobile-tab-btn" id="m-btn-seo"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> SEO</button>
+            <a href="{{ route('admin.tab', 'general') }}" class="mobile-tab-btn {{ $activeTab === 'general' ? 'active' : '' }}" id="m-btn-general"><i data-lucide="settings" style="width: 14px; height: 14px;"></i> General</a>
+            <a href="{{ route('admin.tab', 'leads') }}" class="mobile-tab-btn {{ $activeTab === 'leads' ? 'active' : '' }}" id="m-btn-leads"><i data-lucide="inbox" style="width: 14px; height: 14px;"></i> Leads</a>
+            <a href="{{ route('admin.tab', 'livechat') }}" class="mobile-tab-btn {{ $activeTab === 'livechat' ? 'active' : '' }}" id="m-btn-livechat" style="position: relative;"><i data-lucide="message-square" style="width: 14px; height: 14px;"></i> Live Chat <span id="admin-chat-mobile-badge" style="position: absolute; right: 2px; top: 2px; background-color: #ef4444; color: white; font-size: 0.6rem; font-weight: 700; width: 14px; height: 14px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span></a>
+            <a href="{{ route('admin.tab', 'branding') }}" class="mobile-tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="m-btn-branding"><i data-lucide="image" style="width: 14px; height: 14px;"></i> Branding</a>
+            <a href="{{ route('admin.tab', 'slider') }}" class="mobile-tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="m-btn-slider"><i data-lucide="sliders" style="width: 14px; height: 14px;"></i> Slider</a>
+            <a href="{{ route('admin.tab', 'testimonials') }}" class="mobile-tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="m-btn-testimonials"><i data-lucide="users" style="width: 14px; height: 14px;"></i> Testimonials</a>
+            <a href="{{ route('admin.tab', 'styling') }}" class="mobile-tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="m-btn-styling"><i data-lucide="palette" style="width: 14px; height: 14px;"></i> Styling</a>
+            <a href="{{ route('admin.tab', 'pagecontents') }}" class="mobile-tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="m-btn-pagecontents"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Pages</a>
+            <a href="{{ route('admin.tab', 'landing') }}" class="mobile-tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="m-btn-landing"><i data-lucide="layout" style="width: 14px; height: 14px;"></i> AI Pages</a>
+            <a href="{{ route('admin.tab', 'services') }}" class="mobile-tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="m-btn-services"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Services</a>
+            <a href="{{ route('admin.tab', 'treatments') }}" class="mobile-tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="m-btn-treatments"><i data-lucide="activity" style="width: 14px; height: 14px;"></i> Treatments</a>
+            <a href="{{ route('admin.tab', 'specialists') }}" class="mobile-tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="m-btn-specialists"><i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Specialists</a>
+            <a href="{{ route('admin.tab', 'cms_pages') }}" class="mobile-tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="m-btn-cms_pages"><i data-lucide="files" style="width: 14px; height: 14px;"></i> CMS Pages</a>
+            <a href="{{ route('admin.tab', 'blogs') }}" class="mobile-tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</a>
+            <a href="{{ route('admin.tab', 'media') }}" class="mobile-tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</a>
+            <a href="{{ route('admin.tab', 'analytics') }}" class="mobile-tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</a>
+            <a href="{{ route('admin.tab', 'seo') }}" class="mobile-tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="m-btn-seo"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> SEO</a>
         </div>
 
         <div class="admin-content">
@@ -1048,6 +1057,10 @@
                             <div class="form-group">
                                 <label for="social_twitter">Twitter / X URL</label>
                                 <input type="url" id="social_twitter" name="social_twitter" class="form-control" value="{{ $site['social_twitter'] ?? '' }}" placeholder="https://twitter.com/yourhandle">
+                            </div>
+                            <div class="form-group">
+                                <label for="social_practo">Practo Profile URL</label>
+                                <input type="url" id="social_practo" name="social_practo" class="form-control" value="{{ $site['social_practo'] ?? '' }}" placeholder="https://practo.com/clinic/yourprofile">
                             </div>
                         </div>
                     </div>
@@ -3795,72 +3808,75 @@
                     dashboard.style.display = 'block';
 
                     // Render Chart.js
-                    const ctx = document.getElementById('cloudflareChart').getContext('2d');
-                    if (cloudflareChartInstance) {
-                        cloudflareChartInstance.destroy();
-                    }
+                    const chartCanvas = document.getElementById('cloudflareChart');
+                    if (chartCanvas) {
+                        const ctx = chartCanvas.getContext('2d');
+                        if (cloudflareChartInstance) {
+                            cloudflareChartInstance.destroy();
+                        }
 
-                    cloudflareChartInstance = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'Pageviews',
-                                    data: pageviewsSeries,
-                                    borderColor: '#5ccbb3',
-                                    backgroundColor: 'rgba(92, 203, 179, 0.15)',
-                                    tension: 0.3,
-                                    fill: true,
-                                    borderWidth: 3,
-                                    pointBackgroundColor: '#5ccbb3',
-                                    pointBorderColor: '#ffffff',
-                                    pointHoverRadius: 6
-                                },
-                                {
-                                    label: 'Requests',
-                                    data: requestsSeries,
-                                    borderColor: '#3b82f6',
-                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                    tension: 0.3,
-                                    fill: true,
-                                    borderWidth: 2,
-                                    borderDash: [5, 5],
-                                    pointBackgroundColor: '#3b82f6',
-                                    pointBorderColor: '#ffffff',
-                                    pointHoverRadius: 5
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    labels: {
-                                        color: '#ffffff',
-                                        font: { family: 'Outfit', size: 12 }
+                        cloudflareChartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: 'Pageviews',
+                                        data: pageviewsSeries,
+                                        borderColor: '#5ccbb3',
+                                        backgroundColor: 'rgba(92, 203, 179, 0.15)',
+                                        tension: 0.3,
+                                        fill: true,
+                                        borderWidth: 3,
+                                        pointBackgroundColor: '#5ccbb3',
+                                        pointBorderColor: '#ffffff',
+                                        pointHoverRadius: 6
+                                    },
+                                    {
+                                        label: 'Requests',
+                                        data: requestsSeries,
+                                        borderColor: '#3b82f6',
+                                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                        tension: 0.3,
+                                        fill: true,
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        pointBackgroundColor: '#3b82f6',
+                                        pointBorderColor: '#ffffff',
+                                        pointHoverRadius: 5
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        labels: {
+                                            color: '#ffffff',
+                                            font: { family: 'Outfit', size: 12 }
+                                        }
+                                    },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        bodyFont: { family: 'Outfit' },
+                                        titleFont: { family: 'Outfit', weight: 'bold' }
                                     }
                                 },
-                                tooltip: {
-                                    mode: 'index',
-                                    intersect: false,
-                                    bodyFont: { family: 'Outfit' },
-                                    titleFont: { family: 'Outfit', weight: 'bold' }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                                    ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { family: 'Outfit' } }
-                                },
-                                y: {
-                                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                                    ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { family: 'Outfit' } }
+                                scales: {
+                                    x: {
+                                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                        ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { family: 'Outfit' } }
+                                    },
+                                    y: {
+                                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                        ticks: { color: 'rgba(255, 255, 255, 0.6)', font: { family: 'Outfit' } }
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 } else {
                     loader.style.display = 'none';
                     errorDiv.style.display = 'block';
@@ -3874,46 +3890,9 @@
             });
         }
 
-        // Switch Tabs logic
+        // Switch Tabs logic (Route-based redirect)
         function switchTab(tabId) {
-            const panel = document.getElementById('tab-' + tabId);
-            const btn = document.getElementById('btn-' + tabId);
-            const mBtn = document.getElementById('m-btn-' + tabId);
-            if (!panel) return;
-
-            document.querySelectorAll('.tab-panel').forEach(p => {
-                p.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active');
-            });
-            document.querySelectorAll('.mobile-tab-btn').forEach(b => {
-                b.classList.remove('active');
-            });
-            panel.classList.add('active');
-            if (btn) btn.classList.add('active');
-            if (mBtn) {
-                mBtn.classList.add('active');
-                // Scroll the mobile tab button into view automatically
-                mBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
-
-            // Save to localStorage to persist tab across refreshes/saves
-            localStorage.setItem('active_tab', tabId);
-
-            if (tabId === 'analytics') {
-                fetchCloudflareAnalytics();
-            }
-
-
-
-            // Close sidebar on mobile
-            const sidebar = document.querySelector('.sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
-            if (sidebar && sidebar.classList.contains('show')) {
-                sidebar.classList.remove('show');
-                if (backdrop) backdrop.classList.remove('show');
-            }
+            window.location.href = "{{ url('/admin') }}/" + tabId;
         }
 
         // Toggle Sidebar drawer on mobile or collapse on desktop
@@ -3932,10 +3911,44 @@
             }
         }
 
-        // Initialize active tab from localStorage, defaulting to 'leads'
+        // Initialize active tab from URL segment or activeTab passed from controller
         window.addEventListener('DOMContentLoaded', () => {
-            const activeTab = localStorage.getItem('active_tab') || 'leads';
-            switchTab(activeTab);
+            const activeTab = "{{ $activeTab }}";
+
+            // Sync layout classes with the active tab
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn, .mobile-tab-btn').forEach(b => b.classList.remove('active'));
+
+            const targetPanel = document.getElementById('tab-' + activeTab);
+            const targetBtn = document.getElementById('btn-' + activeTab);
+            const mobileBtn = document.getElementById('m-btn-' + activeTab);
+
+            if (targetPanel) targetPanel.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+            if (mobileBtn) {
+                mobileBtn.classList.add('active');
+                mobileBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+
+            // Save to localStorage as fallback
+            localStorage.setItem('active_tab', activeTab);
+
+            // Manage analytics pageviews loading
+            if (activeTab === 'analytics') {
+                fetchCloudflareAnalytics();
+            }
+
+            // Manage chat pollings
+            if (activeTab === 'livechat') {
+                if (typeof loadAdminChatSessions === 'function') {
+                    loadAdminChatSessions();
+                    clearInterval(adminSessionsPoll);
+                    adminSessionsPoll = setInterval(loadAdminChatSessions, 5000);
+                }
+            } else {
+                clearInterval(adminSessionsPoll);
+                clearInterval(adminMessagesPoll);
+            }
         });
 
         // SEO Recommendations Switch Result Tab
@@ -4607,35 +4620,7 @@
         let adminSessionsPoll = null;
         let adminMessagesPoll = null;
 
-        // Override switchTab function to trigger chat load
-        const originalSwitchTab = window.switchTab;
-        window.switchTab = function(tabId) {
-            if (typeof originalSwitchTab === 'function') {
-                originalSwitchTab(tabId);
-            } else {
-                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-                document.querySelectorAll('.tab-btn, .mobile-tab-btn').forEach(b => b.classList.remove('active'));
-                
-                const targetPanel = document.getElementById('tab-' + tabId);
-                const targetBtn = document.getElementById('btn-' + tabId);
-                const mobileBtn = document.getElementById('m-btn-' + tabId);
-                
-                if (targetPanel) targetPanel.classList.add('active');
-                if (targetBtn) targetBtn.classList.add('active');
-                if (mobileBtn) mobileBtn.classList.add('active');
-                localStorage.setItem('active_tab', tabId);
-            }
-            
-            // Manage chat pollings
-            if (tabId === 'livechat') {
-                loadAdminChatSessions();
-                clearInterval(adminSessionsPoll);
-                adminSessionsPoll = setInterval(loadAdminChatSessions, 5000);
-            } else {
-                clearInterval(adminSessionsPoll);
-                clearInterval(adminMessagesPoll);
-            }
-        };
+        // Chat pollings are managed globally inside the unified DOMContentLoaded listener
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -4861,66 +4846,78 @@
             }, 2000);
         });
 
-        // Initialize CKEditor
+        // Initialize CKEditor defensively
         let blogEditor;
-        ClassicEditor
-            .create(document.querySelector('#blog_content'))
-            .then(editor => {
-                blogEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (document.querySelector('#blog_content')) {
+            ClassicEditor
+                .create(document.querySelector('#blog_content'))
+                .then(editor => {
+                    blogEditor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
 
         let serviceIntroEditor;
         let serviceTipsEditor;
-        ClassicEditor
-            .create(document.querySelector('#ser_intro_content'))
-            .then(editor => {
-                serviceIntroEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (document.querySelector('#ser_intro_content')) {
+            ClassicEditor
+                .create(document.querySelector('#ser_intro_content'))
+                .then(editor => {
+                    serviceIntroEditor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
 
-        ClassicEditor
-            .create(document.querySelector('#ser_tips_content'))
-            .then(editor => {
-                serviceTipsEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (document.querySelector('#ser_tips_content')) {
+            ClassicEditor
+                .create(document.querySelector('#ser_tips_content'))
+                .then(editor => {
+                    serviceTipsEditor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
 
         let treatmentEditor;
-        ClassicEditor
-            .create(document.querySelector('#treat_description'))
-            .then(editor => {
-                treatmentEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (document.querySelector('#treat_description')) {
+            ClassicEditor
+                .create(document.querySelector('#treat_description'))
+                .then(editor => {
+                    treatmentEditor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
 
         let specialistEditor;
-        ClassicEditor
-            .create(document.querySelector('#spec_description'))
-            .then(editor => {
-                specialistEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (document.querySelector('#spec_description')) {
+            ClassicEditor
+                .create(document.querySelector('#spec_description'))
+                .then(editor => {
+                    specialistEditor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
 
         let cmsEditor;
-        ClassicEditor
-            .create(document.querySelector('#cms_description'))
-            .then(editor => {
-                cmsEditor = editor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (document.querySelector('#cms_description')) {
+            ClassicEditor
+                .create(document.querySelector('#cms_description'))
+                .then(editor => {
+                    cmsEditor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
 
         function escapeJsString(str) {
             if (!str) return '';

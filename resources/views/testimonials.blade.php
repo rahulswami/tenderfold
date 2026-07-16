@@ -109,7 +109,7 @@
             <h2>Start Your Own Recovery Journey</h2>
             <p>Speak to our specialists today to obtain prioritized slots and customized therapy guidelines.</p>
             <div class="final-cta-buttons">
-                <button onclick="document.getElementById('callback-dialog').style.display='flex';" class="btn btn-white">Book Appointment</button>
+                <button onclick="openDialog('callback-dialog');" class="btn btn-white">Book Appointment</button>
                 <a href="{{ route('contact') }}" class="btn btn-outline-white"><i data-lucide="phone"></i> Contact Clinic</a>
             </div>
         </div>
