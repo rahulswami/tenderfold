@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', $treatment->name . ' Treatment | SumitZ Clinic Baner')
-@section('meta_description', $treatment->metadescription ?? Str::limit(strip_tags($treatment->description), 150))
+@section('title', ($treatment->metatitle ?? ($treatment->name . ' Treatment | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
+@section('meta_description', ($treatment->metadescription ?? Str::limit(strip_tags($treatment->description), 150)))
 
 @section('schema')
     @if(!empty($treatment->schema_markup))

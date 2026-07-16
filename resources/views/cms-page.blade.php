@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $page->title . ' | ' . ($site['site_name'] ?? 'SumitZ Clinic'))
+@section('title', ($page->metatitle ?? ($page->title . ' | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
 @section('meta_description', $page->metadescription ?? Str::limit(strip_tags($page->content), 150))
 
 @section('schema')

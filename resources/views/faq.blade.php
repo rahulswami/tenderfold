@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Frequently Asked Questions | ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_description', 'Everything you need to know about processing timelines, rates, documents, and qualifications.')
+@section('title', ($faqPage->metatitle ?? ('Frequently Asked Questions | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
+@section('meta_description', ($faqPage->metadescription ?? 'Everything you need to know about processing timelines, rates, documents, and qualifications.'))
 
 @section('schema')
 <script type="application/ld+json">

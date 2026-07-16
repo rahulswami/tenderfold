@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Orthopaedic, Joint Care & Physiotherapy Blog | SumitZ Clinic Baner')
-@section('meta_description', 'Read expert health advice, recovery guides, arthritis tips, and physiotherapy exercises written by Dr. Sumit at SumitZ Clinic, Pune.')
+@section('title', ($blogsPage->metatitle ?? 'Orthopaedic, Joint Care & Physiotherapy Blog | SumitZ Clinic Baner'))
+@section('meta_description', ($blogsPage->metadescription ?? 'Read expert health advice, recovery guides, arthritis tips, and physiotherapy exercises written by Dr. Sumit at SumitZ Clinic, Pune.'))
 
 @section('schema')
 <script type="application/ld+json">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'About SumitZ Clinic | Orthopaedic & Physiotherapy Center Baner')
-@section('meta_description', 'SumitZ Clinic is Baner\'s leading joint and spinal recovery center led by Dr. Sumit, offering advanced diagnostic OPG, X-ray, lab tests, and physiotherapy.')
+@section('title', ($aboutPage->metatitle ?? 'About SumitZ Clinic | Orthopaedic & Physiotherapy Center Baner'))
+@section('meta_description', ($aboutPage->metadescription ?? 'About SumitZ Clinic is Baner\'s leading joint and spinal recovery center led by Dr. Sumit, offering advanced diagnostic OPG, X-ray, lab tests, and physiotherapy.'))
 
 @section('schema')
 <script type="application/ld+json">

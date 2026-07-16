@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Contact Us | Book Appointment | SumitZ Clinic')
-@section('meta_description', 'Contact SumitZ Clinic Baner. Submit our slot booking form, drop a WhatsApp message, or find directions to our orthopaedic and physiotherapy hospital.')
+@section('title', ($contactPage->metatitle ?? 'Contact Us | Book Appointment | SumitZ Clinic'))
+@section('meta_description', ($contactPage->metadescription ?? 'Contact SumitZ Clinic Baner. Submit our slot booking form, drop a WhatsApp message, or find directions to our orthopaedic and physiotherapy hospital.'))
 
 @section('schema')
 <script type="application/ld+json">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Our Clinical & Diagnostic Services | SumitZ Clinic')
-@section('meta_description', 'Explore the wide range of services offered by SumitZ Clinic including Physiotherapy, Digital OPG, pathology diagnostics, Pediatric Orthopaedics, and X-Ray.')
+@section('title', ($servicesPage->metatitle ?? 'Our Clinical & Diagnostic Services | SumitZ Clinic'))
+@section('meta_description', ($servicesPage->metadescription ?? 'Explore the wide range of services offered by SumitZ Clinic including Physiotherapy, Digital OPG, pathology diagnostics, Pediatric Orthopaedics, and X-Ray.'))
 
 @section('schema')
 <script type="application/ld+json">

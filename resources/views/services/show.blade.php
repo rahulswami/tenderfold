@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($service->seo_title ?? ($service->service_name . ' - MLG Finedge')))
-@section('meta_description', ($service->seo_meta_description ?? $service->summary))
+@section('title', ($service->metatitle ?? ($service->service_name . ' | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
+@section('meta_description', ($service->metadescription ?? $service->summary))
 
 @section('schema')
     @if(!empty($service->schema_markup))

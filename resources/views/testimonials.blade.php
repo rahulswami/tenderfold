@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Patient Testimonials & Success Stories | ' . ($site['site_name'] ?? 'SumitZ Clinic'))
-@section('meta_description', 'Read reviews from satisfied patients who recovered their mobility through our orthopaedic treatments and physiotherapy care at SumitZ Clinic Pune.')
+@section('title', ($testimonialPage->metatitle ?? ('Patient Testimonials & Success Stories | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
+@section('meta_description', ($testimonialPage->metadescription ?? 'Read reviews from satisfied patients who recovered their mobility through our orthopaedic treatments and physiotherapy care at SumitZ Clinic Pune.'))
 
 @section('schema')
 <script type="application/ld+json">

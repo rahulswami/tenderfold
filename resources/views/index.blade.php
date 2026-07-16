@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'SumitZ Orthopaedic & Physiotherapy Clinic | Baner Pune')
-@section('meta_description', 'SumitZ Clinic is Baner\'s leading orthopaedic and physiotherapy hospital. Under Dr. Sumit, we offer expert joint replacement, fracture care, spine treatment, and sports rehabilitation.')
+@section('title', ($homePage->metatitle ?? 'SumitZ Orthopaedic & Physiotherapy Clinic | Baner Pune'))
+@section('meta_description', ($homePage->metadescription ?? 'SumitZ Clinic is Baner\'s leading orthopaedic and physiotherapy hospital. Under Dr. Sumit, we offer expert joint replacement, fracture care, spine treatment, and sports rehabilitation.'))
 
 @section('schema')
 @if(!empty($site['home_schema_markup']))

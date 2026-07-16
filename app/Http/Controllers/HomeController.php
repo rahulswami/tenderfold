@@ -13,18 +13,21 @@ class HomeController extends Controller
     {
         $slides = HomeSlide::orderBy('sort_order')->orderBy('id')->get();
         $testimonials = Testimonial::orderBy('sort_order')->orderBy('id')->get();
-        return view('index', compact('slides', 'testimonials'));
+        $homePage = \App\Models\CmsPage::where('slug', 'home')->first();
+        return view('index', compact('slides', 'testimonials', 'homePage'));
     }
 
     public function about()
     {
-        return view('about');
+        $aboutPage = \App\Models\CmsPage::where('slug', 'about-us')->first();
+        return view('about', compact('aboutPage'));
     }
 
     public function services()
     {
+        $servicesPage = \App\Models\CmsPage::where('slug', 'services')->first();
         $services = \App\Models\Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
-        return view('services', compact('services'));
+        return view('services', compact('services', 'servicesPage'));
     }
 
     public function servicesShow($slug)
@@ -39,18 +42,21 @@ class HomeController extends Controller
 
     public function testimonials()
     {
+        $testimonialPage = \App\Models\CmsPage::where('slug', 'testimonials')->first();
         $testimonials = Testimonial::orderBy('sort_order')->orderBy('id')->get();
-        return view('testimonials', compact('testimonials'));
+        return view('testimonials', compact('testimonials', 'testimonialPage'));
     }
 
     public function faq()
     {
+        $faqPage = \App\Models\CmsPage::where('slug', 'faqs')->first();
         $services = \App\Models\Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
-        return view('faq', compact('services'));
+        return view('faq', compact('services', 'faqPage'));
     }
 
     public function blog(Request $request)
     {
+        $blogsPage = \App\Models\CmsPage::where('slug', 'blogs')->first();
         $blogs = \App\Models\Blog::orderBy('published_at', 'desc')->orderBy('id', 'desc')->paginate(9);
         
         if ($request->ajax()) {
@@ -64,7 +70,7 @@ class HomeController extends Controller
             ]);
         }
         
-        return view('blog.index', compact('blogs'));
+        return view('blog.index', compact('blogs', 'blogsPage'));
     }
 
     public function blogShow($slug)
@@ -78,7 +84,8 @@ class HomeController extends Controller
 
     public function contact()
     {
-        return view('contact');
+        $contactPage = \App\Models\CmsPage::where('slug', 'contact-us')->first();
+        return view('contact', compact('contactPage'));
     }
 
     public function contactSubmit(Request $request)
@@ -287,8 +294,9 @@ class HomeController extends Controller
     /* Clinic Treatments */
     public function treatments()
     {
+        $treatmentsPage = \App\Models\CmsPage::where('slug', 'treatments')->first();
         $treatments = \App\Models\Treatment::where('status', true)->get();
-        return view('treatments.index', compact('treatments'));
+        return view('treatments.index', compact('treatments', 'treatmentsPage'));
     }
 
     public function treatmentDetail($slug)

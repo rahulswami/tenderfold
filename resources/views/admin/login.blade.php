@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS Admin Login | MLG Finedge</title>
+    <title>CMS Admin Login | {{ $site['site_name'] ?? 'SumitZ Clinic' }}</title>
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
         body {
@@ -109,15 +109,21 @@
 <body>
 
     <div class="login-card">
-        <div class="login-logo">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="25" y="45" width="12" height="30" rx="3" fill="#ffffff" />
-                <rect x="44" y="30" width="12" height="45" rx="3" fill="#ffffff" />
-                <rect x="63" y="15" width="12" height="60" rx="3" fill="#5ccbb3" />
-                <path d="M15 80 L35 60 L50 70 L85 35" stroke="#e85c24" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M72 35 H85 V48" stroke="#e85c24" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <span>MLG FINEDGE</span>
+        <div class="login-logo" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            @if(!empty($site['logo_path']))
+                <img src="{{ site_image($site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'SumitZ Clinic' }}" style="height: 65px; width: auto; object-fit: contain; margin-bottom: 0.5rem;">
+            @else
+                <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                    <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="stroke: #5ccbb3; stroke-width: 6; width: 42px; height: 42px; flex-shrink: 0;">
+                        <path d="M20 50 L50 20 L80 50 L50 80 Z" />
+                        <path d="M35 50 L50 35 L65 50 L50 65 Z" fill="#5ccbb3" />
+                    </svg>
+                    <div style="text-align: left;">
+                        <span class="logo-text" style="font-size: 1.4rem; font-weight: 800; line-height: 1.1; color: white; letter-spacing: -0.5px; display: block;">{{ $site['site_name'] ?? 'SumitZ Clinic' }}</span>
+                        <span class="logo-tagline" style="font-size: 0.7rem; opacity: 0.8; font-weight: 600; color: #a5f3fc; line-height: 1; display: block;">{{ $site['site_tagline'] ?? 'Orthopaedic & Physiotherapy Speciality' }}</span>
+                    </div>
+                </div>
+            @endif
         </div>
         
         <h2>Welcome Back</h2>
