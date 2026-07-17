@@ -1947,13 +1947,75 @@ User prompt: {$prompt}";
             $results['failed_jobs'] = 'exists ✔';
         }
 
-        // ── 7. Verify leads insert/select works ───────────────────────
+        // ── 7. push_subscriptions ──────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('push_subscriptions')) {
+            \Illuminate\Support\Facades\Schema::create('push_subscriptions', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->id();
+                $t->string('session_id')->nullable()->index();
+                $t->text('endpoint')->nullable();
+                $t->text('auth_token')->nullable();
+                $t->text('public_key')->nullable();
+                $t->timestamps();
+            });
+            $results['push_subscriptions'] = 'CREATED ✅';
+        } else {
+            $results['push_subscriptions'] = 'exists ✔';
+        }
+
+        // ── 8. web_notifications ───────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('web_notifications')) {
+            \Illuminate\Support\Facades\Schema::create('web_notifications', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->id();
+                $t->string('session_id')->nullable()->index();
+                $t->string('title');
+                $t->text('message');
+                $t->string('url')->nullable();
+                $t->boolean('is_read')->default(false);
+                $t->timestamps();
+            });
+            $results['web_notifications'] = 'CREATED ✅';
+        } else {
+            $results['web_notifications'] = 'exists ✔';
+        }
+
+        // ── 9. users table role and permissions columns ─────────────────
+        if (\Illuminate\Support\Facades\Schema::hasTable('users')) {
+            $hasRole = \Illuminate\Support\Facades\Schema::hasColumn('users', 'role');
+            $hasPerms = \Illuminate\Support\Facades\Schema::hasColumn('users', 'permissions');
+            
+            if (!$hasRole || !$hasPerms) {
+                \Illuminate\Support\Facades\Schema::table('users', function (\Illuminate\Database\Schema\Blueprint $t) use ($hasRole, $hasPerms) {
+                    if (!$hasRole) {
+                        $t->string('role')->default('admin')->after('password');
+                    }
+                    if (!$hasPerms) {
+                        $t->text('permissions')->nullable()->after('role');
+                    }
+                });
+                
+                // Seed user ID 1 as superadmin
+                $firstUser = \App\Models\User::find(1);
+                if ($firstUser) {
+                    $firstUser->update([
+                        'role' => 'superadmin',
+                        'permissions' => ['all']
+                    ]);
+                }
+                
+                $results['users_columns'] = 'UPDATED (role & permissions added) ✅';
+            } else {
+                $results['users_columns'] = 'columns exist ✔';
+            }
+        }
+
+        // ── 10. Verify leads insert/select works ───────────────────────
         try {
             $count = \App\Models\Lead::count();
             $results['leads_read_test'] = "PASS ✅ ({$count} existing records)";
         } catch (\Exception $e) {
             $results['leads_read_test'] = 'FAIL ❌ ' . $e->getMessage();
         }
+
 
         return response()->json([
             'status'  => 'ok',
