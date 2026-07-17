@@ -164,3 +164,18 @@ Route::middleware(['auth'])->group(function () {
 
 // CMS catch-all route (placed at the end to prevent conflicts)
 Route::get('/{slug}', [HomeController::class, 'cmsPageShow'])->name('cms.show');
+
+// Dynamic Cache Clear Endpoint (Secure via Cloudflare R2 Secret Access Key)
+Route::get('/api/clear-cache', function(\Illuminate\Http\Request $request) {
+    $setupKey = trim(\App\Models\SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
+    $providedKey = $request->query('key', '');
+    if (empty($setupKey) || $providedKey !== $setupKey) {
+        return response()->json(['status' => 'error', 'message' => 'Unauthorized key.'], 401);
+    }
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    return response()->json(['status' => 'success', 'message' => 'Caches cleared successfully!']);
+});
+
