@@ -3979,6 +3979,9 @@
         let currentAdminSessionId = null;
         let adminSessionsPoll = null;
         let adminMessagesPoll = null;
+        let lastSessionsJson = '';
+        let lastMessagesJson = '';
+
 
         function syncLocalImagesToR2(btn) {
             const originalHtml = btn.innerHTML;
@@ -4997,6 +5000,21 @@
         function renderAdminChatSessions(sessions) {
             const list = document.getElementById('admin-chat-sessions-list');
             
+            // Build signature to check for content and selection state changes
+            const sessionsSignature = JSON.stringify(sessions.map(s => ({
+                id: s.session_id,
+                msg: s.message,
+                unread: s.unread_count,
+                selected: s.session_id === currentAdminSessionId,
+                time: s.created_at
+            })));
+            
+            // If nothing changed, return immediately to prevent sidebar DOM recreation & flickering
+            if (sessionsSignature === lastSessionsJson) {
+                return;
+            }
+            lastSessionsJson = sessionsSignature;
+            
             // Update sidebar unread totals for menu badges
             let totalUnread = 0;
             sessions.forEach(s => totalUnread += s.unread_count);
@@ -5063,6 +5081,7 @@
 
         function selectAdminChat(sessionId) {
             currentAdminSessionId = sessionId;
+            lastMessagesJson = ''; // Clear message signature to force reload of messages panel
             loadAdminChatSessions();
             
             document.getElementById('admin-chat-input-wrap').style.display = 'flex';
@@ -5077,6 +5096,7 @@
             clearInterval(adminMessagesPoll);
             adminMessagesPoll = setInterval(loadAdminChatMessages, 60000);
         }
+
 
 
         function loadAdminChatMessages() {
@@ -5094,6 +5114,19 @@
 
         function renderAdminChatMessages(messages) {
             const wrap = document.getElementById('admin-chat-messages-wrap');
+            
+            const messagesSignature = JSON.stringify(messages.map(m => ({
+                id: m.id,
+                sender: m.sender,
+                msg: m.message,
+                time: m.created_at
+            })));
+            
+            if (messagesSignature === lastMessagesJson) {
+                return;
+            }
+            lastMessagesJson = messagesSignature;
+            
             wrap.innerHTML = '';
             
             messages.forEach(msg => {
@@ -5115,6 +5148,7 @@
             
             wrap.scrollTop = wrap.scrollHeight;
         }
+
 
         function handleAdminChatKey(e) {
             if (e.key === 'Enter') {
@@ -5142,9 +5176,11 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
+                    lastMessagesJson = '';
                     loadAdminChatMessages();
                     loadAdminChatSessions();
                 }
+
             })
             .catch(err => console.error('Error sending admin reply:', err));
         }
@@ -5163,7 +5199,10 @@
                 .then(data => {
                     if (data.success) {
                         currentAdminSessionId = null;
+                        lastSessionsJson = '';
+                        lastMessagesJson = '';
                         clearInterval(adminMessagesPoll);
+
                         
                         document.getElementById('admin-chat-messages-wrap').innerHTML = `
                             <div style="margin: auto; text-align: center; color: var(--admin-text-muted);">
