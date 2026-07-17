@@ -48,6 +48,11 @@ Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'sendMess
 Route::get('/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->name('chat.history');
 Route::post('/chat/auto-trigger', [App\Http\Controllers\ChatController::class, 'autoTrigger'])->name('chat.auto-trigger');
 
+// Web Notification Routes (Public)
+Route::post('/api/push-subscribe', [App\Http\Controllers\NotificationController::class, 'subscribe']);
+Route::get('/api/notifications/poll', [App\Http\Controllers\NotificationController::class, 'poll']);
+
+
 // Admin CMS Auth
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('login');
 Route::post('/admin/login', [AdminController::class, 'login']);
@@ -143,6 +148,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/chats/{session_id}', [App\Http\Controllers\ChatController::class, 'adminGetSessionMessages'])->name('admin.chats.messages');
     Route::post('/admin/chats/{session_id}/reply', [App\Http\Controllers\ChatController::class, 'adminSendReply'])->name('admin.chats.reply');
     Route::delete('/admin/chats/{session_id}', [App\Http\Controllers\ChatController::class, 'adminDeleteChat'])->name('admin.chats.delete');
+
+    // User Management CRUD
+    Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
+    Route::post('/admin/users/{id}/update', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::post('/admin/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::post('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::post('/admin/notifications/broadcast', [App\Http\Controllers\NotificationController::class, 'broadcast'])->name('admin.notifications.broadcast');
+
+
     
     // Catch-all dashboard tab route
     Route::get('/admin/{tab}', [AdminController::class, 'dashboard'])->name('admin.tab');

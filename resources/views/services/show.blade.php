@@ -2,6 +2,8 @@
 
 @section('title', ($service->metatitle ?? ($service->service_name . ' | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
 @section('meta_description', ($service->metadescription ?? $service->summary))
+@section('meta_keywords', ($service->metakeywords ?? ''))
+
 
 @section('schema')
     @if(!empty($service->schema_markup))

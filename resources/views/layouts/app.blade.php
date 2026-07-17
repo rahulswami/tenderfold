@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SumitZ Orthopaedic & Physiotherapy Clinic in Baner, Pune')</title>
     <meta name="description" content="@yield('meta_description', 'SumitZ Orthopaedic & Physiotherapy Clinic is Pune\'s premier clinic in Baner. Led by Dr. Sumit, we offer expert joint, spine, fracture and sports injury care.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'orthopedic clinic in baner, physiotherapy clinic in baner, orthopedic doctor in baner, knee replacement pune, dr sumit diwan')">
+    <link rel="canonical" href="{{ url(Request::url()) }}" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@yield('title', 'SumitZ Orthopaedic & Physiotherapy Clinic in Baner, Pune')" />
+    <meta property="og:description" content="@yield('meta_description', 'SumitZ Orthopaedic & Physiotherapy Clinic is Pune\'s premier clinic in Baner. Led by Dr. Sumit, we offer expert joint, spine, fracture and sports injury care.')" />
+    <meta property="og:url" content="{{ url(Request::url()) }}" />
+    <meta property="og:site_name" content="Drsumitz" />
+    <meta property="og:image" content="https://www.drsumitz.com/public/uploads/gallery/614487085_25_06_2021_01_19_55.jpg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@drsumitzguptao1" />
+    <meta name="twitter:title" content="@yield('title', 'SumitZ Orthopaedic & Physiotherapy Clinic in Baner, Pune')" />
+    <meta name="twitter:description" content="@yield('meta_description', 'SumitZ Orthopaedic & Physiotherapy Clinic is Pune\'s premier clinic in Baner. Led by Dr. Sumit, we offer expert joint, spine, fracture and sports injury care.')" />
+    <meta name="twitter:image" content="https://www.drsumitz.com/public/uploads/gallery/614487085_25_06_2021_01_19_55.jpg" />
+
     
     <!-- Dynamic Favicon -->
     @if(!empty($site['favicon_path']))
@@ -606,5 +624,234 @@
         <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ $site['cloudflare_analytics_token'] }}"}'></script>
         <!-- End Cloudflare Web Analytics -->
     @endif
+
+    <!-- Combined Cookie & Notification Consent Module -->
+    <div id="consent-banner" style="position: fixed; bottom: 20px; left: 20px; right: 20px; max-width: 480px; z-index: 999999; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(92, 203, 179, 0.25); border-radius: 12px; padding: 1.25rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); display: none; color: white; animation: slideUpBanner 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+        <style>
+            @keyframes slideUpBanner {
+                from { transform: translateY(100px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .consent-btn {
+                padding: 8px 14px;
+                border-radius: 6px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                border: none;
+            }
+            .consent-allow {
+                background-color: var(--primary-teal, #5ccbb3);
+                color: #0b1e36;
+            }
+            .consent-allow:hover {
+                filter: brightness(1.1);
+            }
+            .consent-deny {
+                background: rgba(255,255,255,0.06);
+                border: 1px solid rgba(255,255,255,0.1);
+                color: white;
+            }
+            .consent-deny:hover {
+                background: rgba(255,255,255,0.1);
+            }
+            .toast-alert {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                max-width: 350px;
+                background: rgba(15, 23, 42, 0.98);
+                border-left: 4px solid var(--primary-teal, #5ccbb3);
+                border-radius: 8px;
+                padding: 12px;
+                box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+                z-index: 9999999;
+                color: white;
+                display: flex;
+                gap: 10px;
+                cursor: pointer;
+                animation: slideInToast 0.3s ease;
+            }
+            @keyframes slideInToast {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        </style>
+        <div style="display: flex; gap: 12px; align-items: start;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background-color: rgba(92, 203, 179, 0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #5ccbb3;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            </div>
+            <div>
+                <strong style="font-size: 0.9rem; font-family: 'Outfit', sans-serif; display: block; margin-bottom: 2px;">Cookie & Notification Request</strong>
+                <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; line-height: 1.4;">
+                    We use cookies to optimize clinic experience. Would you also like to receive push notifications for dynamic recovery updates and support chat alerts?
+                </p>
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                    <button class="consent-btn consent-allow" onclick="acceptAllConsent()">Accept All</button>
+                    <button class="consent-btn consent-deny" onclick="acceptCookiesOnly()">Cookies Only</button>
+                    <button class="consent-btn consent-deny" onclick="closeConsentBanner()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-side notification toasts container -->
+    <div id="client-toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Auto-open Live Chat if open_chat=1 query parameter is set
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('open_chat') === '1') {
+                setTimeout(() => {
+                    if (typeof toggleChatWindow === 'function' && !isChatOpen) {
+                        toggleChatWindow();
+                    }
+                }, 800);
+            }
+
+            // 2. Manage Consent Banner Visibility
+            const cookiesAccepted = localStorage.getItem('cookies_accepted');
+            const consentViewed = localStorage.getItem('consent_viewed');
+            
+            if (!consentViewed && !cookiesAccepted) {
+                setTimeout(() => {
+                    const banner = document.getElementById('consent-banner');
+                    if (banner) banner.style.display = 'block';
+                }, 2000);
+            }
+
+            // 3. Start Notification Polling if subscribed
+            const notifSubscribed = localStorage.getItem('notifications_subscribed');
+            if (notifSubscribed === 'true') {
+                startNotificationPolling();
+            }
+        });
+
+        function closeConsentBanner() {
+            const banner = document.getElementById('consent-banner');
+            if (banner) banner.style.display = 'none';
+            localStorage.setItem('consent_viewed', 'true');
+        }
+
+        function acceptCookiesOnly() {
+            localStorage.setItem('cookies_accepted', 'true');
+            closeConsentBanner();
+        }
+
+        function acceptAllConsent() {
+            localStorage.setItem('cookies_accepted', 'true');
+            localStorage.setItem('notifications_subscribed', 'true');
+            
+            // Request native notification permission
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        // Subscribe session in DB
+                        fetch('/api/push-subscribe', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ session_id: chatSessionId })
+                        })
+                        .then(() => {
+                            startNotificationPolling();
+                        });
+                    }
+                });
+            }
+            closeConsentBanner();
+        }
+
+        let notificationPollTimer = null;
+        let lastReceivedNotificationId = parseInt(localStorage.getItem('last_received_notification_id') || '0');
+
+        function startNotificationPolling() {
+            if (notificationPollTimer) return;
+            
+            // Poll immediately
+            pollNotifications();
+            // Poll every 8s
+            notificationPollTimer = setInterval(pollNotifications, 8000);
+        }
+
+        function pollNotifications() {
+            fetch(`/api/notifications/poll?session_id=${chatSessionId}&last_id=${lastReceivedNotificationId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.notifications.length > 0) {
+                        data.notifications.forEach(notif => {
+                            // Update last received id
+                            if (notif.id > lastReceivedNotificationId) {
+                                lastReceivedNotificationId = notif.id;
+                                localStorage.setItem('last_received_notification_id', lastReceivedNotificationId.toString());
+                            }
+                            
+                            // Deliver Alert
+                            deliverWebNotification(notif);
+                        });
+                    }
+                })
+                .catch(err => console.error('Error polling alerts:', err));
+        }
+
+        function deliverWebNotification(notif) {
+            // Check if native Notification is permitted
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const n = new Notification(notif.title, {
+                    body: notif.message,
+                    icon: '/favicon.ico',
+                    tag: 'notif_' + notif.id
+                });
+                
+                n.onclick = function() {
+                    window.focus();
+                    if (notif.url) {
+                        window.location.href = notif.url;
+                    }
+                };
+            } else {
+                // Fallback to in-app webpage toast alert
+                showInAppToast(notif);
+            }
+        }
+
+        function showInAppToast(notif) {
+            const container = document.getElementById('client-toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-alert';
+            toast.onclick = () => {
+                if (notif.url) {
+                    window.location.href = notif.url;
+                }
+            };
+            
+            toast.innerHTML = `
+                <div style="width: 32px; height: 32px; border-radius: 6px; background-color: var(--primary-teal, #5ccbb3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #0d1718;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                </div>
+                <div style="flex-grow: 1;">
+                    <strong style="font-size: 0.85rem; font-weight: 700; color: white; display: block; margin-bottom: 2px;">${escapeHTML(notif.title)}</strong>
+                    <p style="margin: 0; font-size: 0.75rem; color: #cbd5e1; line-height: 1.3;">${escapeHTML(notif.message)}</p>
+                    ${notif.url ? `<span style="font-size: 0.65rem; color: var(--primary-teal, #5ccbb3); margin-top: 3px; display: block; text-decoration: underline;">Click to open update link</span>` : ''}
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Remove after 6s
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.5s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 6000);
+        }
+    </script>
 </body>
 </html>
+

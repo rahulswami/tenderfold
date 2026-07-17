@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
-@section('title', $landingPage->title . ' - ' . ($site['site_name'] ?? 'MLG Finedge'))
-@section('meta_desc', $landingPage->meta_description ?? 'Secure premium loan consultation in Jaipur with custom matching parameters.')
+@section('title', $landingPage->title . ' - ' . ($site['site_name'] ?? 'SumitZ Clinic'))
+@section('meta_description', $landingPage->meta_description ?? 'Book a consultation at SumitZ Orthopaedic & Physiotherapy Clinic in Baner, Pune.')
+
 
 @section('schema')
     @if(!empty($landingPage->schema_markup))

@@ -59,11 +59,28 @@ class AdminController extends Controller
         $validTabs = [
             'general', 'leads', 'livechat', 'branding', 'slider', 'testimonials', 
             'styling', 'pagecontents', 'landing', 'services', 'treatments', 
-            'specialists', 'cms_pages', 'blogs', 'media', 'analytics', 'seo'
+            'specialists', 'cms_pages', 'blogs', 'media', 'analytics', 'seo', 'users', 'notifications'
         ];
+
         if (!in_array($activeTab, $validTabs)) {
             $activeTab = 'leads';
         }
+
+        $user = Auth::user();
+        if ($user->role !== 'superadmin') {
+            $permissions = is_array($user->permissions) ? $user->permissions : (json_decode($user->permissions ?? '[]', true) ?: []);
+            if (!in_array('all', $permissions) && !in_array($activeTab, $permissions)) {
+                // Find first permitted tab
+                foreach ($validTabs as $vTab) {
+                    if (in_array($vTab, $permissions)) {
+                        return redirect()->route('admin.dashboard', ['tab' => $vTab]);
+                    }
+                }
+                Auth::logout();
+                return redirect()->route('login')->withErrors(['email' => 'Access Denied: You do not have permissions for any modules.']);
+            }
+        }
+
 
         $parameters = SiteParameter::all()->groupBy('category');
         $slides = HomeSlide::orderBy('sort_order')->orderBy('id')->get();
@@ -121,11 +138,26 @@ class AdminController extends Controller
         $specialists = \App\Models\TeamMember::orderBy('id', 'desc')->get();
         $cmsPages = \App\Models\CmsPage::orderBy('id', 'desc')->get();
         
-        return view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages'));
+        $users = [];
+        if ($user->role === 'superadmin') {
+            $users = \App\Models\User::all();
+        }
+
+        // Fetch broadcast notifications log
+        $notificationsLog = \DB::table('web_notifications')
+            ->whereNull('session_id')
+            ->orderBy('id', 'desc')
+            ->paginate(10, ['*'], 'notifications_page');
+
+
+        return view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages', 'users', 'notificationsLog'));
     }
+
+
 
     public function updateParameters(Request $request)
     {
+        $this->checkPermission('general');
         // Handle unchecked checkbox for recaptcha_enabled
         if (!$request->has('recaptcha_enabled')) {
             $request->merge(['recaptcha_enabled' => '0']);
@@ -217,6 +249,7 @@ class AdminController extends Controller
     /* Homepage Slides CRUD */
     public function storeSlide(Request $request)
     {
+        $this->checkPermission('slider');
         $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'nullable|image|max:5000',
@@ -274,6 +307,7 @@ class AdminController extends Controller
 
     public function deleteSlide($id)
     {
+        $this->checkPermission('slider');
         $slide = HomeSlide::findOrFail($id);
         if ($slide->image_path) {
             Storage::disk('public')->delete($slide->image_path);
@@ -286,6 +320,7 @@ class AdminController extends Controller
     /* Testimonials CRUD */
     public function storeTestimonial(Request $request)
     {
+        $this->checkPermission('testimonials');
         $request->validate([
             'name' => 'required|string|max:255',
             'content' => 'required|string',
@@ -347,6 +382,7 @@ class AdminController extends Controller
 
     public function deleteTestimonial($id)
     {
+        $this->checkPermission('testimonials');
         $testimonial = Testimonial::findOrFail($id);
         if ($testimonial->avatar_path) {
             Storage::disk('public')->delete($testimonial->avatar_path);
@@ -393,11 +429,16 @@ class AdminController extends Controller
             'content' => $blog->content,
             'image_path' => $blog->image_path,
             'schema_markup' => $blog->schema_markup,
+            'metatitle' => $blog->metatitle,
+            'metadescription' => $blog->metadescription,
+            'metakeywords' => $blog->metakeywords,
         ]);
     }
 
+
     public function storeBlog(Request $request)
     {
+        $this->checkPermission('blogs');
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string|max:255',
@@ -407,6 +448,9 @@ class AdminController extends Controller
             'image_url' => 'nullable|string',
             'slug' => 'nullable|string|max:255|unique:blogs,slug',
             'schema_markup' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
         ]);
 
         $slug = $request->slug ?: \Illuminate\Support\Str::slug($request->title);
@@ -431,6 +475,9 @@ class AdminController extends Controller
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : now(),
             'schema_markup' => $request->schema_markup,
+            'metatitle' => $request->metatitle,
+            'metadescription' => $request->metadescription,
+            'metakeywords' => $request->metakeywords,
         ]);
 
         return redirect()->back()->with('success', 'Blog post created successfully!');
@@ -438,6 +485,7 @@ class AdminController extends Controller
 
     public function updateBlog(Request $request, $id)
     {
+        $this->checkPermission('blogs');
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string|max:255',
@@ -447,6 +495,9 @@ class AdminController extends Controller
             'image_url' => 'nullable|string',
             'slug' => 'required|string|max:255|unique:blogs,slug,' . $id,
             'schema_markup' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
         ]);
 
         $blog = \App\Models\Blog::findOrFail($id);
@@ -470,13 +521,18 @@ class AdminController extends Controller
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : $blog->published_at,
             'schema_markup' => $request->schema_markup,
+            'metatitle' => $request->metatitle,
+            'metadescription' => $request->metadescription,
+            'metakeywords' => $request->metakeywords,
         ]);
 
         return redirect()->back()->with('success', 'Blog post updated successfully!');
     }
 
+
     public function deleteBlog($id)
     {
+        $this->checkPermission('blogs');
         $blog = \App\Models\Blog::findOrFail($id);
         if ($blog->image_path) {
             Storage::disk('public')->delete($blog->image_path);
@@ -489,6 +545,7 @@ class AdminController extends Controller
     /* Page Content Updates */
     public function updatePageContents(Request $request)
     {
+        $this->checkPermission('pagecontents');
         $contents = $request->input('contents', []);
         
         foreach ($contents as $page => $sections) {
@@ -512,6 +569,7 @@ class AdminController extends Controller
     /* Media Upload Manager */
     public function uploadMedia(Request $request)
     {
+        $this->checkPermission('media');
         $request->validate([
             'file' => 'required|file|image|max:10000',
         ]);
@@ -710,6 +768,7 @@ class AdminController extends Controller
     /* Services CRUD */
     public function storeService(Request $request)
     {
+        $this->checkPermission('services');
         $validated = $request->validate([
             'service_name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:services,slug',
@@ -733,7 +792,11 @@ class AdminController extends Controller
             'image_url' => 'nullable|string',
             'icon' => 'nullable|image|max:5000',
             'icon_url' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
         ]);
+
 
         if (empty($validated['slug'])) {
             $validated['slug'] = \Illuminate\Support\Str::slug($validated['service_name']);
@@ -777,6 +840,7 @@ class AdminController extends Controller
 
     public function updateService(Request $request, $id)
     {
+        $this->checkPermission('services');
         $service = \App\Models\Service::findOrFail($id);
 
         $validated = $request->validate([
@@ -802,7 +866,11 @@ class AdminController extends Controller
             'image_url' => 'nullable|string',
             'icon' => 'nullable|image|max:5000',
             'icon_url' => 'nullable|string',
+            'metatitle' => 'nullable|string|max:255',
+            'metadescription' => 'nullable|string',
+            'metakeywords' => 'nullable|string',
         ]);
+
 
         $imagePath = $service->image_path;
         if ($request->hasFile('image')) {
@@ -847,6 +915,7 @@ class AdminController extends Controller
 
     public function deleteService($id)
     {
+        $this->checkPermission('services');
         $service = \App\Models\Service::findOrFail($id);
         if ($service->image_path) {
             Storage::disk('public')->delete($service->image_path);
@@ -942,6 +1011,7 @@ class AdminController extends Controller
 
     public function deleteLead($id)
     {
+        $this->checkPermission('leads');
         $lead = \App\Models\Lead::findOrFail($id);
         $lead->delete();
 
@@ -950,6 +1020,7 @@ class AdminController extends Controller
 
     public function exportLeads()
     {
+        $this->checkPermission('leads');
         $headers = [
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=leads_export_" . date('Ymd_His') . ".csv",
@@ -988,6 +1059,7 @@ class AdminController extends Controller
 
     public function bulkDeleteLeads(Request $request)
     {
+        $this->checkPermission('leads');
         $request->validate([
             'ids' => 'required|array',
             'ids.*' => 'integer|exists:leads,id',
@@ -1013,6 +1085,9 @@ class AdminController extends Controller
         $request->validate([
             'prompt' => 'required|string',
             'tone' => 'required|string',
+            'existing_title' => 'nullable|string',
+            'existing_summary' => 'nullable|string',
+            'existing_content' => 'nullable|string',
         ]);
 
         $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
@@ -1023,8 +1098,37 @@ class AdminController extends Controller
         $prompt = $request->input('prompt');
         $tone = $request->input('tone');
         $generateImage = $request->boolean('generate_image');
+        $existingTitle = $request->input('existing_title');
+        $existingSummary = $request->input('existing_summary');
+        $existingContent = $request->input('existing_content');
 
-        $systemPrompt = "You are an expert financial blog writer and SEO specialist. Create a complete, high-quality blog article in English based on the user's prompt.
+        if (!empty($existingContent)) {
+            $systemPrompt = "You are an expert orthopedic, physical therapy, and health care copywriter and SEO specialist. The user wants to EXTEND the content of an existing blog article at SumitZ Clinic, Pune.
+Existing Article Title: \"{$existingTitle}\"
+Existing Article Summary: \"{$existingSummary}\"
+Existing Article Content (HTML): \"{$existingContent}\"
+
+Your task is to EXTEND the existing article content based on the user's prompt: '{$prompt}'.
+The writing tone must be: {$tone}.
+
+Strict Instructions:
+1. DO NOT replace, delete, or rewrite any of the existing content. Keep the existing HTML content exactly as it is.
+2. Append/add new, SEO-relevant subheadings (<h3>/<h4>), paragraphs (<p>), or bulleted lists (<ul>/<li>) at the end of the existing content.
+3. Review the title and summary, and only refine or expand them to match the new extensions if necessary, keeping them SEO-optimized.
+4. Return the combined content (original content + your extensions) in the 'content' field.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"title\": \"Expanded SEO-optimized blog title\",
+  \"category\": \"Choose the most appropriate category from: Orthopaedics, Physiotherapy, Spine & Disc Care, Sports Injuries, Joint Recovery, Healthy Tips\",
+  \"summary\": \"Refined and engaging summary of the article\",
+  \"content\": \"The original HTML content plus your newly appended text at the end, properly formatted in HTML. Do not repeat the original text twice.\",
+  \"image_prompt\": \"A detailed text-to-image prompt to generate a cover image matching this article's topic.\"
+}";
+        } else {
+            $systemPrompt = "You are an expert orthopedic, physical therapy, and health care copywriter and SEO specialist. Create a complete, high-quality blog article in English for SumitZ Orthopaedic & Physiotherapy Clinic, Pune, based on the user's prompt.
 The writing tone must be: {$tone}.
 
 You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
@@ -1032,13 +1136,14 @@ You MUST return the output ONLY as a raw, single-line valid JSON object matching
 JSON Schema:
 {
   \"title\": \"A compelling SEO-optimized blog title\",
-  \"category\": \"Choose the most appropriate category from: Personal Loans, Home Loans, Business Loans, Loan Against Property, Financial Tips\",
+  \"category\": \"Choose the most appropriate category from: Orthopaedics, Physiotherapy, Spine & Disc Care, Sports Injuries, Joint Recovery, Healthy Tips\",
   \"summary\": \"A short, engaging 1-2 sentence summary of the article to be shown on listing cards\",
   \"content\": \"The full blog article content formatted in clean, modern HTML. Use paragraphs <p>, subheadings <h3>/<h4>, lists <ul>/<li>, and emphasized text. Do not include raw CSS or javascript. Make the article comprehensive, informative, and around 400-600 words.\",
   \"image_prompt\": \"A detailed, descriptive text-to-image prompt to generate a high-quality featured cover image matching this article's topic. Do not include adjectives like 'photorealistic', instead describe lighting, context, objects, and style (e.g. 'A professional photograph of ...')\"
 }
 
 User prompt: {$prompt}";
+        }
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -1096,6 +1201,13 @@ User prompt: {$prompt}";
         $request->validate([
             'prompt' => 'required|string',
             'tone' => 'required|string',
+            'existing_service_name' => 'nullable|string',
+            'existing_hero_title' => 'nullable|string',
+            'existing_hero_subtitle' => 'nullable|string',
+            'existing_intro_content' => 'nullable|string',
+            'existing_tips_content' => 'nullable|string',
+            'existing_summary' => 'nullable|string',
+            'existing_faqs' => 'nullable|string',
         ]);
 
         $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
@@ -1105,46 +1217,99 @@ User prompt: {$prompt}";
 
         $prompt = $request->input('prompt');
         $tone = $request->input('tone');
+        
+        $existingName = $request->input('existing_service_name');
+        $existingHeroTitle = $request->input('existing_hero_title');
+        $existingHeroSub = $request->input('existing_hero_subtitle');
+        $existingIntro = $request->input('existing_intro_content');
+        $existingTips = $request->input('existing_tips_content');
+        $existingSummary = $request->input('existing_summary');
+        $existingFaqs = $request->input('existing_faqs');
 
-        $systemPrompt = "You are an expert web designer and copywriter for financial services. Generate a complete service page for a financial product in English based on the user's prompt.
+        if (!empty($existingIntro)) {
+            $systemPrompt = "You are an expert orthopedic, joint replacement, and physiotherapy clinic clinical writer and patient care coordinator. The user wants to EXTEND the content of an existing service details page at SumitZ Clinic, Pune.
+Existing Service: \"{$existingName}\"
+Existing Hero Title: \"{$existingHeroTitle}\"
+Existing Hero Subtitle: \"{$existingHeroSub}\"
+Existing Intro (HTML): \"{$existingIntro}\"
+Existing Tips (HTML): \"{$existingTips}\"
+Existing Summary: \"{$existingSummary}\"
+Existing FAQs (JSON): \"{$existingFaqs}\"
+
+Your task is to EXTEND the existing service page details based on the user's prompt: '{$prompt}'.
+The writing tone must be: {$tone}.
+
+Strict Instructions:
+1. DO NOT delete, rewrite, or replace any of the existing content or headings. Keep the original text fully intact.
+2. In 'intro_content', append new informative clinical sections, descriptions, recovery pathways, or patient advice to the end of the existing HTML.
+3. In 'tips_content', append additional self-care guidelines, exercise advice, or prevention rules to the end of the existing HTML.
+4. Review the FAQs, preserve the existing ones exactly, and append 2-3 new relevant frequently asked questions.
+5. In fields like 'rate_value', 'max_loan', and 'tenure', retain original values if appropriate or update them to clinical indicators (e.g. OPD Consulting slot indicators, Walk-ins Welcome, Session timings).
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"service_name\": \"Service name\",
+  \"hero_category\": \"A short category tag (e.g. ORTHOPAEDICS, PHYSIOTHERAPY, DIAGNOSTICS)\",
+  \"hero_title\": \"Hero heading\",
+  \"hero_subtitle\": \"Hero subheading\",
+  \"rate_value\": \"Clinical slots/costs indicator (e.g., Starts at ₹500 or OPD Consulting)\",
+  \"max_loan\": \"Availability indicator (e.g., Prior Booking Required or Walk-ins Welcome)\",
+  \"tenure\": \"Session timings/report duration (e.g., 30-45 mins per session or Immediate OPG)\",
+  \"intro_title\": \"Heading for the intro section\",
+  \"intro_content\": \"Original HTML plus new appended HTML paragraphs (<p>) highlighting diagnostic details or techniques\",
+  \"eligibility_criteria\": \"Criteria on new lines (preserve original and optionally add more)\",
+  \"documents_required\": \"Required items or preparation on new lines (preserve original)\",
+  \"tips_title\": \"Heading for self-care tips section\",
+  \"tips_content\": \"Original HTML plus new appended clinical self-care tips in HTML\",
+  \"badge\": \"Promo badge (e.g., Expert Care, Modern OPG)\",
+  \"summary\": \"Brief summary of the service\",
+  \"faqs\": [
+     (All original FAQs plus newly appended ones)
+  ]
+}";
+        } else {
+            $systemPrompt = "You are an expert orthopedic, joint replacement, and physiotherapy clinic clinical writer and patient care coordinator. Generate a complete service page for a clinical or diagnostic service in English for SumitZ Clinic, Pune, based on the user's prompt.
 The writing tone must be: {$tone}.
 
 You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
 
 JSON Schema:
 {
-  \"service_name\": \"Name of the service (e.g. Home Renovation Loan)\",
-  \"hero_category\": \"A short category tag (e.g. RETAIL LOAN, PERSONAL FINANCE)\",
+  \"service_name\": \"Name of the service (e.g. Robotic Knee Replacement or Digital OPG Diagnostic)\",
+  \"hero_category\": \"A short category tag (e.g. ORTHOPAEDICS, PHYSIOTHERAPY, DIAGNOSTICS)\",
   \"hero_title\": \"A catchy, clear H1 heading for the hero section\",
   \"hero_subtitle\": \"A brief 1-2 sentence subheading for the hero section describing the main value proposition\",
-  \"rate_value\": \"Starting interest rate value (e.g. 8.9% p.a.)\",
-  \"max_loan\": \"Maximum loan amount available (e.g. Up to 50 Lakhs)\",
-  \"tenure\": \"Repayment tenure limits (e.g. Up to 15 Years)\",
-  \"intro_title\": \"A heading for the introduction section (e.g. Why Choose Our Home Renovation Loan?)\",
-  \"intro_content\": \"An engaging introduction block formatted in HTML paragraphs (<p>) highlighting benefits and features\",
-  \"eligibility_criteria\": \"A list of key eligibility criteria, with each criterion on a new line (use newlines \\n to separate)\",
-  \"documents_required\": \"A list of required documents, with each document on a new line (use newlines \\n to separate)\",
-  \"tips_title\": \"Heading for financial tips/guide section (e.g. How to qualify faster?)\",
-  \"tips_content\": \"A helpful tip guide content formatted in HTML paragraphs (<p>)\",
-  \"badge\": \"A short promo badge tag (e.g. Instant Approval, Low Interest)\",
-  \"summary\": \"A short description of the service (1-2 sentences) shown in footers or small layouts\",
+  \"rate_value\": \"Starting rate or fees indicator (e.g. Starts at ₹500 or OPD Consulting)\",
+  \"max_loan\": \"Availability or booking indicator (e.g. Prior Booking Required or Walk-ins Welcome)\",
+  \"tenure\": \"Session duration or report speed (e.g. 45 Mins / Session or Under 24h reports)\",
+  \"intro_title\": \"A heading for the introduction section (e.g. Why Choose Our Physiotherapy Program?)\",
+  \"intro_content\": \"An engaging introduction block formatted in HTML paragraphs (<p>) highlighting clinical benefits, methodologies, and outcomes\",
+  \"eligibility_criteria\": \"A list of patient eligibility conditions (e.g., age, chronic pain types), with each condition on a new line (use newlines \\n to separate)\",
+  \"documents_required\": \"A list of medical documents/preparations required (e.g. Prior X-rays, Doctor referrals), with each item on a new line (use newlines \\n to separate)\",
+  \"tips_title\": \"Heading for recovery tips/guide section (e.g. Fast Recovery Tips post Knee Surgery)\",
+  \"tips_content\": \"A helpful recovery/self-care guide content formatted in HTML paragraphs (<p>)\",
+  \"badge\": \"A short clinical highlight badge tag (e.g. Expert Surgeon, Advanced OPG)\",
+  \"summary\": \"A short description of the service (1-2 sentences) shown in lists or small layouts\",
   \"faqs\": [
     {
-      \"question\": \"An important, frequently asked question about this service\",
+      \"question\": \"An important, frequently asked patient question about this clinical service\",
+      \"answer\": \"A detailed, professional clinical answer to the question\"
+    },
+    {
+      \"question\": \"Another logical patient question about this service\",
       \"answer\": \"A detailed answer to the question\"
     },
     {
-      \"question\": \"Another logical question about this service\",
-      \"answer\": \"A detailed answer to the question\"
-    },
-    {
-      \"question\": \"A third important question about this service\",
+      \"question\": \"A third important patient question about this service\",
       \"answer\": \"A detailed answer to the question\"
     }
   ]
 }
 
 User prompt: {$prompt}";
+        }
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -1186,6 +1351,7 @@ User prompt: {$prompt}";
             return response()->json(['error' => 'AI generation failed: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function aiGenerateImage(Request $request)
     {
@@ -1866,21 +2032,22 @@ User prompt: {$prompt}";
 
         $prompt = $request->input('prompt');
         $layout = $landingPage->layout_type;
+        $existingContent = is_array($landingPage->content) ? $landingPage->content : json_decode($landingPage->content, true);
 
         if ($layout === 'home') {
             $schemaDesc = '{
   "meta_description": "SEO optimized meta description for this landing page.",
-  "hero_title": "A catchy, attention-grabbing hero main title.",
-  "hero_subtitle": "An engaging subtitle or tagline.",
+  "hero_title": "A catchy, orthopedic or physiotherapy focused hero main title.",
+  "hero_subtitle": "An engaging clinical subtitle or tagline.",
   "features": [
-     {"title": "Feature 1 Title", "desc": "Feature 1 Description", "icon": "Lucide icon name like shield/clock/check/file-text/shield-check/percent/zap"},
+     {"title": "Feature 1 Title", "desc": "Feature 1 Description", "icon": "Lucide icon name like activity/heart/clock/check/file-text/shield-check/calendar/zap"},
      {"title": "Feature 2 Title", "desc": "Feature 2 Description", "icon": "Lucide icon"},
      {"title": "Feature 3 Title", "desc": "Feature 3 Description", "icon": "Lucide icon"},
      {"title": "Feature 4 Title", "desc": "Feature 4 Description", "icon": "Lucide icon"}
   ],
-  "about_title": "Why Choose MLG Finedge / About Us section heading",
-  "about_text": "Detailed description of our loan/credit consultation services.",
-  "cta_title": "Ready to get started? or Call to action heading",
+  "about_title": "Why Choose SumitZ Clinic / About Us section heading",
+  "about_text": "Detailed description of our orthopedic, physiotherapy and recovery services.",
+  "cta_title": "Ready to book your consultation? or Call to action heading",
   "cta_text": "Brief sub-text for CTA section.",
   "faqs": [
      {"q": "FAQ Question 1?", "a": "FAQ Answer 1"},
@@ -1894,7 +2061,7 @@ User prompt: {$prompt}";
   "hero_title": "Hero main title.",
   "hero_subtitle": "Hero subtitle.",
   "story_title": "Our Story / Mission title",
-  "story_text": "Detailed story text explaining our background, 2 paragraphs.",
+  "story_text": "Detailed story text explaining our clinical background, 2 paragraphs.",
   "vision": "Vision Statement.",
   "mission": "Mission Statement.",
   "values": "Core Values Statement.",
@@ -1908,14 +2075,22 @@ User prompt: {$prompt}";
 }';
         }
 
-        $systemPrompt = "You are an expert web content copywriter and landing page optimization specialist.
-Create high-quality, professional landing page content in English based on the user's prompt: '{$prompt}'.
+        $extensionPrompt = "";
+        if (!empty($existingContent)) {
+            $extensionPrompt = "\nCRITICAL: The landing page already contains content! You must EXTEND this content, NOT overwrite it. Here is the existing content: " . json_encode($existingContent) . "\n" .
+                               "Do not delete, shorten, or replace any existing texts or descriptions. Only enrich the text paragraphs by adding more clinical and recovery-related details to them, and preserve all other fields and structures completely.";
+        }
+
+        $systemPrompt = "You are an expert orthopedic web content copywriter and landing page optimization specialist.
+Create high-quality, professional landing page content in English for SumitZ Clinic, Pune, based on the user's prompt: '{$prompt}'.
 The page layout structure is: {$layout}.
+{$extensionPrompt}
 
 You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Output must start with { and end with }.
 
 JSON Schema:
 {$schemaDesc}";
+
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -1977,21 +2152,22 @@ JSON Schema:
             return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
         }
 
-        $systemPrompt = "You are a customer relationship coordinator. Create 5 realistic, high-quality, positive customer testimonials for MLG Finedge (Jaipur's premier credit advisory firm) as if they were synced directly from their Google My Business profile: '{$gmbLink}'.
-Make each testimonial unique and authentic. They should mention specific loan products (e.g. Home Loan, Business Loan, Personal Loan, Loan Against Property), helpful customer support, interest rate savings, or fast approvals in Jaipur.
+        $systemPrompt = "You are a customer relationship coordinator. Create 5 realistic, high-quality, positive customer testimonials for SumitZ Orthopaedic & Physiotherapy Clinic (Pune's premier clinic in Baner) as if they were synced directly from their Google My Business profile: '{$gmbLink}'.
+Make each testimonial unique and authentic. They should mention specific treatments (e.g. Knee Replacement, Joint Pain recovery, Physiotherapy rehabilitation, Digital OPG X-ray), helpful doctor care from Dr. Sumit, clinical support, or successful mobility recovery in Baner, Pune.
 
 You MUST return the output ONLY as a raw, single-line valid JSON array of objects matching the schema below. Output must start with [ and end with ].
 
 JSON Schema:
 [
   {
-    \"name\": \"Full Name of Customer\",
-    \"role\": \"Customer's Occupation or Profile (e.g., Homebuyer, Business Owner, Teacher, IT Engineer)\",
-    \"content\": \"Highly detailed, authentic review text expressing their positive experience with MLG Finedge.\",
+    \"name\": \"Full Name of Patient\",
+    \"role\": \"Patient's Occupation or Profile (e.g., IT Consultant, Senior Citizen, Athlete, Homemaker)\",
+    \"content\": \"Highly detailed, authentic review text expressing their positive recovery experience with Dr. Sumit and the clinic staff.\",
     \"rating\": 5
   },
   ...
 ]";
+
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -2078,26 +2254,27 @@ JSON Schema:
   ],
   \"third_party_articles\": [
     {
-      \"platform_type\": \"Guest Post / Medium / Finance Forum / Industry Blog\",
+      \"platform_type\": \"Guest Post / Medium / Health Forum / Medical Blog\",
       \"title\": \"Title of the guest article to pitch\",
       \"keywords\": \"Anchor text keywords to embed\",
-      \"context\": \"Specific context or paragraph direction where the backlink to our site fits naturally (e.g. 'A paragraph explaining interest rate calculators should link to our calculator page')\"
+      \"context\": \"Specific context or paragraph direction where the backlink to our site fits naturally (e.g. 'A paragraph explaining ligament tear recovery should link to our physiotherapy service page')\"
     }
   ],
   \"quora_questions\": [
     {
       \"topic\": \"Topic or category on Quora\",
-      \"question_direction\": \"E.g., 'Is it a good time to get a home loan?' or 'How can a small business get unsecured funding?'\",
+      \"question_direction\": \"E.g., 'What is the recovery time for ACL reconstruction?' or 'How does dry needling therapy work?'\",
       \"draft_answer_points\": \"Detailed bullet points explaining how to write a helpful, authority answer, and where to naturally plug our website\"
     }
   ],
   \"pinterest_posts\": [
     {
-      \"visual_idea\": \"Description of the pin layout/image (e.g. 'An infographic showing loan processing steps with a mint green background')\",
-      \"overlay_text\": \"Bold overlay text (e.g. 'How to get a home loan in 5 steps!')\",
-      \"category\": \"Category (e.g. Personal Finance, Loans, Business Hacks)\"
+      \"visual_idea\": \"Description of the pin layout/image (e.g. 'An infographic showing post-operative recovery stages with a mint green background')\",
+      \"overlay_text\": \"Bold overlay text (e.g. '5 Exercises to Relief Desk Job Back Pain!')\",
+      \"category\": \"Category (e.g. Joint Health, Physiotherapy, Fitness & Wellness)\"
     }
   ],
+
   \"social_media\": [
     {
       \"platform\": \"LinkedIn / Facebook / Instagram\",
@@ -2195,13 +2372,13 @@ JSON Schema:
         $title = '';
         $summary = '';
         $url = '';
-        $baseUrl = 'https://www.mlgfinedge.com';
+        $baseUrl = rtrim(config('app.url') ?? 'https://www.drsumitz.com', '/');
 
         if ($type === 'blog') {
             $blog = \App\Models\Blog::findOrFail($id);
             $title = $blog->title;
             $summary = $blog->summary;
-            $url = $baseUrl . '/blog/' . $blog->slug;
+            $url = $baseUrl . '/blogs/' . $blog->slug;
         } elseif ($type === 'service') {
             $service = \App\Models\Service::findOrFail($id);
             $title = $service->service_name;
@@ -2220,11 +2397,12 @@ Summary: \"{$summary}\"
 Page Link: \"{$url}\"
 
 Strict Instructions:
-1. Write a compelling summary of the article/service suitable for local audiences in Jaipur (under 800 characters).
-2. Incorporate 2-3 relevant hashtags (e.g. #JaipurLoans, #HomeLoansJaipur, etc.).
+1. Write a compelling summary of the article/service suitable for local audiences in Pune (under 800 characters).
+2. Incorporate 2-3 relevant hashtags (e.g. #OrthopedicsPune, #PhysiotherapyBaner, #SumitzClinic, etc.).
 3. End with a strong call-to-action phrase prompting users to click 'Learn More' to visit the link.
 4. Keep the draft strictly under 1400 characters (Google GBP limit is 1500).
 5. Output ONLY the drafted post text directly without markdown quotes, backticks, or introduction.";
+
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -2506,6 +2684,7 @@ Direct JSON-LD Script Output:";
     /* Treatments CRUD */
     public function storeTreatment(Request $request)
     {
+        $this->checkPermission('treatments');
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:treatments,slug',
@@ -2539,6 +2718,7 @@ Direct JSON-LD Script Output:";
 
     public function updateTreatment(Request $request, $id)
     {
+        $this->checkPermission('treatments');
         $treatment = \App\Models\Treatment::findOrFail($id);
 
         $validated = $request->validate([
@@ -2573,6 +2753,7 @@ Direct JSON-LD Script Output:";
 
     public function deleteTreatment($id)
     {
+        $this->checkPermission('treatments');
         $treatment = \App\Models\Treatment::findOrFail($id);
         if ($treatment->image) {
             Storage::disk('public')->delete($treatment->image);
@@ -2585,6 +2766,7 @@ Direct JSON-LD Script Output:";
     /* Specialists CRUD */
     public function storeSpecialist(Request $request)
     {
+        $this->checkPermission('specialists');
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'designation' => 'nullable|string|max:255',
@@ -2622,6 +2804,7 @@ Direct JSON-LD Script Output:";
 
     public function updateSpecialist(Request $request, $id)
     {
+        $this->checkPermission('specialists');
         $specialist = \App\Models\TeamMember::findOrFail($id);
 
         $validated = $request->validate([
@@ -2660,6 +2843,7 @@ Direct JSON-LD Script Output:";
 
     public function deleteSpecialist($id)
     {
+        $this->checkPermission('specialists');
         $specialist = \App\Models\TeamMember::findOrFail($id);
         if ($specialist->image) {
             Storage::disk('public')->delete($specialist->image);
@@ -2672,6 +2856,7 @@ Direct JSON-LD Script Output:";
     /* CMS Pages CRUD */
     public function storeCmsPage(Request $request)
     {
+        $this->checkPermission('cms_pages');
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:cms_pages,slug',
@@ -2704,6 +2889,7 @@ Direct JSON-LD Script Output:";
 
     public function updateCmsPage(Request $request, $id)
     {
+        $this->checkPermission('cms_pages');
         $page = \App\Models\CmsPage::findOrFail($id);
 
         $validated = $request->validate([
@@ -2737,6 +2923,7 @@ Direct JSON-LD Script Output:";
 
     public function deleteCmsPage($id)
     {
+        $this->checkPermission('cms_pages');
         $page = \App\Models\CmsPage::findOrFail($id);
         if ($page->image) {
             Storage::disk('public')->delete($page->image);
@@ -2745,6 +2932,122 @@ Direct JSON-LD Script Output:";
 
         return redirect()->back()->with('success', 'CMS page deleted successfully!');
     }
+
+    private function checkPermission($module)
+    {
+        $user = Auth::user();
+        if ($user->role === 'superadmin') {
+            return;
+        }
+
+        $permissions = is_array($user->permissions) ? $user->permissions : (json_decode($user->permissions ?? '[]', true) ?: []);
+        if (!in_array('all', $permissions) && !in_array($module, $permissions)) {
+            abort(403, 'Unauthorized action. You do not have permission for this module.');
+        }
+    }
+
+    public function storeUser(Request $request)
+    {
+        $this->checkPermission('users');
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:6',
+            'role' => 'required|string|in:superadmin,admin',
+            'permissions' => 'nullable|array',
+        ]);
+
+        $permissions = $request->input('role') === 'superadmin' ? ['all'] : ($request->input('permissions') ?? []);
+
+        \App\Models\User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Hash::make($request->password),
+            'role' => $request->role,
+            'permissions' => $permissions,
+        ]);
+
+        return redirect()->back()->with('success', 'Admin user created successfully!');
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $this->checkPermission('users');
+
+        $user = \App\Models\User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:6',
+            'role' => 'required|string|in:superadmin,admin',
+            'permissions' => 'nullable|array',
+        ]);
+
+        // Prevent self-demotion or self-modification of role/permissions for security
+        if (Auth::id() === (int)$id) {
+            $role = $user->role;
+            $permissions = $user->permissions;
+        } else {
+            $role = $request->role;
+            $permissions = $request->role === 'superadmin' ? ['all'] : ($request->input('permissions') ?? []);
+        }
+
+        $updateData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $role,
+            'permissions' => $permissions,
+        ];
+
+        if ($request->filled('password')) {
+            $updateData['password'] = \Hash::make($request->password);
+        }
+
+        $user->update($updateData);
+
+        return redirect()->back()->with('success', 'Admin user updated successfully!');
+    }
+
+    public function deleteUser($id)
+    {
+        $this->checkPermission('users');
+
+        if (Auth::id() === (int)$id) {
+            return redirect()->back()->with('error', 'You cannot delete yourself!');
+        }
+
+        $user = \App\Models\User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->back()->with('success', 'Admin user deleted successfully!');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $updateData = [
+            'name' => $request->name,
+            'email' => $request->email,
+        ];
+
+        if ($request->filled('password')) {
+            $updateData['password'] = \Hash::make($request->password);
+        }
+
+        $user->update($updateData);
+
+        return redirect()->back()->with('success', 'Your profile details updated successfully!');
+    }
 }
+
 
 

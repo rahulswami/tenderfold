@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
-@section('title', $specialist->name . ' - ' . $specialist->designation . ' | SumitZ Clinic')
+@section('title', ($specialist->metatitle ?? ($specialist->name . ' - ' . $specialist->designation . ' | SumitZ Clinic')))
 @section('meta_description', $specialist->metadescription ?? Str::limit(strip_tags($specialist->description), 150))
+@section('meta_keywords', ($specialist->metakeywords ?? ''))
+
 
 @section('schema')
     @if(!empty($specialist->schema_markup))

@@ -1,9 +1,19 @@
+@php
+    $currentUser = Auth::user();
+    $isSuper = $currentUser->role === 'superadmin';
+    $userPerms = is_array($currentUser->permissions) ? $currentUser->permissions : (json_decode($currentUser->permissions ?? '[]', true) ?: []);
+    $hasAccess = function($tab) use ($isSuper, $userPerms) {
+        return $isSuper || in_array('all', $userPerms) || in_array($tab, $userPerms);
+    };
+@endphp
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS Admin Dashboard | MLG Finedge</title>
+    <title>CMS Admin Dashboard | {{ $site['site_name'] ?? 'SumitZ Clinic' }}</title>
+
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- Outfit Font -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -921,29 +931,33 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li class="menu-item"><a href="{{ route('admin.tab', 'general') }}" class="tab-btn {{ $activeTab === 'general' ? 'active' : '' }}" id="btn-general"><i data-lucide="settings"></i> General Settings</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'leads') }}" class="tab-btn {{ $activeTab === 'leads' ? 'active' : '' }}" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</a></li>
-            <li class="menu-item">
+            @if($hasAccess('general'))<li class="menu-item"><a href="{{ route('admin.tab', 'general') }}" class="tab-btn {{ $activeTab === 'general' ? 'active' : '' }}" id="btn-general"><i data-lucide="settings"></i> General Settings</a></li>@endif
+            @if($hasAccess('leads'))<li class="menu-item"><a href="{{ route('admin.tab', 'leads') }}" class="tab-btn {{ $activeTab === 'leads' ? 'active' : '' }}" id="btn-leads"><i data-lucide="inbox"></i> Leads Manager</a></li>@endif
+            @if($hasAccess('livechat'))<li class="menu-item">
                 <a href="{{ route('admin.tab', 'livechat') }}" class="tab-btn {{ $activeTab === 'livechat' ? 'active' : '' }}" id="btn-livechat" style="position: relative;">
                     <i data-lucide="message-square"></i> Live Chat Support
                     <span id="admin-chat-total-badge" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #ef4444; color: white; font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span>
                 </a>
-            </li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'branding') }}" class="tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'slider') }}" class="tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'testimonials') }}" class="tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'styling') }}" class="tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="btn-styling"><i data-lucide="palette"></i> Section Backgrounds</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'pagecontents') }}" class="tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="btn-pagecontents"><i data-lucide="file-text"></i> Page Editor</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'landing') }}" class="tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="btn-landing"><i data-lucide="layout"></i> AI Landing Pages</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'services') }}" class="tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="btn-services"><i data-lucide="layers"></i> Services Manager</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'treatments') }}" class="tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="btn-treatments"><i data-lucide="activity"></i> Treatments Manager</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'specialists') }}" class="tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="btn-specialists"><i data-lucide="user-check"></i> Specialists Manager</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'cms_pages') }}" class="tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'blogs') }}" class="tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'media') }}" class="tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'analytics') }}" class="tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</a></li>
-            <li class="menu-item"><a href="{{ route('admin.tab', 'seo') }}" class="tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</a></li>
+            </li>@endif
+            @if($hasAccess('branding'))<li class="menu-item"><a href="{{ route('admin.tab', 'branding') }}" class="tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</a></li>@endif
+            @if($hasAccess('slider'))<li class="menu-item"><a href="{{ route('admin.tab', 'slider') }}" class="tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</a></li>@endif
+            @if($hasAccess('testimonials'))<li class="menu-item"><a href="{{ route('admin.tab', 'testimonials') }}" class="tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</a></li>@endif
+            @if($hasAccess('styling'))<li class="menu-item"><a href="{{ route('admin.tab', 'styling') }}" class="tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="btn-styling"><i data-lucide="palette"></i> Section Backgrounds</a></li>@endif
+            @if($hasAccess('pagecontents'))<li class="menu-item"><a href="{{ route('admin.tab', 'pagecontents') }}" class="tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="btn-pagecontents"><i data-lucide="file-text"></i> Page Editor</a></li>@endif
+            @if($hasAccess('landing'))<li class="menu-item"><a href="{{ route('admin.tab', 'landing') }}" class="tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="btn-landing"><i data-lucide="layout"></i> AI Landing Pages</a></li>@endif
+            @if($hasAccess('services'))<li class="menu-item"><a href="{{ route('admin.tab', 'services') }}" class="tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="btn-services"><i data-lucide="layers"></i> Services Manager</a></li>@endif
+            @if($hasAccess('treatments'))<li class="menu-item"><a href="{{ route('admin.tab', 'treatments') }}" class="tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="btn-treatments"><i data-lucide="activity"></i> Treatments Manager</a></li>@endif
+            @if($hasAccess('specialists'))<li class="menu-item"><a href="{{ route('admin.tab', 'specialists') }}" class="tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="btn-specialists"><i data-lucide="user-check"></i> Specialists Manager</a></li>@endif
+            @if($hasAccess('cms_pages'))<li class="menu-item"><a href="{{ route('admin.tab', 'cms_pages') }}" class="tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</a></li>@endif
+            @if($hasAccess('blogs'))<li class="menu-item"><a href="{{ route('admin.tab', 'blogs') }}" class="tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</a></li>@endif
+            @if($hasAccess('media'))<li class="menu-item"><a href="{{ route('admin.tab', 'media') }}" class="tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</a></li>@endif
+            @if($hasAccess('analytics'))<li class="menu-item"><a href="{{ route('admin.tab', 'analytics') }}" class="tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</a></li>@endif
+            @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'seo') }}" class="tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</a></li>@endif
+            @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'notifications') }}" class="tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="btn-notifications"><i data-lucide="bell"></i> Web Notifications</a></li>@endif
+            @if($isSuper)<li class="menu-item"><a href="{{ route('admin.tab', 'users') }}" class="tab-btn {{ $activeTab === 'users' ? 'active' : '' }}" id="btn-users"><i data-lucide="user"></i> Admin Users</a></li>@endif
         </ul>
+
+
         
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -968,6 +982,9 @@
                 <h1>CMS Control Panel</h1>
             </div>
             <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <button class="btn-ai-sparkle" style="padding: 6px 12px; font-size: 0.8rem; height: auto;" onclick="openProfileModal()">
+                    <i data-lucide="user" style="width: 14px; height: 14px; vertical-align: middle;"></i> My Profile
+                </button>
                 <div class="admin-user">
                     <span>{{ Auth::user() ? Auth::user()->name : 'Admin' }}</span>
                     <div class="admin-user-avatar">{{ Auth::user() ? substr(Auth::user()->name, 0, 1) : 'A' }}</div>
@@ -977,24 +994,28 @@
 
         <!-- Mobile Quick-Switch Tabs -->
         <div class="mobile-tabs-scroll">
-            <a href="{{ route('admin.tab', 'general') }}" class="mobile-tab-btn {{ $activeTab === 'general' ? 'active' : '' }}" id="m-btn-general"><i data-lucide="settings" style="width: 14px; height: 14px;"></i> General</a>
-            <a href="{{ route('admin.tab', 'leads') }}" class="mobile-tab-btn {{ $activeTab === 'leads' ? 'active' : '' }}" id="m-btn-leads"><i data-lucide="inbox" style="width: 14px; height: 14px;"></i> Leads</a>
-            <a href="{{ route('admin.tab', 'livechat') }}" class="mobile-tab-btn {{ $activeTab === 'livechat' ? 'active' : '' }}" id="m-btn-livechat" style="position: relative;"><i data-lucide="message-square" style="width: 14px; height: 14px;"></i> Live Chat <span id="admin-chat-mobile-badge" style="position: absolute; right: 2px; top: 2px; background-color: #ef4444; color: white; font-size: 0.6rem; font-weight: 700; width: 14px; height: 14px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span></a>
-            <a href="{{ route('admin.tab', 'branding') }}" class="mobile-tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="m-btn-branding"><i data-lucide="image" style="width: 14px; height: 14px;"></i> Branding</a>
-            <a href="{{ route('admin.tab', 'slider') }}" class="mobile-tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="m-btn-slider"><i data-lucide="sliders" style="width: 14px; height: 14px;"></i> Slider</a>
-            <a href="{{ route('admin.tab', 'testimonials') }}" class="mobile-tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="m-btn-testimonials"><i data-lucide="users" style="width: 14px; height: 14px;"></i> Testimonials</a>
-            <a href="{{ route('admin.tab', 'styling') }}" class="mobile-tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="m-btn-styling"><i data-lucide="palette" style="width: 14px; height: 14px;"></i> Styling</a>
-            <a href="{{ route('admin.tab', 'pagecontents') }}" class="mobile-tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="m-btn-pagecontents"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Pages</a>
-            <a href="{{ route('admin.tab', 'landing') }}" class="mobile-tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="m-btn-landing"><i data-lucide="layout" style="width: 14px; height: 14px;"></i> AI Pages</a>
-            <a href="{{ route('admin.tab', 'services') }}" class="mobile-tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="m-btn-services"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Services</a>
-            <a href="{{ route('admin.tab', 'treatments') }}" class="mobile-tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="m-btn-treatments"><i data-lucide="activity" style="width: 14px; height: 14px;"></i> Treatments</a>
-            <a href="{{ route('admin.tab', 'specialists') }}" class="mobile-tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="m-btn-specialists"><i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Specialists</a>
-            <a href="{{ route('admin.tab', 'cms_pages') }}" class="mobile-tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="m-btn-cms_pages"><i data-lucide="files" style="width: 14px; height: 14px;"></i> CMS Pages</a>
-            <a href="{{ route('admin.tab', 'blogs') }}" class="mobile-tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</a>
-            <a href="{{ route('admin.tab', 'media') }}" class="mobile-tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</a>
-            <a href="{{ route('admin.tab', 'analytics') }}" class="mobile-tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</a>
-            <a href="{{ route('admin.tab', 'seo') }}" class="mobile-tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="m-btn-seo"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> SEO</a>
+            @if($hasAccess('general'))<a href="{{ route('admin.tab', 'general') }}" class="mobile-tab-btn {{ $activeTab === 'general' ? 'active' : '' }}" id="m-btn-general"><i data-lucide="settings" style="width: 14px; height: 14px;"></i> General</a>@endif
+            @if($hasAccess('leads'))<a href="{{ route('admin.tab', 'leads') }}" class="mobile-tab-btn {{ $activeTab === 'leads' ? 'active' : '' }}" id="m-btn-leads"><i data-lucide="inbox" style="width: 14px; height: 14px;"></i> Leads</a>@endif
+            @if($hasAccess('livechat'))<a href="{{ route('admin.tab', 'livechat') }}" class="mobile-tab-btn {{ $activeTab === 'livechat' ? 'active' : '' }}" id="m-btn-livechat" style="position: relative;"><i data-lucide="message-square" style="width: 14px; height: 14px;"></i> Live Chat <span id="admin-chat-mobile-badge" style="position: absolute; right: 2px; top: 2px; background-color: #ef4444; color: white; font-size: 0.6rem; font-weight: 700; width: 14px; height: 14px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span></a>@endif
+            @if($hasAccess('branding'))<a href="{{ route('admin.tab', 'branding') }}" class="mobile-tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="m-btn-branding"><i data-lucide="image" style="width: 14px; height: 14px;"></i> Branding</a>@endif
+            @if($hasAccess('slider'))<a href="{{ route('admin.tab', 'slider') }}" class="mobile-tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="m-btn-slider"><i data-lucide="sliders" style="width: 14px; height: 14px;"></i> Slider</a>@endif
+            @if($hasAccess('testimonials'))<a href="{{ route('admin.tab', 'testimonials') }}" class="mobile-tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="m-btn-testimonials"><i data-lucide="users" style="width: 14px; height: 14px;"></i> Testimonials</a>@endif
+            @if($hasAccess('styling'))<a href="{{ route('admin.tab', 'styling') }}" class="mobile-tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="m-btn-styling"><i data-lucide="palette" style="width: 14px; height: 14px;"></i> Styling</a>@endif
+            @if($hasAccess('pagecontents'))<a href="{{ route('admin.tab', 'pagecontents') }}" class="mobile-tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="m-btn-pagecontents"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Pages</a>@endif
+            @if($hasAccess('landing'))<a href="{{ route('admin.tab', 'landing') }}" class="mobile-tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="m-btn-landing"><i data-lucide="layout" style="width: 14px; height: 14px;"></i> AI Pages</a>@endif
+            @if($hasAccess('services'))<a href="{{ route('admin.tab', 'services') }}" class="mobile-tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="m-btn-services"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Services</a>@endif
+            @if($hasAccess('treatments'))<a href="{{ route('admin.tab', 'treatments') }}" class="mobile-tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="m-btn-treatments"><i data-lucide="activity" style="width: 14px; height: 14px;"></i> Treatments</a>@endif
+            @if($hasAccess('specialists'))<a href="{{ route('admin.tab', 'specialists') }}" class="mobile-tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="m-btn-specialists"><i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Specialists</a>@endif
+            @if($hasAccess('cms_pages'))<a href="{{ route('admin.tab', 'cms_pages') }}" class="mobile-tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="m-btn-cms_pages"><i data-lucide="files" style="width: 14px; height: 14px;"></i> CMS Pages</a>@endif
+            @if($hasAccess('blogs'))<a href="{{ route('admin.tab', 'blogs') }}" class="mobile-tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</a>@endif
+            @if($hasAccess('media'))<a href="{{ route('admin.tab', 'media') }}" class="mobile-tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</a>@endif
+            @if($hasAccess('analytics'))<a href="{{ route('admin.tab', 'analytics') }}" class="mobile-tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</a>@endif
+            @if($hasAccess('seo'))<a href="{{ route('admin.tab', 'seo') }}" class="mobile-tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="m-btn-seo"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> SEO</a>@endif
+            @if($hasAccess('seo'))<a href="{{ route('admin.tab', 'notifications') }}" class="mobile-tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="m-btn-notifications"><i data-lucide="bell" style="width: 14px; height: 14px;"></i> Alerts</a>@endif
+            @if($isSuper)<a href="{{ route('admin.tab', 'users') }}" class="mobile-tab-btn {{ $activeTab === 'users' ? 'active' : '' }}" id="m-btn-users"><i data-lucide="user" style="width: 14px; height: 14px;"></i> Admins</a>@endif
+
         </div>
+
 
         <div class="admin-content">
             <!-- Success Banner -->
@@ -1510,9 +1531,14 @@
                     
                     <!-- Chat Sessions List (Sidebar) -->
                     <div style="width: 320px; border-right: 1px solid var(--admin-border); display: flex; flex-direction: column; background-color: var(--admin-dark-sidebar);">
-                        <div style="padding: 1.25rem; border-bottom: 1px solid var(--admin-border);">
-                            <h2 style="margin: 0; font-size: 1.2rem;">Live Support Chats</h2>
-                            <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--admin-text-muted);">Real-time patient chat sessions</p>
+                        <div style="padding: 1.25rem; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h2 style="margin: 0; font-size: 1.2rem;">Live Support Chats</h2>
+                                <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--admin-text-muted);">Real-time patient chat sessions</p>
+                            </div>
+                            <button type="button" onclick="loadAdminChatSessions(); if(typeof showToast === 'function') showToast('Chat list refreshed!', 'success');" style="padding: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: var(--mint-green); cursor: pointer; display: flex; align-items: center; justify-content: center; height: auto;" title="Refresh Chat List">
+                                <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+                            </button>
                         </div>
                         <div id="admin-chat-sessions-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column;">
                             <!-- Active sessions loaded dynamically -->
@@ -1530,10 +1556,16 @@
                                 <h3 id="admin-chat-header-title" style="margin: 0; font-size: 1.05rem; color: var(--mint-green);">Select a Chat</h3>
                                 <p id="admin-chat-header-subtitle" style="margin: 2px 0 0 0; font-size: 0.8rem; color: var(--admin-text-muted);">Please pick a patient chat session from the list to start responding.</p>
                             </div>
-                            <button type="button" id="admin-chat-delete-btn" onclick="deleteCurrentChat()" class="btn-action delete" style="display: none; align-items: center; gap: 4px; padding: 6px 12px; font-size: 0.8rem; height: auto; background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; cursor: pointer;">
-                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Close & Delete Chat
-                            </button>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <button type="button" id="admin-chat-refresh-btn" onclick="loadAdminChatMessages(); if(typeof showToast === 'function') showToast('Conversation refreshed!', 'success');" style="display: none; align-items: center; gap: 4px; padding: 6px 12px; font-size: 0.8rem; height: auto; background-color: rgba(92, 203, 179, 0.1); color: var(--mint-green); border: 1px solid rgba(92, 203, 179, 0.2); border-radius: 4px; cursor: pointer;">
+                                    <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Refresh Messages
+                                </button>
+                                <button type="button" id="admin-chat-delete-btn" onclick="deleteCurrentChat()" class="btn-action delete" style="display: none; align-items: center; gap: 4px; padding: 6px 12px; font-size: 0.8rem; height: auto; background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; cursor: pointer;">
+                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Close & Delete Chat
+                                </button>
+                            </div>
                         </div>
+
 
                         <!-- Messages Content area -->
                         <div id="admin-chat-messages-wrap" style="flex-grow: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
@@ -2250,7 +2282,24 @@
                                 <textarea id="ser_schema_markup" name="schema_markup" class="form-control" rows="3" placeholder='<script type="application/ld+json">...</script>'></textarea>
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default service schema.</span>
                             </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <hr style="border-color: var(--admin-border); margin: 1rem 0;">
+                                <h4 style="margin-top: 0.5rem; margin-bottom: 0.5rem; color: var(--accent-teal);">SEO Metadata (Optional)</h4>
+                            </div>
                             <div class="form-group">
+                                <label for="ser_metatitle">Meta Title (SEO)</label>
+                                <input type="text" id="ser_metatitle" name="metatitle" class="form-control" placeholder="Service Meta Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="ser_metakeywords">Meta Keywords (Comma separated)</label>
+                                <input type="text" id="ser_metakeywords" name="metakeywords" class="form-control" placeholder="physiotherapy, pune, doctor">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="ser_metadescription">Meta Description (SEO)</label>
+                                <textarea id="ser_metadescription" name="metadescription" class="form-control" rows="2" placeholder="SEO optimized description for search engines"></textarea>
+                            </div>
+                            <div class="form-group">
+
                                 <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 1rem;">
                                     <input type="checkbox" id="ser_is_active" name="is_active" value="1" checked style="width: 18px; height: 18px; accent-color: var(--mint-green);">
                                     Active / Visible in navigation
@@ -2772,7 +2821,23 @@
                                 <input type="text" id="blog_image_url" name="image_url" class="form-control" placeholder="https://images.mlgfinedge.com/cover.webp">
                             </div>
                         </div>
+                        <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--accent-teal);">SEO Metadata (Optional)</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="blog_metatitle">Meta Title (SEO)</label>
+                                <input type="text" id="blog_metatitle" name="metatitle" class="form-control" placeholder="Article Meta Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="blog_metakeywords">Meta Keywords (Comma separated)</label>
+                                <input type="text" id="blog_metakeywords" name="metakeywords" class="form-control" placeholder="orthopedic, clinic, baner">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="blog_metadescription">Meta Description (SEO)</label>
+                                <textarea id="blog_metadescription" name="metadescription" class="form-control" rows="2" placeholder="SEO optimized description for search engines"></textarea>
+                            </div>
+                        </div>
                         <div class="form-group" style="margin-top: 1.25rem;">
+
                             <label for="blog_summary">Short Summary (shown in blog listing card)</label>
                             <textarea id="blog_summary" name="summary" class="form-control" required placeholder="A brief 1-2 sentence description of the article..." rows="2"></textarea>
                         </div>
@@ -3428,7 +3493,249 @@
                     </p>
                 </div>
             </div>
+
+            @if($isSuper)
+            <!-- Admin Users Tab Panel -->
+            <div class="tab-panel @if($activeTab === 'users') active @endif" id="tab-users">
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <h2 style="margin: 0;"><i data-lucide="user" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Admin Users Management</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 5px 0 0 0;">
+                                Add more administrators, change their email/password, and fine-tune their module permissions.
+                            </p>
+                        </div>
+                        <button type="button" class="btn-submit" onclick="openCreateUserModal()" style="width: auto; padding: 0.65rem 1.25rem; font-size: 0.85rem; background-color: var(--mint-green); color: #0d1718; display: inline-flex; align-items: center; gap: 6px;">
+                            <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Create Admin User
+                        </button>
+                    </div>
+
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">ID</th>
+                                    <th style="width: 20%;">Name</th>
+                                    <th style="width: 25%;">Email</th>
+                                    <th style="width: 15%;">Role</th>
+                                    <th style="width: 20%;">Module Permissions</th>
+                                    <th style="width: 15%; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($users as $usr)
+                                    <tr>
+                                        <td>{{ $usr->id }}</td>
+                                        <td><strong>{{ $usr->name }}</strong></td>
+                                        <td>{{ $usr->email }}</td>
+                                        <td>
+                                            <span class="badge" style="background-color: {{ $usr->role === 'superadmin' ? 'rgba(92, 203, 179, 0.15)' : 'rgba(255,255,255,0.06)' }}; color: {{ $usr->role === 'superadmin' ? 'var(--mint-green)' : '#fff' }}; border: 1px solid {{ $usr->role === 'superadmin' ? 'rgba(92, 203, 179, 0.3)' : 'rgba(255,255,255,0.1)' }}; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase;">
+                                                {{ $usr->role }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if($usr->role === 'superadmin' || (is_array($usr->permissions) && in_array('all', $usr->permissions)))
+                                                <span style="color: var(--mint-green); font-size: 0.8rem;">All Modules (*)</span>
+                                            @else
+                                                <span style="font-size: 0.8rem; line-height: 1.4; display: block; color: var(--admin-text-muted);">
+                                                    {{ implode(', ', array_map(function($p) use ($modules) { return $modules[$p] ?? $p; }, is_array($usr->permissions) ? $usr->permissions : (json_decode($usr->permissions ?? '[]', true) ?: []))) ?: 'None' }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                                                <button type="button" class="btn-action edit" title="Edit Admin" onclick="openEditUserModal('{{ json_encode($usr) }}')">
+                                                    <i data-lucide="edit" style="width: 14px; height: 14px;"></i>
+                                                </button>
+                                                @if(Auth::id() !== $usr->id)
+                                                    <form action="{{ route('admin.users.delete', $usr->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this admin user?');" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn-action delete" title="Delete Admin">
+                                                            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+
+            @if($hasAccess('seo'))
+            <!-- Web Notifications Management Tab Panel -->
+            <div class="tab-panel @if($activeTab === 'notifications') active @endif" id="tab-notifications">
+                <div class="form-grid" style="grid-template-columns: 2fr 1fr; gap: 1.5rem; align-items: start;">
+                    
+                    <!-- Broadcaster Form Card -->
+                    <div class="admin-card">
+                        <h2><i data-lucide="bell" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Push Notification Broadcaster</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                            Compose a notification to broadcast instantly to all subscribed visitor browsers. You can select an existing site entity to auto-fill the details.
+                        </p>
+                        
+                        <form action="{{ route('admin.notifications.broadcast') }}" method="POST" id="broadcast-form">
+                            @csrf
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="broadcast_type">Link Notification To:</label>
+                                <select id="broadcast_type" name="type" class="form-control" onchange="handleBroadcastTypeChange(this.value)">
+                                    <option value="custom">Custom Message (Manual URL)</option>
+                                    <option value="blog">Blog Post</option>
+                                    <option value="service">Service Page</option>
+                                    <option value="cms_page">Custom CMS Page</option>
+                                    <option value="landing">AI Landing Page</option>
+                                    <option value="specialist">Specialist Doctor Profile</option>
+                                </select>
+                            </div>
+
+                            <!-- Dynamic Selectors (initially hidden) -->
+                            <div class="form-group" id="group-select-blog" style="display: none; margin-bottom: 1rem;">
+                                <label for="select_blog">Select Blog Article:</label>
+                                <select id="select_blog" class="form-control" onchange="autoFillFromEntity('blog', this.value)">
+                                    <option value="">-- Choose Blog --</option>
+                                    @foreach($blogs as $b)
+                                        <option value="{{ $b->id }}" data-title="{{ $b->title }}" data-summary="{{ Str::limit(strip_tags($b->summary), 150) }}" data-url="{{ route('blog.show', $b->slug) }}">{{ $b->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="group-select-service" style="display: none; margin-bottom: 1rem;">
+                                <label for="select_service">Select Service:</label>
+                                <select id="select_service" class="form-control" onchange="autoFillFromEntity('service', this.value)">
+                                    <option value="">-- Choose Service --</option>
+                                    @foreach($services as $s)
+                                        <option value="{{ $s->id }}" data-title="{{ $s->service_name }}" data-summary="{{ Str::limit(strip_tags($s->short_description), 150) }}" data-url="{{ route('services.show', $s->slug) }}">{{ $s->service_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="group-select-cms_page" style="display: none; margin-bottom: 1rem;">
+                                <label for="select_cms_page">Select Custom Page:</label>
+                                <select id="select_cms_page" class="form-control" onchange="autoFillFromEntity('cms_page', this.value)">
+                                    <option value="">-- Choose CMS Page --</option>
+                                    @foreach($cmsPages as $cp)
+                                        <option value="{{ $cp->id }}" data-title="{{ $cp->title }}" data-summary="Learn more about our clinic services: {{ $cp->title }}" data-url="{{ url('/' . $cp->slug) }}">{{ $cp->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="group-select-landing" style="display: none; margin-bottom: 1rem;">
+                                <label for="select_landing">Select AI Landing Page:</label>
+                                <select id="select_landing" class="form-control" onchange="autoFillFromEntity('landing', this.value)">
+                                    <option value="">-- Choose Landing Page --</option>
+                                    @foreach($landingPages as $lp)
+                                        <option value="{{ $lp->id }}" data-title="{{ $lp->target_title }}" data-summary="{{ Str::limit(strip_tags($lp->hero_subtitle), 150) }}" data-url="{{ route('landing.show', $lp->slug) }}">{{ $lp->target_title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="group-select-specialist" style="display: none; margin-bottom: 1rem;">
+                                <label for="select_specialist">Select Specialist Profile:</label>
+                                <select id="select_specialist" class="form-control" onchange="autoFillFromEntity('specialist', this.value)">
+                                    <option value="">-- Choose Specialist --</option>
+                                    @foreach($specialists as $sp)
+                                        <option value="{{ $sp->id }}" data-title="{{ $sp->name }}" data-summary="{{ $sp->designation }} - specialist profile." data-url="{{ route('specialists.show', $sp->slug) }}">{{ $sp->name }} ({{ $sp->designation }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Title, Message, URL -->
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="broadcast_title">Notification Title</label>
+                                <input type="text" id="broadcast_title" name="title" class="form-control" required placeholder="e.g. New Treatment Available!" oninput="updateLivePreview()">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="broadcast_message">Message Body</label>
+                                <textarea id="broadcast_message" name="message" class="form-control" rows="3" required placeholder="Enter description details (keep under 200 characters)..." oninput="updateLivePreview()"></textarea>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1.5rem;">
+                                <label for="broadcast_url">Notification Redirect URL</label>
+                                <input type="url" id="broadcast_url" name="url" class="form-control" placeholder="e.g. https://www.drsumitz.com/blogs/my-post" oninput="updateLivePreview()">
+                            </div>
+
+                            <button type="submit" class="btn-submit" style="background-color: var(--mint-green); color: #0d1718; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <i data-lucide="send"></i> Broadcast Push Alert
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Live Preview Card -->
+                    <div class="admin-card" style="position: sticky; top: 20px;">
+                        <h2>Live Preview</h2>
+                        <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin-bottom: 1rem; margin-top: -0.5rem;">
+                            How this notification will display on visitor browsers:
+                        </p>
+                        
+                        <div style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); font-family: sans-serif; display: flex; gap: 12px; align-items: start; color: white;">
+                            <div style="width: 36px; height: 36px; border-radius: 6px; background-color: var(--mint-green); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i data-lucide="bell" style="width: 18px; height: 18px; color: #0d1718;"></i>
+                            </div>
+                            <div style="flex-grow: 1; overflow: hidden;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                    <strong id="preview-title" style="font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">Dr. Sumitz Clinic</strong>
+                                    <span style="font-size: 0.65rem; color: #94a3b8;">now</span>
+                                </div>
+                                <p id="preview-message" style="margin: 0; font-size: 0.75rem; color: #cbd5e1; line-height: 1.3; word-break: break-word;">Waiting for input details...</p>
+                                <span id="preview-url" style="display: block; font-size: 0.65rem; color: var(--mint-green); margin-top: 4px; text-decoration: underline; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">https://www.drsumitz.com</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sent Notifications Log -->
+                <div class="admin-card" style="margin-top: 2rem;">
+                    <h2>Sent Notifications History</h2>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">ID</th>
+                                    <th style="width: 20%;">Title</th>
+                                    <th style="width: 40%;">Message Details</th>
+                                    <th style="width: 20%;">Redirect URL</th>
+                                    <th style="width: 15%;">Broadcast Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($notificationsLog as $log)
+                                    <tr>
+                                        <td>{{ $log->id }}</td>
+                                        <td><strong>{{ $log->title }}</strong></td>
+                                        <td>{{ $log->message }}</td>
+                                        <td>
+                                            @if($log->url)
+                                                <a href="{{ $log->url }}" target="_blank" style="color: var(--mint-green); text-decoration: underline; font-size: 0.8rem;">{{ Str::limit($log->url, 40) }}</a>
+                                            @else
+                                                <span style="color: var(--admin-text-muted); font-size: 0.8rem;">None</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($log->created_at)->format('d M Y, h:i A') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: var(--admin-text-muted);">No broadcast alerts sent yet.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        {{ $notificationsLog->links() }}
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
+
+
     </div>
 
     <!-- AI Toast Notification Container -->
@@ -3473,7 +3780,8 @@
             <div id="ai-blog-form-wrapper">
                 <div class="form-group">
                     <label for="ai_blog_prompt">What should the blog article be about?</label>
-                    <textarea id="ai_blog_prompt" class="form-control" rows="4" placeholder="e.g. Benefits of choosing a home loan through a broker vs directly from a bank..."></textarea>
+                    <textarea id="ai_blog_prompt" class="form-control" rows="4" placeholder="e.g. Benefits of physiotherapy for chronic joint pain, recovering post knee surgery, or preventing back pain at a desk job..."></textarea>
+
                 </div>
                 
                 <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -3575,17 +3883,18 @@
             <div id="ai-service-form-wrapper">
                 <div class="form-group">
                     <label for="ai_service_prompt">Describe the Service Page you want to create:</label>
-                    <textarea id="ai_service_prompt" class="form-control" rows="4" placeholder="e.g. Home Renovation Loans: covering collateral requirements, processing speed, competitive interest rates starting at 8.9% p.a., and top reasons to apply."></textarea>
+                    <textarea id="ai_service_prompt" class="form-control" rows="4" placeholder="e.g. Robotic Joint Replacement: covering clinical precision, recovery timelines, hospital stay durations, and patient consulting hours."></textarea>
                 </div>
                 
                 <div class="form-group">
                     <label for="ai_service_tone">Writing Tone</label>
                     <select id="ai_service_tone" class="form-control">
-                        <option value="Professional & Financial">Professional & Financial</option>
+                        <option value="Professional & Clinical">Professional & Clinical</option>
                         <option value="Informative & Helpful">Informative & Helpful</option>
-                        <option value="Persuasive & Sales-Oriented">Persuasive & Sales-Oriented</option>
+                        <option value="Persuasive & Patient-Oriented">Persuasive & Patient-Oriented</option>
                     </select>
                 </div>
+
                 
                 <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
                     <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('service')">Cancel</button>
@@ -3950,12 +4259,13 @@
                 if (typeof loadAdminChatSessions === 'function') {
                     loadAdminChatSessions();
                     if (typeof adminSessionsPoll !== 'undefined') clearInterval(adminSessionsPoll);
-                    adminSessionsPoll = setInterval(loadAdminChatSessions, 5000);
+                    adminSessionsPoll = setInterval(loadAdminChatSessions, 60000);
                 }
             } else {
                 if (typeof adminSessionsPoll !== 'undefined') clearInterval(adminSessionsPoll);
                 if (typeof adminMessagesPoll !== 'undefined') clearInterval(adminMessagesPoll);
             }
+
         }
 
         // Initialize defensively on page load or immediately if DOM is ready
@@ -4640,6 +4950,39 @@
             );
         }
 
+        let previousUnreadSum = null;
+
+        function playNotificationChime() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const context = new AudioContext();
+                
+                const playNote = (freq, start, duration) => {
+                    const osc = context.createOscillator();
+                    const gain = context.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, start);
+                    
+                    gain.gain.setValueAtTime(0.08, start);
+                    gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+                    
+                    osc.connect(gain);
+                    gain.connect(context.destination);
+                    
+                    osc.start(start);
+                    osc.stop(start + duration);
+                };
+                
+                const now = context.currentTime;
+                playNote(523.25, now, 0.25); // C5
+                playNote(659.25, now + 0.15, 0.4); // E5
+            } catch (e) {
+                console.error('Audio synthesizer chime failed:', e);
+            }
+        }
+
         function loadAdminChatSessions() {
             fetch('/admin/chats')
                 .then(r => r.json())
@@ -4657,6 +5000,14 @@
             // Update sidebar unread totals for menu badges
             let totalUnread = 0;
             sessions.forEach(s => totalUnread += s.unread_count);
+            
+            if (previousUnreadSum !== null && totalUnread > previousUnreadSum) {
+                playNotificationChime();
+                if (typeof showToast === 'function') {
+                    showToast('New message received from visitor!', 'success');
+                }
+            }
+            previousUnreadSum = totalUnread;
             
             const totalBadge = document.getElementById('admin-chat-total-badge');
             const mobileBadge = document.getElementById('admin-chat-mobile-badge');
@@ -4716,6 +5067,7 @@
             
             document.getElementById('admin-chat-input-wrap').style.display = 'flex';
             document.getElementById('admin-chat-delete-btn').style.display = 'inline-flex';
+            document.getElementById('admin-chat-refresh-btn').style.display = 'inline-flex';
             
             document.getElementById('admin-chat-header-title').textContent = `Session ${sessionId.substr(5, 6)}`;
             document.getElementById('admin-chat-header-subtitle').textContent = `Full Session ID: ${sessionId}`;
@@ -4723,8 +5075,9 @@
             loadAdminChatMessages();
             
             clearInterval(adminMessagesPoll);
-            adminMessagesPoll = setInterval(loadAdminChatMessages, 3000);
+            adminMessagesPoll = setInterval(loadAdminChatMessages, 60000);
         }
+
 
         function loadAdminChatMessages() {
             if (!currentAdminSessionId) return;
@@ -4821,7 +5174,9 @@
                         document.getElementById('admin-chat-header-title').textContent = 'Select a Chat';
                         document.getElementById('admin-chat-header-subtitle').textContent = 'Please pick a patient chat session from the list to start responding.';
                         document.getElementById('admin-chat-delete-btn').style.display = 'none';
+                        document.getElementById('admin-chat-refresh-btn').style.display = 'none';
                         document.getElementById('admin-chat-input-wrap').style.display = 'none';
+
                         
                         setTimeout(() => lucide.createIcons(), 10);
                         loadAdminChatSessions();
@@ -4953,6 +5308,9 @@
                     document.getElementById('blog_published_at').value = data.published_at;
                     document.getElementById('blog_summary').value = data.summary;
                     document.getElementById('blog_schema_markup').value = data.schema_markup || '';
+                    document.getElementById('blog_metatitle').value = data.metatitle || '';
+                    document.getElementById('blog_metadescription').value = data.metadescription || '';
+                    document.getElementById('blog_metakeywords').value = data.metakeywords || '';
                     if (blogEditor) {
                         blogEditor.setData(data.content || '');
                     } else {
@@ -4984,6 +5342,9 @@
             document.getElementById('blog_published_at').value = "{{ date('Y-m-d\TH:i') }}";
             document.getElementById('blog_summary').value = '';
             document.getElementById('blog_schema_markup').value = '';
+            document.getElementById('blog_metatitle').value = '';
+            document.getElementById('blog_metadescription').value = '';
+            document.getElementById('blog_metakeywords').value = '';
             document.getElementById('blog_image_url').value = '';
             if (blogEditor) {
                 blogEditor.setData('');
@@ -4993,6 +5354,7 @@
             document.getElementById('blog-submit-btn').innerText = 'Publish Blog Article';
             document.getElementById('blog-cancel-btn').style.display = 'none';
         }
+
 
         // HTML escaping helper
         function escapeHtml(text) {
@@ -5066,6 +5428,9 @@
             
             document.getElementById('ser_summary').value = data.summary || '';
             document.getElementById('ser_schema_markup').value = data.schema_markup || '';
+            document.getElementById('ser_metatitle').value = data.metatitle || '';
+            document.getElementById('ser_metadescription').value = data.metadescription || '';
+            document.getElementById('ser_metakeywords').value = data.metakeywords || '';
             document.getElementById('ser_is_active').checked = !!data.is_active;
             document.getElementById('ser_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
             document.getElementById('ser_icon_url').value = (data.icon_path && (data.icon_path.startsWith('http') || data.icon_path.startsWith('//'))) ? data.icon_path : '';
@@ -5133,6 +5498,9 @@
             
             document.getElementById('ser_summary').value = '';
             document.getElementById('ser_schema_markup').value = '';
+            document.getElementById('ser_metatitle').value = '';
+            document.getElementById('ser_metadescription').value = '';
+            document.getElementById('ser_metakeywords').value = '';
             document.getElementById('ser_is_active').checked = true;
             document.getElementById('ser_image_url').value = '';
             document.getElementById('ser_icon_url').value = '';
@@ -5142,6 +5510,7 @@
             document.getElementById('service-submit-btn').innerText = 'Create Service Page';
             document.getElementById('service-cancel-btn').style.display = 'none';
         }
+
 
         // Bank Edit functions
         // Treatment Edit functions
@@ -5463,9 +5832,10 @@
         function openLandingAiModal(id, title) {
             document.getElementById('ai_landing_id').value = id;
             document.getElementById('ai_landing_target_title').value = title;
-            document.getElementById('ai_landing_prompt').value = 'Create an optimized promotional landing page for ' + title + ' highlighting tailored loan interest options and fast processing payouts.';
+            document.getElementById('ai_landing_prompt').value = 'Create an optimized promotional landing page for ' + title + ' highlighting specialized orthopedic procedures, patient care, recovery success rate, and booking online consultations.';
             openAiModal('landing');
         }
+
 
         function generateAiLandingPage() {
             const id = document.getElementById('ai_landing_id').value;
@@ -5569,6 +5939,20 @@
             formWrapper.style.display = 'none';
             loader.style.display = 'flex';
 
+            let existingTitle = '';
+            let existingSummary = '';
+            let existingContent = '';
+            const isEditing = document.getElementById('blog-cancel-btn').style.display !== 'none';
+            if (isEditing) {
+                existingTitle = document.getElementById('blog_title').value.trim();
+                existingSummary = document.getElementById('blog_summary').value.trim();
+                if (blogEditor) {
+                    existingContent = blogEditor.getData().trim();
+                } else {
+                    existingContent = document.getElementById('blog_content').value.trim();
+                }
+            }
+
             // Generate blog text FIRST (without image to keep it fast!)
             fetch("{{ route('admin.ai.blog') }}", {
                 method: "POST",
@@ -5579,9 +5963,13 @@
                 body: JSON.stringify({
                     prompt: prompt,
                     tone: tone,
-                    generate_image: false
+                    generate_image: false,
+                    existing_title: existingTitle,
+                    existing_summary: existingSummary,
+                    existing_content: existingContent
                 })
             })
+
             .then(res => res.json())
             .then(res => {
                 if (res.success && res.data) {
@@ -5660,6 +6048,47 @@
             formWrapper.style.display = 'none';
             loader.style.display = 'flex';
 
+            let existingName = '';
+            let existingHeroTitle = '';
+            let existingHeroSub = '';
+            let existingIntro = '';
+            let existingTips = '';
+            let existingSummary = '';
+            let existingFaqs = '';
+
+            const isEditing = document.getElementById('service-cancel-btn').style.display !== 'none';
+            if (isEditing) {
+                existingName = document.getElementById('ser_service_name').value.trim();
+                existingHeroTitle = document.getElementById('ser_hero_title').value.trim();
+                existingHeroSub = document.getElementById('ser_hero_subtitle').value.trim();
+                existingSummary = document.getElementById('ser_summary').value.trim();
+                
+                if (serviceIntroEditor) {
+                    existingIntro = serviceIntroEditor.getData().trim();
+                } else {
+                    existingIntro = document.getElementById('ser_intro_content').value.trim();
+                }
+                
+                if (serviceTipsEditor) {
+                    existingTips = serviceTipsEditor.getData().trim();
+                } else {
+                    existingTips = document.getElementById('ser_tips_content').value.trim();
+                }
+
+                const faqItems = [];
+                const questions = document.querySelectorAll('input[name="faq_questions[]"]');
+                const answers = document.querySelectorAll('textarea[name="faq_answers[]"]');
+                for (let i = 0; i < questions.length; i++) {
+                    if (questions[i] && answers[i]) {
+                        faqItems.push({
+                            question: questions[i].value.trim(),
+                            answer: answers[i].value.trim()
+                        });
+                    }
+                }
+                existingFaqs = JSON.stringify(faqItems);
+            }
+
             fetch("{{ route('admin.ai.service') }}", {
                 method: "POST",
                 headers: {
@@ -5668,9 +6097,17 @@
                 },
                 body: JSON.stringify({
                     prompt: prompt,
-                    tone: tone
+                    tone: tone,
+                    existing_service_name: existingName,
+                    existing_hero_title: existingHeroTitle,
+                    existing_hero_subtitle: existingHeroSub,
+                    existing_intro_content: existingIntro,
+                    existing_tips_content: existingTips,
+                    existing_summary: existingSummary,
+                    existing_faqs: existingFaqs
                 })
             })
+
             .then(res => res.json())
             .then(res => {
                 if (res.success && res.data) {
@@ -5858,5 +6295,302 @@
             });
         }
     </script>
+
+    <!-- My Profile Settings Modal -->
+    <div class="ai-modal-overlay" id="profile-modal" style="display: none;">
+        <div class="ai-modal-card" style="border-color: rgba(92, 203, 179, 0.4); box-shadow: 0 10px 30px rgba(92, 203, 179, 0.15);">
+            <button class="ai-modal-close" onclick="closeProfileModal()">&times;</button>
+            <h3><i data-lucide="user"></i> My Profile Settings</h3>
+            
+            <form action="{{ route('admin.profile.update') }}" method="POST" style="margin-top: 1rem;">
+                @csrf
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="profile_name">Full Name</label>
+                    <input type="text" id="profile_name" name="name" class="form-control" value="{{ Auth::user() ? Auth::user()->name : '' }}" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="profile_email">Email Address</label>
+                    <input type="email" id="profile_email" name="email" class="form-control" value="{{ Auth::user() ? Auth::user()->email : '' }}" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="profile_password">New Password (leave blank to keep current)</label>
+                    <input type="password" id="profile_password" name="password" class="form-control" placeholder="Minimum 6 characters">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="profile_password_confirmation">Confirm New Password</label>
+                    <input type="password" id="profile_password_confirmation" name="password_confirmation" class="form-control" placeholder="Re-type password">
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeProfileModal()">Cancel</button>
+                    <button type="submit" class="btn-submit" style="background-color: var(--mint-green); color: #0d1718;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if($isSuper)
+    <!-- Create Admin User Modal -->
+    <div class="ai-modal-overlay" id="create-user-modal" style="display: none;">
+        <div class="ai-modal-card" style="border-color: rgba(92, 203, 179, 0.4); box-shadow: 0 10px 30px rgba(92, 203, 179, 0.15); max-width: 650px;">
+            <button class="ai-modal-close" onclick="closeCreateUserModal()">&times;</button>
+            <h3><i data-lucide="user-plus"></i> Create New Admin User</h3>
+            
+            <form action="{{ route('admin.users.store') }}" method="POST" style="margin-top: 1rem;">
+                @csrf
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="new_user_name">Full Name</label>
+                        <input type="text" id="new_user_name" name="name" class="form-control" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_user_email">Email Address</label>
+                        <input type="email" id="new_user_email" name="email" class="form-control" required placeholder="john@example.com">
+                    </div>
+                </div>
+                
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="new_user_password">Password</label>
+                        <input type="password" id="new_user_password" name="password" class="form-control" required placeholder="Minimum 6 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_user_role">Role</label>
+                        <select id="new_user_role" name="role" class="form-control" onchange="togglePermissionsCheckboxGrid('new', this.value)">
+                            <option value="admin">Regular Admin</option>
+                            <option value="superadmin">Super Admin (All Permissions)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="new-user-permissions-group" style="margin-bottom: 1.5rem;">
+                    <label style="margin-bottom: 0.5rem; display: block;">Module Access Permissions</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-height: 200px; overflow-y: auto; padding: 10px; border: 1px solid var(--admin-border); border-radius: var(--radius-sm); background: rgba(0,0,0,0.2);">
+                        @php
+                            $modules = [
+                                'general' => 'General Settings',
+                                'leads' => 'Leads Manager',
+                                'livechat' => 'Live Chat Support',
+                                'branding' => 'Branding & Logos',
+                                'slider' => 'Homepage Slider',
+                                'testimonials' => 'Testimonials',
+                                'styling' => 'Section Backgrounds',
+                                'pagecontents' => 'Page Editor',
+                                'landing' => 'AI Landing Pages',
+                                'services' => 'Services Manager',
+                                'treatments' => 'Treatments Manager',
+                                'specialists' => 'Specialists Manager',
+                                'cms_pages' => 'CMS Pages Manager',
+                                'blogs' => 'Blog Manager',
+                                'media' => 'Media Manager',
+                                'analytics' => 'Web Analytics',
+                                'seo' => 'SEO Optimizer'
+                            ];
+                        @endphp
+                        @foreach($modules as $key => $label)
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; cursor: pointer; color: white;">
+                                <input type="checkbox" name="permissions[]" value="{{ $key }}" class="new-user-perm-cb" checked style="width: 14px; height: 14px; accent-color: var(--mint-green);">
+                                {{ $label }}
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeCreateUserModal()">Cancel</button>
+                    <button type="submit" class="btn-submit" style="background-color: var(--mint-green); color: #0d1718;">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Admin User Modal -->
+    <div class="ai-modal-overlay" id="edit-user-modal" style="display: none;">
+        <div class="ai-modal-card" style="border-color: rgba(92, 203, 179, 0.4); box-shadow: 0 10px 30px rgba(92, 203, 179, 0.15); max-width: 650px;">
+            <button class="ai-modal-close" onclick="closeEditUserModal()">&times;</button>
+            <h3><i data-lucide="edit"></i> Edit Admin User</h3>
+            
+            <form id="edit-user-form" action="" method="POST" style="margin-top: 1rem;">
+                @csrf
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="edit_user_name">Full Name</label>
+                        <input type="text" id="edit_user_name" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_user_email">Email Address</label>
+                        <input type="email" id="edit_user_email" name="email" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="edit_user_password">Password (leave blank to keep current)</label>
+                        <input type="password" id="edit_user_password" name="password" class="form-control" placeholder="Minimum 6 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_user_role">Role</label>
+                        <select id="edit_user_role" name="role" class="form-control" onchange="togglePermissionsCheckboxGrid('edit', this.value)">
+                            <option value="admin">Regular Admin</option>
+                            <option value="superadmin">Super Admin (All Permissions)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="edit-user-permissions-group" style="margin-bottom: 1.5rem;">
+                    <label style="margin-bottom: 0.5rem; display: block;">Module Access Permissions</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-height: 200px; overflow-y: auto; padding: 10px; border: 1px solid var(--admin-border); border-radius: var(--radius-sm); background: rgba(0,0,0,0.2);">
+                        @foreach($modules as $key => $label)
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; cursor: pointer; color: white;">
+                                <input type="checkbox" name="permissions[]" value="{{ $key }}" id="edit_perm_{{ $key }}" class="edit-user-perm-cb" style="width: 14px; height: 14px; accent-color: var(--mint-green);">
+                                {{ $label }}
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeEditUserModal()">Cancel</button>
+                    <button type="submit" class="btn-submit" style="background-color: var(--mint-green); color: #0d1718;">Update User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
+    <script>
+        function openProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        function closeProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        
+        @if($isSuper)
+        function openCreateUserModal() {
+            const modal = document.getElementById('create-user-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        function closeCreateUserModal() {
+            const modal = document.getElementById('create-user-modal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        function openEditUserModal(userJson) {
+            const user = JSON.parse(userJson);
+            document.getElementById('edit-user-form').action = '/admin/users/' + user.id + '/update';
+            document.getElementById('edit_user_name').value = user.name;
+            document.getElementById('edit_user_email').value = user.email;
+            document.getElementById('edit_user_password').value = '';
+            document.getElementById('edit_user_role').value = user.role;
+            
+            // Clear all checkboxes
+            const checkboxes = document.querySelectorAll('.edit-user-perm-cb');
+            checkboxes.forEach(cb => cb.checked = false);
+            
+            // Set checkboxes based on user permissions
+            let permissions = user.permissions || [];
+            if (typeof permissions === 'string') {
+                try {
+                    permissions = JSON.parse(permissions);
+                } catch(e) {
+                    permissions = [];
+                }
+            }
+            if (user.role === 'superadmin' || permissions.includes('all')) {
+                checkboxes.forEach(cb => cb.checked = true);
+            } else {
+                permissions.forEach(p => {
+                    const cb = document.getElementById('edit_perm_' + p);
+                    if (cb) cb.checked = true;
+                });
+            }
+            
+            togglePermissionsCheckboxGrid('edit', user.role);
+
+            const modal = document.getElementById('edit-user-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        function closeEditUserModal() {
+            const modal = document.getElementById('edit-user-modal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        function togglePermissionsCheckboxGrid(prefix, role) {
+            const container = document.getElementById(prefix + '-user-permissions-group');
+            if (!container) return;
+            if (role === 'superadmin') {
+                container.style.opacity = '0.5';
+                container.style.pointerEvents = 'none';
+                const checkboxes = document.querySelectorAll('.' + prefix + '-user-perm-cb');
+                checkboxes.forEach(cb => cb.checked = true);
+            } else {
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            }
+        }
+        @endif
+
+        function handleBroadcastTypeChange(type) {
+            const types = ['blog', 'service', 'cms_page', 'landing', 'specialist'];
+            types.forEach(t => {
+                const el = document.getElementById('group-select-' + t);
+                if (el) el.style.display = 'none';
+            });
+            
+            document.getElementById('broadcast_title').value = '';
+            document.getElementById('broadcast_message').value = '';
+            document.getElementById('broadcast_url').value = '';
+            
+            if (type !== 'custom') {
+                const group = document.getElementById('group-select-' + type);
+                if (group) {
+                    group.style.display = 'block';
+                    document.getElementById('select_' + type).value = '';
+                }
+            }
+            updateLivePreview();
+        }
+
+        function autoFillFromEntity(type, id) {
+            if (!id) {
+                document.getElementById('broadcast_title').value = '';
+                document.getElementById('broadcast_message').value = '';
+                document.getElementById('broadcast_url').value = '';
+                updateLivePreview();
+                return;
+            }
+            const select = document.getElementById('select_' + type);
+            const option = select.options[select.selectedIndex];
+            
+            const title = option.getAttribute('data-title') || '';
+            const summary = option.getAttribute('data-summary') || '';
+            const url = option.getAttribute('data-url') || '';
+            
+            document.getElementById('broadcast_title').value = title;
+            document.getElementById('broadcast_message').value = summary;
+            document.getElementById('broadcast_url').value = url;
+            
+            updateLivePreview();
+        }
+
+        function updateLivePreview() {
+            const title = document.getElementById('broadcast_title').value || 'Dr. Sumitz Clinic';
+            const message = document.getElementById('broadcast_message').value || 'Waiting for input details...';
+            const url = document.getElementById('broadcast_url').value || 'https://www.drsumitz.com';
+            
+            document.getElementById('preview-title').textContent = title;
+            document.getElementById('preview-message').textContent = message;
+            document.getElementById('preview-url').textContent = url;
+        }
+    </script>
+
 </body>
 </html>
+

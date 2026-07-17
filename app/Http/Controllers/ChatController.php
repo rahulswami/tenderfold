@@ -125,8 +125,20 @@ class ChatController extends Controller
             'is_read' => false,
         ]);
 
+        // Create user-specific web notification for live chat reply
+        DB::table('web_notifications')->insert([
+            'session_id' => $session_id,
+            'title' => 'New Support Reply',
+            'message' => Str::limit($request->message, 120),
+            'url' => route('home') . '?open_chat=1',
+            'is_read' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         return response()->json(['success' => true, 'message' => $msg]);
     }
+
 
     public function adminDeleteChat($session_id)
     {

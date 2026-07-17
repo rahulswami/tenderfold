@@ -2,6 +2,8 @@
 
 @section('title', ($aboutPage->metatitle ?? 'About SumitZ Clinic | Orthopaedic & Physiotherapy Center Baner'))
 @section('meta_description', ($aboutPage->metadescription ?? 'About SumitZ Clinic is Baner\'s leading joint and spinal recovery center led by Dr. Sumit, offering advanced diagnostic OPG, X-ray, lab tests, and physiotherapy.'))
+@section('meta_keywords', ($aboutPage->metakeywords ?? 'about dr sumit, orthopedic surgeon baner, best physiotherapist baner'))
+
 
 @section('schema')
 <script type="application/ld+json">

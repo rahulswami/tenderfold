@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Orthopaedic & Physiotherapy Treatments | SumitZ Clinic')
-@section('meta_description', 'Explore our comprehensive list of clinical treatments including Knee Replacement, Hip Arthritis, Fractures, Sports Injuries & Frozen Shoulder Care.')
+@section('title', ($treatmentsPage->metatitle ?? 'Orthopaedic & Physiotherapy Treatments | SumitZ Clinic'))
+@section('meta_description', ($treatmentsPage->metadescription ?? 'Explore our comprehensive list of clinical treatments including Knee Replacement, Hip Arthritis, Fractures, Sports Injuries & Frozen Shoulder Care.'))
+@section('meta_keywords', ($treatmentsPage->metakeywords ?? 'orthopedic treatments pune, knee replacement baner, sports injury rehabilitation'))
+
 
 @section('content')
 <section class="details-hero">

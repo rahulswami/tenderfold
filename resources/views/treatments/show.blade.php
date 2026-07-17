@@ -2,6 +2,8 @@
 
 @section('title', ($treatment->metatitle ?? ($treatment->name . ' Treatment | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
 @section('meta_description', ($treatment->metadescription ?? Str::limit(strip_tags($treatment->description), 150)))
+@section('meta_keywords', ($treatment->metakeywords ?? ''))
+
 
 @section('schema')
     @if(!empty($treatment->schema_markup))

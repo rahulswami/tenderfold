@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Our Medical Specialists | SumitZ Orthopaedic Clinic')
-@section('meta_description', 'Meet our highly qualified team of orthopaedic surgeons, physiotherapists, and diagnostic specialists led by Dr. Sumit in Baner, Pune.')
+@section('title', ($specialistsPage->metatitle ?? 'Our Medical Specialists | SumitZ Orthopaedic Clinic'))
+@section('meta_description', ($specialistsPage->metadescription ?? 'Meet our highly qualified team of orthopaedic surgeons, physiotherapists, and diagnostic specialists led by Dr. Sumit in Baner, Pune.'))
+@section('meta_keywords', ($specialistsPage->metakeywords ?? 'orthopedic doctor baner, physiotherapist baner, orthopedic surgeons pune'))
+
 
 @section('content')
 <section class="details-hero">

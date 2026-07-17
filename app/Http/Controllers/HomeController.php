@@ -281,9 +281,11 @@ class HomeController extends Controller
     /* Clinic Specialists */
     public function specialists()
     {
+        $specialistsPage = \App\Models\CmsPage::where('slug', 'specialists')->first();
         $specialists = \App\Models\TeamMember::where('status', true)->get();
-        return view('specialists.index', compact('specialists'));
+        return view('specialists.index', compact('specialists', 'specialistsPage'));
     }
+
 
     public function specialistdetails($slug)
     {

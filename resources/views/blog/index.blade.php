@@ -2,6 +2,8 @@
 
 @section('title', ($blogsPage->metatitle ?? 'Orthopaedic, Joint Care & Physiotherapy Blog | SumitZ Clinic Baner'))
 @section('meta_description', ($blogsPage->metadescription ?? 'Read expert health advice, recovery guides, arthritis tips, and physiotherapy exercises written by Dr. Sumit at SumitZ Clinic, Pune.'))
+@section('meta_keywords', ($blogsPage->metakeywords ?? 'health blog sumitz, orthopedic guides, back pain tips, joint health articles'))
+
 
 @section('schema')
 <script type="application/ld+json">

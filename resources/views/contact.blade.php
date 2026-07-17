@@ -2,6 +2,8 @@
 
 @section('title', ($contactPage->metatitle ?? 'Contact Us | Book Appointment | SumitZ Clinic'))
 @section('meta_description', ($contactPage->metadescription ?? 'Contact SumitZ Clinic Baner. Submit our slot booking form, drop a WhatsApp message, or find directions to our orthopaedic and physiotherapy hospital.'))
+@section('meta_keywords', ($contactPage->metakeywords ?? 'contact orthopedic doctor baner, book appointment sumitz, clinic phone number baner'))
+
 
 @section('schema')
 <script type="application/ld+json">

@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('title', ($faqPage->metatitle ?? ('Frequently Asked Questions | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
-@section('meta_description', ($faqPage->metadescription ?? 'Everything you need to know about processing timelines, rates, documents, and qualifications.'))
+@section('meta_description', ($faqPage->metadescription ?? 'Find answers to frequently asked questions about orthopaedic treatments, physiotherapy sessions, digital X-Ray availability, and appointment slot booking at SumitZ Clinic.'))
+@section('meta_keywords', ($faqPage->metakeywords ?? 'orthopedic faq, joint care queries, physiotherapy faq pune'))
+
 
 @section('schema')
 <script type="application/ld+json">

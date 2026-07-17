@@ -2,6 +2,8 @@
 
 @section('title', ($blog->metatitle ?? ($blog->title . ' | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
 @section('meta_description', ($blog->metadescription ?? $blog->summary))
+@section('meta_keywords', ($blog->metakeywords ?? ''))
+
 
 @section('schema')
     @if(!empty($blog->schema_markup))

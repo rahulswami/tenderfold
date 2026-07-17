@@ -2,6 +2,8 @@
 
 @section('title', ($testimonialPage->metatitle ?? ('Patient Testimonials & Success Stories | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
 @section('meta_description', ($testimonialPage->metadescription ?? 'Read reviews from satisfied patients who recovered their mobility through our orthopaedic treatments and physiotherapy care at SumitZ Clinic Pune.'))
+@section('meta_keywords', ($testimonialPage->metakeywords ?? 'patient reviews sumitz, clinic testimonials pune, dr sumit feedback'))
+
 
 @section('schema')
 <script type="application/ld+json">

@@ -2,6 +2,8 @@
 
 @section('title', ($servicesPage->metatitle ?? 'Our Clinical & Diagnostic Services | SumitZ Clinic'))
 @section('meta_description', ($servicesPage->metadescription ?? 'Explore the wide range of services offered by SumitZ Clinic including Physiotherapy, Digital OPG, pathology diagnostics, Pediatric Orthopaedics, and X-Ray.'))
+@section('meta_keywords', ($servicesPage->metakeywords ?? 'physiotherapy pune, digital opg baner, pathology lab baner, pediatric orthopedics pune'))
+
 
 @section('schema')
 <script type="application/ld+json">
