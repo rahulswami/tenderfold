@@ -43,7 +43,7 @@ class NotificationController extends Controller
         ]);
 
         $sessionId = $request->session_id;
-        $lastId = $request->last_id;
+        $lastId = (int) $request->last_id;
 
         // Query targeted unread notifications for this user (chat replies)
         $targeted = DB::table('web_notifications')
@@ -60,16 +60,24 @@ class NotificationController extends Controller
         }
 
         // Query general broadcast notifications (session_id is null) higher than last_id
-        $broadcasts = DB::table('web_notifications')
-            ->whereNull('session_id')
-            ->where('id', '>', $lastId)
-            ->get();
+        $maxId = DB::table('web_notifications')->max('id') ?? 0;
+        if ($lastId === 0) {
+            // Initialize lastId to current max notification ID to avoid history flooding on new session
+            $lastId = $maxId;
+            $broadcasts = collect();
+        } else {
+            $broadcasts = DB::table('web_notifications')
+                ->whereNull('session_id')
+                ->where('id', '>', $lastId)
+                ->get();
+        }
 
         $notifications = $targeted->merge($broadcasts)->sortBy('id')->values();
 
         return response()->json([
             'success' => true,
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'last_id' => $lastId
         ]);
     }
 

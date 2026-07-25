@@ -20,7 +20,7 @@ class LeadsAdminTest extends TestCase
     public function test_admin_can_export_leads_to_csv(): void
     {
         // Create an admin user and authenticate
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'superadmin']);
         
         // Create dummy leads
         Lead::create([
@@ -42,7 +42,7 @@ class LeadsAdminTest extends TestCase
 
     public function test_admin_can_bulk_delete_leads(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'superadmin']);
 
         $lead1 = Lead::create([
             'name' => 'Lead One',

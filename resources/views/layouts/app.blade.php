@@ -657,16 +657,13 @@
                 background: rgba(255,255,255,0.1);
             }
             .toast-alert {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
+                position: relative;
                 max-width: 350px;
                 background: rgba(15, 23, 42, 0.98);
                 border-left: 4px solid var(--primary-teal, #5ccbb3);
                 border-radius: 8px;
                 padding: 12px;
                 box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-                z-index: 9999999;
                 color: white;
                 display: flex;
                 gap: 10px;
@@ -722,11 +719,8 @@
                 }, 2000);
             }
 
-            // 3. Start Notification Polling if subscribed
-            const notifSubscribed = localStorage.getItem('notifications_subscribed');
-            if (notifSubscribed === 'true') {
-                startNotificationPolling();
-            }
+            // 3. Start Notification Polling
+            startNotificationPolling();
         });
 
         function closeConsentBanner() {
@@ -782,17 +776,23 @@
             fetch(`/api/notifications/poll?session_id=${chatSessionId}&last_id=${lastReceivedNotificationId}`)
                 .then(r => r.json())
                 .then(data => {
-                    if (data.success && data.notifications.length > 0) {
-                        data.notifications.forEach(notif => {
-                            // Update last received id
-                            if (notif.id > lastReceivedNotificationId) {
-                                lastReceivedNotificationId = notif.id;
-                                localStorage.setItem('last_received_notification_id', lastReceivedNotificationId.toString());
-                            }
-                            
-                            // Deliver Alert
-                            deliverWebNotification(notif);
-                        });
+                    if (data.success) {
+                        if (data.last_id && data.last_id > lastReceivedNotificationId) {
+                            lastReceivedNotificationId = data.last_id;
+                            localStorage.setItem('last_received_notification_id', lastReceivedNotificationId.toString());
+                        }
+                        if (data.notifications && data.notifications.length > 0) {
+                            data.notifications.forEach(notif => {
+                                // Update last received id
+                                if (notif.id > lastReceivedNotificationId) {
+                                    lastReceivedNotificationId = notif.id;
+                                    localStorage.setItem('last_received_notification_id', lastReceivedNotificationId.toString());
+                                }
+                                
+                                // Deliver Alert
+                                deliverWebNotification(notif);
+                            });
+                        }
                     }
                 })
                 .catch(err => console.error('Error polling alerts:', err));

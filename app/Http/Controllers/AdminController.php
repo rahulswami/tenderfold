@@ -1352,6 +1352,85 @@ User prompt: {$prompt}";
         }
     }
 
+    public function aiGenerateSlider(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string',
+        ]);
+
+        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+        $generateImage = $request->boolean('generate_image');
+
+        $systemPrompt = "You are an expert orthopedic, physical therapy, and health care copywriter. The user wants to create a Homepage Hero Slider slide for SumitZ Clinic, Pune.
+Based on the user's prompt, generate a compelling slide.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"title\": \"A short, punchy slide title (max 6-8 words)\",
+  \"subtitle\": \"An engaging supporting subtitle (max 15-20 words)\",
+  \"button_text\": \"Call to action button text (e.g. Book Appointment, Learn More, Read Free Guide)\",
+  \"button_link\": \"A button link, e.g. '#appointment' or '/services' or '/specialists'\",
+  \"image_prompt\": \"A detailed, descriptive text-to-image prompt to generate a high-quality background/hero banner image matching this slide's topic. Do not include adjectives like 'photorealistic', instead describe lighting, context, objects, and style (e.g. 'A professional photograph of ...')\"
+}
+
+User prompt: {$prompt}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = trim($text);
+            
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $slideData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['error' => 'Failed to parse generated content as JSON. Raw response: ' . $text], 500);
+            }
+
+            if ($generateImage) {
+                $imagePrompt = $slideData['image_prompt'] ?? $prompt;
+                $imageUrl = $this->generateAndSaveAiImage($imagePrompt, '16:9');
+                if ($imageUrl) {
+                    $slideData['image_url'] = $imageUrl;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $slideData
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'AI generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
 
     public function aiGenerateImage(Request $request)
     {
@@ -2030,7 +2109,7 @@ User prompt: {$prompt}";
         $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:landing_pages,slug',
-            'layout_type' => 'required|string|in:home,about',
+            'layout_type' => 'required|string|in:home,about,service,specialist',
             'meta_description' => 'nullable|string',
         ]);
 
@@ -2052,7 +2131,7 @@ User prompt: {$prompt}";
         $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:landing_pages,slug,' . $landingPage->id,
-            'layout_type' => 'required|string|in:home,about',
+            'layout_type' => 'required|string|in:home,about,service,specialist',
             'meta_description' => 'nullable|string',
             'content' => 'required|array',
             'schema_markup' => 'nullable|string',
@@ -2116,6 +2195,47 @@ User prompt: {$prompt}";
      {"q": "FAQ Question 2?", "a": "FAQ Answer 2"},
      {"q": "FAQ Question 3?", "a": "FAQ Answer 3"}
   ]
+}';
+        } elseif ($layout === 'service') {
+            $schemaDesc = '{
+  "meta_description": "SEO optimized meta description for this service landing page.",
+  "hero_title": "Hero main title for the service (e.g. Pain-Free Movement: Pune\'s Top Joint Recovery Program).",
+  "hero_subtitle": "Engaging hero subtitle/tagline highlighting patient relief.",
+  "service_details_title": "Detailed header for the program details (e.g. Advanced Orthopedic & Joint Care).",
+  "service_details_text": "Detailed clinical overview of the treatments, diagnosis, recovery methodologies, and clinical care provided (2 paragraphs).",
+  "service_bullets": [
+     {"title": "Why Us Bullet 1 Title", "desc": "Short description of this benefit", "icon": "Lucide icon name like activity/heart/clock/check/file-text/shield-check/calendar/zap"},
+     {"title": "Why Us Bullet 2 Title", "desc": "Short description", "icon": "Lucide icon"},
+     {"title": "Why Us Bullet 3 Title", "desc": "Short description", "icon": "Lucide icon"}
+  ],
+  "process_title": "Heading for step by step process (e.g. Your Path to Full Recovery).",
+  "process_steps": [
+     {"title": "Step 1 Title (e.g. Initial Assessment)", "desc": "Explanation of the diagnosis/assessment stage."},
+     {"title": "Step 2 Title (e.g. Personalized Therapy)", "desc": "Explanation of the treatment stage."},
+     {"title": "Step 3 Title (e.g. Continuous Support)", "desc": "Explanation of post-recovery care."}
+  ],
+  "cta_title": "Call to action heading",
+  "cta_text": "Brief sub-text for CTA section."
+}';
+        } elseif ($layout === 'specialist') {
+            $schemaDesc = '{
+  "meta_description": "SEO optimized meta description for this specialist doctor landing page.",
+  "hero_title": "Hero main title (e.g. Consult Pune\'s Leading Joint & Spine Specialist).",
+  "hero_subtitle": "Engaging tagline focused on consulting an experienced doctor/surgeon.",
+  "specialist_bio_title": "Biography Section Heading (e.g. Meet Pune\'s Trusted Joint Care Leader).",
+  "specialist_bio_text": "Detailed biography of the doctor, their medical credentials, surgical achievements, and commitment to patients (2 paragraphs).",
+  "specialist_qualifications": [
+     {"title": "Credential/Qualification 1 Title (e.g. 15+ Years Surgical Experience)", "desc": "Brief details of experience or fellowships."},
+     {"title": "Credential/Qualification 2 Title (e.g. Global Training & Certifications)", "desc": "Brief details of international education/training."},
+     {"title": "Credential/Qualification 3 Title (e.g. Patient-First Care Model)", "desc": "Brief details of personalized patient approach."}
+  ],
+  "case_studies": [
+     {"patient_name": "Patient Name or Initials", "case": "Short description of the joint/spine condition treated", "result": "Description of the positive recovery outcome achieved"},
+     {"patient_name": "Patient Name", "case": "Condition", "result": "Outcome"},
+     {"patient_name": "Patient Name", "case": "Condition", "result": "Outcome"}
+  ],
+  "cta_title": "Call to action heading",
+  "cta_text": "Brief sub-text for CTA section."
 }';
         } else {
             $schemaDesc = '{

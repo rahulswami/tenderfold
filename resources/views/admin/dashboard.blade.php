@@ -951,7 +951,7 @@
             @if($hasAccess('cms_pages'))<li class="menu-item"><a href="{{ route('admin.tab', 'cms_pages') }}" class="tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</a></li>@endif
             @if($hasAccess('blogs'))<li class="menu-item"><a href="{{ route('admin.tab', 'blogs') }}" class="tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</a></li>@endif
             @if($hasAccess('media'))<li class="menu-item"><a href="{{ route('admin.tab', 'media') }}" class="tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</a></li>@endif
-            @if($hasAccess('analytics'))<li class="menu-item"><a href="{{ route('admin.tab', 'analytics') }}" class="tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</a></li>@endif
+            {{-- @if($hasAccess('analytics'))<li class="menu-item"><a href="{{ route('admin.tab', 'analytics') }}" class="tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</a></li>@endif --}}
             @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'seo') }}" class="tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</a></li>@endif
             @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'notifications') }}" class="tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="btn-notifications"><i data-lucide="bell"></i> Web Notifications</a></li>@endif
             @if($isSuper)<li class="menu-item"><a href="{{ route('admin.tab', 'users') }}" class="tab-btn {{ $activeTab === 'users' ? 'active' : '' }}" id="btn-users"><i data-lucide="user"></i> Admin Users</a></li>@endif
@@ -1009,7 +1009,7 @@
             @if($hasAccess('cms_pages'))<a href="{{ route('admin.tab', 'cms_pages') }}" class="mobile-tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="m-btn-cms_pages"><i data-lucide="files" style="width: 14px; height: 14px;"></i> CMS Pages</a>@endif
             @if($hasAccess('blogs'))<a href="{{ route('admin.tab', 'blogs') }}" class="mobile-tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</a>@endif
             @if($hasAccess('media'))<a href="{{ route('admin.tab', 'media') }}" class="mobile-tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</a>@endif
-            @if($hasAccess('analytics'))<a href="{{ route('admin.tab', 'analytics') }}" class="mobile-tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</a>@endif
+            {{-- @if($hasAccess('analytics'))<a href="{{ route('admin.tab', 'analytics') }}" class="mobile-tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</a>@endif --}}
             @if($hasAccess('seo'))<a href="{{ route('admin.tab', 'seo') }}" class="mobile-tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="m-btn-seo"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> SEO</a>@endif
             @if($hasAccess('seo'))<a href="{{ route('admin.tab', 'notifications') }}" class="mobile-tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="m-btn-notifications"><i data-lucide="bell" style="width: 14px; height: 14px;"></i> Alerts</a>@endif
             @if($isSuper)<a href="{{ route('admin.tab', 'users') }}" class="mobile-tab-btn {{ $activeTab === 'users' ? 'active' : '' }}" id="m-btn-users"><i data-lucide="user" style="width: 14px; height: 14px;"></i> Admins</a>@endif
@@ -1430,7 +1430,7 @@
                                                     @endif
                                                 </td>
                                                 <td style="text-align: right; white-space: nowrap;">
-                                                    <button type="button" onclick="toggleLeadDetails({{ $lead->id }})" class="btn-action edit" title="View Details / Edit" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; font-weight: 500; font-size: 0.85rem; border: 1px solid var(--primary-teal); background-color: transparent; color: var(--primary-teal);">
+                                                    <button type="button" onclick="toggleLeadDetails({{ $lead->id }})" class="btn-action edit" title="View Details / Edit" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; font-weight: 500; font-size: 0.85rem; border: 1px solid #ffffff; background-color: transparent; color: #ffffff;">
                                                         <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i> Details
                                                     </button>
                                                 </td>
@@ -1702,7 +1702,12 @@
             <div class="tab-panel @if($activeTab === 'slider') active @endif" id="tab-slider">
                 <!-- Add New Slide -->
                 <div class="admin-card">
-                    <h2>Add New Homepage Hero Slide</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="margin: 0;">Add New Homepage Hero Slide</h2>
+                        <button type="button" class="btn-ai-sparkle" onclick="openAiModal('slider')" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i> Generate Slide via AI
+                        </button>
+                    </div>
                     <form action="{{ route('admin.slides.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-grid">
@@ -2991,64 +2996,6 @@
                 </div>
             </div>
 
-            <!-- WEB ANALYTICS TAB -->
-            <div class="tab-panel @if($activeTab === 'analytics') active @endif" id="tab-analytics">
-                <div class="admin-card">
-                    <h2><i data-lucide="bar-chart-2" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Cloudflare Web Analytics</h2>
-                    
-                    @if(empty($site['cloudflare_api_token']) || empty($site['cloudflare_zone_id']))
-                        <div style="padding: 2rem; text-align: center; background: rgba(255,255,255,0.01); border: 1px dashed var(--admin-border); border-radius: var(--radius-md);">
-                            <i data-lucide="info" style="width: 48px; height: 48px; color: var(--admin-text-muted); margin-bottom: 1rem;"></i>
-                            <h3 style="color: #ffffff; margin-bottom: 0.5rem;">Integration Required</h3>
-                            <p style="color: var(--admin-text-muted); max-width: 500px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">
-                                Please configure your Cloudflare API Token and Zone ID in the <strong>General Settings</strong> tab to view detailed web traffic metrics here.
-                            </p>
-                            <button onclick="switchTab('general')" class="btn-submit" style="width: auto;">Configure Settings</button>
-                        </div>
-                    @else
-                        <div id="analytics-loader" style="padding: 3rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                            <div class="ai-toast-spinner" style="width: 40px; height: 40px;"></div>
-                            <span style="color: var(--admin-text-muted); font-size: 0.9rem;">Fetching data from Cloudflare...</span>
-                        </div>
-                        
-                        <div id="analytics-error" style="display: none; padding: 2rem; background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.2); border-radius: var(--radius-md); text-align: center; margin-bottom: 1.5rem;">
-                            <i data-lucide="alert-triangle" style="color: #ff6b6b; margin-bottom: 0.5rem;"></i>
-                            <p id="analytics-error-msg" style="color: #ff6b6b; margin: 0; font-size: 0.9rem;"></p>
-                        </div>
-
-                        <div id="analytics-dashboard" style="display: none;">
-                            <!-- Stats Cards Grid -->
-                            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
-                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
-                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Pageviews</h4>
-                                    <p id="stat-pageviews" style="font-size: 2rem; font-weight: 800; color: var(--mint-green); margin: 0.5rem 0 0 0;">0</p>
-                                </div>
-                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
-                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Requests</h4>
-                                    <p id="stat-requests" style="font-size: 2rem; font-weight: 800; color: #3b82f6; margin: 0.5rem 0 0 0;">0</p>
-                                </div>
-                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
-                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Cache Hit Rate</h4>
-                                    <p id="stat-cache" style="font-size: 2rem; font-weight: 800; color: #eab308; margin: 0.5rem 0 0 0;">0%</p>
-                                </div>
-                                <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0;">
-                                    <h4 style="margin: 0; font-size: 0.8rem; color: var(--admin-text-muted); text-transform: uppercase;">Data Transferred</h4>
-                                    <p id="stat-bandwidth" style="font-size: 2rem; font-weight: 800; color: #f97316; margin: 0.5rem 0 0 0;">0 MB</p>
-                                </div>
-                            </div>
-
-                            <!-- Line Chart Container -->
-                            <div class="admin-card" style="padding: 1.5rem; margin-bottom: 0; background: rgba(0,0,0,0.15);">
-                                <h3>Traffic Metrics (Last 7 Days)</h3>
-                                <div style="position: relative; height: 300px; width: 100%;">
-                                    <canvas id="cloudflareChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
             <!-- LANDING PAGES TAB -->
             <div class="tab-panel @if($activeTab === 'landing') active @endif" id="tab-landing">
                 <!-- Create New Landing Page Card -->
@@ -3070,6 +3017,8 @@
                                 <select id="landing_layout" name="layout_type" class="form-control" required>
                                     <option value="home">Homepage Structure (Hero, Features, About, CTA, FAQs)</option>
                                     <option value="about">About Page Structure (Hero, Story, Vision/Mission/Values, Team, CTA)</option>
+                                    <option value="service">Service Structure (Hero, Program Details, Why Us, Steps, CTA)</option>
+                                    <option value="specialist">Specialist Structure (Hero, Biography, Credentials, Success Stories, CTA)</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -3236,6 +3185,129 @@
                                                                 </div>
                                                             </div>
                                                         @endfor
+                                                    @elseif($lp->layout_type === 'service')
+                                                         <!-- Service Layout Editor Fields -->
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Hero Title</label>
+                                                             <input type="text" name="content[hero_title]" class="form-control" value="{{ $lp->content['hero_title'] ?? '' }}">
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Hero Subtitle</label>
+                                                             <textarea name="content[hero_subtitle]" class="form-control" rows="2">{{ $lp->content['hero_subtitle'] ?? '' }}</textarea>
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Program Details Section Title</label>
+                                                             <input type="text" name="content[service_details_title]" class="form-control" value="{{ $lp->content['service_details_title'] ?? '' }}">
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Program Details Section Text</label>
+                                                             <textarea name="content[service_details_text]" class="form-control" rows="4">{{ $lp->content['service_details_text'] ?? '' }}</textarea>
+                                                         </div>
+
+                                                         <h4 style="color: var(--mint-green); margin: 1.5rem 0 0.5rem 0; font-size: 0.95rem; text-transform: uppercase;">Why Choose Us / Bullets (Grid of 3)</h4>
+                                                         @for($i = 0; $i < 3; $i++)
+                                                             <div class="form-grid" style="background: rgba(0,0,0,0.15); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--admin-border);">
+                                                                 <div class="form-group">
+                                                                     <label>Bullet {{ $i + 1 }} Title</label>
+                                                                     <input type="text" name="content[service_bullets][{{ $i }}][title]" class="form-control" value="{{ $lp->content['service_bullets'][$i]['title'] ?? '' }}">
+                                                                 </div>
+                                                                 <div class="form-group">
+                                                                     <label>Bullet {{ $i + 1 }} Icon (Lucide name)</label>
+                                                                     <input type="text" name="content[service_bullets][{{ $i }}][icon]" class="form-control" value="{{ $lp->content['service_bullets'][$i]['icon'] ?? 'check' }}">
+                                                                 </div>
+                                                                 <div class="form-group" style="grid-column: span 2;">
+                                                                     <label>Bullet {{ $i + 1 }} Description</label>
+                                                                     <textarea name="content[service_bullets][{{ $i }}][desc]" class="form-control" rows="1">{{ $lp->content['service_bullets'][$i]['desc'] ?? '' }}</textarea>
+                                                                 </div>
+                                                             </div>
+                                                         @endfor
+
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Process Steps Section Title</label>
+                                                             <input type="text" name="content[process_title]" class="form-control" value="{{ $lp->content['process_title'] ?? '' }}">
+                                                         </div>
+                                                         <h4 style="color: var(--mint-green); margin: 1.5rem 0 0.5rem 0; font-size: 0.95rem; text-transform: uppercase;">Recovery Steps (3 steps)</h4>
+                                                         @for($i = 0; $i < 3; $i++)
+                                                             <div class="form-grid" style="background: rgba(0,0,0,0.15); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--admin-border);">
+                                                                 <div class="form-group">
+                                                                     <label>Step {{ $i + 1 }} Title</label>
+                                                                     <input type="text" name="content[process_steps][{{ $i }}][title]" class="form-control" value="{{ $lp->content['process_steps'][$i]['title'] ?? '' }}">
+                                                                 </div>
+                                                                 <div class="form-group" style="grid-column: span 2;">
+                                                                     <label>Step {{ $i + 1 }} Description</label>
+                                                                     <textarea name="content[process_steps][{{ $i }}][desc]" class="form-control" rows="1">{{ $lp->content['process_steps'][$i]['desc'] ?? '' }}</textarea>
+                                                                 </div>
+                                                             </div>
+                                                         @endfor
+
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>CTA Section Title</label>
+                                                             <input type="text" name="content[cta_title]" class="form-control" value="{{ $lp->content['cta_title'] ?? '' }}">
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>CTA Section Text</label>
+                                                             <textarea name="content[cta_text]" class="form-control" rows="2">{{ $lp->content['cta_text'] ?? '' }}</textarea>
+                                                         </div>
+
+                                                    @elseif($lp->layout_type === 'specialist')
+                                                         <!-- Specialist Layout Editor Fields -->
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Hero Title</label>
+                                                             <input type="text" name="content[hero_title]" class="form-control" value="{{ $lp->content['hero_title'] ?? '' }}">
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Hero Subtitle</label>
+                                                             <textarea name="content[hero_subtitle]" class="form-control" rows="2">{{ $lp->content['hero_subtitle'] ?? '' }}</textarea>
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Specialist Bio Title</label>
+                                                             <input type="text" name="content[specialist_bio_title]" class="form-control" value="{{ $lp->content['specialist_bio_title'] ?? '' }}">
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>Specialist Bio Text</label>
+                                                             <textarea name="content[specialist_bio_text]" class="form-control" rows="4">{{ $lp->content['specialist_bio_text'] ?? '' }}</textarea>
+                                                         </div>
+
+                                                         <h4 style="color: var(--mint-green); margin: 1.5rem 0 0.5rem 0; font-size: 0.95rem; text-transform: uppercase;">Credentials & Qualifications (3 items)</h4>
+                                                         @for($i = 0; $i < 3; $i++)
+                                                             <div class="form-grid" style="background: rgba(0,0,0,0.15); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--admin-border);">
+                                                                 <div class="form-group">
+                                                                     <label>Credential {{ $i + 1 }} Title</label>
+                                                                     <input type="text" name="content[specialist_qualifications][{{ $i }}][title]" class="form-control" value="{{ $lp->content['specialist_qualifications'][$i]['title'] ?? '' }}">
+                                                                 </div>
+                                                                 <div class="form-group" style="grid-column: span 2;">
+                                                                     <label>Credential {{ $i + 1 }} Detail</label>
+                                                                     <textarea name="content[specialist_qualifications][{{ $i }}][desc]" class="form-control" rows="1">{{ $lp->content['specialist_qualifications'][$i]['desc'] ?? '' }}</textarea>
+                                                                 </div>
+                                                             </div>
+                                                         @endfor
+
+                                                         <h4 style="color: var(--mint-green); margin: 1.5rem 0 0.5rem 0; font-size: 0.95rem; text-transform: uppercase;">Case Studies & Success Stories (3 items)</h4>
+                                                         @for($i = 0; $i < 3; $i++)
+                                                             <div class="form-grid" style="background: rgba(0,0,0,0.15); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem; border: 1px solid var(--admin-border);">
+                                                                 <div class="form-group">
+                                                                     <label>Patient {{ $i + 1 }} Name/Initials</label>
+                                                                     <input type="text" name="content[case_studies][{{ $i }}][patient_name]" class="form-control" value="{{ $lp->content['case_studies'][$i]['patient_name'] ?? '' }}">
+                                                                 </div>
+                                                                 <div class="form-group">
+                                                                     <label>Diagnosis/Case</label>
+                                                                     <input type="text" name="content[case_studies][{{ $i }}][case]" class="form-control" value="{{ $lp->content['case_studies'][$i]['case'] ?? '' }}">
+                                                                 </div>
+                                                                 <div class="form-group" style="grid-column: span 2;">
+                                                                     <label>Recovery Outcome</label>
+                                                                     <textarea name="content[case_studies][{{ $i }}][result]" class="form-control" rows="1">{{ $lp->content['case_studies'][$i]['result'] ?? '' }}</textarea>
+                                                                 </div>
+                                                             </div>
+                                                         @endfor
+
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>CTA Section Title</label>
+                                                             <input type="text" name="content[cta_title]" class="form-control" value="{{ $lp->content['cta_title'] ?? '' }}">
+                                                         </div>
+                                                         <div class="form-group" style="margin-top: 1rem;">
+                                                             <label>CTA Section Text</label>
+                                                             <textarea name="content[cta_text]" class="form-control" rows="2">{{ $lp->content['cta_text'] ?? '' }}</textarea>
+                                                         </div>
                                                     @else
                                                         <!-- About Layout Editor Fields -->
                                                         <div class="form-group" style="margin-top: 1rem;">
@@ -3345,7 +3417,7 @@
                             <button type="button" class="btn-submit" id="seo-tab-btn-other" onclick="switchSeoResultTab('other')" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; background-color: var(--admin-input-bg); color: #fff;">Growth Tactics</button>
                         </div>
                         <div>
-                            <button type="button" class="btn-submit" onclick="downloadSeoPdf()" style="width: auto; padding: 0.5rem 1.25rem; font-size: 0.85rem; background-color: var(--accent-teal); color: var(--primary-teal-dark); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                            <button type="button" class="btn-submit" onclick="downloadSeoPdf()" style="width: auto; padding: 0.5rem 1.25rem; font-size: 0.85rem; background-color: transparent; border: 1px solid #ffffff; color: #ffffff; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius-md);">
                                 <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download PDF Report
                             </button>
                         </div>
@@ -3954,6 +4026,36 @@
                 </div>
             </div>
         </div>
+    <!-- AI Slider Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-slider-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('slider')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> Generate Homepage Slide with AI</h3>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">
+                Enter a topic or offer, and Gemini will generate a compelling heading, subheading, call to action text, and a matched background image for the homepage slider.
+            </p>
+            <div id="ai-slider-form-wrapper">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="ai_slider_prompt">What is the slider slide about? (e.g. Spine recovery program, Knee replacement offer)</label>
+                    <textarea id="ai_slider_prompt" class="form-control" rows="3" placeholder="Describe the offer, treatment, or campaign detail for this slide..."></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: white;">
+                        <input type="checkbox" id="ai_slider_gen_image" value="1" checked style="width: 16px; height: 16px; accent-color: var(--mint-green);">
+                        Generate Background Image using AI
+                    </label>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff; width: auto;" onclick="closeAiModal('slider')">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" style="width: auto;" onclick="generateAiSlider()"><i data-lucide="sparkles"></i> Generate Slide</button>
+                </div>
+            </div>
+            <div class="ai-loader-container" id="ai-slider-loader" style="display: none;">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Gemini is designing and writing your slide...</p>
+                <p class="ai-loader-subtext">This will take 10-15 seconds. Please do not close this modal.</p>
+            </div>
+        </div>
     </div>
 
 
@@ -4261,13 +4363,12 @@
             if (activeTab === 'livechat') {
                 if (typeof loadAdminChatSessions === 'function') {
                     loadAdminChatSessions();
-                    if (typeof adminSessionsPoll !== 'undefined') clearInterval(adminSessionsPoll);
-                    adminSessionsPoll = setInterval(loadAdminChatSessions, 60000);
                 }
             } else {
                 if (typeof adminSessionsPoll !== 'undefined') clearInterval(adminSessionsPoll);
                 if (typeof adminMessagesPoll !== 'undefined') clearInterval(adminMessagesPoll);
             }
+
 
         }
 
@@ -5228,7 +5329,7 @@
         // Initialize background silent badge checkers
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                if (localStorage.getItem('active_tab') === 'livechat') {
+                if (localStorage.getItem('active_tab') === 'livechat' && "{{ $activeTab }}" !== 'livechat') {
                     switchTab('livechat');
                 } else {
                     fetch('/admin/chats')
@@ -6265,6 +6366,60 @@
             .catch(err => {
                 showToast("AI Generation Failed", "Network error during background image generation.", "error", jobId);
             });
+        function generateAiSlider() {
+            const prompt = document.getElementById('ai_slider_prompt').value.trim();
+            const genImg = document.getElementById('ai_slider_gen_image').checked;
+
+            if (!prompt) {
+                alert('Please describe the homepage slide theme or topic.');
+                return;
+            }
+
+            const modal = document.getElementById('ai-slider-modal');
+            const formWrapper = document.getElementById('ai-slider-form-wrapper');
+            const loader = document.getElementById('ai-slider-loader');
+
+            formWrapper.style.display = 'none';
+            loader.style.display = 'block';
+
+            fetch("{{ route('admin.ai.slider') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    generate_image: genImg
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('slider');
+
+                if (res.success && res.data) {
+                    const data = res.data;
+                    document.getElementById('slide_title').value = data.title || '';
+                    document.getElementById('slide_subtitle').value = data.subtitle || '';
+                    document.getElementById('slide_btn_text').value = data.button_text || '';
+                    document.getElementById('slide_btn_link').value = data.button_link || '';
+                    if (data.image_url) {
+                        document.getElementById('slide_image_url').value = data.image_url;
+                    }
+                    
+                    showToast('Slide Content Generated!', 'Slide fields have been auto-populated. Please review and click Add Slide.', 'success');
+                } else {
+                    alert('Error: ' + (res.error || 'Failed to generate slide content.'));
+                }
+            })
+            .catch(err => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('slider');
+                alert('Request failed: ' + err.message);
+            });
         }
 
         // dynamic AI Schema generation helper
@@ -6422,7 +6577,6 @@
                                 'cms_pages' => 'CMS Pages Manager',
                                 'blogs' => 'Blog Manager',
                                 'media' => 'Media Manager',
-                                'analytics' => 'Web Analytics',
                                 'seo' => 'SEO Optimizer'
                             ];
                         @endphp
