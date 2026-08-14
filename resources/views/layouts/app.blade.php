@@ -594,8 +594,12 @@
             });
         }
 
-        // Start continuous background polling every 3.5s for instant reception of admin replies & visitor notifications
-        setInterval(fetchChatHistory, 3500);
+        // Start background polling every 12s when tab is visible to respect Hostinger MySQL connection limits
+        setInterval(() => {
+            if (!document.hidden) {
+                fetchChatHistory();
+            }
+        }, 12000);
         setTimeout(fetchChatHistory, 800);
 
         function toggleMobileDrawer() {

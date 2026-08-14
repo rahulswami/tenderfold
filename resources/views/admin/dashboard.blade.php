@@ -7454,12 +7454,12 @@
         setInterval(fetchInternalNotifications, 20000);
         setTimeout(fetchInternalNotifications, 1000);
 
-        // Keep continuous background poll for live chat sessions (every 4 seconds)
+        // Background poll for live chat sessions (every 15s when tab is visible to respect Hostinger MySQL connection limits)
         setInterval(() => {
-            if (typeof loadAdminChatSessions === 'function') {
+            if (!document.hidden && typeof loadAdminChatSessions === 'function') {
                 loadAdminChatSessions();
             }
-        }, 4000);
+        }, 15000);
     </script>
 
 </body>
