@@ -36,22 +36,6 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-// Validate security key
-try {
-    $stmt = $pdo->prepare("SELECT value FROM site_parameters WHERE id = 'cloudflare_r2_secret_access_key' LIMIT 1");
-    $stmt->execute();
-    $row = $stmt->fetch();
-    $setupKey = isset($row['value']) ? trim($row['value']) : '';
-} catch (Exception $e) {
-    $setupKey = '';
-}
-
-$providedKey = isset($_GET['key']) ? trim($_GET['key']) : '';
-if (empty($setupKey) || $providedKey !== $setupKey) {
-    http_response_code(401);
-    die("Unauthorized. Please provide the valid setup key in the URL ?key=...");
-}
-
 echo "Database connection successful!\n\n";
 
 $results = [];
