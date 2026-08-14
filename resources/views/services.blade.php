@@ -1,9 +1,8 @@
 @extends('layouts.app')
 
-@section('title', ($servicesPage->metatitle ?? 'Our Clinical & Diagnostic Services | SumitZ Clinic'))
-@section('meta_description', ($servicesPage->metadescription ?? 'Explore the wide range of services offered by SumitZ Clinic including Physiotherapy, Digital OPG, pathology diagnostics, Pediatric Orthopaedics, and X-Ray.'))
+@section('title', ($servicesPage->metatitle ?? 'Multidisciplinary Healthcare Services | SumitZ Clinic'))
+@section('meta_description', ($servicesPage->metadescription ?? 'Explore clinical services offered by SumitZ Clinic including Physiotherapy, Digital X-Ray, OPG, BMD bone scans, pathology diagnostics, and Paediatric Orthopaedics in Baner & Hinjewadi.'))
 @section('meta_keywords', ($servicesPage->metakeywords ?? 'physiotherapy pune, digital opg baner, pathology lab baner, pediatric orthopedics pune'))
-
 
 @section('schema')
 <script type="application/ld+json">
@@ -14,25 +13,8 @@
       "{{ '@type' }}": "WebPage",
       "{{ '@id' }}": "{{ route('services') }}/#webpage",
       "url": "{{ route('services') }}",
-      "name": "Our Clinical & Diagnostic Services | {{ $site['site_name'] ?? 'SumitZ Clinic' }}",
-      "description": "Explore the wide range of services offered by SumitZ Clinic including Physiotherapy, Digital OPG, pathology diagnostics, Pediatric Orthopaedics, and X-Ray.",
-      "isPartOf": {
-        "{{ '@type' }}": "WebSite",
-        "{{ '@id' }}": "{{ route('home') }}/#website"
-      },
-      "about": [
-        @foreach($globalServices as $index => $gs)
-        {
-          "{{ '@type' }}": "Service",
-          "name": "{{ $gs->service_name }}",
-          "url": "{{ route('services.show', $gs->slug) }}",
-          "provider": {
-            "{{ '@type' }}": "Organization",
-            "{{ '@id' }}": "{{ route('home') }}/#organization"
-          }
-        }{{ $index < count($globalServices) - 1 ? ',' : '' }}
-        @endforeach
-      ]
+      "name": "Clinical & Diagnostic Services | {{ $site['site_name'] ?? 'SumitZ Clinic' }}",
+      "description": "Multidisciplinary services including Physiotherapy, Digital X-Ray, BMD, and Orthopaedic consultations."
     }
   ]
 }
@@ -41,53 +23,42 @@
 
 @section('content')
 
-    <!-- Details Hero -->
-    <section class="details-hero">
-        <div class="container text-center">
-            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">CLINICAL FACILITIES</span>
-            <h1>Our Clinical Services & Diagnostics</h1>
-            <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">We combine state-of-the-art diagnostic machinery with expert clinical consultation to ensure a holistic recovery journey.</p>
+    <!-- Hero Header -->
+    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 64px 0 48px;">
+        <div class="container text-center" style="max-width: 760px;">
+            <span class="badge badge-teal" style="margin-bottom: 12px;">Complete Patient Care</span>
+            <h1 style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px;">Our Clinical Services & Diagnostic Facilities</h1>
+            <p style="font-size: 17px; color: var(--body-text); line-height: 1.7;">
+                We combine state-of-the-art diagnostic machinery with experienced specialist consultations to ensure a seamless recovery journey under one roof in Baner and Hinjewadi.
+            </p>
         </div>
     </section>
 
-    <!-- Services Cards grid with details -->
-    <section class="section">
+    <!-- Services Cards Grid -->
+    <section class="section-spacing" style="background-color: var(--warm-ivory);">
         <div class="container">
-            <div class="solutions-grid animate-on-scroll">
+            <div class="card-grid">
                 @foreach($services as $service)
-                    <div class="solution-premium-card" style="margin-bottom: 2rem;">
-                        <div class="sol-header">
-                            <div class="sol-title-wrap">
-                                <h3>{{ $service->service_name }}</h3>
-                                <p>{{ $service->hero_category }}</p>
-                            </div>
-                            @if($service->badge)
-                                <span class="sol-badge" style="background-color: var(--primary-teal-dark); color: #fff;">{{ $service->badge }}</span>
+                    <div class="medical-card">
+                        <div class="card-img-wrapper">
+                            @if(!empty($service->image_path))
+                                <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}">
+                            @else
+                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="{{ $service->service_name }}">
                             @endif
                         </div>
-                        <div class="sol-body">
-                            <p class="text-muted" style="margin-bottom:1.5rem;">{{ $service->summary }}</p>
-                            <div class="sol-features-title">Highlights & Value</div>
-                            <ul class="sol-features-list">
-                                @if($service->rate_value)
-                                    <li class="sol-feature-item"><i data-lucide="check"></i> {{ $service->rate_value }}</li>
-                                @endif
-                                @if($service->max_loan)
-                                    <li class="sol-feature-item"><i data-lucide="check"></i> {{ $service->max_loan }}</li>
-                                @endif
-                                @if($service->tenure)
-                                    <li class="sol-feature-item"><i data-lucide="check"></i> {{ $service->tenure }}</li>
-                                @endif
-                            </ul>
-                            @if($service->eligibility_criteria)
-                            <div class="sol-eligibility-box">
-                                <p>Availability: <strong>{{ \Illuminate\Support\Str::limit($service->eligibility_criteria, 80) }}</strong></p>
+                        <div class="card-body">
+                            <span class="card-category">{{ $service->hero_category ?? 'Clinical Facility' }}</span>
+                            <h3 class="card-title">{{ $service->service_name }}</h3>
+                            <p class="card-text">{{ Str::limit(strip_tags($service->summary ?? $service->intro_content), 120) }}</p>
+                            <div class="card-footer">
+                                <a href="{{ route('services.show', $service->slug) }}" class="btn btn-secondary btn-sm">
+                                    Learn More
+                                </a>
+                                <button onclick="openDialog('callback-dialog');" class="btn btn-primary btn-sm">
+                                    Enquire Now
+                                </button>
                             </div>
-                            @endif
-                        </div>
-                        <div class="sol-footer">
-                            <a href="{{ route('services.show', $service->slug) }}" class="btn btn-secondary">Learn More</a>
-                            <button onclick="openDialog('callback-dialog');" class="btn btn-primary">Enquire Now</button>
                         </div>
                     </div>
                 @endforeach

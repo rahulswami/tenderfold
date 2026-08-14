@@ -142,6 +142,13 @@ class HomeController extends Controller
             'status'  => 'New',
         ]);
 
+        \App\Models\AdminNotification::log(
+            'lead',
+            'New Patient Lead: ' . $lead->name,
+            'Phone: ' . $lead->phone . ($lead->email ? (' | Email: ' . $lead->email) : ''),
+            route('admin.tab', 'leads')
+        );
+
         // 3. Google reCAPTCHA Verification (if enabled in settings)
         $isSpam = false;
         $spamReason = '';

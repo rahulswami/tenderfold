@@ -14,7 +14,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMS Admin Dashboard | {{ $site['site_name'] ?? 'SumitZ Clinic' }}</title>
 
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- Outfit Font -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -25,6 +24,14 @@
             --admin-border: rgba(255,255,255,0.08);
             --admin-text-muted: rgba(255,255,255,0.5);
             --admin-input-bg: rgba(255,255,255,0.04);
+            --mint-green: #5ccbb3;
+            --primary-teal: #0085C8;
+            --primary-teal-dark: #071A2E;
+            --accent-orange: #ff6b6b;
+            --accent-blue: #0085C8;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-sm: 6px;
         }
         
         body {
@@ -939,26 +946,39 @@
                     <span id="admin-chat-total-badge" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #ef4444; color: white; font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span>
                 </a>
             </li>@endif
-            @if($hasAccess('branding'))<li class="menu-item"><a href="{{ route('admin.tab', 'branding') }}" class="tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="btn-branding"><i data-lucide="image"></i> Branding & Logos</a></li>@endif
-            @if($hasAccess('slider'))<li class="menu-item"><a href="{{ route('admin.tab', 'slider') }}" class="tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="btn-slider"><i data-lucide="sliders"></i> Homepage Slider</a></li>@endif
+
+            @php 
+                $isAppearanceActive = in_array($activeTab, ['branding', 'slider', 'styling', 'pagecontents']); 
+            @endphp
+            @if($hasAccess('branding') || $hasAccess('slider') || $hasAccess('styling') || $hasAccess('pagecontents'))
+                <li class="menu-item has-submenu {{ $isAppearanceActive ? 'open' : '' }}">
+                    <a href="javascript:void(0)" class="tab-btn {{ $isAppearanceActive ? 'active' : '' }}" onclick="toggleSubmenu(this)" style="display: flex; align-items: center;">
+                        <i data-lucide="layout"></i> Site Appearance & Content
+                        <i data-lucide="chevron-down" class="submenu-arrow" style="width: 14px; height: 14px; margin-left: auto; transition: transform 0.2s;"></i>
+                    </a>
+                    <ul class="submenu-list" style="{{ $isAppearanceActive ? 'display: block;' : 'display: none;' }} padding-left: 0.75rem; list-style: none; margin: 0.25rem 0;">
+                        @if($hasAccess('branding'))<li style="margin: 2px 0;"><a href="{{ route('admin.tab', 'branding') }}" class="tab-btn {{ $activeTab === 'branding' ? 'active' : '' }}" id="btn-branding" style="padding: 0.4rem 0.75rem; font-size: 0.82rem;"><i data-lucide="image" style="width: 14px; height: 14px;"></i> Branding & Logos</a></li>@endif
+                        @if($hasAccess('slider'))<li style="margin: 2px 0;"><a href="{{ route('admin.tab', 'slider') }}" class="tab-btn {{ $activeTab === 'slider' ? 'active' : '' }}" id="btn-slider" style="padding: 0.4rem 0.75rem; font-size: 0.82rem;"><i data-lucide="sliders" style="width: 14px; height: 14px;"></i> Homepage Slider</a></li>@endif
+                        @if($hasAccess('styling'))<li style="margin: 2px 0;"><a href="{{ route('admin.tab', 'styling') }}" class="tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="btn-styling" style="padding: 0.4rem 0.75rem; font-size: 0.82rem;"><i data-lucide="palette" style="width: 14px; height: 14px;"></i> Section Backgrounds</a></li>@endif
+                        @if($hasAccess('pagecontents'))<li style="margin: 2px 0;"><a href="{{ route('admin.tab', 'pagecontents') }}" class="tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="btn-pagecontents" style="padding: 0.4rem 0.75rem; font-size: 0.82rem;"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Page Editor</a></li>@endif
+                    </ul>
+                </li>
+            @endif
+
             @if($hasAccess('testimonials'))<li class="menu-item"><a href="{{ route('admin.tab', 'testimonials') }}" class="tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</a></li>@endif
-            @if($hasAccess('styling'))<li class="menu-item"><a href="{{ route('admin.tab', 'styling') }}" class="tab-btn {{ $activeTab === 'styling' ? 'active' : '' }}" id="btn-styling"><i data-lucide="palette"></i> Section Backgrounds</a></li>@endif
-            @if($hasAccess('pagecontents'))<li class="menu-item"><a href="{{ route('admin.tab', 'pagecontents') }}" class="tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="btn-pagecontents"><i data-lucide="file-text"></i> Page Editor</a></li>@endif
-            @if($hasAccess('landing'))<li class="menu-item"><a href="{{ route('admin.tab', 'landing') }}" class="tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="btn-landing"><i data-lucide="layout"></i> AI Landing Pages</a></li>@endif
+            @if($hasAccess('landing'))<li class="menu-item"><a href="{{ route('admin.tab', 'landing') }}" class="tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="btn-landing"><i data-lucide="sparkles"></i> AI Landing Pages</a></li>@endif
             @if($hasAccess('services'))<li class="menu-item"><a href="{{ route('admin.tab', 'services') }}" class="tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="btn-services"><i data-lucide="layers"></i> Services Manager</a></li>@endif
             @if($hasAccess('treatments'))<li class="menu-item"><a href="{{ route('admin.tab', 'treatments') }}" class="tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="btn-treatments"><i data-lucide="activity"></i> Treatments Manager</a></li>@endif
             @if($hasAccess('specialists'))<li class="menu-item"><a href="{{ route('admin.tab', 'specialists') }}" class="tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="btn-specialists"><i data-lucide="user-check"></i> Specialists Manager</a></li>@endif
             @if($hasAccess('cms_pages'))<li class="menu-item"><a href="{{ route('admin.tab', 'cms_pages') }}" class="tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</a></li>@endif
             @if($hasAccess('blogs'))<li class="menu-item"><a href="{{ route('admin.tab', 'blogs') }}" class="tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</a></li>@endif
             @if($hasAccess('media'))<li class="menu-item"><a href="{{ route('admin.tab', 'media') }}" class="tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</a></li>@endif
-            {{-- @if($hasAccess('analytics'))<li class="menu-item"><a href="{{ route('admin.tab', 'analytics') }}" class="tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="btn-analytics"><i data-lucide="bar-chart-2"></i> Web Analytics</a></li>@endif --}}
             @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'seo') }}" class="tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</a></li>@endif
-            @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'notifications') }}" class="tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="btn-notifications"><i data-lucide="bell"></i> Web Notifications</a></li>@endif
+            <li class="menu-item"><a href="{{ route('admin.tab', 'internal_notifications') }}" class="tab-btn {{ $activeTab === 'internal_notifications' ? 'active' : '' }}" id="btn-internal_notifications" style="position: relative;"><i data-lucide="bell"></i> Internal Logs & Errors <span id="admin-internal-unread-badge" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #3b82f6; color: white; font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span></a></li>
+            @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'notifications') }}" class="tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="btn-notifications"><i data-lucide="send"></i> Push Notifications</a></li>@endif
             @if($isSuper)<li class="menu-item"><a href="{{ route('admin.tab', 'users') }}" class="tab-btn {{ $activeTab === 'users' ? 'active' : '' }}" id="btn-users"><i data-lucide="user"></i> Admin Users</a></li>@endif
         </ul>
 
-
-        
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
@@ -981,7 +1001,29 @@
                 </button>
                 <h1>CMS Control Panel</h1>
             </div>
-            <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <!-- Internal Notifications Bell Dropdown -->
+                <div style="position: relative;">
+                    <button type="button" onclick="toggleNotificationDropdown()" id="nav-bell-btn" style="background: rgba(255,255,255,0.06); border: 1px solid var(--admin-border); color: #ffffff; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer; position: relative;">
+                        <i data-lucide="bell" style="width: 16px; height: 16px; color: var(--mint-green);"></i>
+                        <span style="font-size: 0.8rem; font-weight: 600;">Alerts</span>
+                        <span id="nav-bell-count" style="background-color: #ef4444; color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; display: none;">0</span>
+                    </button>
+                    <!-- Bell Popover Menu -->
+                    <div id="nav-bell-dropdown" style="display: none; position: absolute; right: 0; top: 120%; width: 340px; background-color: var(--admin-dark-sidebar); border: 1px solid var(--admin-border); border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 2500;">
+                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="font-size: 0.85rem; color: #ffffff;">Internal System Notifications</strong>
+                            <a href="{{ route('admin.tab', 'internal_notifications') }}" style="font-size: 0.75rem; color: var(--mint-green); text-decoration: none;">View All →</a>
+                        </div>
+                        <div id="nav-bell-items-list" style="max-height: 260px; overflow-y: auto; display: flex; flex-direction: column;">
+                            <div style="padding: 1.5rem; text-align: center; color: var(--admin-text-muted); font-size: 0.8rem;">Loading notifications...</div>
+                        </div>
+                        <div style="padding: 0.5rem 1rem; border-top: 1px solid var(--admin-border); text-align: center;">
+                            <button type="button" onclick="markAllNotificationsRead()" style="background: none; border: none; color: #94a3b8; font-size: 0.75rem; cursor: pointer;">Mark all as read</button>
+                        </div>
+                    </div>
+                </div>
+
                 <button class="btn-ai-sparkle" style="padding: 6px 12px; font-size: 0.8rem; height: auto;" onclick="openProfileModal()">
                     <i data-lucide="user" style="width: 14px; height: 14px; vertical-align: middle;"></i> My Profile
                 </button>
@@ -1139,9 +1181,28 @@
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="gemini_api_key">Gemini API Key</label>
-                                <input type="password" id="gemini_api_key" name="gemini_api_key" class="form-control" value="{{ $site['gemini_api_key'] ?? '' }}" placeholder="Paste your Gemini API Key here...">
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="password" id="gemini_api_key" name="gemini_api_key" class="form-control" value="{{ $site['gemini_api_key'] ?? '' }}" placeholder="Paste your Gemini API Key here..." style="flex-grow: 1;">
+                                    <button type="button" onclick="testAiConnection()" id="btn-test-ai" class="btn" style="background-color: rgba(92, 203, 179, 0.15); color: var(--mint-green); border: 1px solid var(--mint-green); padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; height: auto;">
+                                        <i data-lucide="zap" style="width: 14px; height: 14px; vertical-align: middle;"></i> Test Connection
+                                    </button>
+                                </div>
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     Get an API Key from the <a href="https://aistudio.google.com/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Google AI Studio Console</a>.
+                                </span>
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="ai_model">AI Engine Model</label>
+                                <select id="ai_model" name="ai_model" class="form-control" style="padding: 0.6rem; height: auto; background-color: var(--admin-input-bg); color: #ffffff;">
+                                    @php $currentModel = $site['ai_model'] ?? 'gemini-2.5-flash'; @endphp
+                                    <option value="gemini-2.5-flash" @selected($currentModel === 'gemini-2.5-flash' || $currentModel === 'gemini-2.0-flash')>Gemini 2.5 Flash (Recommended - Fastest & High Accuracy)</option>
+                                    <option value="gemini-2.5-pro" @selected($currentModel === 'gemini-2.5-pro')>Gemini 2.5 Pro (Advanced Reasoning)</option>
+                                    <option value="gemini-flash-latest" @selected($currentModel === 'gemini-flash-latest')>Gemini Flash Latest</option>
+                                    <option value="gemini-3.5-flash" @selected($currentModel === 'gemini-3.5-flash')>Gemini 3.5 Flash</option>
+                                </select>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    Select the active AI model endpoint for auto blog generation, landing pages, SEO recommendations, and live chat assistant.
                                 </span>
                             </div>
                             
@@ -1167,6 +1228,54 @@
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     OAuth 2.0 Bearer Access Token with <code>https://www.googleapis.com/auth/business.manage</code> scope.
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Navigation Manager Card -->
+                    <div class="admin-card">
+                        <h2>Top Navigation Manager</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Customize the announcement bar, header tagline, location indicators, and helpline numbers.</p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="clinic_timings">Announcement Clinic Timings</label>
+                                <input type="text" id="clinic_timings" name="clinic_timings" class="form-control" value="{{ $site['clinic_timings'] ?? 'Mon - Sat: 9:00 AM - 9:00 PM | Sun: By Appointment' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="clinic_locations_short">Header Short Locations Text</label>
+                                <input type="text" id="clinic_locations_short" name="clinic_locations_short" class="form-control" value="{{ $site['clinic_locations_short'] ?? 'Baner & Hinjewadi, Pune' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone_display">Display Helpline Number</label>
+                                <input type="text" id="phone_display" name="phone_display" class="form-control" value="{{ $site['phone_display'] ?? '+91 95455 59434' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="site_tagline">Logo Sub-Tagline</label>
+                                <input type="text" id="site_tagline" name="site_tagline" class="form-control" value="{{ $site['site_tagline'] ?? 'ORTHOPAEDIC & PHYSIOTHERAPY CENTER' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Content Manager Card -->
+                    <div class="admin-card">
+                        <h2>Footer Content & Links Manager</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Manage footer description, clinic branch addresses, and copyright line.</p>
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="footer_description">Footer About Description</label>
+                            <textarea id="footer_description" name="footer_description" class="form-control" rows="3">{{ $site['footer_description'] ?? 'SumitZ Clinic is Pune\'s leading Orthopaedic and Physiotherapy recovery centre in Baner and Hinjewadi. Directed by Dr. Sumit, we offer patient-focused care for joint, spine, fracture, and sports injury rehabilitation.' }}</textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="address_baner">Baner Clinic Address</label>
+                                <input type="text" id="address_baner" name="address_baner" class="form-control" value="{{ $site['address_baner'] ?? 'First Floor, Krishna Avenue, Baner, Pune - 411045' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="address_hinjewadi">Hinjewadi Clinic Address</label>
+                                <input type="text" id="address_hinjewadi" name="address_hinjewadi" class="form-control" value="{{ $site['address_hinjewadi'] ?? 'Atlanta Society, Hinjewadi, Pune - 411057' }}">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="copyright_text">Footer Copyright Line</label>
+                                <input type="text" id="copyright_text" name="copyright_text" class="form-control" value="{{ $site['copyright_text'] ?? ('© ' . date('Y') . ' SumitZ Clinic. All Rights Reserved.') }}">
                             </div>
                         </div>
                     </div>
@@ -1373,137 +1482,152 @@
                             <p style="font-size: 0.85rem;">When clients submit a form on the website, they will appear here.</p>
                         </div>
                     @else
-                        <form id="bulk-delete-form" action="{{ route('admin.leads.bulk-delete') }}" method="POST" style="margin: 0;">
+                        <!-- Standalone Bulk Delete Form -->
+                        <form id="bulk-delete-form" action="{{ route('admin.leads.bulk-delete') }}" method="POST" style="display: none;">
                             @csrf
-                            <div class="admin-table-wrap">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 40px; text-align: center;">
-                                                <input type="checkbox" id="check-all-leads" onchange="toggleAllLeads(this)" style="cursor: pointer;">
-                                            </th>
-                                            <th>Date & Time</th>
-                                            <th>Client Information</th>
-                                            <th>Source</th>
-                                            <th>Status</th>
-                                            <th style="text-align: right;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($leads as $lead)
-                                            <!-- Main Info Row -->
-                                            <tr id="lead-row-{{ $lead->id }}">
-                                                <td style="text-align: center;">
-                                                    <input type="checkbox" name="ids[]" value="{{ $lead->id }}" class="lead-checkbox" onchange="updateBulkDeleteState()" style="cursor: pointer;">
-                                                </td>
-                                                <td style="font-size: 0.85rem; color: var(--admin-text-muted); white-space: nowrap;">
-                                                    {{ $lead->created_at->format('d M Y, h:i A') }}<br>
-                                                    <small style="color: #94a3b8;">{{ $lead->created_at->diffForHumans() }}</small>
-                                                </td>
-                                                <td>
-                                                    <strong style="font-size: 1.05rem; color: var(--primary-teal-dark); display: block;">{{ $lead->name }}</strong>
-                                                    <div style="display: flex; gap: 10px; margin-top: 0.25rem; font-size: 0.85rem;">
-                                                        <a href="tel:{{ $lead->phone }}" style="color: var(--accent-orange); display: flex; align-items: center; gap: 4px; font-weight: 500;">
-                                                            <i data-lucide="phone" style="width: 12px; height: 12px;"></i> {{ $lead->phone }}
+                            <div id="bulk-delete-inputs"></div>
+                        </form>
+
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px; text-align: center;">
+                                            <input type="checkbox" id="check-all-leads" onchange="toggleAllLeads(this)" style="cursor: pointer;">
+                                        </th>
+                                        <th>Date & Time</th>
+                                        <th>Client Information</th>
+                                        <th>Source</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($leads as $lead)
+                                        <!-- Main Info Row -->
+                                        <tr id="lead-row-{{ $lead->id }}">
+                                            <td style="text-align: center;">
+                                                <input type="checkbox" value="{{ $lead->id }}" class="lead-checkbox" onchange="updateBulkDeleteState()" style="cursor: pointer;">
+                                            </td>
+                                            <td style="font-size: 0.85rem; color: var(--admin-text-muted); white-space: nowrap;">
+                                                {{ $lead->created_at->format('d M Y, h:i A') }}<br>
+                                                <small style="color: #94a3b8;">{{ $lead->created_at->diffForHumans() }}</small>
+                                            </td>
+                                            <td>
+                                                <strong style="font-size: 1.05rem; color: var(--primary-teal-dark); display: block;">{{ $lead->name }}</strong>
+                                                <div style="display: flex; gap: 10px; margin-top: 0.25rem; font-size: 0.85rem;">
+                                                    <a href="tel:{{ $lead->phone }}" style="color: var(--accent-orange); display: flex; align-items: center; gap: 4px; font-weight: 500;">
+                                                        <i data-lucide="phone" style="width: 12px; height: 12px;"></i> {{ $lead->phone }}
+                                                    </a>
+                                                    @if($lead->email)
+                                                        <a href="mailto:{{ $lead->email }}" style="color: var(--admin-text-muted); display: flex; align-items: center; gap: 4px;">
+                                                            <i data-lucide="mail" style="width: 12px; height: 12px;"></i> {{ $lead->email }}
                                                         </a>
-                                                        @if($lead->email)
-                                                            <a href="mailto:{{ $lead->email }}" style="color: var(--admin-text-muted); display: flex; align-items: center; gap: 4px;">
-                                                                <i data-lucide="mail" style="width: 12px; height: 12px;"></i> {{ $lead->email }}
-                                                            </a>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge" style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 0.75rem;">
-                                                        {{ $lead->source }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    @if($lead->status === 'New')
-                                                        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">New</span>
-                                                    @elseif($lead->status === 'Contacted')
-                                                        <span class="badge" style="background-color: #fef9c3; color: #854d0e;">Contacted</span>
-                                                    @elseif($lead->status === 'In Progress')
-                                                        <span class="badge" style="background-color: #ffedd5; color: #9a3412;">In Progress</span>
-                                                    @elseif($lead->status === 'Closed')
-                                                        <span class="badge" style="background-color: #dcfce7; color: #166534;">Closed</span>
                                                     @endif
-                                                </td>
-                                                <td style="text-align: right; white-space: nowrap;">
-                                                    <button type="button" onclick="toggleLeadDetails({{ $lead->id }})" class="btn-action edit" title="View Details / Edit" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; font-weight: 500; font-size: 0.85rem; border: 1px solid #ffffff; background-color: transparent; color: #ffffff;">
-                                                        <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i> Details
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            
-                                            <!-- Inline Expandable Detail/Edit Form Row -->
-                                            <tr id="lead-details-{{ $lead->id }}" class="lead-detail-row" style="display: none; background-color: var(--admin-dark-sidebar);">
-                                                <td colspan="6" style="padding: 1.5rem; border-top: 1px dashed var(--admin-border); border-bottom: 1px dashed var(--admin-border);">
-                                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge" style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 0.75rem;">
+                                                    {{ $lead->source }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if($lead->status === 'New')
+                                                    <span class="badge" style="background-color: #dbeafe; color: #1e40af;">New</span>
+                                                @elseif($lead->status === 'Contacted')
+                                                    <span class="badge" style="background-color: #fef9c3; color: #854d0e;">Contacted</span>
+                                                @elseif($lead->status === 'In Progress')
+                                                    <span class="badge" style="background-color: #ffedd5; color: #9a3412;">In Progress</span>
+                                                @elseif($lead->status === 'Closed')
+                                                    <span class="badge" style="background-color: #dcfce7; color: #166534;">Closed</span>
+                                                @endif
+                                            </td>
+                                            <td style="text-align: right; white-space: nowrap;">
+                                                <button type="button" onclick="toggleLeadDetails({{ $lead->id }})" class="btn-action edit" title="View Details / Edit" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; font-weight: 500; font-size: 0.85rem; border: 1px solid var(--primary-teal); background-color: rgba(92, 203, 179, 0.15); color: var(--mint-green); cursor: pointer;">
+                                                    <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i> Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Inline Expandable Detail/Edit Form Row -->
+                                        <tr id="lead-details-{{ $lead->id }}" class="lead-detail-row" style="display: none; background-color: var(--admin-dark-sidebar);">
+                                            <td colspan="6" style="padding: 1.5rem; border-top: 1px dashed var(--admin-border); border-bottom: 1px dashed var(--admin-border);">
+                                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                                    
+                                                    <!-- Details Section -->
+                                                    <div>
+                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--mint-green); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Lead Information Details</h4>
+                                                        <div style="background-color: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1rem; font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.95);">
+                                                            {!! nl2br(e($lead->message)) !!}
+                                                        </div>
                                                         
-                                                        <!-- Details Section -->
-                                                        <div>
-                                                            <h4 style="margin: 0 0 0.75rem 0; color: var(--mint-green); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Lead Information Details</h4>
-                                                            <div style="background-color: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: var(--radius-md); padding: 1rem; font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.95);">
-                                                                {!! nl2br(e($lead->message)) !!}
-                                                            </div>
-                                                            @if($lead->notes)
-                                                                <div style="margin-top: 1rem;">
-                                                                    <h5 style="margin: 0 0 0.5rem 0; color: rgba(255,255,255,0.6); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Admin Notes History</h5>
-                                                                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.85); font-style: italic; background-color: rgba(255,255,255,0.02); padding: 0.50rem 0.75rem; border-radius: 4px; border-left: 3px solid var(--mint-green); margin: 0;">
-                                                                        {{ $lead->notes }}
-                                                                    </p>
+                                                        <div style="margin-top: 1rem;">
+                                                            <h5 style="margin: 0 0 0.5rem 0; color: rgba(255,255,255,0.6); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Multiple Activity Tracking Log</h5>
+                                                            @if($lead->activities && $lead->activities->count() > 0)
+                                                                <div style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; background-color: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border: 1px solid var(--admin-border);">
+                                                                    @foreach($lead->activities as $act)
+                                                                        <div style="font-size: 0.82rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 6px;">
+                                                                            <strong style="color: var(--mint-green);">{{ $act->user_name }}</strong> 
+                                                                            <span style="color: #94a3b8;">({{ $act->created_at->format('d M Y, h:i A') }}):</span> 
+                                                                            <span style="color: #e2e8f0;">{{ $act->notes ?? 'Updated lead record' }}</span>
+                                                                            @if($act->status_from || $act->status_to)
+                                                                                <span class="badge" style="font-size: 0.7rem; padding: 2px 6px; background: #1e293b; color: #60a5fa; margin-left: 6px;">{{ $act->status_from }} → {{ $act->status_to }}</span>
+                                                                            @endif
+                                                                        </div>
+                                                                    @endforeach
                                                                 </div>
+                                                            @else
+                                                                <p style="font-size: 0.85rem; color: #94a3b8; font-style: italic; margin: 0;">No activities logged yet.</p>
                                                             @endif
                                                         </div>
-                                                        
-                                                        <!-- Actions & Notes Form Section -->
-                                                        <div>
-                                                            <h4 style="margin: 0 0 0.75rem 0; color: var(--mint-green); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Update Status & Actions</h4>
-                                                            <form action="{{ route('admin.leads.update', $lead->id) }}" method="POST" style="margin-bottom: 0;">
-                                                                @csrf
-                                                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                                                    <div class="form-group">
-                                                                        <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Lead Status</label>
-                                                                        <select name="status" class="form-control" required style="padding: 0.5rem; height: auto; background-color: var(--admin-dark-bg); color: #ffffff;">
-                                                                            <option value="New" @selected($lead->status === 'New') style="background-color: var(--admin-dark-bg); color: #ffffff;">New</option>
-                                                                            <option value="Contacted" @selected($lead->status === 'Contacted') style="background-color: var(--admin-dark-bg); color: #ffffff;">Contacted</option>
-                                                                            <option value="In Progress" @selected($lead->status === 'In Progress') style="background-color: var(--admin-dark-bg); color: #ffffff;">In Progress</option>
-                                                                            <option value="Closed" @selected($lead->status === 'Closed') style="background-color: var(--admin-dark-bg); color: #ffffff;">Closed</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    
-                                                                    <div class="form-group">
-                                                                        <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Internal Follow-up Notes</label>
-                                                                        <textarea name="notes" class="form-control" rows="3" placeholder="Write internal notes about client conversation..." style="font-size: 0.85rem; padding: 0.5rem; background-color: var(--admin-dark-bg); color: #ffffff;">{{ $lead->notes }}</textarea>
-                                                                    </div>
+                                                    </div>
+                                                    
+                                                    <!-- Actions & Notes Form Section -->
+                                                    <div>
+                                                        <h4 style="margin: 0 0 0.75rem 0; color: var(--mint-green); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 0;">Update Status & Actions</h4>
+                                                        <form action="{{ route('admin.leads.update', $lead->id) }}" method="POST" style="margin-bottom: 0;">
+                                                            @csrf
+                                                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                                                <div class="form-group">
+                                                                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Lead Status</label>
+                                                                    <select name="status" class="form-control" required style="padding: 0.5rem; height: auto; background-color: var(--admin-dark-bg); color: #ffffff;">
+                                                                        <option value="New" @selected($lead->status === 'New') style="background-color: var(--admin-dark-bg); color: #ffffff;">New</option>
+                                                                        <option value="Contacted" @selected($lead->status === 'Contacted') style="background-color: var(--admin-dark-bg); color: #ffffff;">Contacted</option>
+                                                                        <option value="In Progress" @selected($lead->status === 'In Progress') style="background-color: var(--admin-dark-bg); color: #ffffff;">In Progress</option>
+                                                                        <option value="Closed" @selected($lead->status === 'Closed') style="background-color: var(--admin-dark-bg); color: #ffffff;">Closed</option>
+                                                                    </select>
                                                                 </div>
-                                                                <button type="submit" class="btn-submit" style="padding: 0.5rem 1rem; width: auto; margin-top: 0.75rem; font-size: 0.85rem;">
-                                                                    Update Status & Notes
+                                                                
+                                                                <div class="form-group">
+                                                                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Internal Follow-up Notes</label>
+                                                                    <textarea name="notes" class="form-control" rows="3" placeholder="Write internal notes about client conversation..." style="font-size: 0.85rem; padding: 0.5rem; background-color: var(--admin-dark-bg); color: #ffffff;">{{ $lead->notes }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                            <button type="submit" class="btn-submit" style="padding: 0.5rem 1rem; width: auto; margin-top: 0.75rem; font-size: 0.85rem;">
+                                                                Update Status & Notes
+                                                            </button>
+                                                        </form>
+                                                        
+                                                        <hr style="border: 0; border-top: 1px solid var(--admin-border); margin: 1.25rem 0;">
+                                                        
+                                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                            <span style="font-size: 0.8rem; color: #94a3b8;">Dangerous operation:</span>
+                                                            <form action="{{ route('admin.leads.delete', $lead->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this lead record?');" style="margin: 0;">
+                                                                @csrf
+                                                                <button type="submit" class="btn-action delete" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; height: auto; background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; cursor: pointer;">
+                                                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Delete Lead Record
                                                                 </button>
                                                             </form>
-                                                            
-                                                            <hr style="border: 0; border-top: 1px solid var(--admin-border); margin: 1.25rem 0;">
-                                                            
-                                                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                                <span style="font-size: 0.8rem; color: #94a3b8;">Dangerous operation:</span>
-                                                                <form action="{{ route('admin.leads.delete', $lead->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this lead record?');" style="margin: 0;">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn-action delete" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; height: auto; background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; cursor: pointer;">
-                                                                        <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> Delete Lead Record
-                                                                    </button>
-                                                                </form>
-                                                            </div>
                                                         </div>
-                                                        
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
+                                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                         
                         <!-- Custom Leads Pagination -->
                         <div class="admin-pagination" style="margin-top: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 1rem;">
@@ -1584,6 +1708,49 @@
                         </div>
                     </div>
 
+                </div>
+
+                <!-- Live Chat Auto-Reply & AI Receptionist Settings Card -->
+                <div class="admin-card" style="margin-top: 2rem;">
+                    <h2><i data-lucide="bot" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px; color: var(--mint-green);"></i> Live Chat Auto-Reply & AI Receptionist Settings</h2>
+                    <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
+                        Customize automatic greetings, enable or disable AI auto-replies, and provide instructions for Gemini AI receptionist.
+                    </p>
+                    
+                    <form action="{{ route('admin.parameters.update') }}" method="POST">
+                        @csrf
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="chat_ai_enabled" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="hidden" name="chat_ai_enabled" value="0">
+                                    <input type="checkbox" id="chat_ai_enabled" name="chat_ai_enabled" value="1" @checked(($site['chat_ai_enabled'] ?? '1') == '1') style="width: 18px; height: 18px; cursor: pointer;">
+                                    <strong>Enable Gemini AI Assistant Auto-Replies for New Visitor Queries</strong>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="chat_welcome_message">Welcome Auto-Greeting Message</label>
+                                <input type="text" id="chat_welcome_message" name="chat_welcome_message" class="form-control" value="{{ $site['chat_welcome_message'] ?? 'Hello! Welcome to SumitZ Clinic. How can we help you today with your joint, spine, or physiotherapy recovery?' }}" placeholder="e.g. Hello! Welcome to SumitZ Clinic...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Sent automatically as the initial greeting when a patient opens live chat.</span>
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="chat_ai_custom_prompt">Custom AI Receptionist System Prompt / Instructions</label>
+                                <textarea id="chat_ai_custom_prompt" name="chat_ai_custom_prompt" class="form-control" rows="4" placeholder="e.g. Clinic is open Mon-Sat 9am-9pm. First consultation fee is Rs 500. Dr. Sumit Diwan is lead knee and joint surgeon.">{{ $site['chat_ai_custom_prompt'] ?? '' }}</textarea>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Add specific clinic details, pricing, timings, or rules to instruct Gemini AI.</span>
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="chat_fallback_message">Offline / Human Assistance Fallback Message</label>
+                                <input type="text" id="chat_fallback_message" name="chat_fallback_message" class="form-control" value="{{ $site['chat_fallback_message'] ?? 'Thank you for your message. Our clinical coordinator will respond shortly. You can also request an appointment directly or call us at +91 95455 59434.' }}" placeholder="e.g. Thank you for your message...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Sent when AI is turned OFF or when Gemini API is unavailable.</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.25rem;">
+                            <button type="submit" class="btn-submit"><i data-lucide="save" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px;"></i> Save Chat Settings</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -2392,7 +2559,10 @@
             <!-- 9. TREATMENTS MANAGER TAB -->
             <div class="tab-panel @if($activeTab === 'treatments') active @endif" id="tab-treatments">
                 <div class="admin-card">
-                    <h2 id="treatment-form-title-text">Add New Treatment Page</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 id="treatment-form-title-text" style="margin:0;">Add New Treatment Page</h2>
+                        <button type="button" class="btn-ai-sparkle" onclick="openAiModal('treatment')"><i data-lucide="sparkles"></i> Generate Treatment with AI</button>
+                    </div>
                     <form id="treatment-form" action="{{ route('admin.treatments.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="_method" id="treatment-form-method" value="POST">
@@ -2517,7 +2687,10 @@
             <!-- 10. SPECIALISTS TAB -->
             <div class="tab-panel @if($activeTab === 'specialists') active @endif" id="tab-specialists">
                 <div class="admin-card">
-                    <h2 id="specialist-form-title-text">Add New Clinic Specialist</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+                        <h2 id="specialist-form-title-text" style="margin: 0;">Add New Clinic Specialist</h2>
+                        <button type="button" class="btn-ai-sparkle" id="specialist-ai-btn" onclick="openAiModal('specialist')"><i data-lucide="sparkles"></i> Generate Specialist with AI</button>
+                    </div>
                     <form id="specialist-form" action="{{ route('admin.specialists.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="_method" id="specialist-form-method" value="POST">
@@ -2663,7 +2836,10 @@
             <!-- 11. CMS PAGES MANAGER TAB -->
             <div class="tab-panel @if($activeTab === 'cms_pages') active @endif" id="tab-cms_pages">
                 <div class="admin-card">
-                    <h2 id="cms-form-title-text">Add New CMS Page</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 id="cms-form-title-text" style="margin:0;">Add New CMS Page</h2>
+                        <button type="button" class="btn-ai-sparkle" onclick="openAiModal('cms')"><i data-lucide="sparkles"></i> Generate CMS Page with AI</button>
+                    </div>
                     <form id="cms-form" action="{{ route('admin.cms_pages.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="_method" id="cms-form-method" value="POST">
@@ -3639,6 +3815,40 @@
             @endif
 
 
+            <!-- Internal System Notifications & Error Logs Tab Panel -->
+            <div class="tab-panel @if($activeTab === 'internal_notifications') active @endif" id="tab-internal_notifications">
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h2 style="margin: 0;"><i data-lucide="bell" style="vertical-align: middle; margin-right: 6px; color: var(--mint-green);"></i> Internal System Notifications & Error Logs</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">Automatic audit log of system errors, content edits, parameter changes, incoming leads, and live chats.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <button type="button" onclick="markAllNotificationsRead()" class="btn" style="background-color: rgba(92, 203, 179, 0.15); color: var(--mint-green); border: 1px solid var(--mint-green); padding: 0.5rem 1rem; font-size: 0.85rem; cursor: pointer;">
+                                <i data-lucide="check-check" style="width: 14px; height: 14px; vertical-align: middle;"></i> Mark All Read
+                            </button>
+                            <button type="button" onclick="clearAllNotifications()" class="btn" style="background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 0.5rem 1rem; font-size: 0.85rem; cursor: pointer;">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px; vertical-align: middle;"></i> Clear Log
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div style="display: flex; gap: 10px; margin-bottom: 1.25rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.75rem;">
+                        <button type="button" onclick="filterInternalNotifications('all')" class="btn-filter-notif active" id="notif-filter-all" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background-color: var(--primary-teal); color: white; border: none; cursor: pointer;">All Alerts</button>
+                        <button type="button" onclick="filterInternalNotifications('error')" class="btn-filter-notif" id="notif-filter-error" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background-color: var(--admin-input-bg); color: #f87171; border: 1px solid var(--admin-border); cursor: pointer;">Errors</button>
+                        <button type="button" onclick="filterInternalNotifications('edit')" class="btn-filter-notif" id="notif-filter-edit" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background-color: var(--admin-input-bg); color: #60a5fa; border: 1px solid var(--admin-border); cursor: pointer;">Edits & Updates</button>
+                        <button type="button" onclick="filterInternalNotifications('lead')" class="btn-filter-notif" id="notif-filter-lead" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background-color: var(--admin-input-bg); color: #f59e0b; border: 1px solid var(--admin-border); cursor: pointer;">Leads</button>
+                        <button type="button" onclick="filterInternalNotifications('chat')" class="btn-filter-notif" id="notif-filter-chat" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background-color: var(--admin-input-bg); color: #34d399; border: 1px solid var(--admin-border); cursor: pointer;">Chats</button>
+                    </div>
+
+                    <!-- Notifications List Container -->
+                    <div id="internal-notifications-table-wrap" style="max-height: 550px; overflow-y: auto;">
+                        <div style="padding: 2.5rem; text-align: center; color: var(--admin-text-muted);">Loading system notifications...</div>
+                    </div>
+                </div>
+            </div>
+
             @if($hasAccess('seo'))
             <!-- Web Notifications Management Tab Panel -->
             <div class="tab-panel @if($activeTab === 'notifications') active @endif" id="tab-notifications">
@@ -3805,10 +4015,6 @@
                 </div>
             </div>
             @endif
-        </div>
-
-
-    </div>
 
     <!-- AI Toast Notification Container -->
     <div id="ai-toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999; display: flex; flex-direction: column; gap: 10px;"></div>
@@ -4026,6 +4232,7 @@
                 </div>
             </div>
         </div>
+    </div>
     <!-- AI Slider Generator Modal -->
     <div class="ai-modal-overlay" id="ai-slider-modal">
         <div class="ai-modal-card">
@@ -4054,6 +4261,84 @@
                 <div class="ai-sparkle-loader"></div>
                 <p class="ai-loader-text">Gemini is designing and writing your slide...</p>
                 <p class="ai-loader-subtext">This will take 10-15 seconds. Please do not close this modal.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Treatment Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-treatment-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('treatment')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> AI Treatment Generator</h3>
+            
+            <div id="ai-treatment-form-wrapper">
+                <div class="form-group">
+                    <label for="ai_treatment_prompt">What Treatment do you want to generate?</label>
+                    <textarea id="ai_treatment_prompt" class="form-control" rows="4" placeholder="e.g. ACL Reconstruction & Arthroscopic Knee Surgery for sports injury patients in Pune..."></textarea>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('treatment')">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" onclick="generateAiTreatment()"><i data-lucide="sparkles"></i> Generate Treatment</button>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="ai-treatment-loader" style="display: none;">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Gemini is writing treatment details...</p>
+                <p class="ai-loader-subtext">Structuring title, SEO meta descriptions, and clinical procedures.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI CMS Page Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-cms-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('cms')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> AI CMS Page Generator</h3>
+            
+            <div id="ai-cms-form-wrapper">
+                <div class="form-group">
+                    <label for="ai_cms_prompt">Describe the CMS Page topic/content:</label>
+                    <textarea id="ai_cms_prompt" class="form-control" rows="4" placeholder="e.g. Patient Care Guidelines & Pre-Operative Preparation for Orthopedic Surgery at SumitZ Clinic, Pune..."></textarea>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('cms')">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" onclick="generateAiCmsPage()"><i data-lucide="sparkles"></i> Generate Page</button>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="ai-cms-loader" style="display: none;">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Gemini is creating CMS page content...</p>
+                <p class="ai-loader-subtext">Drafting page title, slug, meta data, and HTML article layout.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Specialist Profile Generator Modal -->
+    <div class="ai-modal-overlay" id="ai-specialist-modal">
+        <div class="ai-modal-card">
+            <button class="ai-modal-close" onclick="closeAiModal('specialist')">&times;</button>
+            <h3><i data-lucide="sparkles"></i> AI Specialist Profile Generator</h3>
+            
+            <div id="ai-specialist-form-wrapper">
+                <div class="form-group">
+                    <label for="ai_specialist_prompt">Doctor/Specialist Name & Specialty:</label>
+                    <textarea id="ai_specialist_prompt" class="form-control" rows="4" placeholder="e.g. Dr. Sumit Diwan, Lead Knee & Joint Replacement Surgeon with 15+ years surgical experience in Pune..."></textarea>
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('specialist')">Cancel</button>
+                    <button type="button" class="btn-ai-sparkle" onclick="generateAiSpecialist()"><i data-lucide="sparkles"></i> Generate Profile</button>
+                </div>
+            </div>
+            
+            <div class="ai-loader-container" id="ai-specialist-loader" style="display: none;">
+                <div class="ai-sparkle-loader"></div>
+                <p class="ai-loader-text">Gemini is writing specialist profile...</p>
+                <p class="ai-loader-subtext">Structuring medical credentials, experience, and biography.</p>
             </div>
         </div>
     </div>
@@ -5005,9 +5290,11 @@
         // Toggle Lead Details
         function toggleLeadDetails(id) {
             const row = document.getElementById('lead-details-' + id);
-            if (row.style.display === 'none') {
+            if (!row) return;
+            const currentDisp = row.style.display || getComputedStyle(row).display;
+            if (currentDisp === 'none') {
                 row.style.display = 'table-row';
-                setTimeout(() => lucide.createIcons(), 10);
+                setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 10);
             } else {
                 row.style.display = 'none';
             }
@@ -5123,7 +5410,17 @@
             if (previousUnreadSum !== null && totalUnread > previousUnreadSum) {
                 playNotificationChime();
                 if (typeof showToast === 'function') {
-                    showToast('New message received from visitor!', 'success');
+                    showToast('New Live Chat message received from visitor!', 'success');
+                }
+                if ("Notification" in window) {
+                    if (Notification.permission === "granted") {
+                        new Notification("New Live Chat Message", {
+                            body: "A website visitor sent a new chat message to SumitZ Clinic.",
+                            icon: "/favicon.ico"
+                        });
+                    } else if (Notification.permission === "default") {
+                        Notification.requestPermission();
+                    }
                 }
             }
             previousUnreadSum = totalUnread;
@@ -5162,7 +5459,7 @@
                 
                 itemDiv.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <strong style="color: ${isSelected ? 'var(--mint-green)' : '#ffffff'}; font-size: 0.9rem; font-family: 'Outfit';">Session ${s.session_id.substr(5, 6)}</strong>
+                        <strong style="color: ${isSelected ? 'var(--mint-green)' : '#ffffff'}; font-size: 0.9rem; font-family: 'Outfit';">Session ${String(s.session_id || '').slice(-6)}</strong>
                         <span style="font-size: 0.7rem; color: var(--admin-text-muted);">${time}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -5189,7 +5486,7 @@
             document.getElementById('admin-chat-delete-btn').style.display = 'inline-flex';
             document.getElementById('admin-chat-refresh-btn').style.display = 'inline-flex';
             
-            document.getElementById('admin-chat-header-title').textContent = `Session ${sessionId.substr(5, 6)}`;
+            document.getElementById('admin-chat-header-title').textContent = `Session ${String(sessionId || '').slice(-6)}`;
             document.getElementById('admin-chat-header-subtitle').textContent = `Full Session ID: ${sessionId}`;
             
             loadAdminChatMessages();
@@ -5396,6 +5693,7 @@
                 .create(document.querySelector('#treat_description'))
                 .then(editor => {
                     treatmentEditor = editor;
+                    window.treatmentEditor = editor;
                 })
                 .catch(error => {
                     console.error(error);
@@ -5408,6 +5706,7 @@
                 .create(document.querySelector('#spec_description'))
                 .then(editor => {
                     specialistEditor = editor;
+                    window.specialistEditor = editor;
                 })
                 .catch(error => {
                     console.error(error);
@@ -5420,6 +5719,7 @@
                 .create(document.querySelector('#cms_description'))
                 .then(editor => {
                     cmsEditor = editor;
+                    window.cmsEditor = editor;
                 })
                 .catch(error => {
                     console.error(error);
@@ -6366,6 +6666,8 @@
             .catch(err => {
                 showToast("AI Generation Failed", "Network error during background image generation.", "error", jobId);
             });
+        }
+
         function generateAiSlider() {
             const prompt = document.getElementById('ai_slider_prompt').value.trim();
             const genImg = document.getElementById('ai_slider_gen_image').checked;
@@ -6419,6 +6721,141 @@
                 loader.style.display = 'none';
                 closeAiModal('slider');
                 alert('Request failed: ' + err.message);
+            });
+        }
+
+        function generateAiCmsPage() {
+            const prompt = document.getElementById('ai_cms_prompt').value.trim();
+            if (!prompt) return alert('Please enter a CMS page topic.');
+            const formWrapper = document.getElementById('ai-cms-form-wrapper');
+            const loader = document.getElementById('ai-cms-loader');
+            formWrapper.style.display = 'none';
+            loader.style.display = 'block';
+
+            fetch("{{ route('admin.ai.cms-page') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(res => res.json())
+            .then(res => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('cms');
+                if (res.success && res.data) {
+                    if (document.getElementById('cms_title')) document.getElementById('cms_title').value = res.data.title || '';
+                    if (document.getElementById('cms_slug')) document.getElementById('cms_slug').value = res.data.slug || '';
+                    if (document.getElementById('cms_metatitle')) document.getElementById('cms_metatitle').value = res.data.metatitle || '';
+                    if (document.getElementById('cms_metadescription')) document.getElementById('cms_metadescription').value = res.data.metadescription || '';
+                    
+                    if (window.cmsEditor) {
+                        window.cmsEditor.setData(res.data.content || '');
+                    }
+                    const cmsArea = document.getElementById('cms_description') || document.getElementById('cms_content');
+                    if (cmsArea) cmsArea.value = res.data.content || '';
+
+                    showToast('CMS Page Generated!', 'Fields auto-populated. Click Save to create.', 'success');
+                } else {
+                    alert('Error: ' + (res.error || 'Failed to generate page.'));
+                }
+            })
+            .catch(err => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('cms');
+                alert('Request error: ' + err.message);
+            });
+        }
+
+        function generateAiTreatment() {
+            const prompt = document.getElementById('ai_treatment_prompt').value.trim();
+            if (!prompt) return alert('Please enter a treatment name.');
+            const formWrapper = document.getElementById('ai-treatment-form-wrapper');
+            const loader = document.getElementById('ai-treatment-loader');
+            formWrapper.style.display = 'none';
+            loader.style.display = 'block';
+
+            fetch("{{ route('admin.ai.treatment') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(res => res.json())
+            .then(res => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('treatment');
+                if (res.success && res.data) {
+                    if (document.getElementById('treat_name')) document.getElementById('treat_name').value = res.data.name || '';
+                    if (document.getElementById('treatment_name')) document.getElementById('treatment_name').value = res.data.name || '';
+
+                    if (document.getElementById('treat_slug')) document.getElementById('treat_slug').value = res.data.slug || '';
+                    if (document.getElementById('treatment_slug')) document.getElementById('treatment_slug').value = res.data.slug || '';
+
+                    if (document.getElementById('treat_metatitle')) document.getElementById('treat_metatitle').value = res.data.metatitle || '';
+                    if (document.getElementById('treatment_metatitle')) document.getElementById('treatment_metatitle').value = res.data.metatitle || '';
+
+                    if (document.getElementById('treat_metadescription')) document.getElementById('treat_metadescription').value = res.data.metadescription || '';
+                    if (document.getElementById('treatment_metadescription')) document.getElementById('treatment_metadescription').value = res.data.metadescription || '';
+
+                    if (window.treatmentEditor) {
+                        window.treatmentEditor.setData(res.data.description || '');
+                    }
+                    const treatDescArea = document.getElementById('treat_description') || document.getElementById('treatment_description');
+                    if (treatDescArea) treatDescArea.value = res.data.description || '';
+
+                    showToast('Treatment Generated!', 'Fields auto-populated. Click Save Treatment.', 'success');
+                } else {
+                    alert('Error: ' + (res.error || 'Failed to generate treatment.'));
+                }
+            })
+            .catch(err => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('treatment');
+                alert('Request error: ' + err.message);
+            });
+        }
+
+        function generateAiSpecialist() {
+            const prompt = document.getElementById('ai_specialist_prompt').value.trim();
+            if (!prompt) return alert('Please enter specialist name & specialty.');
+            const formWrapper = document.getElementById('ai-specialist-form-wrapper');
+            const loader = document.getElementById('ai-specialist-loader');
+            formWrapper.style.display = 'none';
+            loader.style.display = 'block';
+
+            fetch("{{ route('admin.ai.specialist') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(res => res.json())
+            .then(res => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('specialist');
+                if (res.success && res.data) {
+                    if (document.getElementById('spec_name')) document.getElementById('spec_name').value = res.data.name || '';
+                    if (document.getElementById('spec_slug')) document.getElementById('spec_slug').value = res.data.slug || '';
+                    if (document.getElementById('spec_designation')) document.getElementById('spec_designation').value = res.data.designation || '';
+
+                    if (window.specialistEditor) {
+                        window.specialistEditor.setData(res.data.description || '');
+                    }
+                    const specArea = document.getElementById('spec_description') || document.getElementById('specialist_description');
+                    if (specArea) specArea.value = res.data.description || '';
+
+                    showToast('Specialist Generated!', 'Fields auto-populated. Click Save Specialist.', 'success');
+                } else {
+                    alert('Error: ' + (res.error || 'Failed to generate specialist profile.'));
+                }
+            })
+            .catch(err => {
+                formWrapper.style.display = 'block';
+                loader.style.display = 'none';
+                closeAiModal('specialist');
+                alert('Request error: ' + err.message);
             });
         }
 
@@ -6782,6 +7219,247 @@
             document.getElementById('preview-message').textContent = message;
             document.getElementById('preview-url').textContent = url;
         }
+
+        // Submenu accordion toggle
+        function toggleSubmenu(el) {
+            const parent = el.closest('.has-submenu');
+            const list = parent.querySelector('.submenu-list');
+            const arrow = parent.querySelector('.submenu-arrow');
+            const isOpen = list.style.display === 'block';
+            
+            list.style.display = isOpen ? 'none' : 'block';
+            if (arrow) arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+            if (isOpen) {
+                parent.classList.remove('open');
+            } else {
+                parent.classList.add('open');
+            }
+        }
+
+        // Test AI Connection & Model
+        function testAiConnection() {
+            const apiKey = document.getElementById('gemini_api_key').value.trim();
+            const model = document.getElementById('ai_model').value;
+            const btn = document.getElementById('btn-test-ai');
+            const origHtml = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader" class="spin" style="width: 14px; height: 14px; vertical-align: middle;"></i> Testing...`;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            fetch('{{ route("admin.ai.test-connection") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ api_key: apiKey, model: model })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+                if (data.success) {
+                    if (typeof showToast === 'function') showToast(data.message, 'success');
+                    else alert(data.message);
+                } else {
+                    if (typeof showToast === 'function') showToast(data.message, 'error');
+                    else alert(data.message);
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+                if (typeof showToast === 'function') showToast('Connection Error: ' + err.message, 'error');
+                else alert('Connection Error: ' + err.message);
+            });
+        }
+
+        // Bulk Delete Leads Form Handler
+        function submitBulkDelete() {
+            const checkedBoxes = Array.from(document.querySelectorAll('.lead-checkbox')).filter(cb => cb.checked);
+            if (checkedBoxes.length === 0) return;
+            if (!confirm(`Are you sure you want to delete ${checkedBoxes.length} selected lead record(s)?`)) return;
+
+            const inputsContainer = document.getElementById('bulk-delete-inputs');
+            inputsContainer.innerHTML = '';
+            checkedBoxes.forEach(cb => {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'ids[]';
+                hiddenInput.value = cb.value;
+                inputsContainer.appendChild(hiddenInput);
+            });
+
+            document.getElementById('bulk-delete-form').submit();
+        }
+
+        // Internal Notifications JS Engine
+        let currentNotifFilter = 'all';
+
+        function toggleNotificationDropdown() {
+            const drop = document.getElementById('nav-bell-dropdown');
+            const isVisible = drop.style.display === 'block';
+            drop.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                fetchInternalNotifications();
+            }
+        }
+
+        function fetchInternalNotifications() {
+            fetch(`/admin/internal-notifications?type=${currentNotifFilter}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        renderInternalNotifications(data.notifications, data.unread_count);
+                    }
+                })
+                .catch(err => console.error('Error fetching internal notifications:', err));
+        }
+
+        function renderInternalNotifications(notifications, unreadCount) {
+            const countBadge = document.getElementById('nav-bell-count');
+            const tabBadge = document.getElementById('admin-internal-unread-badge');
+            
+            if (unreadCount > 0) {
+                countBadge.textContent = unreadCount;
+                countBadge.style.display = 'inline-block';
+                if (tabBadge) {
+                    tabBadge.textContent = unreadCount;
+                    tabBadge.style.display = 'inline-flex';
+                }
+            } else {
+                countBadge.style.display = 'none';
+                if (tabBadge) tabBadge.style.display = 'none';
+            }
+
+            // Bell popover list
+            const bellList = document.getElementById('nav-bell-items-list');
+            if (bellList) {
+                if (notifications.length === 0) {
+                    bellList.innerHTML = `<div style="padding: 1.5rem; text-align: center; color: var(--admin-text-muted); font-size: 0.8rem;">No recent notifications</div>`;
+                } else {
+                    bellList.innerHTML = '';
+                    notifications.slice(0, 6).forEach(n => {
+                        const div = document.createElement('div');
+                        div.style.padding = '0.75rem 1rem';
+                        div.style.borderBottom = '1px solid var(--admin-border)';
+                        div.style.backgroundColor = n.is_read ? 'transparent' : 'rgba(92, 203, 179, 0.05)';
+                        div.style.fontSize = '0.8rem';
+                        div.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                                <strong style="color: ${n.type === 'error' ? '#f87171' : (n.type === 'lead' ? '#f59e0b' : 'var(--mint-green)')}; font-size: 0.82rem;">${escapeHTML(n.title)}</strong>
+                                <span style="font-size: 0.7rem; color: #94a3b8;">${new Date(n.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            <div style="color: #cbd5e1; margin-bottom: 4px;">${escapeHTML(n.message || '')}</div>
+                            <div style="font-size: 0.7rem; color: #64748b;">By: ${escapeHTML(n.user_name || 'System')}</div>
+                        `;
+                        bellList.appendChild(div);
+                    });
+                }
+            }
+
+            // Full Tab Table List
+            const tabWrap = document.getElementById('internal-notifications-table-wrap');
+            if (tabWrap) {
+                if (notifications.length === 0) {
+                    tabWrap.innerHTML = `<div style="padding: 3rem; text-align: center; color: var(--admin-text-muted); font-size: 0.9rem;">No system notifications recorded in this filter category.</div>`;
+                } else {
+                    let html = `
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Type</th>
+                                    <th>Title</th>
+                                    <th>Details / Message</th>
+                                    <th>Triggered By</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    notifications.forEach(n => {
+                        const typeBg = n.type === 'error' ? '#fee2e2' : (n.type === 'lead' ? '#fef3c7' : (n.type === 'chat' ? '#d1fae5' : '#dbeafe'));
+                        const typeFg = n.type === 'error' ? '#991b1b' : (n.type === 'lead' ? '#92400e' : (n.type === 'chat' ? '#065f46' : '#1e40af'));
+                        const timeStr = new Date(n.created_at).toLocaleString();
+
+                        html += `
+                            <tr style="background-color: ${n.is_read ? 'transparent' : 'rgba(92, 203, 179, 0.04)'};">
+                                <td style="font-size: 0.8rem; color: #94a3b8; white-space: nowrap;">${timeStr}</td>
+                                <td><span class="badge" style="background-color: ${typeBg}; color: ${typeFg}; text-transform: uppercase; font-size: 0.7rem;">${escapeHTML(n.type)}</span></td>
+                                <td><strong style="color: white; font-size: 0.9rem;">${escapeHTML(n.title)}</strong></td>
+                                <td style="font-size: 0.85rem; color: #cbd5e1;">${escapeHTML(n.message || '-')}</td>
+                                <td style="font-size: 0.8rem; color: var(--mint-green);">${escapeHTML(n.user_name || 'System')}</td>
+                                <td>
+                                    ${n.action_url ? `<a href="${n.action_url}" class="btn" style="padding: 4px 10px; font-size: 0.75rem; background: rgba(255,255,255,0.08); color: white; text-decoration: none; border-radius: 4px;">Open Link →</a>` : '-'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    html += `</tbody></table>`;
+                    tabWrap.innerHTML = html;
+                }
+            }
+        }
+
+        function filterInternalNotifications(type) {
+            currentNotifFilter = type;
+            document.querySelectorAll('.btn-filter-notif').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.backgroundColor = 'var(--admin-input-bg)';
+                btn.style.color = '#cbd5e1';
+                btn.style.border = '1px solid var(--admin-border)';
+            });
+            const activeBtn = document.getElementById('notif-filter-' + type);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.backgroundColor = 'var(--primary-teal)';
+                activeBtn.style.color = 'white';
+                activeBtn.style.border = 'none';
+            }
+            fetchInternalNotifications();
+        }
+
+        function markAllNotificationsRead() {
+            fetch('{{ route("admin.internal-notifications.mark-read") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    fetchInternalNotifications();
+                    if (typeof showToast === 'function') showToast('All notifications marked as read', 'success');
+                }
+            });
+        }
+
+        function clearAllNotifications() {
+            if (!confirm('Are you sure you want to clear all internal notification records?')) return;
+            fetch('{{ route("admin.internal-notifications.clear") }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    fetchInternalNotifications();
+                    if (typeof showToast === 'function') showToast('Notification log cleared', 'success');
+                }
+            });
+        }
+
+        // Periodically check internal notifications in background
+        setInterval(fetchInternalNotifications, 20000);
+        setTimeout(fetchInternalNotifications, 1000);
+
+        // Keep continuous background poll for live chat sessions (every 4 seconds)
+        setInterval(() => {
+            if (typeof loadAdminChatSessions === 'function') {
+                loadAdminChatSessions();
+            }
+        }, 4000);
     </script>
 
 </body>

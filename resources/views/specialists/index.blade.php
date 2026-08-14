@@ -1,51 +1,58 @@
 @extends('layouts.app')
 
-@section('title', ($specialistsPage->metatitle ?? 'Our Medical Specialists | SumitZ Orthopaedic Clinic'))
-@section('meta_description', ($specialistsPage->metadescription ?? 'Meet our highly qualified team of orthopaedic surgeons, physiotherapists, and diagnostic specialists led by Dr. Sumit in Baner, Pune.'))
+@section('title', ($specialistsPage->metatitle ?? 'Our Medical Specialists | SumitZ Clinic'))
+@section('meta_description', ($specialistsPage->metadescription ?? 'Meet our team of orthopaedic surgeons, physiotherapists, and diagnostic specialists led by Dr. Sumit in Baner & Hinjewadi, Pune.'))
 @section('meta_keywords', ($specialistsPage->metakeywords ?? 'orthopedic doctor baner, physiotherapist baner, orthopedic surgeons pune'))
 
-
 @section('content')
-<section class="details-hero">
-    <div class="container text-center">
-        <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">EXPERT MEDICAL TEAM</span>
-        <h1 style="margin-top: 10px;">Our Orthopaedic & Physiotherapy Specialists</h1>
-        <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">Dedicated professionals providing world-class joint, spine, and muscle care under one roof.</p>
-    </div>
-</section>
 
-<section class="section">
-    <div class="container animate-on-scroll">
-        <div class="blog-grid">
-            @forelse($specialists as $spec)
-                <div class="blog-card" style="display: flex; flex-direction: column; height: 100%;">
-                    <div style="height: 300px; overflow: hidden; position: relative; background-color: var(--bg-light); display: flex; align-items: center; justify-content: center;">
-                        @if($spec->image)
-                            <img src="{{ site_image($spec->image) }}" alt="{{ $spec->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                        @else
-                            <i data-lucide="user" style="width: 80px; height: 80px; color: var(--accent-teal);"></i>
-                        @endif
-                        <span class="blog-category-badge" style="background-color: var(--primary-teal-dark);">{{ $spec->designation }}</span>
-                    </div>
-                    <div class="blog-body" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <h3 style="margin-top: 0; color: var(--primary-teal-dark); font-size: 1.3rem;">{{ $spec->name }}</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
-                                {{ Str::limit(strip_tags($spec->description), 120) }}
-                            </p>
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <a href="{{ route('specialists.show', $spec->slug) }}" class="btn btn-secondary btn-sm" style="flex-grow: 1; text-align: center;">View Profile</a>
-                            <button onclick="openDialog('callback-dialog');" class="btn btn-primary btn-sm" style="padding: 10px;"><i data-lucide="calendar" style="width: 16px; height: 16px;"></i></button>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="text-center" style="grid-column: 1 / -1; padding: 40px; color: var(--text-light-muted);">
-                    <p>No specialists profiles are currently registered.</p>
-                </div>
-            @endforelse
+    <!-- Hero Header -->
+    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 64px 0 48px;">
+        <div class="container text-center" style="max-width: 760px;">
+            <span class="badge badge-teal" style="margin-bottom: 12px;">Expert Healthcare Team</span>
+            <h1 style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px;">Our Orthopaedic & Physiotherapy Specialists</h1>
+            <p style="font-size: 17px; color: var(--body-text); line-height: 1.7;">
+                Dedicated medical practitioners delivering compassionate, patient-first orthopaedic consultations and guided physical rehabilitation.
+            </p>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- Specialists Listing Grid -->
+    <section class="section-spacing" style="background-color: var(--warm-ivory);">
+        <div class="container">
+            <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                @forelse($specialists as $spec)
+                    <div class="doctor-card">
+                        <div class="doctor-img-container">
+                            @if(!empty($spec->image))
+                                <img src="{{ site_image($spec->image) }}" alt="{{ $spec->name }}">
+                            @else
+                                <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80" alt="{{ $spec->name }}">
+                            @endif
+                        </div>
+                        <div class="doctor-card-body">
+                            <h3 class="doctor-name">{{ $spec->name }}</h3>
+                            <span class="doctor-designation">{{ $spec->designation }}</span>
+                            <p style="font-size: 14.5px; color: var(--body-text); margin-bottom: 20px; line-height: 1.6;">
+                                {{ Str::limit(strip_tags($spec->description), 110) }}
+                            </p>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="{{ route('specialists.show', $spec->slug) }}" class="btn btn-secondary btn-sm" style="flex-grow: 1;">
+                                    View Profile
+                                </a>
+                                <button onclick="openDialog('callback-dialog');" class="btn btn-primary btn-sm">
+                                    <i data-lucide="calendar" style="width: 15px;"></i> Book
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted-text);">
+                        <p>No specialist profiles currently found.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
 @endsection

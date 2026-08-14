@@ -1,52 +1,40 @@
 @extends('layouts.app')
 
-@section('title', 'Thank You | Appointment Requested | ' . ($site['site_name'] ?? 'SumitZ Clinic'))
-@section('meta_description', 'Thank you for submitting your details. One of our clinical coordinators will reach out to you shortly.')
+@section('title', 'Request Received | ' . ($site['site_name'] ?? 'SumitZ Clinic'))
+@section('meta_description', 'Thank you for submitting your appointment request. Our medical coordinator will contact you shortly.')
 
 @section('content')
-    <section class="section" style="min-height: calc(100vh - 400px); display: flex; align-items: center; justify-content: center; padding: 4rem 1rem;">
+    <section class="section-spacing" style="background-color: var(--warm-ivory); min-height: 70vh; display: flex; align-items: center;">
         <div class="container text-center" style="max-width: 600px;">
-            <div style="margin-bottom: 2rem; display: inline-flex; align-items: center; justify-content: center; width: 90px; height: 90px; border-radius: 50%; background: rgba(0, 168, 150, 0.1); color: var(--mint-green); animation: scaleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;">
-                <i data-lucide="check-circle-2" style="width: 52px; height: 52px;"></i>
+            <div style="width: 80px; height: 80px; border-radius: 50%; background-color: var(--light-mint); color: var(--primary-teal); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: var(--shadow-sm);">
+                <i data-lucide="check-circle-2" style="width: 48px; height: 48px;"></i>
             </div>
             
-            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-teal-dark); font-weight: 800;">Thank You!</h1>
+            <h1 style="font-size: 36px; margin-bottom: 12px; color: var(--heading-navy);">Request Submitted Successfully!</h1>
             
-            <p style="font-size: 1.15rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 2rem;">
-                Your request has been successfully submitted and saved. One of our clinical coordinators will review your details and call you back shortly (typically within 2 hours).
+            <p style="font-size: 16.5px; line-height: 1.7; color: var(--body-text); margin-bottom: 32px;">
+                Thank you for reaching out to SumitZ Clinic. Our clinical coordinator will review your request and call you back shortly to confirm your appointment time.
             </p>
- 
-            <div style="background: rgba(12, 83, 84, 0.03); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2.5rem; text-align: left;">
-                <h4 style="margin: 0 0 10px 0; color: var(--primary-teal-dark); font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <i data-lucide="info" style="width: 16px; height: 16px; color: var(--mint-green);"></i> What happens next?
-                </h4>
-                <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
-                    <li style="margin-bottom: 6px;">We evaluate your symptoms and preferred date against current doctor schedules.</li>
-                    <li style="margin-bottom: 6px;">A clinic coordinator contacts you to confirm the time slot and provide preparation details.</li>
-                    <li>You receive confirmation details and clinic directions directly on your phone.</li>
+
+            <div class="location-card" style="text-align: left; padding: 28px; margin-bottom: 32px; background-color: var(--surface-white);">
+                <h3 style="font-size: 17px; margin-bottom: 12px; color: var(--heading-navy); display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="info" style="color: var(--primary-teal); width: 18px;"></i> What Happens Next?
+                </h3>
+                <ol style="margin: 0; padding-left: 20px; font-size: 14.5px; color: var(--body-text); line-height: 1.7;">
+                    <li style="margin-bottom: 8px;">Our team checks slot availability for your selected treatment.</li>
+                    <li style="margin-bottom: 8px;">A coordinator contacts you via phone to finalize the exact appointment time.</li>
+                    <li>You receive clinic directions and visit guidelines directly on your mobile device.</li>
                 </ol>
             </div>
- 
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <a href="{{ route('home') }}" class="btn btn-primary" style="text-decoration: none; padding: 0.75rem 1.75rem; display: inline-flex; align-items: center; gap: 8px; justify-content: center; width: auto; font-weight: 600;">
-                    <i data-lucide="home" style="width: 18px; height: 18px;"></i> Go to Home Page
+
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ route('home') }}" class="btn btn-primary">
+                    <i data-lucide="home"></i> Return to Homepage
                 </a>
-                <a href="{{ route('blog') }}" class="btn-logout" style="text-decoration: none; padding: 0.75rem 1.75rem; background-color: transparent; border: 1px solid var(--border-light); color: var(--primary-teal-dark); border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; transition: all 0.3s ease; font-weight: 600;">
-                    <i data-lucide="book-open" style="width: 18px; height: 18px;"></i> Read Latest Tips
+                <a href="{{ route('blog') }}" class="btn btn-secondary">
+                    <i data-lucide="book-open"></i> Read Health Guides
                 </a>
             </div>
         </div>
     </section>
-
-    <style>
-        @keyframes scaleUp {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .btn-logout:hover {
-            background-color: rgba(255,255,255,0.05) !important;
-            border-color: var(--mint-green) !important;
-            color: var(--mint-green) !important;
-        }
-    </style>
 @endsection

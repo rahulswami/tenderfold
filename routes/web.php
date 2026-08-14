@@ -120,9 +120,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/leads/{id}/update', [AdminController::class, 'updateLead'])->name('admin.leads.update');
     Route::post('/admin/leads/{id}/delete', [AdminController::class, 'deleteLead'])->name('admin.leads.delete');
 
-    // AI Content Generation
     Route::post('/admin/ai/generate-blog', [AdminController::class, 'aiGenerateBlog'])->name('admin.ai.blog');
     Route::post('/admin/ai/generate-service', [AdminController::class, 'aiGenerateService'])->name('admin.ai.service');
+    Route::post('/admin/ai/generate-cms-page', [AdminController::class, 'aiGenerateCmsPage'])->name('admin.ai.cms-page');
+    Route::post('/admin/ai/generate-treatment', [AdminController::class, 'aiGenerateTreatment'])->name('admin.ai.treatment');
+    Route::post('/admin/ai/generate-specialist', [AdminController::class, 'aiGenerateSpecialist'])->name('admin.ai.specialist');
     Route::post('/admin/ai/generate-image', [AdminController::class, 'aiGenerateImage'])->name('admin.ai.image');
     Route::post('/admin/ai/seo-recommendations', [AdminController::class, 'aiGenerateSeoRecommendations'])->name('admin.ai.seo-recommendations');
     Route::post('/admin/ai/generate-slider', [AdminController::class, 'aiGenerateSlider'])->name('admin.ai.slider');
@@ -158,6 +160,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
     Route::post('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
     Route::post('/admin/notifications/broadcast', [App\Http\Controllers\NotificationController::class, 'broadcast'])->name('admin.notifications.broadcast');
+
+    // Internal Admin Notifications System
+    Route::get('/admin/internal-notifications', [AdminController::class, 'getInternalNotifications'])->name('admin.internal-notifications.get');
+    Route::post('/admin/internal-notifications/mark-read', [AdminController::class, 'markInternalNotificationsRead'])->name('admin.internal-notifications.mark-read');
+    Route::post('/admin/internal-notifications/clear', [AdminController::class, 'clearInternalNotifications'])->name('admin.internal-notifications.clear');
+
+    // AI Connection Test Endpoint
+    Route::post('/admin/ai/test-connection', [AdminController::class, 'testAiConnection'])->name('admin.ai.test-connection');
 
 
     

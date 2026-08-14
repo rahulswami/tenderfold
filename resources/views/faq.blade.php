@@ -4,73 +4,37 @@
 @section('meta_description', ($faqPage->metadescription ?? 'Find answers to frequently asked questions about orthopaedic treatments, physiotherapy sessions, digital X-Ray availability, and appointment slot booking at SumitZ Clinic.'))
 @section('meta_keywords', ($faqPage->metakeywords ?? 'orthopedic faq, joint care queries, physiotherapy faq pune'))
 
-
-@section('schema')
-<script type="application/ld+json">
-{
-  "{{ '@' }}context": "https://schema.org",
-  "{{ '@graph' }}": [
-    {
-      "{{ '@type' }}": "FAQPage",
-      "{{ '@id' }}": "{{ route('faq') }}/#faq",
-      "mainEntity": {!! json_encode(array_values(collect($services)->flatMap(function($s) {
-          if (empty($s->faqs) || !is_array($s->faqs)) return [];
-          return collect($s->faqs)->map(function($faq) {
-              return [
-                  "\x40type" => 'Question',
-                  'name' => $faq['question'] ?? '',
-                  'acceptedAnswer' => [
-                      "\x40type" => 'Answer',
-                      'text' => $faq['answer'] ?? ''
-                  ]
-              ];
-          })->toArray();
-      })->toArray())) !!}
-    }
-  ]
-}
-</script>
-@endsection
-
 @section('content')
 
-    <!-- Details Hero -->
-    <section class="details-hero">
-        <div class="container text-center">
-            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">KNOWLEDGE HUB</span>
-            <h1 style="margin-top: 10px;">Frequently Asked Questions</h1>
-            <p style="color: var(--text-light-muted); max-width: 600px; margin: 0 auto;">Everything you need to know about processing timelines, rates, documents, and qualifications.</p>
+    <!-- Hero Header -->
+    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 64px 0 48px;">
+        <div class="container text-center" style="max-width: 760px;">
+            <span class="badge badge-teal" style="margin-bottom: 12px;">Knowledge Base</span>
+            <h1 style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px;">Frequently Asked Questions</h1>
+            <p style="font-size: 17px; color: var(--body-text); line-height: 1.7;">
+                Common queries regarding treatment options, diagnostic preparation, clinic timings, and appointment scheduling.
+            </p>
         </div>
     </section>
 
-    <!-- FAQs Section Accordions -->
-    <section class="section">
-        <div class="container">
-            <!-- Tab filters -->
-            <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin-bottom:3rem;">
-                @foreach($services as $service)
-                    @if(!empty($service->faqs) && is_array($service->faqs) && count($service->faqs) > 0)
-                        <a href="#{{ $service->slug }}-faq" class="btn btn-secondary btn-sm">{{ $service->service_name }} FAQ</a>
-                    @endif
-                @endforeach
-            </div>
-
+    <!-- FAQ Accordions -->
+    <section class="section-spacing" style="background-color: var(--warm-ivory);">
+        <div class="container" style="max-width: 840px;">
             @foreach($services as $service)
                 @if(!empty($service->faqs) && is_array($service->faqs) && count($service->faqs) > 0)
-                    <!-- {{ $service->service_name }} Accordion -->
-                    <div id="{{ $service->slug }}-faq" style="scroll-margin-top: 120px; margin-bottom: 4rem;">
-                        <h2 style="font-size: 1.6rem; color: var(--primary-teal); margin-bottom: 1.5rem; text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">{{ $service->service_name }} Questions</h2>
-                        <div class="faq-accordion">
+                    <div style="margin-bottom: 48px;">
+                        <h2 style="font-size: 22px; color: var(--heading-navy); margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+                            {{ $service->service_name }} FAQs
+                        </h2>
+                        <div class="accordion">
                             @foreach($service->faqs as $faq)
-                                <div class="faq-item">
-                                    <div class="faq-header">
-                                        <span class="faq-title">{{ $faq['question'] ?? '' }}</span>
-                                        <div class="faq-toggle"></div>
-                                    </div>
-                                    <div class="faq-body">
-                                        <div class="faq-content">
-                                            <p>{{ $faq['answer'] ?? '' }}</p>
-                                        </div>
+                                <div class="accordion-item">
+                                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                                        {{ $faq['question'] ?? '' }}
+                                        <i data-lucide="chevron-down" style="width: 20px;"></i>
+                                    </button>
+                                    <div class="accordion-body">
+                                        {{ $faq['answer'] ?? '' }}
                                     </div>
                                 </div>
                             @endforeach
@@ -80,5 +44,16 @@
             @endforeach
         </div>
     </section>
+
+    <script>
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const isActive = item.classList.contains('active');
+            document.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('active'));
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+    </script>
 
 @endsection

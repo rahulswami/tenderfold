@@ -50,16 +50,19 @@ class AdminController extends Controller
     {
         $activeTab = $tab;
         
-        // Normalize CMS page tab name
+        // Normalize CMS page and internal notification tab names
         if ($activeTab === 'cms-pages') {
             $activeTab = 'cms_pages';
+        } elseif ($activeTab === 'internal-notifications') {
+            $activeTab = 'internal_notifications';
         }
         
         // Ensure activeTab is valid
         $validTabs = [
             'general', 'leads', 'livechat', 'branding', 'slider', 'testimonials', 
             'styling', 'pagecontents', 'landing', 'services', 'treatments', 
-            'specialists', 'cms_pages', 'blogs', 'media', 'analytics', 'seo', 'users', 'notifications'
+            'specialists', 'cms_pages', 'blogs', 'media', 'analytics', 'seo', 'users', 
+            'notifications', 'internal_notifications'
         ];
 
         if (!in_array($activeTab, $validTabs)) {
@@ -150,7 +153,11 @@ class AdminController extends Controller
             ->paginate(10, ['*'], 'notifications_page');
 
 
-        return view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages', 'users', 'notificationsLog'));
+        return response()
+            ->view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages', 'users', 'notificationsLog'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
 
@@ -242,6 +249,8 @@ class AdminController extends Controller
                 ['value' => $request->input('favicon_url'), 'label' => 'Custom Favicon Image (WebP)', 'category' => 'branding']
             );
         }
+
+        \App\Models\AdminNotification::log('edit', 'Site Parameters & Settings Updated', 'System configuration & site settings were saved.', route('admin.tab', 'general'));
 
         return redirect()->back()->with('success', 'Parameters and branding updated successfully!');
     }
@@ -1001,19 +1010,45 @@ class AdminController extends Controller
         ]);
 
         $lead = \App\Models\Lead::findOrFail($id);
+        $oldStatus = $lead->status;
         $lead->update([
             'status' => $request->status,
             'notes' => $request->notes,
         ]);
 
-        return redirect()->back()->with('success', 'Lead updated successfully!');
+        $user = \Illuminate\Support\Facades\Auth::user();
+        \App\Models\LeadActivity::create([
+            'lead_id' => $lead->id,
+            'user_name' => $user ? $user->name : 'Admin',
+            'action_type' => ($oldStatus !== $request->status) ? 'status_change' : 'note_added',
+            'status_from' => $oldStatus,
+            'status_to' => $request->status,
+            'notes' => $request->notes,
+        ]);
+
+        \App\Models\AdminNotification::log(
+            'lead',
+            'Lead Updated: ' . $lead->name,
+            'Status: ' . $oldStatus . ' → ' . $request->status,
+            route('admin.tab', 'leads')
+        );
+
+        return redirect()->back()->with('success', 'Lead updated successfully and activity logged!');
     }
 
     public function deleteLead($id)
     {
         $this->checkPermission('leads');
         $lead = \App\Models\Lead::findOrFail($id);
+        $name = $lead->name;
         $lead->delete();
+
+        \App\Models\AdminNotification::log(
+            'lead',
+            'Lead Record Deleted: ' . $name,
+            'Lead record #' . $id . ' was permanently deleted.',
+            route('admin.tab', 'leads')
+        );
 
         return redirect()->back()->with('success', 'Lead deleted successfully!');
     }
@@ -1090,9 +1125,9 @@ class AdminController extends Controller
             'existing_content' => 'nullable|string',
         ]);
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $prompt = $request->input('prompt');
@@ -1148,7 +1183,7 @@ User prompt: {$prompt}";
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $systemPrompt]]]
                 ],
@@ -1210,9 +1245,9 @@ User prompt: {$prompt}";
             'existing_faqs' => 'nullable|string',
         ]);
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $prompt = $request->input('prompt');
@@ -1314,7 +1349,7 @@ User prompt: {$prompt}";
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $systemPrompt]]]
                 ],
@@ -1358,9 +1393,9 @@ User prompt: {$prompt}";
             'prompt' => 'required|string',
         ]);
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $prompt = $request->input('prompt');
@@ -1385,7 +1420,7 @@ User prompt: {$prompt}";
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $systemPrompt]]]
                 ],
@@ -1439,9 +1474,9 @@ User prompt: {$prompt}";
             'aspect_ratio' => 'required|string|in:1:1,16:9,4:3',
         ]);
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $prompt = $request->input('prompt');
@@ -1461,7 +1496,7 @@ User prompt: {$prompt}";
 
     private function generateAndSaveAiImage($prompt, $aspectRatio = '1:1')
     {
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) return null;
 
         $base64 = null;
@@ -1499,12 +1534,12 @@ User prompt: {$prompt}";
             try {
                 $response = \Illuminate\Support\Facades\Http::withHeaders([
                     'Content-Type' => 'application/json',
-                ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key={$apiKey}", [
-                    'contents' => [
-                        ['parts' => [['text' => $prompt]]]
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key={$apiKey}", [
+                    'instances' => [
+                        ['prompt' => $prompt]
                     ],
-                    'generationConfig' => [
-                        'response_modalities' => ['TEXT', 'IMAGE']
+                    'parameters' => [
+                        'sampleCount' => 1
                     ]
                 ]);
 
@@ -2108,14 +2143,21 @@ User prompt: {$prompt}";
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:landing_pages,slug',
+            'slug' => 'nullable|string|max:255',
             'layout_type' => 'required|string|in:home,about,service,specialist',
             'meta_description' => 'nullable|string',
         ]);
 
+        $slug = $request->input('slug');
+        if (empty($slug)) {
+            $slug = \Illuminate\Support\Str::slug($request->title);
+        } else {
+            $slug = \Illuminate\Support\Str::slug($slug);
+        }
+
         \App\Models\LandingPage::create([
             'title' => $request->title,
-            'slug' => \Illuminate\Support\Str::slug($request->slug),
+            'slug' => $slug,
             'layout_type' => $request->layout_type,
             'meta_description' => $request->meta_description,
             'content' => [],
@@ -2166,9 +2208,9 @@ User prompt: {$prompt}";
         ]);
 
         $landingPage = \App\Models\LandingPage::findOrFail($request->id);
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $prompt = $request->input('prompt');
@@ -2277,7 +2319,7 @@ JSON Schema:
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $systemPrompt]]]
                 ],
@@ -2329,9 +2371,9 @@ JSON Schema:
             return response()->json(['error' => 'Google My Business Link is not configured. Please save it in General Settings first.'], 400);
         }
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $systemPrompt = "You are a customer relationship coordinator. Create 5 realistic, high-quality, positive customer testimonials for SumitZ Orthopaedic & Physiotherapy Clinic (Pune's premier clinic in Baner) as if they were synced directly from their Google My Business profile: '{$gmbLink}'.
@@ -2354,7 +2396,7 @@ JSON Schema:
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $systemPrompt]]]
                 ],
@@ -2411,9 +2453,9 @@ JSON Schema:
             'keywords' => 'required|string',
         ]);
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $keywords = $request->input('keywords');
@@ -2489,7 +2531,7 @@ JSON Schema:
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $systemPrompt]]]
                 ],
@@ -2546,9 +2588,9 @@ JSON Schema:
             return response()->json(['error' => 'Invalid content type.'], 400);
         }
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $title = '';
@@ -2589,7 +2631,7 @@ Strict Instructions:
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $prompt]]]
                 ]
@@ -2663,9 +2705,9 @@ Strict Instructions:
             'schema_types.*' => 'string'
         ]);
 
-        $apiKey = SiteParameter::where('id', 'gemini_api_key')->value('value');
+        $apiKey = self::getAiApiKey();
         if (empty($apiKey)) {
-            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings first.'], 400);
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
         }
 
         $type = $request->type;
@@ -2777,7 +2819,7 @@ Direct JSON-LD Script Output:";
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
                 'contents' => [
                     ['parts' => [['text' => $systemPrompt]]]
                 ]
@@ -2812,6 +2854,188 @@ Direct JSON-LD Script Output:";
             return response()->json(['success' => true, 'schema' => $cleanMarkup]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Schema generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function aiGenerateCmsPage(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string',
+        ]);
+
+        $apiKey = self::getAiApiKey();
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+
+        $systemPrompt = "You are an expert orthopedic, physical therapy, and medical copywriter and SEO specialist. Create a complete, high-quality CMS page in English for SumitZ Clinic, Pune based on the user's prompt: '{$prompt}'.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes. Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"title\": \"A clear, SEO-optimized page title\",
+  \"slug\": \"seo-friendly-url-slug\",
+  \"metatitle\": \"SEO Meta Title (max 60 chars)\",
+  \"metadescription\": \"SEO Meta Description (max 160 chars)\",
+  \"content\": \"Full page content formatted in clean, modern HTML using <p>, <h3>, <h4>, <ul>, <li>, and <strong> elements.\"
+}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = trim($resData['candidates'][0]['content']['parts'][0]['text'] ?? '');
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $pageData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['error' => 'Failed to parse generated content as JSON. Raw response: ' . $text], 500);
+            }
+
+            return response()->json(['success' => true, 'data' => $pageData]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'CMS Page generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function aiGenerateTreatment(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string',
+        ]);
+
+        $apiKey = self::getAiApiKey();
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+
+        $systemPrompt = "You are an expert orthopedic surgeon and medical copywriter. Create a detailed treatment profile in English for SumitZ Clinic, Pune based on the user's prompt: '{$prompt}'.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"name\": \"Name of the Treatment (e.g. ACL Reconstruction & Arthroscopy)\",
+  \"slug\": \"treatment-url-slug\",
+  \"metatitle\": \"SEO Meta Title (max 60 chars)\",
+  \"metadescription\": \"SEO Meta Description (max 160 chars)\",
+  \"description\": \"Comprehensive treatment overview formatted in clean HTML (<p>, <h3>, <ul>, <li>, <strong>) detailing surgical/non-surgical procedure, indications, recovery steps, and outcomes.\"
+}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = trim($resData['candidates'][0]['content']['parts'][0]['text'] ?? '');
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $treatmentData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['error' => 'Failed to parse generated content as JSON. Raw response: ' . $text], 500);
+            }
+
+            return response()->json(['success' => true, 'data' => $treatmentData]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Treatment generation failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function aiGenerateSpecialist(Request $request)
+    {
+        $request->validate([
+            'prompt' => 'required|string',
+        ]);
+
+        $apiKey = self::getAiApiKey();
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'Gemini API Key is not set. Please save it in General Settings or set GEMINI_API_KEY in .env.'], 400);
+        }
+
+        $prompt = $request->input('prompt');
+
+        $systemPrompt = "You are a medical practice copywriter. Create a specialist doctor profile in English for SumitZ Clinic, Pune based on the user's prompt: '{$prompt}'.
+
+You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Output must start with { and end with }.
+
+JSON Schema:
+{
+  \"name\": \"Full Name of Specialist (e.g. Dr. Sumit Diwan)\",
+  \"slug\": \"dr-name-slug\",
+  \"designation\": \"Designation & Degrees (e.g. Lead Orthopedic Surgeon, MBBS, MS Ortho)\",
+  \"description\": \"Engaging specialist biography formatted in clean HTML (<p>, <h3>, <ul>, <li>, <strong>) highlighting qualifications, surgical experience, patient philosophy, and clinic care.\"
+}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/" . self::getAiModel() . ":generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => $systemPrompt]]]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                ]
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Gemini API call failed: ' . $response->body()], 500);
+            }
+
+            $resData = $response->json();
+            $text = trim($resData['candidates'][0]['content']['parts'][0]['text'] ?? '');
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?/i', '', $text);
+                $text = preg_replace('/```$/', '', $text);
+                $text = trim($text);
+            }
+
+            $specData = json_decode($text, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['error' => 'Failed to parse generated content as JSON. Raw response: ' . $text], 500);
+            }
+
+            return response()->json(['success' => true, 'data' => $specData]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Specialist profile generation failed: ' . $e->getMessage()], 500);
         }
     }
 
@@ -3227,7 +3451,114 @@ Direct JSON-LD Script Output:";
 
         $user->update($updateData);
 
+        \App\Models\AdminNotification::log('edit', 'Admin Profile Updated', 'Profile details were updated for ' . $user->name, route('admin.tab', 'users'));
+
         return redirect()->back()->with('success', 'Your profile details updated successfully!');
+    }
+
+    /**
+     * Helper to resolve Gemini API Key from Env or DB
+     */
+    public static function getAiApiKey(): ?string
+    {
+        $key = env('GEMINI_API_KEY') ?: env('GOOGLE_API_KEY');
+        if (!empty($key) && trim($key) !== '') {
+            return trim($key);
+        }
+
+        $key = \App\Models\SiteParameter::where('id', 'gemini_api_key')->value('value')
+            ?: \App\Models\SiteParameter::where('id', 'google_api_key')->value('value');
+
+        return (!empty($key) && trim($key) !== '') ? trim($key) : null;
+    }
+
+    /**
+     * AI Model Helper Method
+     */
+    public static function getAiModel(): string
+    {
+        $model = \App\Models\SiteParameter::where('id', 'ai_model')->value('value');
+        if (!empty($model) && trim($model) !== '' && trim($model) !== 'gemini-2.0-flash') {
+            return trim($model);
+        }
+        return 'gemini-2.5-flash';
+    }
+
+    /**
+     * Test Gemini API Connection & Model Validation
+     */
+    public function testAiConnection(Request $request)
+    {
+        $apiKey = $request->input('api_key') ?: self::getAiApiKey();
+        $model = $request->input('model') ?: self::getAiModel();
+
+        if (empty($apiKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Gemini API Key provided or saved in settings.'
+            ], 400);
+        }
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(10)->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [
+                'contents' => [
+                    ['parts' => [['text' => 'Respond with "OK" if this connection test is successful.']]]
+                ]
+            ]);
+
+            if ($response->successful()) {
+                $text = $response->json('candidates.0.content.parts.0.text') ?? 'Connection successful!';
+                return response()->json([
+                    'success' => true,
+                    'message' => 'AI Connection Verified! Selected Model: ' . $model,
+                    'response' => trim($text)
+                ]);
+            } else {
+                $err = $response->json('error.message') ?? $response->body();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'API Test Failed (HTTP ' . $response->status() . '): ' . $err
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Connection Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Internal Admin Notifications Management
+     */
+    public function getInternalNotifications(Request $request)
+    {
+        $query = \App\Models\AdminNotification::query();
+
+        if ($request->filled('type') && $request->type !== 'all') {
+            $query->where('type', strtolower($request->type));
+        }
+
+        $notifications = $query->orderBy('created_at', 'desc')->take(50)->get();
+        $unreadCount = \App\Models\AdminNotification::where('is_read', false)->count();
+
+        return response()->json([
+            'success' => true,
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount
+        ]);
+    }
+
+    public function markInternalNotificationsRead(Request $request)
+    {
+        \App\Models\AdminNotification::where('is_read', false)->update(['is_read' => true]);
+        return response()->json(['success' => true]);
+    }
+
+    public function clearInternalNotifications(Request $request)
+    {
+        \App\Models\AdminNotification::query()->delete();
+        return response()->json(['success' => true]);
     }
 }
 

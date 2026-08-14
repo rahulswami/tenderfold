@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ChatMessage;
+use App\Models\SiteParameter;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class ChatController extends Controller
@@ -20,14 +22,24 @@ class ChatController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
-        $msg = ChatMessage::create([
+        $visitorMsg = ChatMessage::create([
             'session_id' => $request->session_id,
             'sender' => 'visitor',
             'message' => $request->message,
             'is_read' => false,
         ]);
 
-        return response()->json(['success' => true, 'message' => $msg]);
+        \App\Models\AdminNotification::log(
+            'chat',
+            'New Live Chat Message',
+            'Session #' . substr($request->session_id, -6) . ': ' . \Illuminate\Support\Str::limit($request->message, 80),
+            route('admin.tab', 'livechat')
+        );
+
+        return response()->json([
+            'success' => true, 
+            'message' => $visitorMsg
+        ]);
     }
 
     public function getHistory(Request $request)
@@ -60,10 +72,13 @@ class ChatController extends Controller
         $exists = ChatMessage::where('session_id', $sessionId)->exists();
 
         if (!$exists) {
+            $welcomeMsg = SiteParameter::where('id', 'chat_welcome_message')->value('value')
+                ?? 'Hello! Welcome to SumitZ Clinic. How can we help you today with your joint, spine, or physiotherapy recovery?';
+
             $msg = ChatMessage::create([
                 'session_id' => $sessionId,
                 'sender' => 'admin',
-                'message' => 'Hello! Thanks for visiting SumitZ Clinic. How can I help you today with your joint or spine recovery?',
+                'message' => $welcomeMsg,
                 'is_read' => false,
             ]);
             return response()->json(['success' => true, 'message' => $msg]);
@@ -77,14 +92,13 @@ class ChatController extends Controller
      */
     public function adminListSessions()
     {
-        // Select latest message for each session_id
-        $subQuery = ChatMessage::select('session_id', DB::raw('MAX(id) as max_id'))
-            ->groupBy('session_id');
+        // Select latest message ID for each session_id
+        $latestIds = ChatMessage::select(DB::raw('MAX(id) as max_id'))
+            ->groupBy('session_id')
+            ->pluck('max_id');
 
-        $sessions = ChatMessage::joinSub($subQuery, 'latest_msg', function ($join) {
-                $join->on('chat_messages.id', '=', 'latest_msg.max_id');
-            })
-            ->orderBy('chat_messages.created_at', 'desc')
+        $sessions = ChatMessage::whereIn('id', $latestIds)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         // Calculate unread counts
@@ -125,20 +139,8 @@ class ChatController extends Controller
             'is_read' => false,
         ]);
 
-        // Create user-specific web notification for live chat reply
-        DB::table('web_notifications')->insert([
-            'session_id' => $session_id,
-            'title' => 'New Support Reply',
-            'message' => Str::limit($request->message, 120),
-            'url' => route('home') . '?open_chat=1',
-            'is_read' => false,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
         return response()->json(['success' => true, 'message' => $msg]);
     }
-
 
     public function adminDeleteChat($session_id)
     {

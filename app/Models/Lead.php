@@ -15,4 +15,9 @@ class Lead extends Model
         'status',
         'notes',
     ];
+
+    public function activities()
+    {
+        return $this->hasMany(LeadActivity::class)->orderBy('created_at', 'desc');
+    }
 }

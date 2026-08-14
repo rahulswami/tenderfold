@@ -4,7 +4,6 @@
 @section('meta_description', ($service->metadescription ?? $service->summary))
 @section('meta_keywords', ($service->metakeywords ?? ''))
 
-
 @section('schema')
     @if(!empty($service->schema_markup))
         {!! $service->schema_markup !!}
@@ -14,46 +13,10 @@
           "{{ '@' }}context": "https://schema.org",
           "{{ '@graph' }}": [
             {
-              "{{ '@type' }}": "Service",
-              "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#service",
+              "{{ '@type' }}": "MedicalProcedure",
               "name": "{{ $service->service_name }}",
-              "description": "{{ $service->summary }}",
-              "provider": {
-                "{{ '@type' }}": "Organization",
-                "{{ '@id' }}": "{{ route('home') }}/#organization",
-                "name": "{{ $site['site_name'] ?? 'SumitZ Clinic' }}",
-                "url": "{{ route('home') }}"
-              },
-              "areaServed": {
-                "{{ '@type' }}": "State",
-                "name": "Maharashtra"
-              },
-              "serviceType": "MedicalService",
-              "offers": {
-                "{{ '@type' }}": "Offer",
-                "priceCurrency": "INR",
-                "description": "Consultation details: {{ $service->rate_value ?? 'Standard slots' }}"
-              }
+              "description": "{{ $service->summary }}"
             }
-            @if(!empty($service->faqs) && is_array($service->faqs))
-            ,
-            {
-              "{{ '@type' }}": "FAQPage",
-              "{{ '@id' }}": "{{ route('services.show', $service->slug) }}/#faq",
-              "mainEntity": [
-                @foreach($service->faqs as $index => $faq)
-                {
-                  "{{ '@type' }}": "Question",
-                  "name": "{{ $faq['question'] ?? '' }}",
-                  "acceptedAnswer": {
-                    "{{ '@type' }}": "Answer",
-                    "text": "{{ $faq['answer'] ?? '' }}"
-                  }
-                }{{ $index < count($service->faqs) - 1 ? ',' : '' }}
-                @endforeach
-              ]
-            }
-            @endif
           ]
         }
         </script>
@@ -62,125 +25,124 @@
 
 @section('content')
 
-    <!-- Section 1: Hero Section -->
-    <section class="details-hero">
-        <div class="container">
-            <span class="color-mint font-semibold" style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">{{ $service->hero_category }}</span>
-            <h1>{{ $service->hero_title }}</h1>
-            <p style="color: var(--text-light-muted); max-width: 600px; margin-top: 10px;">{{ $service->hero_subtitle }}</p>
-            <div class="details-hero-meta" style="margin-top: 20px;">
-                @if($service->rate_value)
-                    <div class="meta-item"><i data-lucide="check"></i> {{ $service->rate_value }}</div>
-                @endif
-                @if($service->max_loan)
-                    <div class="meta-item"><i data-lucide="info"></i> {{ $service->max_loan }}</div>
-                @endif
-                @if($service->tenure)
-                    <div class="meta-item"><i data-lucide="clock"></i> {{ $service->tenure }}</div>
-                @endif
+    <!-- Hero Header -->
+    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 56px 0 40px;">
+        <div class="container" style="max-width: 1000px;">
+            <div style="font-size: 14px; color: var(--muted-text); margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
+                <a href="{{ route('home') }}">Home</a> /
+                <a href="{{ route('services') }}">Services</a> /
+                <span style="color: var(--primary-teal); font-weight: 600;">{{ $service->service_name }}</span>
             </div>
+            <span class="badge badge-teal" style="margin-bottom: 12px;">{{ $service->hero_category ?? 'Clinical Facility' }}</span>
+            <h1 style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px;">{{ $service->hero_title ?? $service->service_name }}</h1>
+            <p style="font-size: 17.5px; color: var(--body-text); line-height: 1.7; max-width: 760px;">
+                {{ $service->hero_subtitle ?? $service->summary }}
+            </p>
         </div>
     </section>
 
-    <!-- Section 2: Detailed Overview & Introduction -->
-    <section class="section">
-        <div class="container details-layout animate-on-scroll">
-            <div class="details-content">
-                <h2>{{ $service->intro_title }}</h2>
-                {!! $service->intro_content !!}
-                
-                <!-- Section 3: Feature Blocks (Eligibility & Docs) -->
-                @if($service->eligibility_criteria || $service->documents_required)
-                <div class="details-grid-cards" style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
-                    <!-- Eligibility Card -->
-                    @if($service->eligibility_criteria)
-                    <div class="details-list-card">
-                        <h3><i data-lucide="check-circle" style="color: var(--accent-teal);"></i> Requirements & Preparation</h3>
-                        <ul class="sol-features-list" style="list-style: none; padding: 0;">
-                            @foreach(explode("\n", str_replace("\r", "", $service->eligibility_criteria)) as $item)
-                                @if(trim($item))
-                                    <li style="margin-bottom: 0.75rem;"><i data-lucide="check" style="color: var(--accent-teal); margin-right: 8px; vertical-align: middle;"></i> {{ trim($item) }}</li>
-                                @endif
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
-
-                    <!-- Documents Card -->
-                    @if($service->documents_required)
-                    <div class="details-list-card">
-                        <h3><i data-lucide="file-text" style="color: var(--accent-teal);"></i> Diagnostics / Prep Work</h3>
-                        <ul class="sol-features-list" style="list-style: none; padding: 0;">
-                            @foreach(explode("\n", str_replace("\r", "", $service->documents_required)) as $item)
-                                @if(trim($item))
-                                    <li style="margin-bottom: 0.75rem;"><i data-lucide="check" style="color: var(--accent-teal); margin-right: 8px; vertical-align: middle;"></i> {{ trim($item) }}</li>
-                                @endif
-                            @endforeach
-                        </ul>
-                    </div>
+    <!-- Main Content & Sidebar Layout -->
+    <section class="section-spacing" style="background-color: var(--warm-ivory);">
+        <div class="container" style="display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start;">
+            <div>
+                <!-- Featured Image -->
+                <div style="border-radius: var(--radius-xl); overflow: hidden; margin-bottom: 36px; box-shadow: var(--shadow-md); aspect-ratio: 16/9; background-color: var(--mist-blue);">
+                    @if(!empty($service->image_path))
+                        <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @else
+                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80" alt="{{ $service->service_name }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @endif
                 </div>
-                @endif
 
-                <!-- Section 4: Optimization Tips -->
-                @if($service->tips_title)
-                    <h2>{{ $service->tips_title }}</h2>
-                    {!! $service->tips_content !!}
-                @endif
+                <div style="font-size: 16.5px; line-height: 1.8; color: var(--body-text);">
+                    <h2 style="font-size: 26px; margin-bottom: 16px;">{{ $service->intro_title ?? 'Overview & Facilities' }}</h2>
+                    {!! $service->intro_content !!}
 
-                <!-- Section 5: FAQs -->
-                @if(!empty($service->faqs) && is_array($service->faqs))
-                    <h2 style="margin-top: 3rem;">Frequently Asked Questions</h2>
-                    <div class="faq-accordion" style="margin-top: 1.5rem;">
-                        @foreach($service->faqs as $faq)
-                            <div class="faq-item">
-                                <div class="faq-header">
-                                    <span class="faq-title">{{ $faq['question'] ?? '' }}</span>
-                                    <div class="faq-toggle"></div>
-                                </div>
-                                <div class="faq-body">
-                                    <div class="faq-content">
-                                        <p>{{ $faq['answer'] ?? '' }}</p>
+                    @if($service->eligibility_criteria)
+                        <div style="background-color: var(--surface-white); border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--border-color); margin: 32px 0;">
+                            <h3 style="font-size: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="check-circle" style="color: var(--primary-teal);"></i> Who Should Consider This Service
+                            </h3>
+                            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+                                @foreach(explode("\n", str_replace("\r", "", $service->eligibility_criteria)) as $item)
+                                    @if(trim($item))
+                                        <li style="display: flex; align-items: flex-start; gap: 8px;">
+                                            <i data-lucide="check" style="color: var(--primary-teal); width: 18px; margin-top: 3px;"></i>
+                                            <span>{{ trim($item) }}</span>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if($service->tips_title)
+                        <h2 style="font-size: 24px; margin: 36px 0 16px;">{{ $service->tips_title }}</h2>
+                        {!! $service->tips_content !!}
+                    @endif
+
+                    @if(!empty($service->faqs) && is_array($service->faqs))
+                        <h2 style="font-size: 24px; margin: 36px 0 20px;">Frequently Asked Questions</h2>
+                        <div class="accordion">
+                            @foreach($service->faqs as $faq)
+                                <div class="accordion-item">
+                                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                                        {{ $faq['question'] ?? '' }}
+                                        <i data-lucide="chevron-down" style="width: 20px;"></i>
+                                    </button>
+                                    <div class="accordion-body">
+                                        {{ $faq['answer'] ?? '' }}
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             </div>
-            
-            <!-- Sticky Sidebar Form -->
-            <div class="sidebar-sticky">
-                <div class="sidebar-box form-card">
-                    <h3>Request Consultation</h3>
+
+            <!-- Sticky Booking Sidebar -->
+            <div style="position: sticky; top: 100px;">
+                <div class="form-card" style="margin-bottom: 24px;">
+                    <h3 style="font-size: 20px; margin-bottom: 8px;">Request Consultation</h3>
+                    <p style="font-size: 13.5px; color: var(--muted-text); margin-bottom: 20px;">Schedule your visit for {{ $service->service_name }}.</p>
                     <form action="{{ route('contact.submit') }}" method="POST">
                         @csrf
                         <input type="hidden" name="source" value="Service Page Form: {{ $service->service_name }}">
                         <input type="hidden" name="service" value="{{ $service->slug }}">
                         <div class="form-group">
-                            <label for="sb-name">Full Name</label>
-                            <input type="text" id="sb-name" name="name" class="form-control" placeholder="Enter your name" required>
+                            <label for="sbs-name" class="form-label">Full Name</label>
+                            <input type="text" id="sbs-name" name="name" class="form-control" placeholder="Enter full name" required>
                         </div>
                         <div class="form-group">
-                            <label for="sb-phone">Phone Number</label>
-                            <input type="tel" id="sb-phone" name="phone" class="form-control" placeholder="10-digit number" pattern="[0-9]{10}" required>
+                            <label for="sbs-phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="sbs-phone" name="phone" class="form-control" placeholder="10-digit number" pattern="[0-9]{10}" required>
                         </div>
-                        @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
-                            <div class="form-group" style="margin-bottom: 1rem; display: flex; justify-content: center;">
-                                <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
-                            </div>
-                        @endif
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Request Slot</button>
+                        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 8px;">
+                            <i data-lucide="calendar"></i> Book Consultation
+                        </button>
                     </form>
                 </div>
-                
-                <div class="sidebar-box sidebar-contact-card">
-                    <h3 style="border:none; padding:0; margin-bottom:0.75rem;">Need Quick Help?</h3>
-                    <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1.5rem;">Speak directly to our clinical coordinator.</p>
-                    <a href="tel:{{ $site['phone'] ?? '+919672777749' }}" class="btn btn-secondary" style="width: 100%;"><i data-lucide="phone"></i> {{ $site['phone'] ?? '+91 96727 77749' }}</a>
+
+                <div class="location-card" style="padding: 24px;">
+                    <h4 style="font-size: 16px; margin-bottom: 8px;">Direct Clinic Helpline</h4>
+                    <p style="font-size: 13.5px; color: var(--body-text); margin-bottom: 16px;">Speak directly with our clinical coordinator.</p>
+                    <a href="tel:+919545559434" class="btn btn-secondary btn-full btn-sm">
+                        <i data-lucide="phone"></i> Call +91 95455 59434
+                    </a>
                 </div>
             </div>
         </div>
     </section>
+
+    <script>
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const isActive = item.classList.contains('active');
+            document.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('active'));
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+    </script>
 
 @endsection
