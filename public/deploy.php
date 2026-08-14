@@ -91,7 +91,106 @@ try {
     $results['web_notifications'] = "FAIL ❌ " . $e->getMessage();
 }
 
-// ── 3. Modify users table ─────────────────────────────────────────
+// ── 3. Create admin_notifications ─────────────────────────────────
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `admin_notifications` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `type` VARCHAR(255) NOT NULL DEFAULT 'system',
+        `title` VARCHAR(255) NOT NULL,
+        `message` TEXT NULL,
+        `user_name` VARCHAR(255) NULL,
+        `action_url` VARCHAR(2048) NULL,
+        `is_read` TINYINT(1) NOT NULL DEFAULT 0,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    $results['admin_notifications'] = "CREATED OR ALREADY EXISTED ✅";
+} catch (Exception $e) {
+    $results['admin_notifications'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 4. Create lead_activities ─────────────────────────────────────
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `lead_activities` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `lead_id` BIGINT UNSIGNED NOT NULL,
+        `user_name` VARCHAR(255) NOT NULL DEFAULT 'Admin',
+        `status_from` VARCHAR(255) NULL,
+        `status_to` VARCHAR(255) NULL,
+        `notes` TEXT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL,
+        INDEX (`lead_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    $results['lead_activities'] = "CREATED OR ALREADY EXISTED ✅";
+} catch (Exception $e) {
+    $results['lead_activities'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 5. Create treatments ──────────────────────────────────────────
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `treatments` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `name` VARCHAR(255) NOT NULL,
+        `slug` VARCHAR(255) NOT NULL UNIQUE,
+        `image` VARCHAR(255) NULL,
+        `description` LONGTEXT NULL,
+        `metatitle` VARCHAR(255) NULL,
+        `metadescription` TEXT NULL,
+        `tags` VARCHAR(255) NULL,
+        `schema_markup` TEXT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    $results['treatments'] = "CREATED OR ALREADY EXISTED ✅";
+} catch (Exception $e) {
+    $results['treatments'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 6. Create team_members ────────────────────────────────────────
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `team_members` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `name` VARCHAR(255) NOT NULL,
+        `slug` VARCHAR(255) NULL,
+        `designation` VARCHAR(255) NULL,
+        `image` VARCHAR(255) NULL,
+        `phone` VARCHAR(255) NULL,
+        `facebook` VARCHAR(255) NULL,
+        `twitter` VARCHAR(255) NULL,
+        `description` LONGTEXT NULL,
+        `metatitle` VARCHAR(255) NULL,
+        `metadescription` TEXT NULL,
+        `tags` VARCHAR(255) NULL,
+        `schema_markup` TEXT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    $results['team_members'] = "CREATED OR ALREADY EXISTED ✅";
+} catch (Exception $e) {
+    $results['team_members'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 7. Create cms_pages ───────────────────────────────────────────
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `cms_pages` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `title` VARCHAR(255) NOT NULL,
+        `slug` VARCHAR(255) NOT NULL UNIQUE,
+        `description` LONGTEXT NULL,
+        `metatitle` VARCHAR(255) NULL,
+        `metadescription` TEXT NULL,
+        `tags` VARCHAR(255) NULL,
+        `schema_markup` TEXT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    $results['cms_pages'] = "CREATED OR ALREADY EXISTED ✅";
+} catch (Exception $e) {
+    $results['cms_pages'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 8. Modify users table ─────────────────────────────────────────
 try {
     $columns = $pdo->query("DESCRIBE `users`")->fetchAll(PDO::FETCH_COLUMN);
     $hasRole = in_array('role', $columns);
@@ -117,9 +216,35 @@ try {
     $results['users_columns'] = "FAIL ❌ " . $e->getMessage();
 }
 
-echo "Live database deployment results:\n";
+// ── 9. Update site_parameters ─────────────────────────────────────
+try {
+    $pdo->exec("INSERT INTO `site_parameters` (`id`, `category`, `value`, `created_at`, `updated_at`) 
+        VALUES ('ai_model', 'ai', 'gemini-2.5-flash', NOW(), NOW()) 
+        ON DUPLICATE KEY UPDATE `value` = 'gemini-2.5-flash', `updated_at` = NOW();");
+    $results['site_parameters_ai_model'] = "UPDATED to gemini-2.5-flash ✅";
+} catch (Exception $e) {
+    $results['site_parameters_ai_model'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 10. Clear Compiled View Caches ───────────────────────────────
+try {
+    $storageViews = __DIR__ . '/../storage/framework/views';
+    if (is_dir($storageViews)) {
+        $files = glob($storageViews . '/*');
+        foreach ($files as $file) {
+            if (is_file($file) && basename($file) !== '.gitignore') {
+                @unlink($file);
+            }
+        }
+        $results['clear_view_cache'] = "STORAGE FRAMEWORK VIEWS CLEARED ✅";
+    }
+} catch (Exception $e) {
+    $results['clear_view_cache'] = "FAIL ❌ " . $e->getMessage();
+}
+
+echo "Live database & system deployment results:\n";
 foreach ($results as $table => $status) {
     echo "- {$table}: {$status}\n";
 }
 
-echo "\nAll database upgrades applied successfully! Please try loading the website again.\n";
+echo "\nAll database upgrades & view cache clearing applied successfully! Please try loading the /admin page now.\n";
