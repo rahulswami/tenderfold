@@ -241,6 +241,18 @@ try {
     $results['clear_view_cache'] = "FAIL ❌ " . $e->getMessage();
 }
 
+// ── 12. Run SEO Data Sync ──────────────────────────────────────────
+try {
+    if (file_exists(__DIR__ . '/../sync_drsumitz_seo.php')) {
+        ob_start();
+        include __DIR__ . '/../sync_drsumitz_seo.php';
+        $syncOut = ob_get_clean();
+        $results['seo_data_sync'] = "SEO DATA SYNCED TO LIVE DB ✅";
+    }
+} catch (Exception $e) {
+    $results['seo_data_sync'] = "FAIL ❌ " . $e->getMessage();
+}
+
 echo "Live database & system deployment results:\n";
 foreach ($results as $table => $status) {
     echo "- {$table}: {$status}\n";
