@@ -200,7 +200,22 @@ try {
     $results['users_columns'] = "FAIL ❌ " . $e->getMessage();
 }
 
-// ── 9. Update site_parameters ─────────────────────────────────────
+// ── 9. Ensure services & blogs SEO columns ────────────────────────
+try {
+    $svcCols = $pdo->query("DESCRIBE `services`")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('metatitle', $svcCols)) {
+        $pdo->exec("ALTER TABLE `services` ADD COLUMN `metatitle` VARCHAR(255) NULL, ADD COLUMN `metadescription` TEXT NULL, ADD COLUMN `metakeywords` TEXT NULL;");
+    }
+    $blogCols = $pdo->query("DESCRIBE `blogs`")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('metatitle', $blogCols)) {
+        $pdo->exec("ALTER TABLE `blogs` ADD COLUMN `metatitle` VARCHAR(255) NULL, ADD COLUMN `metadescription` TEXT NULL, ADD COLUMN `metakeywords` TEXT NULL, ADD COLUMN `tags` TEXT NULL;");
+    }
+    $results['services_blogs_seo_columns'] = "SEO COLUMNS ADDED/VERIFIED ✅";
+} catch (Exception $e) {
+    $results['services_blogs_seo_columns'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 10. Update site_parameters ────────────────────────────────────
 try {
     $pdo->exec("INSERT INTO `site_parameters` (`id`, `category`, `value`, `created_at`, `updated_at`) 
         VALUES ('ai_model', 'ai', 'gemini-2.5-flash', NOW(), NOW()) 
@@ -210,7 +225,7 @@ try {
     $results['site_parameters_ai_model'] = "FAIL ❌ " . $e->getMessage();
 }
 
-// ── 10. Clear Compiled View Caches ───────────────────────────────
+// ── 11. Clear Compiled View Caches ───────────────────────────────
 try {
     $storageViews = __DIR__ . '/../storage/framework/views';
     if (is_dir($storageViews)) {

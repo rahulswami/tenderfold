@@ -27,5 +27,8 @@ Homestead.yaml
 Thumbs.db
 database_backup.sql
 mlg_finedge_backup.zip
+mlg_finedge_backup.sql
+u709314437_smpune.sql
+*.sql
 test_home.html
 _static_backup/
