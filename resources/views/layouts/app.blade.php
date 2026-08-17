@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0A2540">
     <title>@yield('title', ($site['meta_title'] ?? 'SumitZ Orthopaedic & Physiotherapy Clinic in Baner & Hinjewadi, Pune'))</title>
     <meta name="description" content="@yield('meta_description', ($site['meta_description'] ?? 'SumitZ Orthopaedic & Physiotherapy Clinic is Pune\'s premier clinic in Baner & Hinjewadi. Led by Dr. Sumit, we offer expert joint, spine, fracture and sports injury care.'))">
     <meta name="keywords" content="@yield('meta_keywords', ($site['meta_keywords'] ?? 'orthopedic clinic in baner, physiotherapy clinic in baner, orthopedic doctor in baner, knee replacement pune, dr sumit diwan'))">
@@ -16,6 +17,21 @@
     <meta property="og:site_name" content="{{ $site['site_name'] ?? 'SumitZ Clinic' }}" />
     <meta property="og:image" content="{{ !empty($site['logo_path']) ? site_image($site['logo_path']) : 'https://www.drsumitz.com/public/uploads/gallery/614487085_25_06_2021_01_19_55.jpg' }}" />
 
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@yield('title', ($site['site_name'] ?? 'SumitZ Clinic'))" />
+    <meta name="twitter:description" content="@yield('meta_description', ($site['meta_description'] ?? 'SumitZ Orthopaedic & Physiotherapy Clinic'))" />
+    <meta name="twitter:image" content="{{ !empty($site['logo_path']) ? site_image($site['logo_path']) : 'https://www.drsumitz.com/public/uploads/gallery/614487085_25_06_2021_01_19_55.jpg' }}" />
+
+    <!-- Performance & Preconnect -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//unpkg.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Dynamic Favicon -->
     @if(!empty($site['favicon_path']))
         <link rel="icon" type="image/webp" href="{{ site_image($site['favicon_path']) }}">
@@ -23,11 +39,7 @@
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     @endif
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link rel="preload" as="style" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     @yield('styles')
 

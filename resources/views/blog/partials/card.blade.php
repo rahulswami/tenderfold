@@ -1,9 +1,9 @@
 <div class="medical-card">
     <div class="card-img-wrapper" style="aspect-ratio: 16/9;">
         @if(!empty($blog->image_path))
-            <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->title }}">
+            <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->title }}" loading="lazy" decoding="async">
         @else
-            <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="{{ $blog->title }}">
+            <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="{{ $blog->title }}" loading="lazy" decoding="async">
         @endif
     </div>
     <div class="card-body">

@@ -25,9 +25,9 @@
                     <div class="medical-card">
                         <div class="card-img-wrapper">
                             @if(!empty($treat->image))
-                                <img src="{{ site_image($treat->image) }}" alt="{{ $treat->name }}">
+                                <img src="{{ site_image($treat->image) }}" alt="{{ $treat->name }}" loading="lazy" decoding="async">
                             @else
-                                <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80" alt="{{ $treat->name }}">
+                                <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80" alt="{{ $treat->name }}" loading="lazy" decoding="async">
                             @endif
                         </div>
                         <div class="card-body">

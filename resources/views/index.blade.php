@@ -83,9 +83,9 @@
                 <div class="hero-visual">
                     <div class="hero-img-container">
                         @if(isset($slides) && $slides->count() > 0 && !empty($slides->first()->image_path) && strpos($slides->first()->image_path, 'http') !== false)
-                            <img src="{{ site_image($slides->first()->image_path) }}" alt="Dr. Sumit Consultation">
+                            <img src="{{ site_image($slides->first()->image_path) }}" alt="Dr. Sumit Consultation" fetchpriority="high" decoding="async" width="1000" height="667">
                         @else
-                            <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1000&q=80" alt="SumitZ Physiotherapy & Orthopaedic Clinic">
+                            <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1000&q=80" alt="SumitZ Physiotherapy & Orthopaedic Clinic" fetchpriority="high" decoding="async" width="1000" height="667">
                         @endif
                     </div>
                     <div class="hero-floating-card">
@@ -219,9 +219,9 @@
                     <div class="medical-card">
                         <div class="card-img-wrapper">
                             @if(!empty($service->image_path))
-                                <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}">
+                                <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}" loading="lazy" decoding="async">
                             @else
-                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="{{ $service->service_name }}">
+                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="{{ $service->service_name }}" loading="lazy" decoding="async">
                             @endif
                         </div>
                         <div class="card-body">
@@ -252,9 +252,9 @@
                 <div style="display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: center;">
                     <div class="doctor-img-container" style="border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg);">
                         @if(!empty($leadDoc->image))
-                            <img src="{{ site_image($leadDoc->image) }}" alt="{{ $leadDoc->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ site_image($leadDoc->image) }}" alt="{{ $leadDoc->name }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
                         @else
-                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80" alt="{{ $leadDoc->name }}">
+                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80" alt="{{ $leadDoc->name }}" loading="lazy" decoding="async">
                         @endif
                     </div>
                     <div>
@@ -344,7 +344,7 @@
             <div class="card-grid">
                 <div class="medical-card">
                     <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80" alt="Digital X-Ray Unit">
+                        <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80" alt="Digital X-Ray Unit" loading="lazy" decoding="async">
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">High-Frequency Digital X-Ray</h3>
@@ -354,7 +354,7 @@
 
                 <div class="medical-card">
                     <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80" alt="Physiotherapy Equipment">
+                        <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80" alt="Physiotherapy Equipment" loading="lazy" decoding="async">
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">Advanced Physiotherapy Gym</h3>
@@ -364,7 +364,7 @@
 
                 <div class="medical-card">
                     <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=600&q=80" alt="BMD Density Scan">
+                        <img src="https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=600&q=80" alt="BMD Density Scan" loading="lazy" decoding="async">
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">BMD Bone Density Scan</h3>
@@ -389,9 +389,9 @@
                     <div class="medical-card">
                         <div class="card-img-wrapper">
                             @if(!empty($treatment->image))
-                                <img src="{{ site_image($treatment->image) }}" alt="{{ $treatment->name }}">
+                                <img src="{{ site_image($treatment->image) }}" alt="{{ $treatment->name }}" loading="lazy" decoding="async">
                             @else
-                                <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80" alt="{{ $treatment->name }}">
+                                <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80" alt="{{ $treatment->name }}" loading="lazy" decoding="async">
                             @endif
                         </div>
                         <div class="card-body">

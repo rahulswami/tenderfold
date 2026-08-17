@@ -42,9 +42,9 @@
                     <div class="medical-card">
                         <div class="card-img-wrapper">
                             @if(!empty($service->image_path))
-                                <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}">
+                                <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}" loading="lazy" decoding="async">
                             @else
-                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="{{ $service->service_name }}">
+                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="{{ $service->service_name }}" loading="lazy" decoding="async">
                             @endif
                         </div>
                         <div class="card-body">
