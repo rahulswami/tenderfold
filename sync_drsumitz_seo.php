@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Str;
 
-$jsonFile = '/Users/apple/.gemini/antigravity-ide/brain/8f07770e-d44e-4183-9d02-c567bdf083bf/scratch/old_drsumitz_seo.json';
+$jsonFile = __DIR__ . '/storage/app/old_drsumitz_seo.json';
 if (!file_exists($jsonFile)) {
-    die("JSON dump file not found.");
+    die("JSON dump file not found at " . $jsonFile);
 }
 
 $data = json_decode(file_get_contents($jsonFile), true);
