@@ -36,7 +36,7 @@ Route::redirect('/contact', '/contact-us', 301);
 Route::redirect('/faqs', '/faq', 301);
 Route::redirect('/facilities', '/', 301); // Redirect facilities to home page if not explicitly managed
 
-// Loan Specific Route (Kept for compatibility, but styled for clinic context if visited)
+// Legacy redirect for SEO compatibility
 Route::redirect('/compare-loans', '/', 301);
 Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);
 

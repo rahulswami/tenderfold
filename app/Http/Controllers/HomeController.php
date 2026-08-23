@@ -100,14 +100,11 @@ class HomeController extends Controller
         
         // 1. Build detailed compilation message
         $compiledMessage = '';
-        if ($request->filled('loan_type')) {
-            $compiledMessage .= 'Loan Type: ' . ucwords($request->loan_type) . "\n";
-        }
-        if ($request->filled('amount')) {
-            $compiledMessage .= 'Expected Amount: ₹' . number_format($request->amount) . "\n";
-        }
         if ($request->filled('service')) {
-            $compiledMessage .= 'Service: ' . str_replace('-', ' ', ucwords($request->service)) . "\n";
+            $compiledMessage .= 'Service / Treatment: ' . str_replace('-', ' ', ucwords($request->service)) . "\n";
+        }
+        if ($request->filled('appointment_date')) {
+            $compiledMessage .= 'Preferred Date: ' . $request->appointment_date . "\n";
         }
         if ($request->filled('message')) {
             $compiledMessage .= 'Details: ' . $request->message . "\n";

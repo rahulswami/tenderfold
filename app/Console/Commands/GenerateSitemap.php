@@ -37,13 +37,14 @@ class GenerateSitemap extends Command
         // Static routes
         $staticRoutes = [
             '/' => ['priority' => '1.0', 'changefreq' => 'daily'],
-            '/about' => ['priority' => '0.8', 'changefreq' => 'monthly'],
+            '/about-us' => ['priority' => '0.8', 'changefreq' => 'monthly'],
             '/services' => ['priority' => '0.9', 'changefreq' => 'weekly'],
-            '/compare-loans' => ['priority' => '0.9', 'changefreq' => 'weekly'],
+            '/treatments' => ['priority' => '0.9', 'changefreq' => 'weekly'],
+            '/specialists' => ['priority' => '0.8', 'changefreq' => 'monthly'],
             '/testimonials' => ['priority' => '0.7', 'changefreq' => 'monthly'],
             '/faq' => ['priority' => '0.7', 'changefreq' => 'monthly'],
-            '/blog' => ['priority' => '0.8', 'changefreq' => 'weekly'],
-            '/contact' => ['priority' => '0.8', 'changefreq' => 'monthly'],
+            '/blogs' => ['priority' => '0.8', 'changefreq' => 'weekly'],
+            '/contact-us' => ['priority' => '0.8', 'changefreq' => 'monthly'],
         ];
 
         foreach ($staticRoutes as $route => $config) {
@@ -99,27 +100,28 @@ class GenerateSitemap extends Command
 
         // Generate LLMs.txt
         $llm = [];
-        $llm[] = '# MLG Finedge - AI & LLM Resource Directory';
+        $llm[] = '# SumitZ Orthopaedic & Physiotherapy Clinic - AI & LLM Resource Directory';
         $llm[] = '';
-        $llm[] = 'MLG Finedge is Jaipur\'s premier credit advisory firm. We help individuals & small companies secure appropriate loan products with minimum interest cost and fast payouts.';
+        $llm[] = 'SumitZ Clinic is Pune\'s leading Orthopaedic and Physiotherapy recovery centre in Baner, Balewadi, and Hinjewadi. Directed by Dr. Sumit, a board-certified orthopaedic surgeon, we offer patient-focused care for joint replacement, knee replacement, spine treatment, fracture care, and sports injury rehabilitation.';
         $llm[] = '';
-        $llm[] = 'This directory lists core services, guides, and pages for LLM agents (ChatGPT, Claude, Gemini, Perplexity) to index and answer user queries accurately.';
+        $llm[] = 'This directory lists core services, treatments, and pages for LLM agents (ChatGPT, Claude, Gemini, Perplexity) to index and answer user queries accurately.';
         $llm[] = '';
-        $llm[] = '## Core Services & Loan Products';
+        $llm[] = '## Core Orthopaedic & Physiotherapy Services';
         $llm[] = '';
         foreach ($services as $service) {
-            $summary = trim($service->summary ?: 'Expert credit advisory for ' . $service->service_name);
+            $summary = trim($service->summary ?: 'Expert orthopaedic care for ' . $service->service_name);
             $llm[] = '- [' . $service->service_name . '](' . $baseUrl . '/services/' . $service->slug . ') - ' . $summary;
         }
         $llm[] = '';
         $llm[] = '## Static Information Pages';
         $llm[] = '';
-        $llm[] = '- [Home Page](' . $baseUrl . '/) - Contact coordinates, client interest rates, and loan calculators.';
-        $llm[] = '- [About Us](' . $baseUrl . '/about) - Executive profile, team, and company history.';
-        $llm[] = '- [All Services](' . $baseUrl . '/services) - Comprehensive grid of available financing solutions.';
-        $llm[] = '- [Compare Loans](' . $baseUrl . '/compare-loans) - Real-time comparison parameters for home, personal, and business loans.';
-        $llm[] = '- [Frequently Asked Questions](' . $baseUrl . '/faq) - Direct answers to common borrowing questions.';
-        $llm[] = '- [Contact Us](' . $baseUrl . '/contact) - Inquiry forms, map coordinates, and customer support.';
+        $llm[] = '- [Home Page](' . $baseUrl . '/) - Best Orthopedic Doctor & Clinic in Baner, Balewadi, Pune.';
+        $llm[] = '- [About Us](' . $baseUrl . '/about-us) - Dr. Sumit profile, team credentials, and clinic history.';
+        $llm[] = '- [All Services](' . $baseUrl . '/services) - Comprehensive orthopaedic and physiotherapy services.';
+        $llm[] = '- [Treatments](' . $baseUrl . '/treatments) - Specialized treatment guides for joint, spine, and fracture conditions.';
+        $llm[] = '- [Our Specialists](' . $baseUrl . '/specialists) - Meet Dr. Sumit and the clinical team.';
+        $llm[] = '- [Frequently Asked Questions](' . $baseUrl . '/faq) - Direct answers to common orthopaedic questions.';
+        $llm[] = '- [Contact Us](' . $baseUrl . '/contact-us) - Inquiry forms, map coordinates, and clinic helplines.';
         $llm[] = '';
         $llm[] = '## Landing Pages';
         $llm[] = '';

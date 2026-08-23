@@ -2137,21 +2137,84 @@
             <div class="tab-panel @if($activeTab === 'pagecontents') active @endif" id="tab-pagecontents">
                 <form action="{{ route('admin.page-contents.update') }}" method="POST">
                     @csrf
-                    
+
+                    {{-- ── HOMEPAGE HERO ────────────────────────────────── --}}
                     <div class="admin-card">
-                        <h2>Homepage - Hero Section</h2>
+                        <h2>🏠 Homepage — Hero Section</h2>
+                        <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1.5rem;margin-top:-1rem;">Controls the large hero slider area: headline, description, eyebrow badge, and trust statistics.</p>
                         <div class="form-group">
-                            <label>Hero Main Title</label>
-                            <input type="text" name="contents[home][hero][title]" class="form-control" value="{{ $pageContents->where('page', 'home')->where('section', 'hero')->where('key', 'title')->first()->value ?? '' }}">
+                            <label>Eyebrow Badge Text (above H1)</label>
+                            <input type="text" name="contents[home][hero][eyebrow]" class="form-control" placeholder="Best Orthopedic Doctor in Baner, Balewadi & Pune" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','eyebrow')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Hero Main H1 Title <small style="color:var(--admin-text-muted);">(supports <code>&lt;span class="highlight-blue"&gt;</code> HTML)</small></label>
+                            <input type="text" name="contents[home][hero][title]" class="form-control" placeholder="Pune's Most Trusted Orthopedic Surgeon" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','title')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>Hero Subtitle / Description</label>
-                            <textarea name="contents[home][hero][subtitle]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'hero')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][hero][subtitle]" class="form-control" rows="3" placeholder="Dr. Sumit offers world-class joint replacement, spine care and physiotherapy...">{{ $pageContents->where('page','home')->where('section','hero')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                        <hr style="border:0;border-top:1px solid var(--admin-border);margin:1.5rem 0;">
+                        <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1rem;"><strong>Trust Statistics Row</strong> — The 3 numbers displayed below the CTA buttons.</p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Trust Stat 1 — Number</label>
+                                <input type="text" name="contents[home][hero][trust_1_num]" class="form-control" placeholder="20,000+" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_1_num')->first()->value ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Trust Stat 1 — Label</label>
+                                <input type="text" name="contents[home][hero][trust_1_label]" class="form-control" placeholder="Patients Recovered" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_1_label')->first()->value ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Trust Stat 2 — Number</label>
+                                <input type="text" name="contents[home][hero][trust_2_num]" class="form-control" placeholder="15+ Yrs" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_2_num')->first()->value ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Trust Stat 2 — Label</label>
+                                <input type="text" name="contents[home][hero][trust_2_label]" class="form-control" placeholder="Clinical Experience" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_2_label')->first()->value ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Trust Stat 3 — Number</label>
+                                <input type="text" name="contents[home][hero][trust_3_num]" class="form-control" placeholder="3 Locations" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_num')->first()->value ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Trust Stat 3 — Label</label>
+                                <input type="text" name="contents[home][hero][trust_3_label]" class="form-control" placeholder="Baner · Balewadi · Hinjewadi" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_label')->first()->value ?? '' }}">
+                            </div>
                         </div>
                     </div>
 
+                    {{-- ── QUICK CARE FINDER ───────────────────────────── --}}
                     <div class="admin-card">
-                        <h2>Homepage - Services Section Overview</h2>
+                        <h2>🔍 Homepage — Quick Care Finder Strip</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Finder Badge Text</label>
+                                <input type="text" name="contents[home][finder][badge]" class="form-control" placeholder="Quick Care Finder" value="{{ $pageContents->where('page','home')->where('section','finder')->where('key','badge')->first()->value ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Finder Heading Text</label>
+                                <input type="text" name="contents[home][finder][heading]" class="form-control" placeholder="Which condition can we help you with?" value="{{ $pageContents->where('page','home')->where('section','finder')->where('key','heading')->first()->value ?? '' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ── APPOINTMENT BOOKING SECTION ────────────────── --}}
+                    <div class="admin-card">
+                        <h2>📅 Homepage — Appointment Booking Section</h2>
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="contents[home][appointment][heading]" class="form-control" placeholder="Book Your Priority Consultation with Dr. Sumit" value="{{ $pageContents->where('page','home')->where('section','appointment')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Section Subtitle / Description</label>
+                            <textarea name="contents[home][appointment][subtitle]" class="form-control" rows="2" placeholder="Our clinical coordinators will help schedule your visit...">{{ $pageContents->where('page','home')->where('section','appointment')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ── SERVICES SECTION ────────────────────────────── --}}
+                    <div class="admin-card">
+                        <h2>🏥 Homepage — Services Grid Section</h2>
                         <div class="form-group">
                             <label>Services Heading</label>
                             <input type="text" name="contents[home][services][title]" class="form-control" value="{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'title')->first()->value ?? '' }}">
@@ -2162,8 +2225,98 @@
                         </div>
                     </div>
 
+                    </div>
+
+                    {{-- ── PROCESS JOURNEY ─────────────────────────────── --}}
                     <div class="admin-card">
-                        <h2>Homepage - About Section</h2>
+                        <h2>🛤️ Homepage — Patient Journey (4-Step Process)</h2>
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="contents[home][process][heading]" class="form-control" placeholder="Your Journey to Pain-Free Living" value="{{ $pageContents->where('page','home')->where('section','process')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Section Subtitle</label>
+                            <textarea name="contents[home][process][subtitle]" class="form-control" rows="2" placeholder="We follow a systematic, compassionate four-step protocol...">{{ $pageContents->where('page','home')->where('section','process')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ── FACILITIES ───────────────────────────────────── --}}
+                    <div class="admin-card">
+                        <h2>🔬 Homepage — Clinical Facilities Showcase</h2>
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="contents[home][facilities][heading]" class="form-control" placeholder="State-of-the-Art Clinical Facilities in Baner" value="{{ $pageContents->where('page','home')->where('section','facilities')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Section Subtitle</label>
+                            <textarea name="contents[home][facilities][subtitle]" class="form-control" rows="2" placeholder="Modern diagnostic equipment ensuring accurate answers...">{{ $pageContents->where('page','home')->where('section','facilities')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ── TREATMENTS SECTION ───────────────────────────── --}}
+                    <div class="admin-card">
+                        <h2>💊 Homepage — Treatments Grid Section</h2>
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="contents[home][treatments][heading]" class="form-control" placeholder="Specialized Orthopedic Treatments in Pune" value="{{ $pageContents->where('page','home')->where('section','treatments')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Section Subtitle</label>
+                            <textarea name="contents[home][treatments][subtitle]" class="form-control" rows="2" placeholder="Targeted interventions for joint, bone, muscle, and ligament disorders...">{{ $pageContents->where('page','home')->where('section','treatments')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ── TESTIMONIALS SECTION ─────────────────────────── --}}
+                    <div class="admin-card">
+                        <h2>⭐ Homepage — Testimonials Section</h2>
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="contents[home][testimonials][heading]" class="form-control" placeholder="Stories of Recovery & Renewed Hope" value="{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Section Subtitle</label>
+                            <textarea name="contents[home][testimonials][subtitle]" class="form-control" rows="2" placeholder="Read how Dr. Sumit's patient-first approach helped...">{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ── CLINIC LOCATIONS SECTION ─────────────────────── --}}
+                    <div class="admin-card">
+                        <h2>📍 Homepage — Clinic Locations Section</h2>
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="contents[home][locations][heading]" class="form-control" placeholder="Visit SumitZ Clinic — Baner, Balewadi & Hinjewadi" value="{{ $pageContents->where('page','home')->where('section','locations')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Section Subtitle</label>
+                            <textarea name="contents[home][locations][subtitle]" class="form-control" rows="2" placeholder="Three conveniently located clinics serving patients across Pune...">{{ $pageContents->where('page','home')->where('section','locations')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ── FAQ SECTION ──────────────────────────────────── --}}
+                    <div class="admin-card">
+                        <h2>❓ Homepage — FAQ Section</h2>
+                        <div class="form-group">
+                            <label>FAQ Section Heading</label>
+                            <input type="text" name="contents[home][faq][heading]" class="form-control" placeholder="Common Questions About Orthopedic Treatment in Pune" value="{{ $pageContents->where('page','home')->where('section','faq')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                    </div>
+
+                    {{-- ── FINAL CTA BANNER ─────────────────────────────── --}}
+                    <div class="admin-card">
+                        <h2>🚀 Homepage — Final CTA Banner</h2>
+                        <div class="form-group">
+                            <label>CTA Heading</label>
+                            <input type="text" name="contents[home][cta][heading]" class="form-control" placeholder="Ready to Live Pain-Free? Consult Pune's Best Orthopedic Doctor Today" value="{{ $pageContents->where('page','home')->where('section','cta')->where('key','heading')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>CTA Subtitle</label>
+                            <textarea name="contents[home][cta][subtitle]" class="form-control" rows="2" placeholder="Book an appointment at SumitZ Clinic Baner, Balewadi, or Hinjewadi...">{{ $pageContents->where('page','home')->where('section','cta')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ── HOMEPAGE ABOUT SECTION (legacy) ─────────────── --}}
+                    <div class="admin-card">
+                        <h2>ℹ️ Homepage — About / Why Choose Us (Legacy)</h2>
                         <div class="form-group">
                             <label>Pre-Heading / Category Tag</label>
                             <input type="text" name="contents[home][about][pre_title]" class="form-control" value="{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'pre_title')->first()->value ?? '' }}">
@@ -2346,7 +2499,7 @@
 
 
 
-                    <button type="submit" class="btn-submit">Save Page Content</button>
+                    <button type="submit" class="btn-submit">💾 Save All Page Content</button>
                 </form>
             </div>
 
@@ -2399,31 +2552,31 @@
                             </div>
                             <div class="form-group">
                                 <label for="ser_hero_category">Hero Category Tag</label>
-                                <input type="text" id="ser_hero_category" name="hero_category" class="form-control" placeholder="RETAIL LOAN">
+                                <input type="text" id="ser_hero_category" name="hero_category" class="form-control" placeholder="ORTHOPAEDIC SURGERY">
                             </div>
                             <div class="form-group">
                                 <label for="ser_hero_title">Hero Main Title</label>
-                                <input type="text" id="ser_hero_title" name="hero_title" class="form-control" required placeholder="Personal Loan at Low Rates">
+                                <input type="text" id="ser_hero_title" name="hero_title" class="form-control" required placeholder="Advanced Joint Replacement Surgery in Baner, Pune">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_hero_subtitle">Hero Subtitle</label>
-                                <textarea id="ser_hero_subtitle" name="hero_subtitle" class="form-control" rows="2" placeholder="Instant personal loans up to 40 Lakhs with minimum documentation."></textarea>
+                                <textarea id="ser_hero_subtitle" name="hero_subtitle" class="form-control" rows="2" placeholder="Dr. Sumit performs minimally invasive knee replacement surgery with rapid recovery protocols."></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="ser_rate_value">Key Rate Value (e.g. 10.49% p.a.)</label>
                                 <input type="text" id="ser_rate_value" name="rate_value" class="form-control" placeholder="10.49% p.a.">
                             </div>
                             <div class="form-group">
-                                <label for="ser_max_loan">Key Max Loan (e.g. Up to ₹40 Lakhs)</label>
-                                <input type="text" id="ser_max_loan" name="max_loan" class="form-control" placeholder="Up to ₹40 Lakhs">
+                                <label for="ser_max_loan">Key Highlight Value (e.g. 5000+ Cases)</label>
+                                <input type="text" id="ser_max_loan" name="max_loan" class="form-control" placeholder="5000+ Successful Surgeries">
                             </div>
                             <div class="form-group">
-                                <label for="ser_tenure">Key Tenure (e.g. Up to 72 Months)</label>
-                                <input type="text" id="ser_tenure" name="tenure" class="form-control" placeholder="Up to 72 Months">
+                                <label for="ser_tenure">Recovery Timeline (e.g. 4–6 Weeks)</label>
+                                <input type="text" id="ser_tenure" name="tenure" class="form-control" placeholder="4–6 Weeks Recovery">
                             </div>
                             <div class="form-group">
                                 <label for="ser_intro_title">Intro Title</label>
-                                <input type="text" id="ser_intro_title" name="intro_title" class="form-control" placeholder="Why Choose Our Personal Loan?">
+                                <input type="text" id="ser_intro_title" name="intro_title" class="form-control" placeholder="Why Choose SumitZ Clinic for Joint Replacement?">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_intro_content">Intro Content (HTML Editor)</label>
@@ -2438,8 +2591,8 @@
                                 <textarea id="ser_documents_required" name="documents_required" class="form-control" rows="4" placeholder="PAN Card & Aadhaar Card&#10;Last 3 Months Salary Slips"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="ser_tips_title">Tips Section Title (optional)</label>
-                                <input type="text" id="ser_tips_title" name="tips_title" class="form-control" placeholder="How to get faster personal loan approval?">
+                                <label for="ser_tips_title">Tips / Patient Guidance Section Title (optional)</label>
+                                <input type="text" id="ser_tips_title" name="tips_title" class="form-control" placeholder="What to expect before your orthopedic surgery?">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_tips_content">Tips Section Content (HTML Editor)</label>
@@ -7450,16 +7603,20 @@
             });
         }
 
-        // Periodically check internal notifications in background
-        setInterval(fetchInternalNotifications, 20000);
+        // Periodically check internal notifications in background (every 60s when tab is active)
+        setInterval(() => {
+            if (!document.hidden) {
+                fetchInternalNotifications();
+            }
+        }, 60000);
         setTimeout(fetchInternalNotifications, 1000);
 
-        // Background poll for live chat sessions (every 15s when tab is visible to respect Hostinger MySQL connection limits)
+        // Background poll for live chat sessions (every 45s when tab is active)
         setInterval(() => {
             if (!document.hidden && typeof loadAdminChatSessions === 'function') {
                 loadAdminChatSessions();
             }
-        }, 15000);
+        }, 45000);
     </script>
 
 </body>
