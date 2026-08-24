@@ -1040,6 +1040,7 @@ class AdminController extends Controller
 
     public function updateLead(Request $request, $id)
     {
+        $this->checkPermission('leads');
         $request->validate([
             'status' => 'required|string|in:New,Contacted,In Progress,Closed',
             'notes' => 'nullable|string',
@@ -1053,23 +1054,29 @@ class AdminController extends Controller
         ]);
 
         $user = \Illuminate\Support\Facades\Auth::user();
-        \App\Models\LeadActivity::create([
-            'lead_id' => $lead->id,
-            'user_name' => $user ? $user->name : 'Admin',
-            'action_type' => ($oldStatus !== $request->status) ? 'status_change' : 'note_added',
-            'status_from' => $oldStatus,
-            'status_to' => $request->status,
-            'notes' => $request->notes,
-        ]);
+        try {
+            \App\Models\LeadActivity::create([
+                'lead_id' => $lead->id,
+                'user_name' => $user ? $user->name : 'Admin',
+                'action_type' => ($oldStatus !== $request->status) ? 'status_change' : 'note_added',
+                'status_from' => $oldStatus,
+                'status_to' => $request->status,
+                'notes' => $request->notes,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed logging LeadActivity: ' . $e->getMessage());
+        }
 
-        \App\Models\AdminNotification::log(
-            'lead',
-            'Lead Updated: ' . $lead->name,
-            'Status: ' . $oldStatus . ' → ' . $request->status,
-            route('admin.tab', 'leads')
-        );
+        try {
+            \App\Models\AdminNotification::log(
+                'lead',
+                'Lead Updated: ' . $lead->name,
+                'Status: ' . $oldStatus . ' → ' . $request->status,
+                route('admin.tab', 'leads')
+            );
+        } catch (\Throwable $e) {}
 
-        return redirect()->back()->with('success', 'Lead updated successfully and activity logged!');
+        return redirect()->back()->with('success', 'Lead updated successfully!');
     }
 
     public function deleteLead($id)

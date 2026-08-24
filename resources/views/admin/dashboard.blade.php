@@ -1114,28 +1114,61 @@
                     </div>
 
                     <div class="admin-card">
-                        <h2>Social Media Profiles</h2>
-                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Add links to your official social media pages to show them in the footer.</p>
+                        <h2>Social Media Profiles & Custom SVG Icons</h2>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Configure your official social media profile URLs and optional custom SVG icon code.</p>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="social_facebook">Facebook URL</label>
                                 <input type="url" id="social_facebook" name="social_facebook" class="form-control" value="{{ $site['social_facebook'] ?? '' }}" placeholder="https://facebook.com/yourpage">
                             </div>
                             <div class="form-group">
+                                <label for="social_facebook_svg">Facebook Custom SVG Icon (optional)</label>
+                                <input type="text" id="social_facebook_svg" name="social_facebook_svg" class="form-control" value="{{ $site['social_facebook_svg'] ?? '' }}" placeholder="<svg>...</svg>">
+                            </div>
+
+                            <div class="form-group">
                                 <label for="social_instagram">Instagram URL</label>
                                 <input type="url" id="social_instagram" name="social_instagram" class="form-control" value="{{ $site['social_instagram'] ?? '' }}" placeholder="https://instagram.com/yourusername">
                             </div>
+                            <div class="form-group">
+                                <label for="social_instagram_svg">Instagram Custom SVG Icon (optional)</label>
+                                <input type="text" id="social_instagram_svg" name="social_instagram_svg" class="form-control" value="{{ $site['social_instagram_svg'] ?? '' }}" placeholder="<svg>...</svg>">
+                            </div>
+
                             <div class="form-group">
                                 <label for="social_linkedin">LinkedIn URL</label>
                                 <input type="url" id="social_linkedin" name="social_linkedin" class="form-control" value="{{ $site['social_linkedin'] ?? '' }}" placeholder="https://linkedin.com/company/yourcompany">
                             </div>
                             <div class="form-group">
+                                <label for="social_linkedin_svg">LinkedIn Custom SVG Icon (optional)</label>
+                                <input type="text" id="social_linkedin_svg" name="social_linkedin_svg" class="form-control" value="{{ $site['social_linkedin_svg'] ?? '' }}" placeholder="<svg>...</svg>">
+                            </div>
+
+                            <div class="form-group">
                                 <label for="social_twitter">Twitter / X URL</label>
                                 <input type="url" id="social_twitter" name="social_twitter" class="form-control" value="{{ $site['social_twitter'] ?? '' }}" placeholder="https://twitter.com/yourhandle">
                             </div>
                             <div class="form-group">
+                                <label for="social_twitter_svg">Twitter / X Custom SVG Icon (optional)</label>
+                                <input type="text" id="social_twitter_svg" name="social_twitter_svg" class="form-control" value="{{ $site['social_twitter_svg'] ?? '' }}" placeholder="<svg>...</svg>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="social_youtube">YouTube Channel URL</label>
+                                <input type="url" id="social_youtube" name="social_youtube" class="form-control" value="{{ $site['social_youtube'] ?? '' }}" placeholder="https://youtube.com/@yourchannel">
+                            </div>
+                            <div class="form-group">
+                                <label for="social_youtube_svg">YouTube Custom SVG Icon (optional)</label>
+                                <input type="text" id="social_youtube_svg" name="social_youtube_svg" class="form-control" value="{{ $site['social_youtube_svg'] ?? '' }}" placeholder="<svg>...</svg>">
+                            </div>
+
+                            <div class="form-group">
                                 <label for="social_practo">Practo Profile URL</label>
                                 <input type="url" id="social_practo" name="social_practo" class="form-control" value="{{ $site['social_practo'] ?? '' }}" placeholder="https://practo.com/clinic/yourprofile">
+                            </div>
+                            <div class="form-group">
+                                <label for="social_practo_svg">Practo Custom SVG Icon (optional)</label>
+                                <input type="text" id="social_practo_svg" name="social_practo_svg" class="form-control" value="{{ $site['social_practo_svg'] ?? '' }}" placeholder="<svg>...</svg>">
                             </div>
                         </div>
                     </div>

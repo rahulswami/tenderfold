@@ -155,6 +155,204 @@
             .chat-widget-btn { bottom: 80px; right: 16px; width: 52px; height: 52px; }
             .chat-widget-box { bottom: 140px; right: 16px; }
         }
+
+        /* Fullscreen Search Modal Overlay */
+        .search-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(10, 37, 64, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 999999;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 60px 16px 20px 16px;
+            box-sizing: border-box;
+        }
+        .search-modal-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 680px;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalSlideDown {
+            from { opacity: 0; transform: translateY(-20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .search-modal-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            gap: 12px;
+        }
+        .search-modal-input-wrap {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 14px;
+            transition: border-color 0.2s ease;
+        }
+        .search-modal-input-wrap:focus-within {
+            border-color: var(--brand-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 133, 200, 0.15);
+        }
+        .search-modal-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 16px;
+            font-family: inherit;
+            color: #0f172a;
+        }
+        .search-modal-clear-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #94a3b8;
+            cursor: pointer;
+            display: none;
+            padding: 0 4px;
+        }
+        .search-modal-close-btn {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 22px;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+        .search-modal-close-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .search-modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .search-tag-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .search-tag-btn:hover {
+            background: var(--brand-blue);
+            color: #ffffff;
+            border-color: var(--brand-blue);
+        }
+        .nav-search-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .nav-search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.2s ease;
+        }
+        .nav-search-result-item:hover {
+            background-color: #f1f5f9;
+        }
+        .nav-search-thumb {
+            width: 46px;
+            height: 46px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .nav-search-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .nav-search-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .nav-search-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nav-search-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .nav-search-sub {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nav-search-empty {
+            padding: 30px 16px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .nav-search-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--brand-blue);
+            font-weight: 500;
+            padding: 10px 0;
+        }
+        .search-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(0, 133, 200, 0.2);
+            border-top-color: var(--brand-blue);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -395,22 +593,39 @@
                 </p>
                 <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
                     @if(!empty($site['social_instagram']))
-                        <a href="{{ $site['social_instagram'] }}" target="_blank" style="color: white; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Instagram @drsumitz" title="Follow Dr. Sumit on Instagram"><i data-lucide="instagram" style="width: 20px; height: 20px; color: white;"></i></a>
+                        <a href="{{ $site['social_instagram'] }}" target="_blank" style="color: white; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Instagram @drsumitz" title="Follow Dr. Sumit on Instagram">
+                            {!! $site['social_instagram_svg'] ?? '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>' !!}
+                        </a>
                     @endif
                     @if(!empty($site['social_facebook']))
-                        <a href="{{ $site['social_facebook'] }}" target="_blank" style="color: white; background: #1877f2; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Facebook" title="Facebook Page"><i data-lucide="facebook" style="width: 20px; height: 20px; color: white;"></i></a>
+                        <a href="{{ $site['social_facebook'] }}" target="_blank" style="color: white; background: #1877f2; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Facebook" title="Facebook Page">
+                            {!! $site['social_facebook_svg'] ?? '<svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' !!}
+                        </a>
                     @endif
                     @if(!empty($site['social_linkedin']))
-                        <a href="{{ $site['social_linkedin'] }}" target="_blank" style="color: white; background: #0a66c2; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="LinkedIn" title="LinkedIn Profile"><i data-lucide="linkedin" style="width: 20px; height: 20px; color: white;"></i></a>
+                        <a href="{{ $site['social_linkedin'] }}" target="_blank" style="color: white; background: #0a66c2; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="LinkedIn" title="LinkedIn Profile">
+                            {!! $site['social_linkedin_svg'] ?? '<svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.74a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z"/></svg>' !!}
+                        </a>
                     @endif
                     @if(!empty($site['social_twitter']))
-                        <a href="{{ $site['social_twitter'] }}" target="_blank" style="color: white; background: #1da1f2; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Twitter / X" title="Twitter Profile"><i data-lucide="twitter" style="width: 20px; height: 20px; color: white;"></i></a>
+                        <a href="{{ $site['social_twitter'] }}" target="_blank" style="color: white; background: #000000; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Twitter / X" title="Twitter / X Profile">
+                            {!! $site['social_twitter_svg'] ?? '<svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' !!}
+                        </a>
+                    @endif
+                    @if(!empty($site['social_youtube']))
+                        <a href="{{ $site['social_youtube'] }}" target="_blank" style="color: white; background: #ff0000; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="YouTube" title="YouTube Channel">
+                            {!! $site['social_youtube_svg'] ?? '<svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>' !!}
+                        </a>
                     @endif
                     @if(!empty($site['social_practo']))
-                        <a href="{{ $site['social_practo'] }}" target="_blank" style="color: white; background: #28328c; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Practo Profile" title="Book via Practo">P</a>
+                        <a href="{{ $site['social_practo'] }}" target="_blank" style="color: white; background: #28328c; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Practo Profile" title="Book via Practo">
+                            {!! $site['social_practo_svg'] ?? '<svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-4H9v-2h2V9h2v2h2v2h-2v4z"/></svg>' !!}
+                        </a>
                     @endif
                     @if(!empty($site['google_my_business_link']))
-                        <a href="{{ $site['google_my_business_link'] }}" target="_blank" style="color: white; background: #4285f4; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Google Reviews" title="Read Google Reviews"><i data-lucide="star" style="width: 20px; height: 20px; color: #fbbf24;"></i></a>
+                        <a href="{{ $site['google_my_business_link'] }}" target="_blank" style="color: white; background: #4285f4; width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" aria-label="Google Reviews" title="Read Google Reviews">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="#fbbf24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </a>
                     @endif
                 </div>
             </div>
