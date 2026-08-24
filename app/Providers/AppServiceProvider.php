@@ -3,6 +3,14 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use App\Models\SiteParameter;
+use App\Models\PageContent;
+use App\Models\Service;
+use App\Models\Treatment;
+use App\Models\TeamMember;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,63 +27,72 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (\Illuminate\Support\Facades\Schema::hasTable('site_parameters')) {
-            try {
-                $parameters = \App\Models\SiteParameter::all()->pluck('value', 'id')->toArray();
-                \Illuminate\Support\Facades\View::share('site', $parameters);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\View::share('site', []);
-            }
-        } else {
-            \Illuminate\Support\Facades\View::share('site', []);
+        // 1. Share safe default empty collections/arrays first so views never crash on null
+        View::share('site', []);
+        View::share('pageContents', []);
+        View::share('globalServices', collect());
+        View::share('globalTreatments', collect());
+        View::share('globalSpecialists', collect());
+
+        // Skip heavy view sharing database queries for CLI, API, AJAX or JSON requests to conserve connections
+        if ($this->app->runningInConsole() || request()->is('api/*') || request()->is('chat/*') || request()->ajax() || request()->wantsJson()) {
+            return;
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasTable('page_contents')) {
-            try {
-                $contents = \App\Models\PageContent::all();
-                $pageContents = [];
-                foreach ($contents as $content) {
-                    $pageContents[$content->page][$content->section][$content->key] = $content->value;
+        try {
+            $site = Cache::remember('global_site_parameters', 3600, function () {
+                if (Schema::hasTable('site_parameters')) {
+                    return SiteParameter::all()->pluck('value', 'id')->toArray();
                 }
-                \Illuminate\Support\Facades\View::share('pageContents', $pageContents);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\View::share('pageContents', []);
-            }
-        } else {
-            \Illuminate\Support\Facades\View::share('pageContents', []);
+                return [];
+            });
+            View::share('site', $site);
+        } catch (\Throwable $e) {
+            View::share('site', []);
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasTable('services')) {
-            try {
-                $globalServices = \App\Models\Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
-                \Illuminate\Support\Facades\View::share('globalServices', $globalServices);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\View::share('globalServices', collect());
-            }
-        } else {
-            \Illuminate\Support\Facades\View::share('globalServices', collect());
+        try {
+            $pageContents = Cache::remember('global_page_contents', 3600, function () {
+                if (Schema::hasTable('page_contents')) {
+                    $contents = PageContent::all();
+                    $result = [];
+                    foreach ($contents as $content) {
+                        $result[$content->page][$content->section][$content->key] = $content->value;
+                    }
+                    return $result;
+                }
+                return [];
+            });
+            View::share('pageContents', $pageContents);
+        } catch (\Throwable $e) {
+            View::share('pageContents', []);
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasTable('treatments')) {
-            try {
-                $globalTreatments = \App\Models\Treatment::where('status', true)->orderBy('id')->get();
-                \Illuminate\Support\Facades\View::share('globalTreatments', $globalTreatments);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\View::share('globalTreatments', collect());
+        try {
+            if (Schema::hasTable('services')) {
+                $globalServices = Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
+                View::share('globalServices', $globalServices);
             }
-        } else {
-            \Illuminate\Support\Facades\View::share('globalTreatments', collect());
+        } catch (\Throwable $e) {
+            View::share('globalServices', collect());
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasTable('team_members')) {
-            try {
-                $globalSpecialists = \App\Models\TeamMember::where('status', true)->orderBy('id')->get();
-                \Illuminate\Support\Facades\View::share('globalSpecialists', $globalSpecialists);
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\View::share('globalSpecialists', collect());
+        try {
+            if (Schema::hasTable('treatments')) {
+                $globalTreatments = Treatment::where('status', true)->orderBy('id')->get();
+                View::share('globalTreatments', $globalTreatments);
             }
-        } else {
-            \Illuminate\Support\Facades\View::share('globalSpecialists', collect());
+        } catch (\Throwable $e) {
+            View::share('globalTreatments', collect());
+        }
+
+        try {
+            if (Schema::hasTable('team_members')) {
+                $globalSpecialists = TeamMember::where('status', true)->orderBy('id')->get();
+                View::share('globalSpecialists', $globalSpecialists);
+            }
+        } catch (\Throwable $e) {
+            View::share('globalSpecialists', collect());
         }
     }
 }

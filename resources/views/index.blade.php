@@ -71,15 +71,14 @@
         overflow: hidden;
         min-height: 92vh;
         display: flex;
-        align-items: center;
+        align-items: stretch;
     }
     .slider-track {
         position: relative;
         width: 100%;
         min-height: 92vh;
-        display: flex;
-        align-items: center;
     }
+    /* Every slide sits absolute/full-bleed inside the track */
     .slide-item {
         position: absolute;
         inset: 0;
@@ -89,12 +88,12 @@
         display: flex;
         align-items: center;
     }
+    /* Active slide on top — keep position: absolute so width = track width */
     .slide-item.active {
         opacity: 1;
         pointer-events: auto;
-        position: relative;
+        z-index: 2;
     }
-    /* Fallback static hero when DB slides used as image background */
     .hero-bg-overlay {
         position: absolute;
         inset: 0;
@@ -110,9 +109,10 @@
         z-index: 0;
         filter: brightness(0.55);
     }
+    /* Content wrapper sits above overlay */
     .slide-content-wrap {
         position: relative;
-        z-index: 2;
+        z-index: 3;
         width: 100%;
     }
     .hero-inner {
@@ -125,9 +125,7 @@
     @media (max-width: 900px) {
         .hero-inner { grid-template-columns: 1fr; gap: 32px; padding: 60px 0 40px; }
         .hero-visual-panel { display: none; }
-        .hero-slider-section { min-height: unset; }
-        .slider-track { min-height: unset; }
-        .slide-item { position: relative; }
+        .hero-slider-section, .slider-track { min-height: unset; }
     }
     .hero-eyebrow-badge {
         display: inline-flex;
@@ -305,44 +303,47 @@
         border-radius: 4px;
     }
     /* ─── SYMPTOM FINDER ─────────────────────────────────────────────── */
-    .symptom-finder-section { background: var(--surface-white); padding: 0; margin-top: -2px; }
+    .symptom-finder-section { background: var(--surface-white); padding: 0; }
     .symptom-card-wrapper {
         background: #fff;
-        border-radius: 0 0 16px 16px;
+        border-radius: 0 0 20px 20px;
         box-shadow: 0 8px 32px rgba(10,37,64,0.08);
-        padding: 28px 40px;
+        padding: 24px 32px;
+    }
+    .symptom-card-top {
         display: flex;
         align-items: center;
-        gap: 24px;
+        gap: 20px;
+        margin-bottom: 18px;
         flex-wrap: wrap;
     }
     .symptom-header { flex-shrink: 0; }
-    .symptom-header h2 { font-size: 16px; margin: 0; color: var(--heading-navy); }
+    .symptom-header h2 { font-size: 15px; margin: 0; color: var(--heading-navy); }
     .symptom-grid {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
-        flex: 1;
     }
     .symptom-item {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 7px;
         background: var(--brand-blue-light);
         color: var(--brand-blue);
-        padding: 10px 16px;
+        padding: 9px 16px;
         border-radius: 8px;
         text-decoration: none;
-        font-size: 13.5px;
+        font-size: 13px;
         font-weight: 600;
         transition: all 0.2s;
         white-space: nowrap;
     }
     .symptom-item:hover { background: var(--brand-blue); color: #fff; transform: translateY(-2px); }
-    .symptom-icon { width: 16px; height: 16px; }
+    .symptom-icon { width: 15px; height: 15px; flex-shrink: 0; }
     @media(max-width:768px){
-        .symptom-card-wrapper { flex-direction: column; align-items: flex-start; padding: 20px; }
-        .symptom-grid { gap: 8px; }
+        .symptom-card-wrapper { padding: 18px 16px; }
+        .symptom-card-top { flex-direction: column; align-items: flex-start; }
+        .symptom-item { font-size: 12.5px; padding: 8px 12px; }
     }
 </style>
 @endsection
@@ -536,45 +537,7 @@
         @endif
     </section>
 
-    {{-- ===== 2. QUICK CARE FINDER ===== --}}
-    <section class="symptom-finder-section">
-        <div class="container">
-            <div class="symptom-card-wrapper">
-                <div class="symptom-header">
-                    <span class="badge badge-blue" style="margin-bottom:4px;font-size:11px;">{{ $pageContents['home']['finder']['badge'] ?? 'Quick Care Finder' }}</span>
-                    <h2>{{ $pageContents['home']['finder']['heading'] ?? 'Which condition can we help you with?' }}</h2>
-                </div>
-                <div class="symptom-grid">
-                    <a href="{{ route('treatments') }}#knee" class="symptom-item">
-                        <i data-lucide="activity" class="symptom-icon"></i><span>Knee &amp; Joint Pain</span>
-                    </a>
-                    <a href="{{ route('treatments') }}#spine" class="symptom-item">
-                        <i data-lucide="shield" class="symptom-icon"></i><span>Back &amp; Spine Care</span>
-                    </a>
-                    <a href="{{ route('services') }}#physiotherapy" class="symptom-item">
-                        <i data-lucide="zap" class="symptom-icon"></i><span>Physiotherapy</span>
-                    </a>
-                    <a href="{{ route('treatments') }}#sports" class="symptom-item">
-                        <i data-lucide="award" class="symptom-icon"></i><span>Sports Injury</span>
-                    </a>
-                    <a href="{{ route('treatments') }}#fracture" class="symptom-item">
-                        <i data-lucide="plus-square" class="symptom-icon"></i><span>Fracture Care</span>
-                    </a>
-                    <a href="{{ route('services') }}#diagnostics" class="symptom-item">
-                        <i data-lucide="scan" class="symptom-icon"></i><span>X-Ray &amp; BMD Scan</span>
-                    </a>
-                    <a href="{{ route('treatments') }}#hip" class="symptom-item">
-                        <i data-lucide="move" class="symptom-icon"></i><span>Hip Replacement</span>
-                    </a>
-                    <a href="{{ route('treatments') }}#arthritis" class="symptom-item">
-                        <i data-lucide="wind" class="symptom-icon"></i><span>Arthritis</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== 3. APPOINTMENT BOOKING CARD ===== --}}
+    {{-- ===== 2. APPOINTMENT BOOKING CARD ===== --}}
     <section class="section-spacing" id="appointment-section" style="background-color: var(--bg-surface);">
         <div class="container">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
@@ -1056,19 +1019,26 @@
 
     // ─── Hero Slider ─────────────────────────────────────────
     (function() {
+        const track  = document.getElementById('slider-track');
         const slides = document.querySelectorAll('#slider-track .slide-item');
         const dots   = document.querySelectorAll('#slider-dots .slider-dot');
-        if (!slides.length || slides.length < 2) return;
+        if (!slides.length) return;
+
+        // Single slide — make it fully visible, nothing else needed
+        if (slides.length < 2) {
+            slides[0].classList.add('active');
+            // Ensure track has height based on slide content
+            if (track) track.style.minHeight = slides[0].scrollHeight + 'px';
+            return;
+        }
 
         let current = 0;
-        let timer = null;
+        let timer   = null;
 
         function activate(n) {
             slides[current].classList.remove('active');
             if (dots[current]) dots[current].classList.remove('active');
-
             current = (n + slides.length) % slides.length;
-
             slides[current].classList.add('active');
             if (dots[current]) dots[current].classList.add('active');
         }
@@ -1077,22 +1047,13 @@
             stopAuto();
             timer = setInterval(() => activate(current + 1), 5000);
         }
-
         function stopAuto() {
             if (timer) { clearInterval(timer); timer = null; }
         }
 
-        // Position all non-active slides absolutely for smooth transition
-        slides.forEach((s, i) => {
-            if (i !== 0) {
-                s.style.position = 'absolute';
-                s.style.inset = '0';
-            }
-        });
-
-        window.sliderPrev  = () => { stopAuto(); activate(current - 1); startAuto(); };
-        window.sliderNext  = () => { stopAuto(); activate(current + 1); startAuto(); };
-        window.goToSlide   = (n) => { stopAuto(); activate(n); startAuto(); };
+        window.sliderPrev = () => { stopAuto(); activate(current - 1); startAuto(); };
+        window.sliderNext = () => { stopAuto(); activate(current + 1); startAuto(); };
+        window.goToSlide  = (n) => { stopAuto(); activate(n); startAuto(); };
 
         startAuto();
     })();

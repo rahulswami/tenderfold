@@ -222,8 +222,14 @@
                             Services <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 2px;"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            @foreach($globalServices as $gs)
-                                <li><a href="{{ route('services.show', $gs->slug) }}">{{ $gs->service_name }}</a></li>
+                            @foreach(($globalServices ?? collect()) as $gs)
+                                @php
+                                    $gSlug = is_object($gs) ? $gs->slug : (is_array($gs) ? ($gs['slug'] ?? '') : '');
+                                    $gName = is_object($gs) ? $gs->service_name : (is_array($gs) ? ($gs['service_name'] ?? '') : $gs);
+                                @endphp
+                                @if(!empty($gSlug))
+                                    <li><a href="{{ route('services.show', $gSlug) }}">{{ $gName }}</a></li>
+                                @endif
                             @endforeach
                         </ul>
                     </li>
@@ -233,10 +239,16 @@
                             Treatments <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 2px;"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            @foreach($globalTreatments->take(8) as $gt)
-                                <li><a href="{{ route('treatments.show', $gt->slug) }}">{{ $gt->name }}</a></li>
+                            @foreach(($globalTreatments ?? collect())->take(8) as $gt)
+                                @php
+                                    $gtSlug = is_object($gt) ? $gt->slug : (is_array($gt) ? ($gt['slug'] ?? '') : '');
+                                    $gtName = is_object($gt) ? $gt->name : (is_array($gt) ? ($gt['name'] ?? '') : $gt);
+                                @endphp
+                                @if(!empty($gtSlug))
+                                    <li><a href="{{ route('treatments.show', $gtSlug) }}">{{ $gtName }}</a></li>
+                                @endif
                             @endforeach
-                            @if($globalTreatments->count() > 8)
+                            @if(($globalTreatments ?? collect())->count() > 8)
                                 <li><a href="{{ route('treatments') }}" style="font-weight: 700; color: var(--brand-blue);">View All Treatments →</a></li>
                             @endif
                         </ul>
@@ -247,8 +259,14 @@
                             Specialists <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 2px;"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            @foreach($globalSpecialists as $gspec)
-                                <li><a href="{{ route('specialists.show', $gspec->slug) }}">{{ $gspec->name }}</a></li>
+                            @foreach(($globalSpecialists ?? collect()) as $gspec)
+                                @php
+                                    $specSlug = is_object($gspec) ? $gspec->slug : (is_array($gspec) ? ($gspec['slug'] ?? '') : '');
+                                    $specName = is_object($gspec) ? $gspec->name : (is_array($gspec) ? ($gspec['name'] ?? '') : $gspec);
+                                @endphp
+                                @if(!empty($specSlug))
+                                    <li><a href="{{ route('specialists.show', $specSlug) }}">{{ $specName }}</a></li>
+                                @endif
                             @endforeach
                         </ul>
                     </li>
@@ -606,13 +624,13 @@
             });
         }
 
-        // Start background polling every 12s when tab is visible to respect Hostinger MySQL connection limits
+        // Only poll chat history when tab is visible and chat box is open to conserve Hostinger MySQL connections
         setInterval(() => {
-            if (!document.hidden) {
+            const chatBox = document.getElementById('chat-box');
+            if (!document.hidden && chatBox && chatBox.style.display === 'flex') {
                 fetchChatHistory();
             }
-        }, 12000);
-        setTimeout(fetchChatHistory, 800);
+        }, 30000);
 
         function toggleMobileDrawer() {
             const drawer = document.getElementById('mobile-drawer');
