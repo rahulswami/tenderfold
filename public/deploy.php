@@ -245,16 +245,76 @@ try {
     $results['clear_view_cache'] = "FAIL ❌ " . $e->getMessage();
 }
 
-// ── 12. Run SEO Data Sync ──────────────────────────────────────────
+// ── 13. Auto-restore Blog Titles & HTML Contents ─────────────────────
 try {
-    if (file_exists(__DIR__ . '/../sync_drsumitz_seo.php')) {
-        ob_start();
-        include __DIR__ . '/../sync_drsumitz_seo.php';
-        $syncOut = ob_get_clean();
-        $results['seo_data_sync'] = "SEO DATA SYNCED TO LIVE DB ✅";
+    $emptyCount = (int)$pdo->query("SELECT COUNT(*) FROM `blogs` WHERE `title` IS NULL OR `title` = ''")->fetchColumn();
+    if ($emptyCount > 0 && file_exists(__DIR__ . '/../u709314437_smpune.sql')) {
+        $sqlContent = file_get_contents(__DIR__ . '/../u709314437_smpune.sql');
+        $startPos = strpos($sqlContent, "INSERT INTO `blogs` (`id`, `name`, `slug`");
+        if ($startPos !== false) {
+            $blogsSection = substr($sqlContent, $startPos);
+            if (preg_match('/\nINSERT INTO `(?!blogs`)/', $blogsSection, $m, PREG_OFFSET_CAPTURE)) {
+                $blogsSection = substr($blogsSection, 0, $m[0][1]);
+            }
+            
+            $tuples = [];
+            $inTuple = false; $inStr = false; $quoteChar = null;
+            $currVal = ''; $currTuple = []; $len = strlen($blogsSection);
+            for ($i = 0; $i < $len; $i++) {
+                $c = $blogsSection[$i];
+                if (!$inTuple) {
+                    if ($c === '(') { $inTuple = true; $currTuple = []; $currVal = ''; $inStr = false; }
+                    continue;
+                }
+                if ($inStr) {
+                    if ($c === $quoteChar) {
+                        if ($i + 1 < $len && $blogsSection[$i + 1] === $quoteChar) { $currVal .= $quoteChar; $i++; continue; }
+                        if ($i > 0 && $blogsSection[$i - 1] === '\\' && ($i < 2 || $blogsSection[$i - 2] !== '\\')) { $currVal .= $c; continue; }
+                        $inStr = false; continue;
+                    }
+                    if ($c === '\\' && $i + 1 < $len) {
+                        $next = $blogsSection[$i + 1];
+                        if ($next === 'n') { $currVal .= "\n"; $i++; continue; }
+                        if ($next === 'r') { $currVal .= "\r"; $i++; continue; }
+                        if ($next === 't') { $currVal .= "\t"; $i++; continue; }
+                        if ($next === "'" || $next === '"' || $next === '\\') { $currVal .= $next; $i++; continue; }
+                    }
+                    $currVal .= $c; continue;
+                }
+                if ($c === "'" || $c === '"') { $inStr = true; $quoteChar = $c; continue; }
+                if ($c === ',') { $currTuple[] = (trim($currVal) === 'NULL') ? null : $currVal; $currVal = ''; continue; }
+                if ($c === ')') {
+                    $currTuple[] = (trim($currVal) === 'NULL') ? null : $currVal;
+                    if (count($currTuple) >= 5 && !empty($currTuple[1]) && !empty($currTuple[4])) {
+                        $tuples[] = $currTuple;
+                    }
+                    $inTuple = false; $currVal = ''; continue;
+                }
+                $currVal .= $c;
+            }
+            
+            $restoredCount = 0;
+            $stmtUpdate = $pdo->prepare("UPDATE `blogs` SET `title` = :title, `content` = :content, `summary` = :summary, `updated_at` = NOW() WHERE `id` = :id OR `slug` = :slug");
+            foreach ($tuples as $t) {
+                $bId = is_numeric($t[0]) ? (int)$t[0] : null;
+                $bTitle = html_entity_decode(trim($t[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $bSlug = trim($t[2] ?? '');
+                $bContent = trim($t[4] ?? '');
+                $cleanTxt = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($bContent), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+                $bSummary = mb_substr($cleanTxt, 0, 165) . (mb_strlen($cleanTxt) > 165 ? '...' : '');
+                
+                if (!empty($bTitle) && !empty($bContent)) {
+                    $stmtUpdate->execute(['title' => $bTitle, 'content' => $bContent, 'summary' => $bSummary, 'id' => $bId, 'slug' => $bSlug]);
+                    $restoredCount++;
+                }
+            }
+            $results['blog_restoration'] = "RESTORED {$restoredCount} BLOG TITLES & CONTENTS ✅";
+        }
+    } else {
+        $results['blog_restoration'] = "ALL BLOG TITLES & CONTENTS UP TO DATE ✅";
     }
 } catch (Exception $e) {
-    $results['seo_data_sync'] = "FAIL ❌ " . $e->getMessage();
+    $results['blog_restoration'] = "FAIL ❌ " . $e->getMessage();
 }
 
 echo "Live database & system deployment results:\n";
@@ -263,3 +323,4 @@ foreach ($results as $table => $status) {
 }
 
 echo "\nAll database upgrades & view cache clearing applied successfully! Please try loading the /admin page now.\n";
+
