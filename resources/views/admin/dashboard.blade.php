@@ -986,6 +986,7 @@
             @if($hasAccess('blogs'))<li class="menu-item"><a href="{{ route('admin.tab', 'blogs') }}" class="tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</a></li>@endif
             @if($hasAccess('media'))<li class="menu-item"><a href="{{ route('admin.tab', 'media') }}" class="tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</a></li>@endif
             @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'seo') }}" class="tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="btn-seo"><i data-lucide="trending-up"></i> SEO Optimizer</a></li>@endif
+            @if($hasAccess('analytics'))<li class="menu-item"><a href="{{ route('admin.tab', 'analytics') }}" class="tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="btn-analytics"><i data-lucide="bar-chart-3"></i> Google Analytics & GMB</a></li>@endif
             <li class="menu-item"><a href="{{ route('admin.tab', 'internal_notifications') }}" class="tab-btn {{ $activeTab === 'internal_notifications' ? 'active' : '' }}" id="btn-internal_notifications" style="position: relative;"><i data-lucide="bell"></i> Internal Logs & Errors <span id="admin-internal-unread-badge" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #3b82f6; color: white; font-size: 0.65rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span></a></li>
             @if($hasAccess('seo'))<li class="menu-item"><a href="{{ route('admin.tab', 'notifications') }}" class="tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="btn-notifications"><i data-lucide="send"></i> Push Notifications</a></li>@endif
             @if($isSuper)<li class="menu-item"><a href="{{ route('admin.tab', 'users') }}" class="tab-btn {{ $activeTab === 'users' ? 'active' : '' }}" id="btn-users"><i data-lucide="user"></i> Admin Users</a></li>@endif
@@ -1065,6 +1066,7 @@
             @if($hasAccess('media'))<a href="{{ route('admin.tab', 'media') }}" class="mobile-tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</a>@endif
             {{-- @if($hasAccess('analytics'))<a href="{{ route('admin.tab', 'analytics') }}" class="mobile-tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="m-btn-analytics"><i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i> Analytics</a>@endif --}}
             @if($hasAccess('seo'))<a href="{{ route('admin.tab', 'seo') }}" class="mobile-tab-btn {{ $activeTab === 'seo' ? 'active' : '' }}" id="m-btn-seo"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> SEO</a>@endif
+            @if($hasAccess('analytics'))<a href="{{ route('admin.tab', 'analytics') }}" class="mobile-tab-btn {{ $activeTab === 'analytics' ? 'active' : '' }}" id="m-btn-analytics"><i data-lucide="bar-chart-3" style="width: 14px; height: 14px;"></i> Analytics</a>@endif
             @if($hasAccess('seo'))<a href="{{ route('admin.tab', 'notifications') }}" class="mobile-tab-btn {{ $activeTab === 'notifications' ? 'active' : '' }}" id="m-btn-notifications"><i data-lucide="bell" style="width: 14px; height: 14px;"></i> Alerts</a>@endif
             @if($isSuper)<a href="{{ route('admin.tab', 'users') }}" class="mobile-tab-btn {{ $activeTab === 'users' ? 'active' : '' }}" id="m-btn-users"><i data-lucide="user" style="width: 14px; height: 14px;"></i> Admins</a>@endif
 
@@ -3966,6 +3968,272 @@
                 </div>
             </div>
 
+            @if($hasAccess('analytics'))
+            <!-- Google Analytics & GBP Dashboard Tab -->
+            <div class="tab-panel @if($activeTab === 'analytics') active @endif" id="tab-analytics">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--admin-border); padding-bottom: 1rem;">
+                    <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px;"><i data-lucide="bar-chart-3" style="color: var(--mint-green);"></i> Analytics Dashboard</h2>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="analytics_date_range" style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 0;">Date Range:</label>
+                        <select id="analytics_date_range" class="form-control" style="width: auto; padding: 0.4rem 1.5rem; font-size: 0.85rem; background: rgba(255,255,255,0.05); border-color: var(--admin-border); color: #fff; cursor: pointer;" onchange="fetchGoogleAnalytics(this.value)">
+                            <option value="last_7_days" selected>Last 7 Days</option>
+                            <option value="last_30_days">Last 30 Days</option>
+                            <option value="last_90_days">Last 90 Days</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="google-analytics-demo-banner" class="alert-success" style="display: none; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: #60a5fa; margin-bottom: 1.5rem;">
+                    <i data-lucide="info"></i>
+                    <span><strong>Preview Mode:</strong> Showing simulated metrics. Connect your Google Analytics, Search Console, and My Business API credentials below to view live data.</span>
+                </div>
+
+                <div id="google-analytics-loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; background: var(--admin-dark-sidebar); border-radius: 12px; border: 1px solid var(--admin-border); margin-bottom: 2rem;">
+                    <div style="width: 40px; height: 40px; border: 3px solid rgba(92, 203, 179, 0.2); border-top-color: var(--mint-green); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem;"></div>
+                    <p style="color: var(--admin-text-muted); font-size: 0.95rem; margin: 0;">Fetching analytics metrics...</p>
+                </div>
+
+                <div id="google-analytics-dashboard" style="display: none;">
+                    <!-- 1. GA4 Overview Cards -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="globe" style="width: 18px; height: 18px; color: var(--mint-green);"></i> Google Analytics 4 (GA4) Overview
+                        </h3>
+                        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid var(--mint-green);">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Sessions</h4>
+                                <p id="ga-sessions" style="font-size: 1.75rem; font-weight: 800; color: #fff; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #3b82f6;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Active Users</h4>
+                                <p id="ga-users" style="font-size: 1.75rem; font-weight: 800; color: #3b82f6; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #8b5cf6;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Returning Users</h4>
+                                <p id="ga-returning" style="font-size: 1.75rem; font-weight: 800; color: #8b5cf6; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #f59e0b;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Bounce Rate</h4>
+                                <p id="ga-bounce" style="font-size: 1.75rem; font-weight: 800; color: #f59e0b; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #10b981;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Avg Time on Site</h4>
+                                <p id="ga-time" style="font-size: 1.75rem; font-weight: 800; color: #10b981; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #ec4899;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Pages / Session</h4>
+                                <p id="ga-pages-per-session" style="font-size: 1.75rem; font-weight: 800; color: #ec4899; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                        </div>
+
+                        <!-- GA4 Timeline Chart -->
+                        <div class="admin-card" style="margin-top: 1rem; padding: 1.25rem;">
+                            <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #fff;">Sessions & Users Timeline</h4>
+                            <div style="height: 250px; position: relative;">
+                                <canvas id="ga-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Google Search Console Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="search" style="width: 18px; height: 18px; color: #3b82f6;"></i> Google Search Console (Search Performance)
+                        </h3>
+                        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid #3b82f6;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Organic Clicks</h4>
+                                <p id="gsc-clicks" style="font-size: 1.85rem; font-weight: 800; color: #3b82f6; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid #8b5cf6;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Total Impressions</h4>
+                                <p id="gsc-impressions" style="font-size: 1.85rem; font-weight: 800; color: #8b5cf6; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid var(--mint-green);">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Avg CTR</h4>
+                                <p id="gsc-ctr" style="font-size: 1.85rem; font-weight: 800; color: var(--mint-green); margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-left: 4px solid #f59e0b;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Avg Position</h4>
+                                <p id="gsc-position" style="font-size: 1.85rem; font-weight: 800; color: #f59e0b; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                        </div>
+
+                        <!-- GSC Timeline Chart -->
+                        <div class="admin-card" style="margin-top: 1rem; padding: 1.25rem;">
+                            <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #fff;">Search Clicks & Impressions Timeline</h4>
+                            <div style="height: 250px; position: relative;">
+                                <canvas id="gsc-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Top Keywords & Top Pages Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                            <!-- Top Keywords -->
+                            <div class="admin-card" style="margin-bottom: 0;">
+                                <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #fff;">🔑 Top Organic Search Queries</h4>
+                                <div class="admin-table-wrap" style="max-height: 320px; overflow-y: auto;">
+                                    <table class="admin-table" style="font-size: 0.82rem;">
+                                        <thead>
+                                            <tr>
+                                                <th>Query</th>
+                                                <th style="text-align: right;">Clicks</th>
+                                                <th style="text-align: right;">Imps</th>
+                                                <th style="text-align: right;">CTR</th>
+                                                <th style="text-align: right;">Pos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="gsc-keywords-tbody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Top Pages -->
+                            <div class="admin-card" style="margin-bottom: 0;">
+                                <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #fff;">📄 Top Search Landing Pages</h4>
+                                <div class="admin-table-wrap" style="max-height: 320px; overflow-y: auto;">
+                                    <table class="admin-table" style="font-size: 0.82rem;">
+                                        <thead>
+                                            <tr>
+                                                <th>Page URL</th>
+                                                <th style="text-align: right;">Clicks</th>
+                                                <th style="text-align: right;">Imps</th>
+                                                <th style="text-align: right;">CTR</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="gsc-pages-tbody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Google My Business (GMB) / Local Business Insights -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="map-pin" style="width: 18px; height: 18px; color: #ef4444;"></i> Google My Business (GMB) Local Insights
+                        </h3>
+                        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #ef4444;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Profile Views</h4>
+                                <p id="gmb-visitors" style="font-size: 1.75rem; font-weight: 800; color: #ef4444; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #3b82f6;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Search Appearances</h4>
+                                <p id="gmb-search" style="font-size: 1.75rem; font-weight: 800; color: #3b82f6; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid var(--mint-green);">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Phone Calls</h4>
+                                <p id="gmb-calls" style="font-size: 1.75rem; font-weight: 800; color: var(--mint-green); margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #8b5cf6;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Website Clicks</h4>
+                                <p id="gmb-website" style="font-size: 1.75rem; font-weight: 800; color: #8b5cf6; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                            <div class="admin-card text-center" style="padding: 1.25rem; margin-bottom: 0; border-top: 3px solid #f59e0b;">
+                                <h4 style="margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); text-transform: uppercase;">Driving Directions</h4>
+                                <p id="gmb-directions" style="font-size: 1.75rem; font-weight: 800; color: #f59e0b; margin: 0.4rem 0 0 0;">-</p>
+                            </div>
+                        </div>
+
+                        <!-- GMB Timeline Chart -->
+                        <div class="admin-card" style="margin-top: 1rem; padding: 1.25rem;">
+                            <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #fff;">GMB Local Interactions Timeline</h4>
+                            <div style="height: 250px; position: relative;">
+                                <canvas id="gmb-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Top Postal Codes Table -->
+                    <div class="admin-card" style="margin-bottom: 2rem;">
+                        <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #fff;">📍 Top Visitor Locations by Postal / Zip Code</h4>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" style="font-size: 0.85rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Postal Code</th>
+                                        <th>City / Region</th>
+                                        <th style="text-align: right;">Active Users</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ga-postal-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google API Credentials & Configuration Card -->
+                <div class="admin-card">
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #fff;"><i data-lucide="key" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Google API Connection Settings</h3>
+                    <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">
+                        Configure your GA4 Property ID, Google Search Console URL, and Google My Business Location ID.
+                    </p>
+
+                    <form action="{{ route('admin.site.update') }}" method="POST">
+                        @csrf
+                        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                            <div class="form-group">
+                                <label for="google_analytics_property_id">GA4 Property ID</label>
+                                <input type="text" id="google_analytics_property_id" name="google_analytics_property_id" class="form-control" value="{{ $site['google_analytics_property_id'] ?? '' }}" placeholder="e.g. 123456789">
+                            </div>
+                            <div class="form-group">
+                                <label for="google_search_console_site_url">Search Console Site URL</label>
+                                <input type="text" id="google_search_console_site_url" name="google_search_console_site_url" class="form-control" value="{{ $site['google_search_console_site_url'] ?? '' }}" placeholder="e.g. https://www.drsumitz.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="gmb_location_id">GMB Location ID</label>
+                                <input type="text" id="gmb_location_id" name="gmb_location_id" class="form-control" value="{{ $site['gmb_location_id'] ?? '' }}" placeholder="e.g. locations/1234567890">
+                            </div>
+                        </div>
+
+                        <div style="border-top: 1px solid var(--admin-border); margin: 1.5rem 0; padding-top: 1.5rem;">
+                            <h4 style="font-size: 0.95rem; margin-bottom: 1rem; color: #fff;">Option A: Google Cloud OAuth Connection</h4>
+                            @if(!empty($site['google_oauth_refresh_token']))
+                                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 50%;">
+                                            <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
+                                        </span>
+                                        <div>
+                                            <h4 style="margin: 0; color: #fff; font-size: 0.9rem;">Google Account Connected</h4>
+                                            <p style="margin: 0; font-size: 0.78rem; color: var(--admin-text-muted);">Successfully authorized access for GA4, Search Console, and GMB.</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="document.getElementById('disconnect-google-form').submit();" class="btn-submit" style="background: #ef4444; border-color: #ef4444; padding: 0.4rem 1rem; font-size: 0.8rem; width: auto;">Disconnect Account</button>
+                                </div>
+                            @else
+                                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <h4 style="margin: 0; color: #fff; font-size: 0.9rem;">Connect Google Account (1-Click OAuth)</h4>
+                                        <p style="margin: 0; font-size: 0.78rem; color: var(--admin-text-muted);">Authorize access to read your Analytics, Search Console, and GMB metrics automatically.</p>
+                                    </div>
+                                    <a href="{{ route('admin.google.auth') }}" class="btn-submit" style="background: #3b82f6; border-color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; padding: 0.4rem 1rem; font-size: 0.8rem; width: auto; gap: 5px;">
+                                        <i data-lucide="link" style="width: 14px; height: 14px;"></i> Connect Google
+                                    </a>
+                                </div>
+                            @endif
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="google_oauth_client_id">OAuth Client ID</label>
+                                    <input type="text" id="google_oauth_client_id" name="google_oauth_client_id" class="form-control" value="{{ $site['google_oauth_client_id'] ?? '' }}" placeholder="e.g. 123456-xxx.apps.googleusercontent.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="google_oauth_client_secret">OAuth Client Secret</label>
+                                    <input type="password" id="google_oauth_client_secret" name="google_oauth_client_secret" class="form-control" value="{{ $site['google_oauth_client_secret'] ?? '' }}" placeholder="Enter Client Secret...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" style="width: auto; padding: 0.6rem 1.5rem;">Save Google Credentials</button>
+                    </form>
+                    <form id="disconnect-google-form" action="{{ route('admin.google.disconnect') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
+            </div>
+            @endif
+
             @if($isSuper)
             <!-- Admin Users Tab Panel -->
             <div class="tab-panel @if($activeTab === 'users') active @endif" id="tab-users">
@@ -4587,6 +4855,9 @@
 
         // Global variables declared at the top to prevent Temporal Dead Zone (TDZ) ReferenceErrors
         let cloudflareChartInstance = null;
+        let gaChartInstance = null;
+        let gscChartInstance = null;
+        let gmbChartInstance = null;
         let currentAdminSessionId = null;
         let adminSessionsPoll = null;
         let adminMessagesPoll = null;
@@ -4818,6 +5089,242 @@
             });
         }
 
+        function fetchGoogleAnalytics(dateRange = 'last_7_days') {
+            const loader = document.getElementById('google-analytics-loader');
+            const dashboard = document.getElementById('google-analytics-dashboard');
+            const demoBanner = document.getElementById('google-analytics-demo-banner');
+
+            if (!loader) return;
+
+            loader.style.display = 'flex';
+            dashboard.style.display = 'none';
+            if (demoBanner) demoBanner.style.display = 'none';
+
+            fetch("{{ route('admin.google.analytics') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ date_range: dateRange })
+            })
+            .then(res => res.json())
+            .then(res => {
+                loader.style.display = 'none';
+                dashboard.style.display = 'block';
+
+                if (res.success && res.data) {
+                    const data = res.data;
+
+                    if (demoBanner) {
+                        demoBanner.style.display = res.is_demo ? 'flex' : 'none';
+                    }
+
+                    // 1. GA4 Overview
+                    const ga = data.analytics;
+                    if (ga) {
+                        document.getElementById('ga-sessions').innerText = (ga.sessions || 0).toLocaleString();
+                        document.getElementById('ga-users').innerText = (ga.unique_users || 0).toLocaleString();
+                        document.getElementById('ga-returning').innerText = (ga.repeated_users || 0).toLocaleString();
+                        document.getElementById('ga-bounce').innerText = parseFloat(ga.bounce_rate || 0).toFixed(1) + '%';
+                        document.getElementById('ga-time').innerText = ga.time_on_site || '0m 0s';
+                        document.getElementById('ga-pages-per-session').innerText = parseFloat(ga.avg_pages_per_session || 0).toFixed(1);
+
+                        // Render GA4 Chart
+                        const gaCanvas = document.getElementById('ga-chart');
+                        if (gaCanvas && ga.daily) {
+                            const ctx = gaCanvas.getContext('2d');
+                            if (gaChartInstance) gaChartInstance.destroy();
+                            gaChartInstance = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: ga.daily.map(d => d.date),
+                                    datasets: [
+                                        {
+                                            label: 'Sessions',
+                                            data: ga.daily.map(d => d.sessions),
+                                            borderColor: '#5ccbb3',
+                                            backgroundColor: 'rgba(92, 203, 179, 0.1)',
+                                            fill: true,
+                                            tension: 0.3
+                                        },
+                                        {
+                                            label: 'Active Users',
+                                            data: ga.daily.map(d => d.users),
+                                            borderColor: '#3b82f6',
+                                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                            fill: true,
+                                            tension: 0.3
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { labels: { color: '#ffffff' } } },
+                                    scales: {
+                                        x: { ticks: { color: '#888888' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                                        y: { ticks: { color: '#888888' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    // 2. Google Search Console (GSC)
+                    const gsc = data.search_console;
+                    if (gsc) {
+                        document.getElementById('gsc-clicks').innerText = (gsc.clicks || 0).toLocaleString();
+                        document.getElementById('gsc-impressions').innerText = (gsc.impressions || 0).toLocaleString();
+                        document.getElementById('gsc-ctr').innerText = parseFloat(gsc.ctr || 0).toFixed(2) + '%';
+                        document.getElementById('gsc-position').innerText = parseFloat(gsc.position || 0).toFixed(1);
+
+                        // Top Keywords Table
+                        const kwTbody = document.getElementById('gsc-keywords-tbody');
+                        if (kwTbody) {
+                            kwTbody.innerHTML = '';
+                            if (gsc.keywords && gsc.keywords.length > 0) {
+                                gsc.keywords.forEach(kw => {
+                                    kwTbody.innerHTML += `
+                                        <tr>
+                                            <td><strong>${kw.keyword}</strong></td>
+                                            <td style="text-align: right;">${kw.clicks.toLocaleString()}</td>
+                                            <td style="text-align: right;">${kw.impressions.toLocaleString()}</td>
+                                            <td style="text-align: right; color: var(--mint-green);">${kw.ctr}%</td>
+                                            <td style="text-align: right; color: #60a5fa;">${kw.position}</td>
+                                        </tr>
+                                    `;
+                                });
+                            } else {
+                                kwTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--admin-text-muted);">No keyword data available.</td></tr>';
+                            }
+                        }
+
+                        // Top Pages Table
+                        const pgTbody = document.getElementById('gsc-pages-tbody');
+                        if (pgTbody) {
+                            pgTbody.innerHTML = '';
+                            if (gsc.pages && gsc.pages.length > 0) {
+                                gsc.pages.forEach(pg => {
+                                    pgTbody.innerHTML += `
+                                        <tr>
+                                            <td><span style="font-size: 0.82rem; word-break: break-all; color: var(--admin-text-muted);">${pg.page}</span></td>
+                                            <td style="text-align: right;">${pg.clicks.toLocaleString()}</td>
+                                            <td style="text-align: right;">${pg.impressions.toLocaleString()}</td>
+                                            <td style="text-align: right; color: var(--mint-green);">${pg.ctr}%</td>
+                                        </tr>
+                                    `;
+                                });
+                            } else {
+                                pgTbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--admin-text-muted);">No page data available.</td></tr>';
+                            }
+                        }
+
+                        // GSC Chart
+                        const gscCanvas = document.getElementById('gsc-chart');
+                        if (gscCanvas && gsc.daily) {
+                            const ctx = gscCanvas.getContext('2d');
+                            if (gscChartInstance) gscChartInstance.destroy();
+                            gscChartInstance = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: gsc.daily.map(d => d.date),
+                                    datasets: [
+                                        {
+                                            label: 'Clicks',
+                                            data: gsc.daily.map(d => d.clicks),
+                                            borderColor: '#3b82f6',
+                                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                            fill: true,
+                                            tension: 0.3
+                                        },
+                                        {
+                                            label: 'Impressions',
+                                            data: gsc.daily.map(d => d.impressions),
+                                            borderColor: '#8b5cf6',
+                                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                                            fill: true,
+                                            tension: 0.3
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { labels: { color: '#ffffff' } } },
+                                    scales: {
+                                        x: { ticks: { color: '#888888' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                                        y: { ticks: { color: '#888888' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    // 3. Google My Business (GMB)
+                    const gmb = data.my_business;
+                    if (gmb) {
+                        document.getElementById('gmb-visitors').innerText = (gmb.visitors || 0).toLocaleString();
+                        document.getElementById('gmb-search').innerText = (gmb.search_appearance || 0).toLocaleString();
+                        document.getElementById('gmb-calls').innerText = (gmb.calls || 0).toLocaleString();
+                        document.getElementById('gmb-website').innerText = (gmb.website_visits || 0).toLocaleString();
+                        document.getElementById('gmb-directions').innerText = (gmb.directions || 0).toLocaleString();
+
+                        // GMB Chart
+                        const gmbCanvas = document.getElementById('gmb-chart');
+                        if (gmbCanvas && gmb.daily) {
+                            const ctx = gmbCanvas.getContext('2d');
+                            if (gmbChartInstance) gmbChartInstance.destroy();
+                            gmbChartInstance = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: gmb.daily.map(d => d.date),
+                                    datasets: [
+                                        { label: 'Views', data: gmb.daily.map(d => d.visitors), backgroundColor: '#ef4444' },
+                                        { label: 'Calls', data: gmb.daily.map(d => d.calls), backgroundColor: '#5ccbb3' },
+                                        { label: 'Website Visits', data: gmb.daily.map(d => d.website_visits), backgroundColor: '#8b5cf6' },
+                                        { label: 'Directions', data: gmb.daily.map(d => d.directions), backgroundColor: '#f59e0b' }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { labels: { color: '#ffffff' } } },
+                                    scales: {
+                                        x: { ticks: { color: '#888888' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                                        y: { ticks: { color: '#888888' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    // 4. Postal Codes
+                    const postalTbody = document.getElementById('ga-postal-tbody');
+                    if (postalTbody) {
+                        postalTbody.innerHTML = '';
+                        if (data.postal_codes && data.postal_codes.length > 0) {
+                            data.postal_codes.forEach(p => {
+                                postalTbody.innerHTML += `
+                                    <tr>
+                                        <td><strong>${p.zip}</strong></td>
+                                        <td>${p.city}</td>
+                                        <td style="text-align: right; color: var(--mint-green); font-weight: 700;">${p.users.toLocaleString()}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            postalTbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--admin-text-muted);">No location data.</td></tr>';
+                        }
+                    }
+                }
+            })
+            .catch(err => {
+                loader.style.display = 'none';
+                dashboard.style.display = 'block';
+            });
+        }
+
         // Switch Tabs logic (Route-based redirect)
         function switchTab(tabId) {
             window.location.href = "{{ url('/admin') }}/" + tabId;
@@ -4870,6 +5377,9 @@
             if (activeTab === 'analytics') {
                 if (typeof fetchCloudflareAnalytics === 'function') {
                     fetchCloudflareAnalytics();
+                }
+                if (typeof fetchGoogleAnalytics === 'function') {
+                    fetchGoogleAnalytics();
                 }
             }
 

@@ -136,8 +136,13 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    // Cloudflare Analytics
+    // Cloudflare & Google Analytics Routes
     Route::post('/admin/cloudflare/analytics', [AdminController::class, 'getCloudflareAnalytics'])->name('admin.cloudflare.analytics');
+    Route::post('/admin/google/analytics', [AdminController::class, 'getGoogleAnalyticsData'])->name('admin.google.analytics');
+    Route::get('/admin/google/auth', [AdminController::class, 'redirectToGoogle'])->name('admin.google.auth');
+    Route::get('/admin/google/callback', [AdminController::class, 'handleGoogleCallback'])->name('admin.google.callback');
+    Route::post('/admin/google/disconnect', [AdminController::class, 'disconnectGoogle'])->name('admin.google.disconnect');
+    Route::get('/admin/google/properties', [AdminController::class, 'getGoogleProperties'])->name('admin.google.properties');
 
     // Landing Pages CRUD
     Route::post('/admin/landing-pages', [AdminController::class, 'storeLandingPage'])->name('admin.landing.store');
