@@ -265,11 +265,13 @@ try {
                 `metadescription` = :metadescription, 
                 `metakeywords` = :metakeywords, 
                 `tags` = :tags, 
+                `published_at` = COALESCE(NULLIF(:published_at, ''), `published_at`),
+                `created_at` = COALESCE(NULLIF(:created_at, ''), `created_at`),
                 `updated_at` = NOW() 
                 WHERE `id` = :target_id");
             $stmtInsert = $pdo->prepare("INSERT INTO `blogs` 
                 (`id`, `title`, `slug`, `content`, `summary`, `image_path`, `metatitle`, `metadescription`, `metakeywords`, `tags`, `published_at`, `created_at`, `updated_at`) 
-                VALUES (:id, :title, :slug, :content, :summary, :image_path, :metatitle, :metadescription, :metakeywords, :tags, NOW(), NOW(), NOW())");
+                VALUES (:id, :title, :slug, :content, :summary, :image_path, :metatitle, :metadescription, :metakeywords, :tags, :published_at, :created_at, NOW())");
 
             $syncedCount = 0;
             foreach ($blogsData as $b) {
@@ -285,6 +287,8 @@ try {
                 $bMDesc = $b['metadescription'] ?? null;
                 $bMKeys = $b['metakeywords'] ?? null;
                 $bTags = $b['tags'] ?? null;
+                $bPubAt = !empty($b['published_at']) ? date('Y-m-d H:i:s', strtotime($b['published_at'])) : null;
+                $bCreateAt = !empty($b['created_at']) ? date('Y-m-d H:i:s', strtotime($b['created_at'])) : $bPubAt;
 
                 $stmtSelect->execute(['id' => $bId, 'slug' => $bSlug]);
                 $found = $stmtSelect->fetch();
@@ -299,6 +303,8 @@ try {
                         'metadescription' => $bMDesc,
                         'metakeywords' => $bMKeys,
                         'tags' => $bTags,
+                        'published_at' => $bPubAt,
+                        'created_at' => $bCreateAt,
                         'target_id' => $found['id']
                     ]);
                 } else {
@@ -312,7 +318,9 @@ try {
                         'metatitle' => $bMTitle,
                         'metadescription' => $bMDesc,
                         'metakeywords' => $bMKeys,
-                        'tags' => $bTags
+                        'tags' => $bTags,
+                        'published_at' => $bPubAt,
+                        'created_at' => $bCreateAt
                     ]);
                 }
                 $syncedCount++;
