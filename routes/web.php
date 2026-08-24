@@ -48,6 +48,9 @@ Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'sendMess
 Route::get('/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->name('chat.history');
 Route::post('/chat/auto-trigger', [App\Http\Controllers\ChatController::class, 'autoTrigger'])->name('chat.auto-trigger');
 
+// Live Autocomplete Search Route (Public)
+Route::get('/api/search', [HomeController::class, 'liveSearch'])->name('api.search');
+
 // Web Notification Routes (Public)
 Route::post('/api/push-subscribe', [App\Http\Controllers\NotificationController::class, 'subscribe']);
 Route::get('/api/notifications/poll', [App\Http\Controllers\NotificationController::class, 'poll']);

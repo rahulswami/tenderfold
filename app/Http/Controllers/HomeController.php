@@ -320,4 +320,108 @@ class HomeController extends Controller
         }
         abort(404);
     }
+
+    /* Top Navigation Live Autocomplete Search */
+    public function liveSearch(Request $request)
+    {
+        $query = trim($request->input('q', ''));
+        if (strlen($query) < 2) {
+            return response()->json(['results' => [], 'count' => 0]);
+        }
+
+        $results = [];
+
+        // 1. Search Treatments
+        $treatments = \App\Models\Treatment::where('status', true)
+            ->where(function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%")
+                  ->orWhere('tags', 'LIKE', "%{$query}%");
+            })
+            ->take(6)
+            ->get();
+
+        foreach ($treatments as $t) {
+            $results[] = [
+                'type' => 'Treatment',
+                'badge_bg' => '#e0f2fe',
+                'badge_color' => '#0369a1',
+                'title' => $t->name,
+                'subtitle' => \Illuminate\Support\Str::limit(strip_tags($t->description), 80),
+                'url' => route('treatments.show', $t->slug),
+                'image' => site_image($t->image, 'treatment'),
+            ];
+        }
+
+        // 2. Search Services
+        $services = \App\Models\Service::where('is_active', true)
+            ->where(function($q) use ($query) {
+                $q->where('service_name', 'LIKE', "%{$query}%")
+                  ->orWhere('hero_title', 'LIKE', "%{$query}%")
+                  ->orWhere('summary', 'LIKE', "%{$query}%")
+                  ->orWhere('intro_content', 'LIKE', "%{$query}%");
+            })
+            ->take(5)
+            ->get();
+
+        foreach ($services as $s) {
+            $results[] = [
+                'type' => 'Service',
+                'badge_bg' => '#ccfbf1',
+                'badge_color' => '#0f766e',
+                'title' => $s->service_name,
+                'subtitle' => \Illuminate\Support\Str::limit(strip_tags($s->summary ?? $s->hero_subtitle), 80),
+                'url' => route('services.show', $s->slug),
+                'image' => site_image($s->image_path, 'service'),
+            ];
+        }
+
+        // 3. Search Specialists
+        $specialists = \App\Models\TeamMember::where('status', true)
+            ->where(function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('designation', 'LIKE', "%{$query}%")
+                  ->orWhere('tags', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%");
+            })
+            ->take(4)
+            ->get();
+
+        foreach ($specialists as $sp) {
+            $results[] = [
+                'type' => 'Specialist',
+                'badge_bg' => '#f3e8ff',
+                'badge_color' => '#6b21a8',
+                'title' => $sp->name,
+                'subtitle' => $sp->designation ?? 'Orthopaedic Specialist',
+                'url' => route('specialists.show', $sp->slug),
+                'image' => site_image($sp->image, 'specialist'),
+            ];
+        }
+
+        // 4. Search Blogs / Health Hub
+        $blogs = \App\Models\Blog::where(function($q) use ($query) {
+                $q->where('title', 'LIKE', "%{$query}%")
+                  ->orWhere('summary', 'LIKE', "%{$query}%")
+                  ->orWhere('content', 'LIKE', "%{$query}%")
+                  ->orWhere('tags', 'LIKE', "%{$query}%");
+            })
+            ->orderBy('id', 'desc')
+            ->take(5)
+            ->get();
+
+        foreach ($blogs as $b) {
+            $results[] = [
+                'type' => 'Blog',
+                'badge_bg' => '#fef3c7',
+                'badge_color' => '#92400e',
+                'title' => $b->title ?? $b->name,
+                'subtitle' => \Illuminate\Support\Str::limit(strip_tags($b->summary ?? $b->content ?? $b->description), 80),
+                'url' => route('blog.show', $b->slug),
+                'image' => site_image($b->image_path ?? $b->image, 'blog'),
+            ];
+        }
+
+        return response()->json(['results' => $results, 'count' => count($results)]);
+    }
 }

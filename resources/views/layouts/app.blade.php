@@ -274,6 +274,23 @@
             </nav>
             
             <div class="header-actions">
+                <!-- Top Navigation Live Autocomplete Search -->
+                <div class="nav-search-wrapper">
+                    <div class="nav-search-box">
+                        <i data-lucide="search" class="nav-search-icon"></i>
+                        <input type="text" id="nav-search-input" class="nav-search-input" placeholder="Search treatments, services, blogs..." autocomplete="off" onkeyup="handleNavSearch(this.value, 'desktop')">
+                        <button id="nav-search-clear" class="nav-search-clear-btn" onclick="clearNavSearch('desktop')">&times;</button>
+                    </div>
+
+                    <!-- Desktop Autocomplete Results Dropdown -->
+                    <div id="nav-search-dropdown" class="nav-search-dropdown">
+                        <div id="nav-search-loading" class="nav-search-status" style="display: none;">
+                            <span class="search-spinner"></span> Searching treatments, services, specialists...
+                        </div>
+                        <div id="nav-search-results"></div>
+                    </div>
+                </div>
+
                 <button class="btn btn-primary btn-sm" onclick="openDialog('callback-dialog');">
                     <i data-lucide="calendar"></i> Book Appointment
                 </button>
@@ -292,6 +309,22 @@
             <span class="logo-text" style="font-size: 18px;">{{ $site['site_name'] ?? 'SumitZ Clinic' }}</span>
             <button class="mobile-drawer-close" aria-label="Close Navigation" onclick="toggleMobileDrawer()">&times;</button>
         </div>
+
+        <!-- Mobile Live Search Box -->
+        <div class="nav-search-wrapper" style="margin-bottom: 20px;">
+            <div class="nav-search-box" style="width: 100%;">
+                <i data-lucide="search" class="nav-search-icon"></i>
+                <input type="text" id="mobile-search-input" class="nav-search-input" placeholder="Search treatments, services, blogs..." autocomplete="off" onkeyup="handleNavSearch(this.value, 'mobile')">
+                <button id="mobile-search-clear" class="nav-search-clear-btn" onclick="clearNavSearch('mobile')">&times;</button>
+            </div>
+            <div id="mobile-search-dropdown" class="nav-search-dropdown" style="position: static; width: 100%; box-shadow: none; border-radius: 8px; margin-top: 8px;">
+                <div id="mobile-search-loading" class="nav-search-status" style="display: none;">
+                    <span class="search-spinner"></span> Searching...
+                </div>
+                <div id="mobile-search-results"></div>
+            </div>
+        </div>
+
         <ul style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
             <li><a href="{{ route('about') }}" class="nav-item">About Us</a></li>
             <li><a href="{{ route('services') }}" class="nav-item">Services</a></li>
@@ -667,6 +700,110 @@
         if (window.location.search.includes('open_chat=1')) {
             toggleChatWidget();
         }
+
+        // Live Navigation Autocomplete Search Handler
+        let navSearchDebounce = null;
+
+        function handleNavSearch(query, mode = 'desktop') {
+            const isMobile = mode === 'mobile';
+            const clearBtn = document.getElementById(isMobile ? 'mobile-search-clear' : 'nav-search-clear');
+            const dropdown = document.getElementById(isMobile ? 'mobile-search-dropdown' : 'nav-search-dropdown');
+            const loading = document.getElementById(isMobile ? 'mobile-search-loading' : 'nav-search-loading');
+            const resultsContainer = document.getElementById(isMobile ? 'mobile-search-results' : 'nav-search-results');
+
+            query = query.trim();
+
+            if (query.length > 0) {
+                if (clearBtn) clearBtn.style.display = 'block';
+            } else {
+                if (clearBtn) clearBtn.style.display = 'none';
+                if (dropdown) dropdown.style.display = 'none';
+                return;
+            }
+
+            if (query.length < 2) {
+                if (dropdown) dropdown.style.display = 'none';
+                return;
+            }
+
+            if (dropdown) dropdown.style.display = 'block';
+            if (loading) loading.style.display = 'flex';
+            if (resultsContainer) resultsContainer.innerHTML = '';
+
+            clearTimeout(navSearchDebounce);
+            navSearchDebounce = setTimeout(() => {
+                fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (loading) loading.style.display = 'none';
+                        if (data.results && data.results.length > 0) {
+                            let html = '<div class="nav-search-results-list">';
+                            data.results.forEach(item => {
+                                html += `
+                                    <a href="${item.url}" class="nav-search-result-item">
+                                        <img src="${item.image}" alt="${item.title}" class="nav-search-thumb">
+                                        <div class="nav-search-details">
+                                            <div class="nav-search-title-row">
+                                                <span class="nav-search-title">${item.title}</span>
+                                                <span class="nav-search-badge" style="background-color: ${item.badge_bg}; color: ${item.badge_color};">${item.type}</span>
+                                            </div>
+                                            <div class="nav-search-sub">${item.subtitle || ''}</div>
+                                        </div>
+                                    </a>
+                                `;
+                            });
+                            html += '</div>';
+                            if (resultsContainer) resultsContainer.innerHTML = html;
+                        } else {
+                            if (resultsContainer) {
+                                resultsContainer.innerHTML = `
+                                    <div class="nav-search-empty">
+                                        No treatments, services or blogs found matching "<strong>${escapeHtml(query)}</strong>"
+                                    </div>
+                                `;
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        if (loading) loading.style.display = 'none';
+                        if (resultsContainer) {
+                            resultsContainer.innerHTML = '<div class="nav-search-empty">Error fetching search results. Please try again.</div>';
+                        }
+                    });
+            }, 250);
+        }
+
+        function clearNavSearch(mode = 'desktop') {
+            const inputId = mode === 'mobile' ? 'mobile-search-input' : 'nav-search-input';
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = '';
+                handleNavSearch('', mode);
+                input.focus();
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Close search dropdown on click outside or Escape key
+        document.addEventListener('click', function(e) {
+            const desktopWrapper = document.querySelector('.header-actions .nav-search-wrapper');
+            if (desktopWrapper && !desktopWrapper.contains(e.target)) {
+                const dd = document.getElementById('nav-search-dropdown');
+                if (dd) dd.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const dd1 = document.getElementById('nav-search-dropdown');
+                const dd2 = document.getElementById('mobile-search-dropdown');
+                if (dd1) dd1.style.display = 'none';
+                if (dd2) dd2.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
