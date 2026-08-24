@@ -274,22 +274,10 @@
             </nav>
             
             <div class="header-actions">
-                <!-- Top Navigation Live Autocomplete Search -->
-                <div class="nav-search-wrapper">
-                    <div class="nav-search-box">
-                        <i data-lucide="search" class="nav-search-icon"></i>
-                        <input type="text" id="nav-search-input" class="nav-search-input" placeholder="Search treatments, services, blogs..." autocomplete="off" onkeyup="handleNavSearch(this.value, 'desktop')">
-                        <button id="nav-search-clear" class="nav-search-clear-btn" onclick="clearNavSearch('desktop')">&times;</button>
-                    </div>
-
-                    <!-- Desktop Autocomplete Results Dropdown -->
-                    <div id="nav-search-dropdown" class="nav-search-dropdown">
-                        <div id="nav-search-loading" class="nav-search-status" style="display: none;">
-                            <span class="search-spinner"></span> Searching treatments, services, specialists...
-                        </div>
-                        <div id="nav-search-results"></div>
-                    </div>
-                </div>
+                <!-- Search Trigger Icon Button -->
+                <button class="nav-search-trigger-btn" onclick="openSearchModal()" title="Search site" aria-label="Search site">
+                    <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+                </button>
 
                 <button class="btn btn-primary btn-sm" onclick="openDialog('callback-dialog');">
                     <i data-lucide="calendar"></i> Book Appointment
@@ -310,20 +298,10 @@
             <button class="mobile-drawer-close" aria-label="Close Navigation" onclick="toggleMobileDrawer()">&times;</button>
         </div>
 
-        <!-- Mobile Live Search Box -->
-        <div class="nav-search-wrapper" style="margin-bottom: 20px;">
-            <div class="nav-search-box" style="width: 100%;">
-                <i data-lucide="search" class="nav-search-icon"></i>
-                <input type="text" id="mobile-search-input" class="nav-search-input" placeholder="Search treatments, services, blogs..." autocomplete="off" onkeyup="handleNavSearch(this.value, 'mobile')">
-                <button id="mobile-search-clear" class="nav-search-clear-btn" onclick="clearNavSearch('mobile')">&times;</button>
-            </div>
-            <div id="mobile-search-dropdown" class="nav-search-dropdown" style="position: static; width: 100%; box-shadow: none; border-radius: 8px; margin-top: 8px;">
-                <div id="mobile-search-loading" class="nav-search-status" style="display: none;">
-                    <span class="search-spinner"></span> Searching...
-                </div>
-                <div id="mobile-search-results"></div>
-            </div>
-        </div>
+        <!-- Mobile Search Button -->
+        <button class="btn btn-secondary btn-full" onclick="toggleMobileDrawer(); openSearchModal();" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i data-lucide="search" style="width: 18px; height: 18px;"></i> Search Treatments & Services
+        </button>
 
         <ul style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
             <li><a href="{{ route('about') }}" class="nav-item">About Us</a></li>
@@ -701,32 +679,100 @@
             toggleChatWidget();
         }
 
+    <!-- Fullscreen Live Search Modal Overlay -->
+    <div class="search-modal-overlay" id="search-modal" onclick="closeSearchModalOnBackdrop(event)">
+        <div class="search-modal-container">
+            <div class="search-modal-header">
+                <div class="search-modal-input-wrap">
+                    <i data-lucide="search" class="search-modal-icon"></i>
+                    <input type="text" id="modal-search-input" class="search-modal-input" placeholder="Search treatments, services, specialists, blogs..." autocomplete="off" onkeyup="handleNavSearch(this.value)">
+                    <button id="modal-search-clear" class="search-modal-clear-btn" onclick="clearNavSearch()">&times;</button>
+                </div>
+                <button class="search-modal-close-btn" onclick="closeSearchModal()" aria-label="Close search">&times;</button>
+            </div>
+
+            <div class="search-modal-body">
+                <div id="modal-search-loading" class="nav-search-status" style="display: none;">
+                    <span class="search-spinner"></span> Searching treatments, services, specialists...
+                </div>
+                <div id="modal-search-results"></div>
+                <div id="modal-search-initial" class="search-modal-initial-suggestions">
+                    <p style="font-size: 12px; font-weight: 700; color: var(--muted-text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Popular Searches</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Knee Replacement')">Knee Replacement</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Physiotherapy')">Physiotherapy</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Dr. Sumit Gupta')">Dr. Sumit Gupta</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('ACL Reconstruction')">ACL Reconstruction</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Back Pain')">Back Pain</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSearchModal() {
+            const modal = document.getElementById('search-modal');
+            const input = document.getElementById('modal-search-input');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                if (input) {
+                    setTimeout(() => input.focus(), 100);
+                }
+            }
+        }
+
+        function closeSearchModal() {
+            const modal = document.getElementById('search-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeSearchModalOnBackdrop(e) {
+            if (e.target.id === 'search-modal') {
+                closeSearchModal();
+            }
+        }
+
+        function quickSearch(tag) {
+            const input = document.getElementById('modal-search-input');
+            if (input) {
+                input.value = tag;
+                handleNavSearch(tag);
+                input.focus();
+            }
+        }
+
         // Live Navigation Autocomplete Search Handler
         let navSearchDebounce = null;
 
-        function handleNavSearch(query, mode = 'desktop') {
-            const isMobile = mode === 'mobile';
-            const clearBtn = document.getElementById(isMobile ? 'mobile-search-clear' : 'nav-search-clear');
-            const dropdown = document.getElementById(isMobile ? 'mobile-search-dropdown' : 'nav-search-dropdown');
-            const loading = document.getElementById(isMobile ? 'mobile-search-loading' : 'nav-search-loading');
-            const resultsContainer = document.getElementById(isMobile ? 'mobile-search-results' : 'nav-search-results');
+        function handleNavSearch(query) {
+            const clearBtn = document.getElementById('modal-search-clear');
+            const loading = document.getElementById('modal-search-loading');
+            const resultsContainer = document.getElementById('modal-search-results');
+            const initialContainer = document.getElementById('modal-search-initial');
 
             query = query.trim();
 
             if (query.length > 0) {
                 if (clearBtn) clearBtn.style.display = 'block';
+                if (initialContainer) initialContainer.style.display = 'none';
             } else {
                 if (clearBtn) clearBtn.style.display = 'none';
-                if (dropdown) dropdown.style.display = 'none';
+                if (resultsContainer) resultsContainer.innerHTML = '';
+                if (initialContainer) initialContainer.style.display = 'block';
                 return;
             }
 
             if (query.length < 2) {
-                if (dropdown) dropdown.style.display = 'none';
+                if (resultsContainer) resultsContainer.innerHTML = '';
+                if (initialContainer) initialContainer.style.display = 'block';
                 return;
             }
 
-            if (dropdown) dropdown.style.display = 'block';
             if (loading) loading.style.display = 'flex';
             if (resultsContainer) resultsContainer.innerHTML = '';
 
@@ -773,12 +819,11 @@
             }, 250);
         }
 
-        function clearNavSearch(mode = 'desktop') {
-            const inputId = mode === 'mobile' ? 'mobile-search-input' : 'nav-search-input';
-            const input = document.getElementById(inputId);
+        function clearNavSearch() {
+            const input = document.getElementById('modal-search-input');
             if (input) {
                 input.value = '';
-                handleNavSearch('', mode);
+                handleNavSearch('');
                 input.focus();
             }
         }
@@ -787,21 +832,9 @@
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // Close search dropdown on click outside or Escape key
-        document.addEventListener('click', function(e) {
-            const desktopWrapper = document.querySelector('.header-actions .nav-search-wrapper');
-            if (desktopWrapper && !desktopWrapper.contains(e.target)) {
-                const dd = document.getElementById('nav-search-dropdown');
-                if (dd) dd.style.display = 'none';
-            }
-        });
-
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                const dd1 = document.getElementById('nav-search-dropdown');
-                const dd2 = document.getElementById('mobile-search-dropdown');
-                if (dd1) dd1.style.display = 'none';
-                if (dd2) dd2.style.display = 'none';
+                closeSearchModal();
             }
         });
     </script>
