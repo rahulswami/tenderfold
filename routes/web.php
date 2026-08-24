@@ -65,6 +65,7 @@ Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.lo
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/admin/parameters', [AdminController::class, 'updateParameters'])->name('admin.parameters.update');
+    Route::post('/admin/site/update', [AdminController::class, 'updateParameters'])->name('admin.site.update');
     
     Route::post('/admin/slides', [AdminController::class, 'storeSlide'])->name('admin.slides.store');
     Route::post('/admin/slides/{id}/update', [AdminController::class, 'updateSlide'])->name('admin.slides.update');

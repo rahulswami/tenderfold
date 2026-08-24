@@ -4169,7 +4169,7 @@
                         Configure your GA4 Property ID, Google Search Console URL, and Google My Business Location ID.
                     </p>
 
-                    <form action="{{ route('admin.site.update') }}" method="POST">
+                    <form action="{{ route('admin.parameters.update') }}" method="POST">
                         @csrf
                         <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
                             <div class="form-group">
