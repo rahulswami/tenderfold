@@ -340,10 +340,211 @@
     }
     .symptom-item:hover { background: var(--brand-blue); color: #fff; transform: translateY(-2px); }
     .symptom-icon { width: 15px; height: 15px; flex-shrink: 0; }
-    @media(max-width:768px){
-        .symptom-card-wrapper { padding: 18px 16px; }
-        .symptom-card-top { flex-direction: column; align-items: flex-start; }
-        .symptom-item { font-size: 12.5px; padding: 8px 12px; }
+    /* ─── SPECIALISTS GRID (SECTION A) ─────────────────────────────────── */
+    .specialist-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 24px;
+    }
+    .specialist-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(10, 25, 47, 0.05);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    .specialist-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(0, 133, 200, 0.14);
+        border-color: var(--brand-blue-light);
+    }
+    .specialist-img-box {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4/4;
+        background: #e2e8f0;
+        overflow: hidden;
+    }
+    .specialist-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        transition: transform 0.5s ease;
+    }
+    .specialist-card:hover .specialist-img-box img {
+        transform: scale(1.05);
+    }
+    .specialist-card-body {
+        padding: 18px 16px;
+        text-align: center;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .specialist-name {
+        font-size: 17.5px;
+        font-weight: 700;
+        color: var(--heading-navy);
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+    .specialist-designation {
+        font-size: 13px;
+        color: var(--brand-blue);
+        font-weight: 600;
+        margin-bottom: 14px;
+        min-height: 20px;
+    }
+    .specialist-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        padding: 9px 14px;
+        background: var(--brand-blue-light);
+        color: var(--brand-blue);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+    .specialist-card:hover .specialist-action-btn {
+        background: var(--brand-blue);
+        color: #ffffff;
+    }
+
+    /* ─── WHY CHOOSE US (SECTION B) ───────────────────────────────────── */
+    .why-choose-grid {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 48px;
+        align-items: center;
+    }
+    @media (max-width: 900px) {
+        .why-choose-grid { grid-template-columns: 1fr; gap: 36px; }
+    }
+    .why-item-row {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        padding: 20px 24px;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    .why-item-row:hover {
+        transform: translateX(6px);
+        border-color: var(--brand-blue);
+        box-shadow: 0 10px 30px rgba(0, 133, 200, 0.12);
+    }
+    .why-number-circle {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--brand-blue-light) 0%, #e0f2fe 100%);
+        color: var(--brand-blue);
+        font-size: 20px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid rgba(0, 133, 200, 0.2);
+    }
+    .why-item-row:hover .why-number-circle {
+        background: var(--brand-blue);
+        color: #ffffff;
+    }
+    .why-content-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--heading-navy);
+        margin-bottom: 6px;
+    }
+    .why-content-desc {
+        font-size: 14.5px;
+        color: var(--body-text);
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* ─── CLINIC OVERVIEW & TEAM COLLAGE (SECTION C) ─────────────────── */
+    .clinic-overview-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+    }
+    @media (max-width: 900px) {
+        .clinic-overview-grid { grid-template-columns: 1fr; gap: 36px; }
+    }
+    .team-collage-box {
+        background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+        border-radius: 20px;
+        padding: 28px 24px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 12px 36px rgba(7, 26, 46, 0.08);
+        text-align: center;
+    }
+    .team-collage-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--heading-navy);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        display: inline-block;
+        padding: 6px 18px;
+        background: rgba(0, 133, 200, 0.1);
+        border-radius: 20px;
+    }
+    .team-collage-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    @media (max-width: 500px) {
+        .team-collage-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .team-collage-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        border: 1px solid var(--border-color);
+        text-align: center;
+        transition: transform 0.25s ease;
+    }
+    .team-collage-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 133, 200, 0.15);
+    }
+    .team-collage-img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 6px;
+        background: #e2e8f0;
+    }
+    .team-collage-name {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--heading-navy);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
     }
 </style>
 @endsection
@@ -639,9 +840,168 @@
                 <a href="{{ route('services') }}" class="btn btn-secondary btn-lg">View All Services</a>
             </div>
         </div>
+    {{-- ===== CLINIC OVERVIEW & TEAM COLLAGE SECTION (Screenshot 3) ===== --}}
+    <section class="section-spacing" style="background-color: var(--surface-white);">
+        <div class="container">
+            <div class="clinic-overview-grid">
+                <div>
+                    <span class="badge badge-blue" style="margin-bottom: 12px;">Established Excellence</span>
+                    <h2 style="font-size: 34px; margin-bottom: 6px; color: var(--heading-navy); line-height: 1.2;">
+                        Orthopedic &amp; Physiotherapy Clinic In Baner <span style="color: var(--brand-blue);">SUMITZ</span>
+                    </h2>
+                    <span style="font-size: 18px; font-weight: 700; color: var(--brand-blue); display: block; margin-bottom: 20px;">
+                        Your Health is in Good Hands
+                    </span>
+                    <p style="font-size: 16px; line-height: 1.7; color: var(--body-text); margin-bottom: 16px;">
+                        SumitZ is one of the leading Orthopaedic &amp; Physiotherapy clinics in Baner and has been serving patients since 2006.
+                    </p>
+                    <p style="font-size: 16px; line-height: 1.7; color: var(--body-text); margin-bottom: 16px;">
+                        We offer proactive, quality healthcare in a safe and comfortable environment tailored to your specific musculoskeletal needs.
+                    </p>
+                    <p style="font-size: 16px; line-height: 1.7; color: var(--body-text); margin-bottom: 28px;">
+                        Your health is our number one priority, and we make sure to meet all your needs in a timely manner.
+                    </p>
+                    <div>
+                        <a href="{{ route('services') }}" class="btn btn-primary btn-lg" style="display: inline-flex; align-items: center; gap: 8px;">
+                            Our Services <i data-lucide="arrow-right" style="width: 18px;"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="team-collage-box">
+                    <div class="team-collage-title">SUMITZ ORTHOPAEDIC TEAM</div>
+                    <div class="team-collage-grid">
+                        @php
+                            $collageSlugs = ['dr-randhir-patil', 'dr-varun-agrawal', 'dr-sumit-gupta', 'dr-sachin-khalane', 'dr-ashish-ranade', 'dr-aniruddha-deshmukh', 'dr-pradnya-jagtap'];
+                            $collageDocs = $globalSpecialists->filter(function($d) use ($collageSlugs) {
+                                return in_array($d->slug, $collageSlugs);
+                            })->values();
+                            if ($collageDocs->isEmpty()) {
+                                $collageDocs = $globalSpecialists->take(7);
+                            }
+                        @endphp
+                        @foreach($collageDocs as $doc)
+                            <div class="team-collage-card">
+                                @if(!empty($doc->image))
+                                    <img src="{{ site_image($doc->image) }}" alt="{{ $doc->name }}" class="team-collage-img" loading="lazy" decoding="async">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80" alt="{{ $doc->name }}" class="team-collage-img" loading="lazy" decoding="async">
+                                @endif
+                                <span class="team-collage-name">{{ $doc->name }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    {{-- ===== 5. MEET DR. SUMIT ===== --}}
+    {{-- ===== WHY CHOOSE US SECTION (Screenshot 2) ===== --}}
+    <section class="section-spacing" style="background-color: var(--brand-blue-light);">
+        <div class="container">
+            <div class="why-choose-grid">
+                <div style="position: relative;">
+                    <div style="border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(7, 26, 46, 0.15); aspect-ratio: 4/3;">
+                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80" alt="Why Choose SumitZ Orthopedic Specialists Baner" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
+                    </div>
+                    <div style="position: absolute; bottom: -20px; right: -20px; background: #ffffff; border-radius: 16px; padding: 18px 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.12); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center;">
+                            <i data-lucide="award" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div>
+                            <strong style="font-size: 18px; color: var(--heading-navy); display: block;">15+ Yrs</strong>
+                            <span style="font-size: 13px; color: var(--muted-text);">Clinical Expertise in Baner</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="badge badge-blue" style="margin-bottom: 12px;">Patient Advantage</span>
+                    <h2 style="font-size: 34px; margin-bottom: 24px; color: var(--heading-navy); line-height: 1.25;">
+                        Why Choose Us As Orthopedic &amp; Physiotherapy Specialist In Baner?
+                    </h2>
+
+                    <div class="why-item-row">
+                        <div class="why-number-circle">01.</div>
+                        <div>
+                            <h3 class="why-content-title">Patient-Centred</h3>
+                            <p class="why-content-desc">
+                                While our team brings important experience and knowledge, we know that each patient is the expert in their own life.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="why-item-row">
+                        <div class="why-number-circle">02.</div>
+                        <div>
+                            <h3 class="why-content-title">Comprehensive</h3>
+                            <p class="why-content-desc">
+                                We offer comprehensive health care focusing on the whole person, at all ages and stages of life.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="why-item-row" style="margin-bottom: 0;">
+                        <div class="why-number-circle">03.</div>
+                        <div>
+                            <h3 class="why-content-title">Flexible Working Hours</h3>
+                            <p class="why-content-desc">
+                                We have flexible hours and are open on certain evenings and during the weekend, to accommodate your schedule.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ===== MEET THE TEAM: SPECIALISTS GRID SECTION (Screenshot 1) ===== --}}
+    @if($globalSpecialists->count() > 0)
+        <section class="section-spacing" style="background-color: var(--surface-white);">
+            <div class="container">
+                <div style="text-align: center; max-width: 720px; margin: 0 auto 48px;">
+                    <span class="badge badge-blue" style="margin-bottom: 12px;">Meet the Team</span>
+                    <h2 style="font-size: 36px; margin-bottom: 12px; color: var(--heading-navy);">
+                        Our Orthopedic &amp; Physiotherapy Specialists
+                    </h2>
+                    <p style="color: var(--body-text); font-size: 16.5px; line-height: 1.6;">
+                        We offer highly specialised medical care, on one site, from some of the foremost national and international specialists in their fields of medicine.
+                    </p>
+                </div>
+
+                <div class="specialist-card-grid">
+                    @foreach($globalSpecialists->take(8) as $doc)
+                        <div class="specialist-card">
+                            <div class="specialist-img-box">
+                                @if(!empty($doc->image))
+                                    <img src="{{ site_image($doc->image) }}" alt="{{ $doc->name }}" loading="lazy" decoding="async">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80" alt="{{ $doc->name }}" loading="lazy" decoding="async">
+                                @endif
+                            </div>
+                            <div class="specialist-card-body">
+                                <div>
+                                    <h3 class="specialist-name">{{ $doc->name }}</h3>
+                                    <div class="specialist-designation">{{ $doc->designation ?: 'Medical Specialist' }}</div>
+                                </div>
+                                <a href="{{ route('specialists.show', $doc->slug) }}" class="specialist-action-btn">
+                                    View Doctor Profile <i data-lucide="arrow-right" style="width: 15px;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                @if($globalSpecialists->count() > 8)
+                    <div style="text-align: center; margin-top: 40px;">
+                        <a href="{{ route('specialists') }}" class="btn btn-secondary btn-lg">
+                            View All Specialists ({{ $globalSpecialists->count() }})
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </section>
+    @endif
     @if($globalSpecialists->count() > 0)
         @php $leadDoc = $globalSpecialists->first(); @endphp
         <section class="section-spacing" style="background-color: var(--surface-white);">
