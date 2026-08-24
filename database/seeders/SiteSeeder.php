@@ -76,22 +76,22 @@ class SiteSeeder extends Seeder
         // 3. Seed Page Contents
         $contents = [
             // Homepage Hero
-            ['page' => 'home', 'section' => 'hero', 'key' => 'title', 'value' => 'Trusted Loan Provider in Gopalpura Jaipur'],
-            ['page' => 'home', 'section' => 'hero', 'key' => 'subtitle', 'value' => 'Your Trusted Partner for Smart Loan Solutions, Quick Assistance, and Reliable Financial Guidance.'],
+            ['page' => 'home', 'section' => 'hero', 'key' => 'title', 'value' => 'Pune\'s Most Trusted Orthopedic &amp; Physiotherapy Expert'],
+            ['page' => 'home', 'section' => 'hero', 'key' => 'subtitle', 'value' => 'Dr. Sumit offers world-class joint replacement, knee surgery, spine care, fracture treatment, and advanced physiotherapy at his clinics in Baner, Balewadi, and Hinjewadi, Pune.'],
             
             // Homepage Services
-            ['page' => 'home', 'section' => 'services', 'key' => 'title', 'value' => 'Find the Right Loan for Your Needs'],
-            ['page' => 'home', 'section' => 'services', 'key' => 'subtitle', 'value' => 'We work as your advisory partner to match you with top-tier lenders. Here are the tailor-made lending solutions we consult on:'],
+            ['page' => 'home', 'section' => 'services', 'key' => 'title', 'value' => 'Comprehensive Healthcare Services'],
+            ['page' => 'home', 'section' => 'services', 'key' => 'subtitle', 'value' => 'We act as your dedicated healthcare partner to match you with expert orthopedic specialists and personalized treatment plans. Here are the tailor-made care solutions we provide:'],
             
             // Homepage About
-            ['page' => 'home', 'section' => 'about', 'key' => 'pre_title', 'value' => 'Your Trusted Loan Advisory Partner'],
-            ['page' => 'home', 'section' => 'about', 'key' => 'title', 'value' => 'MLG Finedge: Simplifying Credit for Jaipur'],
-            ['page' => 'home', 'section' => 'about', 'key' => 'body_p1', 'value' => "MLG Finedge helps individuals and businesses navigate India's complex credit markets. Rather than acting as a direct lender, we serve as your independent consultant, comparing loan schemes from leading nationalized banks, private financial entities, and NBFCs."],
-            ['page' => 'home', 'section' => 'about', 'key' => 'body_p2', 'value' => 'Our goal is to ensure you get the maximum loan amount eligibility at the lowest possible interest rate with the least amount of processing hassle.'],
+            ['page' => 'home', 'section' => 'about', 'key' => 'pre_title', 'value' => 'Your Trusted Orthopedic & Physiotherapy Clinic'],
+            ['page' => 'home', 'section' => 'about', 'key' => 'title', 'value' => 'SumitZ Clinic: Elevating Musculoskeletal Health in Baner'],
+            ['page' => 'home', 'section' => 'about', 'key' => 'body_p1', 'value' => "SumitZ Clinic has been serving Baner, Balewadi, and Hinjewadi Pune with premier orthopedic surgery, joint replacement, spine care, and advanced physiotherapy since 2006."],
+            ['page' => 'home', 'section' => 'about', 'key' => 'body_p2', 'value' => 'Our goal is to ensure each patient receives rapid, compassionate, and effective non-surgical or surgical care to restore pain-free mobility.'],
             
             // Homepage Why Choose Us
-            ['page' => 'home', 'section' => 'why_choose_us', 'key' => 'title', 'value' => 'Simplifying Your Loan Journey'],
-            ['page' => 'home', 'section' => 'why_choose_us', 'key' => 'subtitle', 'value' => 'We combine deep expertise with strong banking relationships to bring you unmatched credit advisory services.'],
+            ['page' => 'home', 'section' => 'why_choose_us', 'key' => 'title', 'value' => 'Why Choose Us As Orthopedic & Physiotherapy Specialist In Baner?'],
+            ['page' => 'home', 'section' => 'why_choose_us', 'key' => 'subtitle', 'value' => 'We combine 15+ years of clinical excellence with patient-centered care and flexible hours to support your recovery.'],
         ];
 
         DB::table('page_contents')->truncate();

@@ -574,15 +574,17 @@ class AdminController extends Controller
                 foreach ($sections as $section => $keys) {
                     if (is_array($keys)) {
                         foreach ($keys as $key => $value) {
-                            \App\Models\PageContent::updateOrCreate(
+                            \DB::table('page_contents')->updateOrInsert(
                                 ['page' => $page, 'section' => $section, 'key' => $key],
-                                ['value' => $value]
+                                ['value' => $value, 'updated_at' => now()]
                             );
                         }
                     }
                 }
             }
         }
+
+        \Illuminate\Support\Facades\Cache::forget('global_page_contents');
 
         return redirect()->back()->with('success', 'Page contents updated successfully!');
     }
