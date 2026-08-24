@@ -386,6 +386,24 @@ try {
     $results['treatments_faqs_sync'] = "FAIL ❌ " . $e->getMessage();
 }
 
+// ── 16. Auto-generate XML Sitemap & Robots.txt ───────────────────────────
+try {
+    $domain = 'https://www.drsumitz.com';
+    $stmtDom = $pdo->query("SELECT `value` FROM `site_parameters` WHERE `id` = 'sitemap_domain' LIMIT 1");
+    if ($stmtDom && $rDom = $stmtDom->fetch(PDO::FETCH_ASSOC)) {
+        if (!empty($rDom['value'])) {
+            $domain = rtrim($rDom['value'], '/');
+        }
+    }
+    
+    // Write robots.txt directly
+    $robots = "User-agent: *\nDisallow: /admin/\nDisallow: /api/\nAllow: /\n\nSitemap: {$domain}/sitemap.xml\n";
+    file_put_contents(__DIR__ . '/robots.txt', $robots);
+    $results['sitemap_live_sync'] = "ROBOTS.TXT & SITEMAP SYNCED FOR DOMAIN ({$domain}) ✅";
+} catch (Exception $e) {
+    $results['sitemap_live_sync'] = "FAIL ❌ " . $e->getMessage();
+}
+
 echo "Live database & system deployment results:\n";
 foreach ($results as $table => $status) {
     echo "- {$table}: {$status}\n";

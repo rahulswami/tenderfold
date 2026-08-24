@@ -2613,10 +2613,22 @@ JSON Schema:
 
     public function generateSitemap(Request $request)
     {
+        $this->checkPermission('seo');
         try {
-            \Illuminate\Support\Facades\Artisan::call('sitemap:generate');
-            $output = \Illuminate\Support\Facades\Artisan::output();
-            return redirect()->back()->with('success', 'Sitemap successfully regenerated! ' . $output);
+            if ($request->has('sitemap_domain')) {
+                $domain = rtrim(trim($request->input('sitemap_domain')), '/');
+                if (!empty($domain)) {
+                    \App\Models\SiteParameter::updateOrCreate(
+                        ['id' => 'sitemap_domain'],
+                        ['value' => $domain, 'label' => 'Sitemap Domain', 'category' => 'seo']
+                    );
+                }
+            }
+
+            $domain = \App\Models\SiteParameter::where('id', 'sitemap_domain')->value('value') ?: 'https://www.drsumitz.com';
+            \Illuminate\Support\Facades\Artisan::call('sitemap:generate', ['--domain' => $domain]);
+
+            return redirect()->back()->with('success', 'Sitemap & robots.txt successfully updated for live domain (' . $domain . ')!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to generate sitemap: ' . $e->getMessage());
         }

@@ -4,7 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Service;
+use App\Models\Treatment;
+use App\Models\TeamMember;
 use App\Models\Blog;
+use App\Models\SiteParameter;
 use Carbon\Carbon;
 
 class GenerateSitemap extends Command
@@ -14,22 +17,29 @@ class GenerateSitemap extends Command
      *
      * @var string
      */
-    protected $signature = 'sitemap:generate';
+    protected $signature = 'sitemap:generate {--domain= : Override base domain for sitemap generation}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate XML sitemap for the live site';
+    protected $description = 'Generate XML sitemap and robots.txt for the live site domain';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $baseUrl = 'https://www.mlgfinedge.com';
+        $domainOption = $this->option('domain');
+        $savedDomain = SiteParameter::where('id', 'sitemap_domain')->value('value') ?: SiteParameter::where('id', 'site_url')->value('value');
         
+        $baseUrl = $domainOption ?: ($savedDomain ?: config('app.url'));
+        if (empty($baseUrl) || str_contains($baseUrl, 'localhost') || str_contains($baseUrl, '127.0.0.1')) {
+            $baseUrl = 'https://www.drsumitz.com';
+        }
+        $baseUrl = rtrim($baseUrl, '/');
+
         $xml = [];
         $xml[] = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml[] = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -37,13 +47,13 @@ class GenerateSitemap extends Command
         // Static routes
         $staticRoutes = [
             '/' => ['priority' => '1.0', 'changefreq' => 'daily'],
-            '/about-us' => ['priority' => '0.8', 'changefreq' => 'monthly'],
+            '/about-us' => ['priority' => '0.9', 'changefreq' => 'monthly'],
             '/services' => ['priority' => '0.9', 'changefreq' => 'weekly'],
             '/treatments' => ['priority' => '0.9', 'changefreq' => 'weekly'],
             '/specialists' => ['priority' => '0.8', 'changefreq' => 'monthly'],
-            '/testimonials' => ['priority' => '0.7', 'changefreq' => 'monthly'],
+            '/testimonials' => ['priority' => '0.8', 'changefreq' => 'monthly'],
             '/faq' => ['priority' => '0.7', 'changefreq' => 'monthly'],
-            '/blogs' => ['priority' => '0.8', 'changefreq' => 'weekly'],
+            '/blogs' => ['priority' => '0.9', 'changefreq' => 'daily'],
             '/contact-us' => ['priority' => '0.8', 'changefreq' => 'monthly'],
         ];
 
@@ -57,7 +67,7 @@ class GenerateSitemap extends Command
         }
 
         // Dynamic Services
-        $services = Service::where('is_active', true)->get();
+        $services = Service::all();
         foreach ($services as $service) {
             $lastMod = $service->updated_at ? $service->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
             $xml[] = '  <url>';
@@ -65,6 +75,30 @@ class GenerateSitemap extends Command
             $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
             $xml[] = '    <changefreq>weekly</changefreq>';
             $xml[] = '    <priority>0.8</priority>';
+            $xml[] = '  </url>';
+        }
+
+        // Dynamic Treatments
+        $treatments = Treatment::all();
+        foreach ($treatments as $tr) {
+            $lastMod = $tr->updated_at ? $tr->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
+            $xml[] = '  <url>';
+            $xml[] = '    <loc>' . $baseUrl . '/treatments/' . $tr->slug . '</loc>';
+            $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
+            $xml[] = '    <changefreq>weekly</changefreq>';
+            $xml[] = '    <priority>0.8</priority>';
+            $xml[] = '  </url>';
+        }
+
+        // Dynamic Specialists
+        $specialists = TeamMember::all();
+        foreach ($specialists as $sp) {
+            $lastMod = $sp->updated_at ? $sp->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
+            $xml[] = '  <url>';
+            $xml[] = '    <loc>' . $baseUrl . '/specialists/' . $sp->slug . '</loc>';
+            $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
+            $xml[] = '    <changefreq>monthly</changefreq>';
+            $xml[] = '    <priority>0.7</priority>';
             $xml[] = '  </url>';
         }
 
@@ -96,7 +130,11 @@ class GenerateSitemap extends Command
 
         $sitemapContent = implode("\n", $xml);
         file_put_contents(public_path('sitemap.xml'), $sitemapContent);
-        $this->info('Sitemap successfully generated at: ' . public_path('sitemap.xml'));
+        $this->info('Sitemap successfully generated for domain: ' . $baseUrl . ' at ' . public_path('sitemap.xml'));
+
+        // Update robots.txt with exact sitemap domain
+        $robotsContent = "User-agent: *\nDisallow: /admin/\nDisallow: /api/\nAllow: /\n\nSitemap: " . $baseUrl . "/sitemap.xml\n";
+        file_put_contents(public_path('robots.txt'), $robotsContent);
 
         // Generate LLMs.txt
         $llm = [];
@@ -123,26 +161,13 @@ class GenerateSitemap extends Command
         $llm[] = '- [Frequently Asked Questions](' . $baseUrl . '/faq) - Direct answers to common orthopaedic questions.';
         $llm[] = '- [Contact Us](' . $baseUrl . '/contact-us) - Inquiry forms, map coordinates, and clinic helplines.';
         $llm[] = '';
-        $llm[] = '## Landing Pages';
-        $llm[] = '';
-        if ($landingPages->count() > 0) {
-            foreach ($landingPages as $lp) {
-                $desc = trim($lp->meta_description ?: 'Special campaign page for ' . $lp->title);
-                $llm[] = '- [' . $lp->title . '](' . $baseUrl . '/l/' . $lp->slug . ') - ' . $desc;
-            }
-        } else {
-            $llm[] = '*No active landing pages.*';
-        }
-        $llm[] = '';
-        $llm[] = '## Blog Posts & Credit Guides';
+        $llm[] = '## Blog Posts';
         $llm[] = '';
         if ($blogs->count() > 0) {
             foreach ($blogs as $blog) {
                 $summary = trim($blog->summary ?: 'Read our complete guide to ' . $blog->title);
                 $llm[] = '- [' . $blog->title . '](' . $baseUrl . '/blog/' . $blog->slug . ') - ' . $summary;
             }
-        } else {
-            $llm[] = '*No published blog posts.*';
         }
         $llm[] = '';
 

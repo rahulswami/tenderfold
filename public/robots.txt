@@ -1,26 +1,6 @@
 User-agent: *
-Disallow: /admin
-Disallow: /login
-Disallow: /register
-Disallow: /api
-
-User-agent: GPTBot
+Disallow: /admin/
+Disallow: /api/
 Allow: /
 
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: Applebot-Extended
-Allow: /
-
-Sitemap: https://www.mlgfinedge.com/sitemap.xml
-Link: <https://www.mlgfinedge.com/llms.txt>; rel="llms"
+Sitemap: https://www.drsumitz.com/sitemap.xml

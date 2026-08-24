@@ -3938,21 +3938,31 @@
                     </div>
                 </div>
 
-                <!-- XML Sitemap Generator Card -->
+                <!-- XML Sitemap & Robots.txt Manager Card -->
                 <div class="admin-card" style="margin-top: 2rem;">
-                    <h2><i data-lucide="map" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> XML Sitemap Generator</h2>
+                    <h2><i data-lucide="map" style="display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Live XML Sitemap & Domain Config</h2>
                     <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
-                        Regenerate the website XML sitemap to include all newly created service pages, blog articles, and landing pages for search engines like Google.
+                        Set your target production domain name and regenerate the live <code>sitemap.xml</code> and <code>robots.txt</code> files for search engines like Google & Bing.
                     </p>
                     <form action="{{ route('admin.sitemap.generate') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn-submit" style="width: auto; padding: 0.75rem 1.5rem;">
-                            <i data-lucide="refresh-cw" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Regenerate Sitemap
-                        </button>
+                        <div class="form-grid" style="grid-template-columns: 2fr 1fr; align-items: end; gap: 1rem; margin-bottom: 1.25rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="sitemap_domain">Production Domain Name (with protocol, no trailing slash)</label>
+                                <input type="url" id="sitemap_domain" name="sitemap_domain" class="form-control" value="{{ $site['sitemap_domain'] ?? 'https://www.drsumitz.com' }}" placeholder="https://www.drsumitz.com" required>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn-submit" style="width: 100%; padding: 0.75rem 1.25rem; font-weight: 600;">
+                                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Update & Regenerate Sitemap
+                                </button>
+                            </div>
+                        </div>
                     </form>
-                    <p style="font-size: 0.85rem; margin-top: 10px; color: var(--admin-text-muted);">
-                        Sitemap URL: <a href="/sitemap.xml" target="_blank" style="color: var(--mint-green); text-decoration: underline;">/sitemap.xml</a>
-                    </p>
+                    <div style="display: flex; gap: 1.5rem; margin-top: 15px; font-size: 0.85rem; flex-wrap: wrap;">
+                        <span>📄 Sitemap File: <a href="/sitemap.xml" target="_blank" style="color: var(--mint-green); text-decoration: underline; font-weight: 600;">/sitemap.xml</a></span>
+                        <span>🤖 Robots File: <a href="/robots.txt" target="_blank" style="color: var(--mint-green); text-decoration: underline; font-weight: 600;">/robots.txt</a></span>
+                        <span>🤖 LLM Directory: <a href="/llms.txt" target="_blank" style="color: var(--mint-green); text-decoration: underline; font-weight: 600;">/llms.txt</a></span>
+                    </div>
                 </div>
             </div>
 
