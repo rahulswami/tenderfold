@@ -81,21 +81,49 @@
                         {!! $service->tips_content !!}
                     @endif
 
-                    @if(!empty($service->faqs) && is_array($service->faqs))
-                        <h2 style="font-size: 24px; margin: 36px 0 20px;">Frequently Asked Questions</h2>
-                        <div class="accordion">
-                            @foreach($service->faqs as $faq)
-                                <div class="accordion-item">
-                                    <button class="accordion-header" onclick="toggleAccordion(this)">
-                                        {{ $faq['question'] ?? '' }}
-                                        <i data-lucide="chevron-down" style="width: 20px;"></i>
-                                    </button>
-                                    <div class="accordion-body">
-                                        {{ $faq['answer'] ?? '' }}
+                    @php
+                        $serviceFaqs = parse_faqs($service->faqs, $service->service_name);
+                    @endphp
+                    @if(!empty($serviceFaqs))
+                        <div style="margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                                <span class="badge badge-teal" style="font-size: 12px;">Patient Queries</span>
+                                <h2 style="font-size: 24px; margin: 0;">Frequently Asked Questions</h2>
+                            </div>
+                            <div class="accordion">
+                                @foreach($serviceFaqs as $index => $faq)
+                                    <div class="accordion-item {{ $index === 0 ? 'active' : '' }}" style="background: var(--surface-white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden;">
+                                        <button class="accordion-header" onclick="toggleAccordion(this)" style="width: 100%; text-align: left; padding: 18px 24px; background: none; border: none; font-size: 16.5px; font-weight: 600; color: var(--navy-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                                            <span>{{ $faq['question'] }}</span>
+                                            <i data-lucide="chevron-down" style="width: 20px; flex-shrink: 0; transition: transform 0.2s ease;"></i>
+                                        </button>
+                                        <div class="accordion-body" style="padding: 0 24px 20px; font-size: 15px; color: var(--body-text); line-height: 1.7; display: {{ $index === 0 ? 'block' : 'none' }};">
+                                            {{ $faq['answer'] }}
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
+
+                        {{-- Google FAQPage Schema Markup --}}
+                        <script type="application/ld+json">
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "FAQPage",
+                            "mainEntity": [
+                                @foreach($serviceFaqs as $index => $faq)
+                                {
+                                    "@type": "Question",
+                                    "name": "{{ addslashes($faq['question']) }}",
+                                    "acceptedAnswer": {
+                                        "@type": "Answer",
+                                        "text": "{{ addslashes($faq['answer']) }}"
+                                    }
+                                }{{ $index < count($serviceFaqs) - 1 ? ',' : '' }}
+                                @endforeach
+                            ]
+                        }
+                        </script>
                     @endif
                 </div>
             </div>
@@ -137,10 +165,18 @@
     <script>
         function toggleAccordion(button) {
             const item = button.parentElement;
+            const body = item.querySelector('.accordion-body');
             const isActive = item.classList.contains('active');
-            document.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('active'));
+            
+            document.querySelectorAll('.accordion-item').forEach(el => {
+                el.classList.remove('active');
+                const b = el.querySelector('.accordion-body');
+                if (b) b.style.display = 'none';
+            });
+            
             if (!isActive) {
                 item.classList.add('active');
+                if (body) body.style.display = 'block';
             }
         }
     </script>

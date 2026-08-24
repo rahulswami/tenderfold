@@ -14,6 +14,7 @@ class Treatment extends Model
         'slug',
         'image',
         'description',
+        'faqs',
         'metatitle',
         'metadescription',
         'metakeywords',
@@ -23,6 +24,7 @@ class Treatment extends Model
     ];
 
     protected $casts = [
+        'faqs' => 'array',
         'status' => 'boolean',
     ];
 }

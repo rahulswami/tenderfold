@@ -7,7 +7,7 @@
         "service_name": "Orthopaedic Clinic",
         "hero_category": "Clinic Services",
         "hero_title": " Orthopaedic Clinic",
-        "hero_subtitle": "We have been served for many years for problems related to bones and joints. For the best orthopedic center in Baner, Pune, let’s get connected ",
+        "hero_subtitle": "We have been served for many years for problems related to bones and joints. For the best orthopedic center in Baner, Pune, let\u2019s get connected ",
         "rate_value": null,
         "max_loan": null,
         "tenure": null,
@@ -17,16 +17,25 @@
         "documents_required": null,
         "tips_title": null,
         "tips_content": null,
-        "faqs": null,
+        "faqs": [
+            {
+                "question": "What facilities are included in Orthopaedic Clinic?",
+                "answer": "Comprehensive diagnosis, digital imaging, and rehabilitative therapy."
+            },
+            {
+                "question": "How can I book an appointment?",
+                "answer": "You can book online through our site or call our helpline at +91 95455 59434."
+            }
+        ],
         "badge": null,
-        "summary": "We have been served for many years for problems related to bones and joints. For the best orthopedic center in Baner, Pune, let’s get connected ",
+        "summary": "We have been served for many years for problems related to bones and joints. For the best orthopedic center in Baner, Pune, let\u2019s get connected ",
         "is_active": true,
         "sort_order": 0,
         "created_at": "2026-07-15T10:00:22.000000Z",
-        "updated_at": "2026-08-18T05:51:22.000000Z",
+        "updated_at": "2026-08-24T09:50:17.000000Z",
         "schema_markup": null,
         "metatitle": "Best Orthopedic Center In Baner, Pune | DrSumitz Clinic",
-        "metadescription": "We have been served for many years for problems related to bones and joints. For the best orthopedic center in Baner, Pune, let’s get connected",
+        "metadescription": "We have been served for many years for problems related to bones and joints. For the best orthopedic center in Baner, Pune, let\u2019s get connected",
         "metakeywords": "orthopedic physiotherapy near me, orthopedic center near me, best orthopedic near me, orthopedic clinic in pune, orthopedic treatment in pune, orthopedic treatment in baner, orthopedic clinic in baner, orthopedic doctor in baner"
     },
     {
@@ -124,10 +133,10 @@
         "slug": "physiotherapy-services-in-baner",
         "image_path": "uploads\/category\/143782991_03_09_2020_05_30_57.jpg",
         "icon_path": "uploads\/category\/99903905_20_10_2020_07_15_14.png",
-        "service_name": "Physiotherapy at Home",
+        "service_name": "Physiotherapy at\u00a0Home",
         "hero_category": "Clinic Services",
-        "hero_title": "Physiotherapy at Home",
-        "hero_subtitle": "Physiotherapists in Pune have years of experience and are experts in handling machines like BMD and X-rays. Let’s get connected if you have any queries",
+        "hero_title": "Physiotherapy at\u00a0Home",
+        "hero_subtitle": "Physiotherapists in Pune have years of experience and are experts in handling machines like BMD and X-rays. Let\u2019s get connected if you have any queries",
         "rate_value": null,
         "max_loan": null,
         "tenure": null,
@@ -139,14 +148,14 @@
         "tips_content": null,
         "faqs": null,
         "badge": null,
-        "summary": "Physiotherapists in Pune have years of experience and are experts in handling machines like BMD and X-rays. Let’s get connected if you have any queries",
+        "summary": "Physiotherapists in Pune have years of experience and are experts in handling machines like BMD and X-rays. Let\u2019s get connected if you have any queries",
         "is_active": true,
         "sort_order": 0,
         "created_at": "2026-07-15T10:00:22.000000Z",
         "updated_at": "2026-08-18T05:51:22.000000Z",
         "schema_markup": null,
         "metatitle": "Clinic of expert Physiotherapist in Pune | DrSumitz Clinic",
-        "metadescription": "Physiotherapists in Pune have years of experience and are experts in handling machines like BMD and X-rays. Let’s get connected if you have any queries",
+        "metadescription": "Physiotherapists in Pune have years of experience and are experts in handling machines like BMD and X-rays. Let\u2019s get connected if you have any queries",
         "metakeywords": "Physiotherapist in Pune, Physiotherapist in Baner, Best Physiotherapist in Pune, Best Physiotherapist in Baner"
     },
     {

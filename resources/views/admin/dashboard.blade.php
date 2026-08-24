@@ -2603,6 +2603,11 @@
                                 <textarea id="ser_summary" name="summary" class="form-control" rows="2" placeholder="Brief summary of the service..."></textarea>
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
+                                <label for="ser_faqs">Service Frequently Asked Questions (FAQs)</label>
+                                <textarea id="ser_faqs" name="faqs" class="form-control" rows="5" placeholder="What is the recovery time? | Most patients walk with assistance within 24-48 hours and recover fully in 4-6 weeks.&#10;Is physiotherapy mandatory? | Yes, physical therapy is crucial for regaining full joint strength and mobility."></textarea>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Format: Enter one question and answer per line in <code>Question | Answer</code> format.</span>
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_schema_markup">Custom Schema Markup (JSON-LD script)</label>
                                 <textarea id="ser_schema_markup" name="schema_markup" class="form-control" rows="3" placeholder='<script type="application/ld+json">...</script>'></textarea>
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default service schema.</span>
@@ -2755,6 +2760,12 @@
                         <div class="form-group" style="margin-top: 1rem;">
                             <label for="treat_description">Detailed Treatment Content</label>
                             <textarea id="treat_description" name="description" class="form-control richtext" rows="10" placeholder="Write treatment overview, symptoms, process..."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="treat_faqs">Treatment Frequently Asked Questions (FAQs)</label>
+                            <textarea id="treat_faqs" name="faqs" class="form-control" rows="5" placeholder="What is the expected recovery timeline? | Physical therapy often shows improvements in 2-4 weeks, while surgical procedures involve structured rehabilitation over 6-12 weeks.&#10;Do I need an advance appointment? | Booking an advance appointment is recommended to minimize wait times."></textarea>
+                            <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Format: Enter one question and answer per line in <code>Question | Answer</code> format.</span>
                         </div>
 
                         <div class="form-group" style="margin-top: 1rem;">
@@ -6028,6 +6039,26 @@
             document.getElementById('ser_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
             document.getElementById('ser_icon_url').value = (data.icon_path && (data.icon_path.startsWith('http') || data.icon_path.startsWith('//'))) ? data.icon_path : '';
             
+            // Format FAQs for textarea
+            let formattedFaqs = '';
+            if (Array.isArray(data.faqs)) {
+                formattedFaqs = data.faqs.map(f => (f.question || '') + ' | ' + (f.answer || '')).join('\n');
+            } else if (typeof data.faqs === 'string') {
+                try {
+                    let parsed = JSON.parse(data.faqs);
+                    if (Array.isArray(parsed)) {
+                        formattedFaqs = parsed.map(f => (f.question || '') + ' | ' + (f.answer || '')).join('\n');
+                    } else {
+                        formattedFaqs = data.faqs;
+                    }
+                } catch(e) {
+                    formattedFaqs = data.faqs;
+                }
+            }
+            if (document.getElementById('ser_faqs')) {
+                document.getElementById('ser_faqs').value = formattedFaqs;
+            }
+            
             // Clear and rebuild FAQs
             const container = document.getElementById('faq-repeater-container');
             container.innerHTML = '';
@@ -6090,6 +6121,7 @@
             }
             
             document.getElementById('ser_summary').value = '';
+            if (document.getElementById('ser_faqs')) document.getElementById('ser_faqs').value = '';
             document.getElementById('ser_schema_markup').value = '';
             document.getElementById('ser_metatitle').value = '';
             document.getElementById('ser_metadescription').value = '';
@@ -6124,6 +6156,27 @@
             } else {
                 document.getElementById('treat_description').value = data.description || '';
             }
+            
+            // Format FAQs for treatment textarea
+            let formattedTreatFaqs = '';
+            if (Array.isArray(data.faqs)) {
+                formattedTreatFaqs = data.faqs.map(f => (f.question || '') + ' | ' + (f.answer || '')).join('\n');
+            } else if (typeof data.faqs === 'string') {
+                try {
+                    let parsed = JSON.parse(data.faqs);
+                    if (Array.isArray(parsed)) {
+                        formattedTreatFaqs = parsed.map(f => (f.question || '') + ' | ' + (f.answer || '')).join('\n');
+                    } else {
+                        formattedTreatFaqs = data.faqs;
+                    }
+                } catch(e) {
+                    formattedTreatFaqs = data.faqs;
+                }
+            }
+            if (document.getElementById('treat_faqs')) {
+                document.getElementById('treat_faqs').value = formattedTreatFaqs;
+            }
+            
             document.getElementById('treat_image_url').value = (data.image && (data.image.startsWith('http') || data.image.startsWith('//'))) ? data.image : '';
             document.getElementById('treat-cancel-btn').style.display = 'inline-block';
             
@@ -6146,6 +6199,7 @@
             } else {
                 document.getElementById('treat_description').value = '';
             }
+            if (document.getElementById('treat_faqs')) document.getElementById('treat_faqs').value = '';
             document.getElementById('treat_image_url').value = '';
             document.getElementById('treat-cancel-btn').style.display = 'none';
         }

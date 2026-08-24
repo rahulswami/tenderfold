@@ -840,17 +840,22 @@ class AdminController extends Controller
         $validated['icon_path'] = $iconPath;
 
         // Handle FAQs
-        $faqs = [];
-        $questions = $request->input('faq_questions', []);
-        $answers = $request->input('faq_answers', []);
-        if (is_array($questions)) {
-            foreach ($questions as $i => $q) {
-                if (!empty($q) && !empty($answers[$i])) {
-                    $faqs[] = ['question' => $q, 'answer' => $answers[$i]];
+        $rawFaqs = $request->input('faqs');
+        if (empty($rawFaqs) && $request->has('faq_questions')) {
+            $faqs = [];
+            $questions = $request->input('faq_questions', []);
+            $answers = $request->input('faq_answers', []);
+            if (is_array($questions)) {
+                foreach ($questions as $i => $q) {
+                    if (!empty($q) && !empty($answers[$i])) {
+                        $faqs[] = ['question' => $q, 'answer' => $answers[$i]];
+                    }
                 }
             }
+            $validated['faqs'] = $faqs;
+        } else {
+            $validated['faqs'] = parse_faqs($rawFaqs, $request->input('service_name'));
         }
-        $validated['faqs'] = $faqs;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
 
@@ -915,17 +920,23 @@ class AdminController extends Controller
         }
         $validated['icon_path'] = $iconPath;
 
-        $faqs = [];
-        $questions = $request->input('faq_questions', []);
-        $answers = $request->input('faq_answers', []);
-        if (is_array($questions)) {
-            foreach ($questions as $i => $q) {
-                if (!empty($q) && !empty($answers[$i])) {
-                    $faqs[] = ['question' => $q, 'answer' => $answers[$i]];
+        // Handle FAQs
+        $rawFaqs = $request->input('faqs');
+        if (empty($rawFaqs) && $request->has('faq_questions')) {
+            $faqs = [];
+            $questions = $request->input('faq_questions', []);
+            $answers = $request->input('faq_answers', []);
+            if (is_array($questions)) {
+                foreach ($questions as $i => $q) {
+                    if (!empty($q) && !empty($answers[$i])) {
+                        $faqs[] = ['question' => $q, 'answer' => $answers[$i]];
+                    }
                 }
             }
+            $validated['faqs'] = $faqs;
+        } else {
+            $validated['faqs'] = parse_faqs($rawFaqs, $request->input('service_name'));
         }
-        $validated['faqs'] = $faqs;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
 
@@ -3136,6 +3147,10 @@ JSON Schema:
         }
         $validated['image'] = $imagePath;
         $validated['status'] = $request->boolean('status', true);
+        
+        // Handle FAQs for Treatment
+        $rawFaqs = $request->input('faqs');
+        $validated['faqs'] = parse_faqs($rawFaqs, $request->input('name'));
 
         \App\Models\Treatment::create($validated);
 
@@ -3171,6 +3186,10 @@ JSON Schema:
         }
         $validated['image'] = $imagePath;
         $validated['status'] = $request->boolean('status', true);
+
+        // Handle FAQs for Treatment
+        $rawFaqs = $request->input('faqs');
+        $validated['faqs'] = parse_faqs($rawFaqs, $request->input('name'));
 
         $treatment->update($validated);
 

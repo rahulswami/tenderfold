@@ -57,6 +57,51 @@
                 <div style="font-size: 16.5px; line-height: 1.8; color: var(--body-text);">
                     <h2 style="font-size: 26px; margin-bottom: 16px;">Treatment Overview & Care Pathway</h2>
                     {!! $treatment->description !!}
+
+                    @php
+                        $treatmentFaqs = parse_faqs($treatment->faqs, $treatment->name);
+                    @endphp
+                    @if(!empty($treatmentFaqs))
+                        <div style="margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                                <span class="badge badge-teal" style="font-size: 12px;">Treatment FAQs</span>
+                                <h2 style="font-size: 24px; margin: 0;">Frequently Asked Questions</h2>
+                            </div>
+                            <div class="accordion">
+                                @foreach($treatmentFaqs as $index => $faq)
+                                    <div class="accordion-item {{ $index === 0 ? 'active' : '' }}" style="background: var(--surface-white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden;">
+                                        <button class="accordion-header" onclick="toggleAccordion(this)" style="width: 100%; text-align: left; padding: 18px 24px; background: none; border: none; font-size: 16.5px; font-weight: 600; color: var(--navy-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                                            <span>{{ $faq['question'] }}</span>
+                                            <i data-lucide="chevron-down" style="width: 20px; flex-shrink: 0; transition: transform 0.2s ease;"></i>
+                                        </button>
+                                        <div class="accordion-body" style="padding: 0 24px 20px; font-size: 15px; color: var(--body-text); line-height: 1.7; display: {{ $index === 0 ? 'block' : 'none' }};">
+                                            {{ $faq['answer'] }}
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Google FAQPage Schema Markup --}}
+                        <script type="application/ld+json">
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "FAQPage",
+                            "mainEntity": [
+                                @foreach($treatmentFaqs as $index => $faq)
+                                {
+                                    "@type": "Question",
+                                    "name": "{{ addslashes($faq['question']) }}",
+                                    "acceptedAnswer": {
+                                        "@type": "Answer",
+                                        "text": "{{ addslashes($faq['answer']) }}"
+                                    }
+                                }{{ $index < count($treatmentFaqs) - 1 ? ',' : '' }}
+                                @endforeach
+                            ]
+                        }
+                        </script>
+                    @endif
                 </div>
             </div>
 
@@ -97,5 +142,24 @@
             </div>
         </div>
     </section>
+
+    <script>
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+            const body = item.querySelector('.accordion-body');
+            const isActive = item.classList.contains('active');
+            
+            document.querySelectorAll('.accordion-item').forEach(el => {
+                el.classList.remove('active');
+                const b = el.querySelector('.accordion-body');
+                if (b) b.style.display = 'none';
+            });
+            
+            if (!isActive) {
+                item.classList.add('active');
+                if (body) body.style.display = 'block';
+            }
+        }
+    </script>
 
 @endsection

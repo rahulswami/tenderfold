@@ -200,17 +200,21 @@ try {
     $results['users_columns'] = "FAIL ❌ " . $e->getMessage();
 }
 
-// ── 9. Ensure services & blogs SEO columns ────────────────────────
+// ── 9. Ensure services, treatments & blogs SEO/FAQ columns ─────────
 try {
     $svcCols = $pdo->query("DESCRIBE `services`")->fetchAll(PDO::FETCH_COLUMN);
     if (!in_array('metatitle', $svcCols)) {
         $pdo->exec("ALTER TABLE `services` ADD COLUMN `metatitle` VARCHAR(255) NULL, ADD COLUMN `metadescription` TEXT NULL, ADD COLUMN `metakeywords` TEXT NULL;");
     }
+    $treatCols = $pdo->query("DESCRIBE `treatments`")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('faqs', $treatCols)) {
+        $pdo->exec("ALTER TABLE `treatments` ADD COLUMN `faqs` TEXT NULL AFTER `description`;");
+    }
     $blogCols = $pdo->query("DESCRIBE `blogs`")->fetchAll(PDO::FETCH_COLUMN);
     if (!in_array('metatitle', $blogCols)) {
         $pdo->exec("ALTER TABLE `blogs` ADD COLUMN `metatitle` VARCHAR(255) NULL, ADD COLUMN `metadescription` TEXT NULL, ADD COLUMN `metakeywords` TEXT NULL, ADD COLUMN `tags` TEXT NULL;");
     }
-    $results['services_blogs_seo_columns'] = "SEO COLUMNS ADDED/VERIFIED ✅";
+    $results['services_blogs_seo_columns'] = "SEO/FAQ COLUMNS ADDED/VERIFIED ✅";
 } catch (Exception $e) {
     $results['services_blogs_seo_columns'] = "FAIL ❌ " . $e->getMessage();
 }
