@@ -542,10 +542,43 @@
         </div>
     </div>
 
+    <!-- Fullscreen Live Search Modal Overlay -->
+    <div class="search-modal-overlay" id="search-modal" onclick="closeSearchModalOnBackdrop(event)">
+        <div class="search-modal-container">
+            <div class="search-modal-header">
+                <div class="search-modal-input-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="search-modal-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="modal-search-input" class="search-modal-input" placeholder="Search treatments, services, specialists, blogs..." autocomplete="off" onkeyup="handleNavSearch(this.value)">
+                    <button id="modal-search-clear" class="search-modal-clear-btn" onclick="clearNavSearch()">&times;</button>
+                </div>
+                <button class="search-modal-close-btn" onclick="closeSearchModal()" aria-label="Close search">&times;</button>
+            </div>
+
+            <div class="search-modal-body">
+                <div id="modal-search-loading" class="nav-search-status" style="display: none;">
+                    <span class="search-spinner"></span> Searching treatments, services, specialists...
+                </div>
+                <div id="modal-search-results"></div>
+                <div id="modal-search-initial" class="search-modal-initial-suggestions">
+                    <p style="font-size: 12px; font-weight: 700; color: var(--muted-text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Popular Searches</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Knee Replacement')">Knee Replacement</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Physiotherapy')">Physiotherapy</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Dr. Sumit Gupta')">Dr. Sumit Gupta</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('ACL Reconstruction')">ACL Reconstruction</button>
+                        <button type="button" class="search-tag-btn" onclick="quickSearch('Back Pain')">Back Pain</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Lucide Icons CDN and Script Initializer -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
         // Get or Create Chat Session ID
         function getChatSessionId() {
@@ -560,8 +593,9 @@
         function toggleChatWidget() {
             const box = document.getElementById('chat-box');
             const badge = document.getElementById('chat-unread-badge');
-            const isOpen = box.style.display === 'flex';
-            if (isOpen) {
+            if (!box) return;
+            const isVisible = box.style.display === 'flex';
+            if (isVisible) {
                 box.style.display = 'none';
             } else {
                 box.style.display = 'flex';
@@ -658,7 +692,6 @@
             });
         }
 
-        // Only poll chat history when tab is visible and chat box is open to conserve Hostinger MySQL connections
         setInterval(() => {
             const chatBox = document.getElementById('chat-box');
             if (!document.hidden && chatBox && chatBox.style.display === 'flex') {
@@ -679,19 +712,18 @@
             const dialog = document.getElementById(id);
             if (!dialog) return;
 
-            // Check if any other popup dialog is currently active/visible
             const activeOverlays = Array.from(document.querySelectorAll('.dialog-overlay, .modal-overlay')).filter(
                 el => el.id !== id && (el.style.display === 'flex' || el.style.display === 'block' || el.classList.contains('active') || el.classList.contains('show'))
             );
 
             if (activeOverlays.length > 0) {
-                // Block opening new popup if one popup is already open
                 return;
             }
 
             dialog.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
+
         function closeDialog(id) {
             const dialog = document.getElementById(id);
             if (dialog) {
@@ -700,43 +732,6 @@
             }
         }
 
-        // Auto-check for chat open query param
-        if (window.location.search.includes('open_chat=1')) {
-            toggleChatWidget();
-        }
-
-    <!-- Fullscreen Live Search Modal Overlay -->
-    <div class="search-modal-overlay" id="search-modal" onclick="closeSearchModalOnBackdrop(event)">
-        <div class="search-modal-container">
-            <div class="search-modal-header">
-                <div class="search-modal-input-wrap">
-                    <i data-lucide="search" class="search-modal-icon"></i>
-                    <input type="text" id="modal-search-input" class="search-modal-input" placeholder="Search treatments, services, specialists, blogs..." autocomplete="off" onkeyup="handleNavSearch(this.value)">
-                    <button id="modal-search-clear" class="search-modal-clear-btn" onclick="clearNavSearch()">&times;</button>
-                </div>
-                <button class="search-modal-close-btn" onclick="closeSearchModal()" aria-label="Close search">&times;</button>
-            </div>
-
-            <div class="search-modal-body">
-                <div id="modal-search-loading" class="nav-search-status" style="display: none;">
-                    <span class="search-spinner"></span> Searching treatments, services, specialists...
-                </div>
-                <div id="modal-search-results"></div>
-                <div id="modal-search-initial" class="search-modal-initial-suggestions">
-                    <p style="font-size: 12px; font-weight: 700; color: var(--muted-text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Popular Searches</p>
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                        <button type="button" class="search-tag-btn" onclick="quickSearch('Knee Replacement')">Knee Replacement</button>
-                        <button type="button" class="search-tag-btn" onclick="quickSearch('Physiotherapy')">Physiotherapy</button>
-                        <button type="button" class="search-tag-btn" onclick="quickSearch('Dr. Sumit Gupta')">Dr. Sumit Gupta</button>
-                        <button type="button" class="search-tag-btn" onclick="quickSearch('ACL Reconstruction')">ACL Reconstruction</button>
-                        <button type="button" class="search-tag-btn" onclick="quickSearch('Back Pain')">Back Pain</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
         function openSearchModal() {
             const modal = document.getElementById('search-modal');
             const input = document.getElementById('modal-search-input');
@@ -772,7 +767,6 @@
             }
         }
 
-        // Live Navigation Autocomplete Search Handler
         let navSearchDebounce = null;
 
         function handleNavSearch(query) {
@@ -863,6 +857,10 @@
                 closeSearchModal();
             }
         });
+
+        if (window.location.search.includes('open_chat=1')) {
+            toggleChatWidget();
+        }
     </script>
 </body>
 </html>
