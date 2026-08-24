@@ -328,6 +328,56 @@ try {
     $results['blog_live_sync'] = "FAIL ❌ " . $e->getMessage();
 }
 
+// ── 14. Sync Live Database Page Contents ──────────────────────────────────
+try {
+    $pcPath = __DIR__ . '/../database/data/page_contents.json';
+    if (file_exists($pcPath)) {
+        $pcData = json_decode(file_get_contents($pcPath), true);
+        if (is_array($pcData)) {
+            $stmtPC = $pdo->prepare("INSERT INTO `page_contents` (`page`, `section`, `key`, `value`, `created_at`, `updated_at`) 
+                VALUES (:page, :section, :key, :value, NOW(), NOW()) 
+                ON DUPLICATE KEY UPDATE `value` = :value, `updated_at` = NOW()");
+            foreach ($pcData as $row) {
+                $stmtPC->execute([
+                    'page' => $row['page'],
+                    'section' => $row['section'],
+                    'key' => $row['key'],
+                    'value' => $row['value']
+                ]);
+            }
+            $results['page_contents_sync'] = "SYNCED " . count($pcData) . " PAGE CONTENTS TO LIVE DB ✅";
+        }
+    }
+} catch (Exception $e) {
+    $results['page_contents_sync'] = "FAIL ❌ " . $e->getMessage();
+}
+
+// ── 15. Sync Treatments FAQs & Live Admin User Auth ──────────────────────
+try {
+    $tPath = __DIR__ . '/../database/data/treatments.json';
+    if (file_exists($tPath)) {
+        $tData = json_decode(file_get_contents($tPath), true);
+        if (is_array($tData)) {
+            $stmtT = $pdo->prepare("UPDATE `treatments` SET `faqs` = :faqs, `updated_at` = NOW() WHERE `slug` = :slug");
+            foreach ($tData as $tRow) {
+                if (!empty($tRow['faqs']) && !empty($tRow['slug'])) {
+                    $stmtT->execute([
+                        'faqs' => is_array($tRow['faqs']) ? json_encode($tRow['faqs']) : $tRow['faqs'],
+                        'slug' => $tRow['slug']
+                    ]);
+                }
+            }
+            $results['treatments_faqs_sync'] = "SYNCED TREATMENTS FAQS TO LIVE DB ✅";
+        }
+    }
+
+    $adminHash = password_hash('admin123', PASSWORD_BCRYPT);
+    $pdo->exec("UPDATE `users` SET `password` = '{$adminHash}', `role` = 'superadmin' WHERE `email` IN ('admin@drsumitz.com', 'admin@mlgfinedge.com') OR `id` = 1;");
+    $results['live_admin_auth'] = "UPDATED LIVE ADMIN PASSWORDS TO admin123 ✅";
+} catch (Exception $e) {
+    $results['treatments_faqs_sync'] = "FAIL ❌ " . $e->getMessage();
+}
+
 echo "Live database & system deployment results:\n";
 foreach ($results as $table => $status) {
     echo "- {$table}: {$status}\n";

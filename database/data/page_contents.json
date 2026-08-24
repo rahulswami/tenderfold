@@ -1,35 +1,283 @@
 [
     {
+        "page": "about",
+        "section": "hero",
+        "key": "pre_title",
+        "value": "WHO WE ARE",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "hero",
+        "key": "subtitle",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "hero",
+        "key": "title",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "mission",
+        "key": "text",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "mission",
+        "key": "title",
+        "value": "Our Mission",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "story",
+        "key": "p1",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "story",
+        "key": "p2",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "story",
+        "key": "p3",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "story",
+        "key": "pre_title",
+        "value": "Our Story",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "story",
+        "key": "title",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "values",
+        "key": "text",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "values",
+        "key": "title",
+        "value": "Our Core Values",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "vision",
+        "key": "text",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "about",
+        "section": "vision",
+        "key": "title",
+        "value": "Our Vision",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "footer",
+        "section": "about",
+        "key": "description",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "footer",
+        "section": "bottom",
+        "key": "copyright",
+        "value": "All Rights Reserved.",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "footer",
+        "section": "bottom",
+        "key": "disclaimer",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "footer",
+        "section": "headings",
+        "key": "contact",
+        "value": "Contact Info",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "footer",
+        "section": "headings",
+        "key": "quick_links",
+        "value": "Quick Links",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "footer",
+        "section": "headings",
+        "key": "services",
+        "value": "Clinic Services",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "about",
+        "value": "About Us",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "blog",
+        "value": "Blog",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "compare",
+        "value": "Treatments",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "contact",
+        "value": "Contact Us",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "cta",
+        "value": "Call Now",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "home",
+        "value": "Home",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "services",
+        "value": "Services",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "header",
+        "section": "menu",
+        "key": "testimonials",
+        "value": "Testimonials",
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
         "page": "home",
         "section": "about",
         "key": "body_p1",
         "value": "SumitZ Clinic is Pune's leading multidisciplinary healthcare center specializing in orthopaedic consultation, joint replacement, sports injury rehabilitation, and advanced physiotherapy. Led by Dr. Sumit, our team provides compassionate, evidence-based care tailored to each patient.",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "about",
         "key": "body_p2",
         "value": "With state-of-the-art digital diagnostics, modern physiotherapy equipment, and two convenient clinics in Baner and Hinjewadi, we empower our patients to regain pain-free mobility and return to active living.",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "about",
         "key": "pre_title",
         "value": "About SumitZ Clinic",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "about",
         "key": "title",
         "value": "Pune's Premier Orthopaedic & Physiotherapy Center",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "appointment",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "appointment",
+        "key": "subtitle",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "cta",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
@@ -37,7 +285,7 @@
         "key": "subtitle",
         "value": "Book your specialist consultation or physiotherapy session with Dr. Sumit today.",
         "created_at": null,
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
@@ -45,7 +293,15 @@
         "key": "title",
         "value": "Take the First Step Towards a Pain-Free Life",
         "created_at": null,
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "updated_at": "2026-08-12 11:30:23"
+    },
+    {
+        "page": "home",
+        "section": "facilities",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
@@ -53,7 +309,7 @@
         "key": "subtitle",
         "value": "Equipped with high-precision digital X-ray, modern rehab equipment, and sterile procedure suites in Baner & Hinjewadi.",
         "created_at": null,
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
@@ -61,54 +317,198 @@
         "key": "title",
         "value": "World-Class Clinic Facilities",
         "created_at": null,
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "updated_at": "2026-08-12 11:30:23"
+    },
+    {
+        "page": "home",
+        "section": "faq",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "finder",
+        "key": "badge",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "finder",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "hero",
+        "key": "eyebrow",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "hero",
         "key": "subtitle",
         "value": "Specialist consultations, advanced physiotherapy, digital diagnostics, and personalized rehabilitation programs designed to restore your natural mobility in Baner and Hinjewadi.",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "hero",
         "key": "title",
         "value": "Move Better. Recover Stronger. Live Without Limiting Pain.",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "hero",
+        "key": "trust_1_label",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "hero",
+        "key": "trust_1_num",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "hero",
+        "key": "trust_2_label",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "hero",
+        "key": "trust_2_num",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "hero",
+        "key": "trust_3_label",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "hero",
+        "key": "trust_3_num",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "locations",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "locations",
+        "key": "subtitle",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "process",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "process",
+        "key": "subtitle",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "services",
         "key": "subtitle",
-        "value": "From advanced robotic joint replacement to personalized sports injury rehab, explore our expert medical treatments designed for rapid recovery.",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "value": "We act as your dedicated healthcare partner to match you with expert orthopedic specialists and personalized treatment plans. Here are the tailor-made care solutions we provide:",
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "services",
         "key": "title",
-        "value": "Comprehensive Healthcare Services",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "value": "Comprehensive Orthopedic Services in Baner Pune",
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "testimonials",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "testimonials",
+        "key": "subtitle",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "treatments",
+        "key": "heading",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
+    },
+    {
+        "page": "home",
+        "section": "treatments",
+        "key": "subtitle",
+        "value": null,
+        "created_at": null,
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "why_choose_us",
         "key": "subtitle",
         "value": "Our systematic medical evaluation ensures accurate diagnosis, targeted therapy, and long-term joint health.",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
     },
     {
         "page": "home",
         "section": "why_choose_us",
         "key": "title",
         "value": "4-Step Fast Mobility Recovery Protocol",
-        "created_at": "2026-07-07T11:09:47.000000Z",
-        "updated_at": "2026-08-12T11:30:23.000000Z"
+        "created_at": "2026-07-07 11:09:47",
+        "updated_at": "2026-08-24 11:10:46"
     }
 ]
