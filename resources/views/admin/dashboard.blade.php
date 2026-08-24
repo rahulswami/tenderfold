@@ -185,19 +185,21 @@
 
         .admin-content {
             padding: 2rem;
-            overflow-y: auto;
+            overflow-y: scroll;
             overflow-x: hidden;
             flex: 1 1 0%;
             min-height: 0;
             height: calc(100vh - 70px);
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
         }
 
         /* Tab Content Panel */
         .tab-panel {
             display: none;
-            min-height: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .tab-panel.active {
@@ -2240,8 +2242,6 @@
                             <label>Services Intro Text</label>
                             <textarea name="contents[home][services][subtitle]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
                         </div>
-                    </div>
-
                     </div>
 
                     {{-- ── PROCESS JOURNEY ─────────────────────────────── --}}
