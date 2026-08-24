@@ -85,15 +85,15 @@
                         {{-- Google FAQPage Schema Markup --}}
                         <script type="application/ld+json">
                         {
-                            "@context": "https://schema.org",
-                            "@type": "FAQPage",
+                            "{{ '@' }}context": "https://schema.org",
+                            "{{ '@' }}type": "FAQPage",
                             "mainEntity": [
                                 @foreach($treatmentFaqs as $index => $faq)
                                 {
-                                    "@type": "Question",
+                                    "{{ '@' }}type": "Question",
                                     "name": "{{ addslashes($faq['question']) }}",
                                     "acceptedAnswer": {
-                                        "@type": "Answer",
+                                        "{{ '@' }}type": "Answer",
                                         "text": "{{ addslashes($faq['answer']) }}"
                                     }
                                 }{{ $index < count($treatmentFaqs) - 1 ? ',' : '' }}
