@@ -318,8 +318,12 @@ class AdminController extends Controller
     {
         $this->checkPermission('slider');
         $slide = HomeSlide::findOrFail($id);
-        if ($slide->image_path) {
-            Storage::disk('public')->delete($slide->image_path);
+        if ($slide->image_path && !str_starts_with($slide->image_path, 'http') && !str_starts_with($slide->image_path, '//')) {
+            try {
+                Storage::disk('public')->delete($slide->image_path);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete slide image file: ' . $e->getMessage());
+            }
         }
         $slide->delete();
 
@@ -393,8 +397,12 @@ class AdminController extends Controller
     {
         $this->checkPermission('testimonials');
         $testimonial = Testimonial::findOrFail($id);
-        if ($testimonial->avatar_path) {
-            Storage::disk('public')->delete($testimonial->avatar_path);
+        if ($testimonial->avatar_path && !str_starts_with($testimonial->avatar_path, 'http') && !str_starts_with($testimonial->avatar_path, '//')) {
+            try {
+                Storage::disk('public')->delete($testimonial->avatar_path);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete testimonial avatar file: ' . $e->getMessage());
+            }
         }
         $testimonial->delete();
 
@@ -543,8 +551,12 @@ class AdminController extends Controller
     {
         $this->checkPermission('blogs');
         $blog = \App\Models\Blog::findOrFail($id);
-        if ($blog->image_path) {
-            Storage::disk('public')->delete($blog->image_path);
+        if ($blog->image_path && !str_starts_with($blog->image_path, 'http') && !str_starts_with($blog->image_path, '//')) {
+            try {
+                Storage::disk('public')->delete($blog->image_path);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete blog image file: ' . $e->getMessage());
+            }
         }
         $blog->delete();
 
@@ -926,11 +938,19 @@ class AdminController extends Controller
     {
         $this->checkPermission('services');
         $service = \App\Models\Service::findOrFail($id);
-        if ($service->image_path) {
-            Storage::disk('public')->delete($service->image_path);
+        if ($service->image_path && !str_starts_with($service->image_path, 'http') && !str_starts_with($service->image_path, '//')) {
+            try {
+                Storage::disk('public')->delete($service->image_path);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete service image file: ' . $e->getMessage());
+            }
         }
-        if ($service->icon_path) {
-            Storage::disk('public')->delete($service->icon_path);
+        if ($service->icon_path && !str_starts_with($service->icon_path, 'http') && !str_starts_with($service->icon_path, '//')) {
+            try {
+                Storage::disk('public')->delete($service->icon_path);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete service icon file: ' . $e->getMessage());
+            }
         }
         $service->delete();
 
@@ -3161,8 +3181,12 @@ JSON Schema:
     {
         $this->checkPermission('treatments');
         $treatment = \App\Models\Treatment::findOrFail($id);
-        if ($treatment->image) {
-            Storage::disk('public')->delete($treatment->image);
+        if ($treatment->image && !str_starts_with($treatment->image, 'http') && !str_starts_with($treatment->image, '//')) {
+            try {
+                Storage::disk('public')->delete($treatment->image);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete treatment image file: ' . $e->getMessage());
+            }
         }
         $treatment->delete();
 
@@ -3251,8 +3275,12 @@ JSON Schema:
     {
         $this->checkPermission('specialists');
         $specialist = \App\Models\TeamMember::findOrFail($id);
-        if ($specialist->image) {
-            Storage::disk('public')->delete($specialist->image);
+        if ($specialist->image && !str_starts_with($specialist->image, 'http') && !str_starts_with($specialist->image, '//')) {
+            try {
+                Storage::disk('public')->delete($specialist->image);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete specialist image file: ' . $e->getMessage());
+            }
         }
         $specialist->delete();
 
@@ -3331,8 +3359,12 @@ JSON Schema:
     {
         $this->checkPermission('cms_pages');
         $page = \App\Models\CmsPage::findOrFail($id);
-        if ($page->image) {
-            Storage::disk('public')->delete($page->image);
+        if ($page->image && !str_starts_with($page->image, 'http') && !str_starts_with($page->image, '//')) {
+            try {
+                Storage::disk('public')->delete($page->image);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete CMS page image file: ' . $e->getMessage());
+            }
         }
         $page->delete();
 

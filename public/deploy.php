@@ -217,8 +217,12 @@ try {
 
 // ── 10. Update site_parameters ────────────────────────────────────
 try {
-    $pdo->exec("INSERT INTO `site_parameters` (`id`, `category`, `value`, `created_at`, `updated_at`) 
-        VALUES ('ai_model', 'ai', 'gemini-2.5-flash', NOW(), NOW()) 
+    $paramCols = $pdo->query("DESCRIBE `site_parameters`")->fetchAll(PDO::FETCH_COLUMN);
+    if (in_array('label', $paramCols)) {
+        $pdo->exec("ALTER TABLE `site_parameters` MODIFY COLUMN `label` VARCHAR(255) NULL DEFAULT NULL;");
+    }
+    $pdo->exec("INSERT INTO `site_parameters` (`id`, `label`, `category`, `value`, `created_at`, `updated_at`) 
+        VALUES ('ai_model', 'AI Model', 'ai', 'gemini-2.5-flash', NOW(), NOW()) 
         ON DUPLICATE KEY UPDATE `value` = 'gemini-2.5-flash', `updated_at` = NOW();");
     $results['site_parameters_ai_model'] = "UPDATED to gemini-2.5-flash ✅";
 } catch (Exception $e) {
