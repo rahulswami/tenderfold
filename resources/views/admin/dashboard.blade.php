@@ -138,7 +138,11 @@
 
         /* Main Content Panel */
         .main-panel {
-            flex-grow: 1;
+            flex: 1 1 0%;
+            min-width: 0;
+            min-height: 0;
+            height: 100vh;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -182,12 +186,19 @@
         .admin-content {
             padding: 2rem;
             overflow-y: auto;
-            flex-grow: 1;
+            overflow-x: hidden;
+            flex: 1 1 0%;
+            min-height: 0;
+            height: calc(100vh - 70px);
+            max-height: calc(100vh - 70px);
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Tab Content Panel */
         .tab-panel {
             display: none;
+            min-height: 0;
         }
 
         .tab-panel.active {
@@ -1985,11 +1996,12 @@
                     </div>
                 </div>
 
-                <!-- Add New Testimonial -->
-                <div class="admin-card">
-                    <h2>Add New Customer Testimonial</h2>
-                    <form action="{{ route('admin.testimonials.store') }}" method="POST" enctype="multipart/form-data">
+                <!-- Add / Edit Testimonial Card -->
+                <div class="admin-card" id="testimonial-form-card">
+                    <h2 id="testimonial-form-title">Add New Customer Testimonial</h2>
+                    <form id="testimonial-form" action="{{ route('admin.testimonials.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" name="id" id="testimonial_id" value="">
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="test_name">Client Name</label>
@@ -2026,7 +2038,10 @@
                             <label for="test_content">Testimonial Review Content</label>
                             <textarea id="test_content" name="content" class="form-control" required placeholder="Write review feedback here..."></textarea>
                         </div>
-                        <button type="submit" class="btn-submit">Add Testimonial</button>
+                        <div style="display: flex; gap: 12px; margin-top: 1.25rem;">
+                            <button type="submit" id="btn-testimonial-submit" class="btn-submit">Add Testimonial</button>
+                            <button type="button" id="btn-testimonial-cancel" class="btn-secondary" style="display: none; width: auto; padding: 0.75rem 1.5rem;" onclick="resetTestimonialForm()">Cancel Edit</button>
+                        </div>
                     </form>
                 </div>
 
@@ -2070,6 +2085,9 @@
                                         <td>{{ $test->sort_order }}</td>
                                         <td>
                                             <div class="action-btns">
+                                                <button type="button" class="btn-action edit" title="Edit Testimonial" onclick='editTestimonial(@json($test))'>
+                                                    <i data-lucide="edit"></i>
+                                                </button>
                                                 <form action="{{ route('admin.testimonials.delete', $test->id) }}" method="POST" onsubmit="return confirm('Delete this testimonial?')">
                                                     @csrf
                                                     <button type="submit" class="btn-action delete" title="Delete"><i data-lucide="trash-2"></i></button>
@@ -4045,7 +4063,7 @@
                                 <select id="select_blog" class="form-control" onchange="autoFillFromEntity('blog', this.value)">
                                     <option value="">-- Choose Blog --</option>
                                     @foreach($blogs as $b)
-                                        <option value="{{ $b->id }}" data-title="{{ $b->title }}" data-summary="{{ Str::limit(strip_tags($b->summary), 150) }}" data-url="{{ route('blog.show', $b->slug) }}">{{ $b->title }}</option>
+                                        <option value="{{ $b->id }}" data-title="{{ $b->title }}" data-summary="{{ Str::limit(strip_tags($b->summary ?? ''), 150) }}" data-url="{{ route('blog.show', $b->slug) }}">{{ $b->title }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -4055,7 +4073,7 @@
                                 <select id="select_service" class="form-control" onchange="autoFillFromEntity('service', this.value)">
                                     <option value="">-- Choose Service --</option>
                                     @foreach($services as $s)
-                                        <option value="{{ $s->id }}" data-title="{{ $s->service_name }}" data-summary="{{ Str::limit(strip_tags($s->short_description), 150) }}" data-url="{{ route('services.show', $s->slug) }}">{{ $s->service_name }}</option>
+                                        <option value="{{ $s->id }}" data-title="{{ $s->service_name }}" data-summary="{{ Str::limit(strip_tags($s->short_description ?? ''), 150) }}" data-url="{{ route('services.show', $s->slug) }}">{{ $s->service_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -4075,7 +4093,7 @@
                                 <select id="select_landing" class="form-control" onchange="autoFillFromEntity('landing', this.value)">
                                     <option value="">-- Choose Landing Page --</option>
                                     @foreach($landingPages as $lp)
-                                        <option value="{{ $lp->id }}" data-title="{{ $lp->target_title }}" data-summary="{{ Str::limit(strip_tags($lp->hero_subtitle), 150) }}" data-url="{{ route('landing.show', $lp->slug) }}">{{ $lp->target_title }}</option>
+                                        <option value="{{ $lp->id }}" data-title="{{ $lp->target_title }}" data-summary="{{ Str::limit(strip_tags($lp->hero_subtitle ?? ''), 150) }}" data-url="{{ route('landing.show', $lp->slug) }}">{{ $lp->target_title }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -5992,6 +6010,54 @@
             `;
             container.appendChild(faqRow);
             lucide.createIcons();
+        }
+
+        // Testimonial Edit functions
+        function editTestimonial(data) {
+            const form = document.getElementById('testimonial-form');
+            const title = document.getElementById('testimonial-form-title');
+            const submitBtn = document.getElementById('btn-testimonial-submit');
+            const cancelBtn = document.getElementById('btn-testimonial-cancel');
+
+            if (!form) return;
+
+            form.action = '/admin/testimonials/' + data.id + '/update';
+            document.getElementById('testimonial_id').value = data.id;
+            document.getElementById('test_name').value = data.name || '';
+            document.getElementById('test_role').value = data.role || '';
+            document.getElementById('test_rating').value = data.rating || 5;
+            document.getElementById('test_sort').value = data.sort_order || 0;
+            document.getElementById('test_avatar_url').value = data.avatar_path || '';
+            document.getElementById('test_content').value = data.content || '';
+
+            if (title) title.innerText = 'Edit Customer Testimonial: ' + (data.name || '');
+            if (submitBtn) submitBtn.innerText = '💾 Save Testimonial Changes';
+            if (cancelBtn) cancelBtn.style.display = 'inline-block';
+
+            const card = document.getElementById('testimonial-form-card');
+            if (card) card.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetTestimonialForm() {
+            const form = document.getElementById('testimonial-form');
+            const title = document.getElementById('testimonial-form-title');
+            const submitBtn = document.getElementById('btn-testimonial-submit');
+            const cancelBtn = document.getElementById('btn-testimonial-cancel');
+
+            if (!form) return;
+
+            form.action = "{{ route('admin.testimonials.store') }}";
+            document.getElementById('testimonial_id').value = '';
+            document.getElementById('test_name').value = '';
+            document.getElementById('test_role').value = '';
+            document.getElementById('test_rating').value = '5';
+            document.getElementById('test_sort').value = '0';
+            document.getElementById('test_avatar_url').value = '';
+            document.getElementById('test_content').value = '';
+
+            if (title) title.innerText = 'Add New Customer Testimonial';
+            if (submitBtn) submitBtn.innerText = 'Add Testimonial';
+            if (cancelBtn) cancelBtn.style.display = 'none';
         }
 
         // Service Edit functions

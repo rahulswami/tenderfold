@@ -363,6 +363,7 @@ class AdminController extends Controller
 
     public function updateTestimonial(Request $request, $id)
     {
+        $this->checkPermission('testimonials');
         $request->validate([
             'name' => 'required|string|max:255',
             'content' => 'required|string',
@@ -375,10 +376,12 @@ class AdminController extends Controller
 
         if ($request->hasFile('avatar')) {
             if ($testimonial->avatar_path && !str_starts_with($testimonial->avatar_path, 'http') && !str_starts_with($testimonial->avatar_path, '//')) {
-                Storage::disk('public')->delete($testimonial->avatar_path);
+                try {
+                    Storage::disk('public')->delete($testimonial->avatar_path);
+                } catch (\Throwable $e) {}
             }
             $testimonial->avatar_path = $this->uploadAndConvertToWebP($request->file('avatar'), 'testimonials');
-        } elseif ($request->has('avatar_url')) {
+        } elseif ($request->filled('avatar_url')) {
             $testimonial->avatar_path = $request->input('avatar_url');
         }
 
