@@ -190,7 +190,6 @@
             flex: 1 1 0%;
             min-height: 0;
             height: calc(100vh - 70px);
-            max-height: calc(100vh - 70px);
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
@@ -4814,6 +4813,11 @@
             if (mobileBtn) {
                 mobileBtn.classList.add('active');
                 mobileBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+
+            const adminContent = document.querySelector('.admin-content');
+            if (adminContent) {
+                adminContent.scrollTop = 0;
             }
 
             // Save to localStorage as fallback
