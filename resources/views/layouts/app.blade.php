@@ -217,11 +217,11 @@
                 <ul class="nav-links">
                     <li><a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">About Us</a></li>
                     
-                    <li class="nav-dropdown-item">
+                    <li class="nav-dropdown-item mega-dropdown">
                         <a href="{{ route('services') }}" class="nav-item {{ request()->routeIs('services') || request()->routeIs('services.*') ? 'active' : '' }}">
                             Services <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 2px;"></i>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu mega-menu">
                             @foreach(($globalServices ?? collect()) as $gs)
                                 @php
                                     $gSlug = is_object($gs) ? $gs->slug : (is_array($gs) ? ($gs['slug'] ?? '') : '');
@@ -234,12 +234,12 @@
                         </ul>
                     </li>
 
-                    <li class="nav-dropdown-item">
+                    <li class="nav-dropdown-item mega-dropdown">
                         <a href="{{ route('treatments') }}" class="nav-item {{ request()->routeIs('treatments') || request()->routeIs('treatments.*') ? 'active' : '' }}">
                             Treatments <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 2px;"></i>
                         </a>
-                        <ul class="dropdown-menu">
-                            @foreach(($globalTreatments ?? collect())->take(8) as $gt)
+                        <ul class="dropdown-menu mega-menu mega-menu-wide">
+                            @foreach(($globalTreatments ?? collect()) as $gt)
                                 @php
                                     $gtSlug = is_object($gt) ? $gt->slug : (is_array($gt) ? ($gt['slug'] ?? '') : '');
                                     $gtName = is_object($gt) ? $gt->name : (is_array($gt) ? ($gt['name'] ?? '') : $gt);
@@ -248,9 +248,6 @@
                                     <li><a href="{{ route('treatments.show', $gtSlug) }}">{{ $gtName }}</a></li>
                                 @endif
                             @endforeach
-                            @if(($globalTreatments ?? collect())->count() > 8)
-                                <li><a href="{{ route('treatments') }}" style="font-weight: 700; color: var(--brand-blue);">View All Treatments →</a></li>
-                            @endif
                         </ul>
                     </li>
 
