@@ -20,6 +20,9 @@ Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you')
 Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/l/{slug}', [HomeController::class, 'landingShow'])->name('landing.show');
 
+// Unique Social Link Redirector (/s/{code})
+Route::get('/s/{code}', [App\Http\Controllers\MobileApiController::class, 'redirectShortLink'])->name('shortlink.redirect');
+
 // Clinic Treatments
 Route::get('/treatments', [HomeController::class, 'treatments'])->name('treatments');
 Route::get('/treatments/{slug}', [HomeController::class, 'treatmentDetail'])->name('treatments.show');

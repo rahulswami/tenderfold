@@ -404,6 +404,28 @@ try {
     $results['sitemap_live_sync'] = "FAIL ❌ " . $e->getMessage();
 }
 
+// ── 17. Social Links Table for Mobile App ───────────────────────────────
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `social_links` (
+        `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `code` varchar(255) NOT NULL,
+        `original_url` text NOT NULL,
+        `utm_source` varchar(255) NOT NULL DEFAULT 'social',
+        `utm_medium` varchar(255) NOT NULL DEFAULT 'post',
+        `utm_campaign` varchar(255) DEFAULT NULL,
+        `full_url` text NOT NULL,
+        `title` varchar(255) DEFAULT NULL,
+        `clicks` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+        `created_at` timestamp NULL DEFAULT NULL,
+        `updated_at` timestamp NULL DEFAULT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `social_links_code_unique` (`code`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    $results['social_links_table'] = "SOCIAL LINKS TABLE MIGRATED / VERIFIED ✅";
+} catch (Exception $e) {
+    $results['social_links_table'] = "FAIL ❌ " . $e->getMessage();
+}
+
 echo "Live database & system deployment results:\n";
 foreach ($results as $table => $status) {
     echo "- {$table}: {$status}\n";
