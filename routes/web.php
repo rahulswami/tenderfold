@@ -23,6 +23,14 @@ Route::get('/l/{slug}', [HomeController::class, 'landingShow'])->name('landing.s
 // Unique Social Link Redirector (/s/{code})
 Route::get('/s/{code}', [App\Http\Controllers\MobileApiController::class, 'redirectShortLink'])->name('shortlink.redirect');
 
+// Mobile Hybrid React App Web Route
+Route::get('/mobile-app', function () {
+    return response(file_get_contents(public_path('mobile-app/index.html')), 200)->header('Content-Type', 'text/html');
+})->name('mobile-app');
+Route::get('/mobile-app/{any}', function () {
+    return response(file_get_contents(public_path('mobile-app/index.html')), 200)->header('Content-Type', 'text/html');
+})->where('any', '.*');
+
 // Clinic Treatments
 Route::get('/treatments', [HomeController::class, 'treatments'])->name('treatments');
 Route::get('/treatments/{slug}', [HomeController::class, 'treatmentDetail'])->name('treatments.show');
