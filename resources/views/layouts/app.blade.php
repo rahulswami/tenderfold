@@ -39,8 +39,9 @@
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     @endif
 
-    <link rel="preload" as="style" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    @php $cssVer = file_exists(public_path('assets/css/style.css')) ? filemtime(public_path('assets/css/style.css')) : '1'; @endphp
+    <link rel="preload" as="style" href="{{ asset('assets/css/style.css') }}?v={{ $cssVer }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ $cssVer }}">
     @yield('styles')
 
     <!-- Google Tag (gtag.js) -->
