@@ -1076,6 +1076,19 @@
         if (window.location.search.includes('open_chat=1')) {
             toggleChatWidget();
         }
+
+        // Back-to-top button: show after 300px scroll
+        (function () {
+            const topBtn = document.getElementById('back-to-top-btn');
+            if (!topBtn) return;
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    topBtn.style.display = 'flex';
+                } else {
+                    topBtn.style.display = 'none';
+                }
+            }, { passive: true });
+        })();
     </script>
 </body>
 </html>
