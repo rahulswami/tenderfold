@@ -123,9 +123,19 @@
         padding: 80px 0;
     }
     @media (max-width: 900px) {
-        .hero-inner { grid-template-columns: 1fr; gap: 32px; padding: 60px 0 40px; }
+        .hero-inner { grid-template-columns: 1fr; gap: 24px; padding: 40px 0 32px; }
         .hero-visual-panel { display: none; }
-        .hero-slider-section, .slider-track { min-height: unset; }
+        .hero-slider-section { min-height: unset; }
+        .slider-track { min-height: unset; height: auto; }
+        .slide-item { position: relative; inset: unset; opacity: 1; pointer-events: auto; }
+        .slide-item:not(.active) { display: none; }
+        .slide-bg-img { position: absolute; inset: 0; height: 100%; }
+        .hero-h1 { font-size: clamp(24px, 7vw, 38px); }
+        .hero-desc { font-size: 15px; margin-bottom: 24px; }
+        .hero-btn-row { gap: 10px; margin-bottom: 28px; }
+        .hero-btn-primary, .hero-btn-secondary { padding: 13px 20px; font-size: 14px; width: 100%; justify-content: center; }
+        .hero-trust-strip { gap: 20px; }
+        .hero-trust-num { font-size: 22px; }
     }
     .hero-eyebrow-badge {
         display: inline-flex;
@@ -546,6 +556,13 @@
         text-overflow: ellipsis;
         display: block;
     }
+    /* ─── HOME APPOINTMENT SECTION ─────────────────────────────────── */
+    @media (max-width: 860px) {
+        .home-appt-grid {
+            grid-template-columns: 1fr !important;
+            gap: 32px !important;
+        }
+    }
 </style>
 @endsection
 
@@ -741,7 +758,7 @@
     {{-- ===== 2. APPOINTMENT BOOKING CARD ===== --}}
     <section class="section-spacing" id="appointment-section" style="background-color: var(--bg-surface);">
         <div class="container">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+        <div class="home-appt-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
                 <div>
                     <span class="badge badge-blue" style="margin-bottom: 12px;">Seamless Booking</span>
                     <h2 style="margin-bottom: 16px;">{{ $pageContents['home']['appointment']['heading'] ?? 'Book Your Priority Consultation with Dr. Sumit' }}</h2>
@@ -797,9 +814,9 @@
                         <button type="submit" class="btn btn-primary btn-full" style="margin-top: 8px;">
                             <i data-lucide="calendar"></i> Request Consultation Slot
                         </button>
-                    </form>
-                </div>
+                </form>
             </div>
+        </div>
         </div>
     </section>
 
