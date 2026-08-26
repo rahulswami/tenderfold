@@ -152,6 +152,12 @@ img {
     padding: 96px 0;
 }
 
+/* Prevent horizontal overflow globally */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
 @media (max-width: 991px) {
     .section-spacing { padding: 72px 0; }
 }
@@ -173,12 +179,13 @@ img {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
 }
 .top-bar-info {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 .top-bar-item {
     display: flex;
@@ -193,7 +200,8 @@ img {
 .top-bar-actions {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 .top-bar-link {
     color: #fff;
@@ -201,9 +209,31 @@ img {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
 }
 .top-bar-link:hover {
     color: var(--brand-blue-soft);
+}
+
+/* Mobile: collapse top-bar to compact 2-column grid */
+@media (max-width: 600px) {
+    .top-bar-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 12px;
+    }
+    .top-bar-info {
+        grid-column: 1 / -1;
+        gap: 10px;
+    }
+    .top-bar-actions {
+        grid-column: 1 / -1;
+        gap: 12px;
+    }
+    .top-bar-item span,
+    .top-bar-link {
+        font-size: 12px;
+    }
 }
 
 /* --- Header & Navigation --- */
@@ -1440,3 +1470,148 @@ img {
         height: 420px;
     }
 }
+
+/* ===================================================
+   DETAIL PAGES — MOBILE RESPONSIVE GRID FIXES
+   Targets: Treatment, Service, Specialist show pages
+   All use inline `display: grid; grid-template-columns: 1fr 340px`
+   or `grid-template-columns: 240px 1fr` — must stack on mobile.
+=================================================== */
+
+/* Utility class for 2-col detail page grids */
+.detail-page-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 48px;
+    align-items: start;
+}
+.specialist-hero-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 32px;
+    align-items: center;
+}
+
+@media (max-width: 860px) {
+    /* ── Treatment & Service: stack content + sidebar ── */
+    .detail-page-grid,
+    [style*="grid-template-columns: 1fr 340px"] {
+        display: block !important;
+    }
+    [style*="grid-template-columns: 1fr 340px"] > div:last-child {
+        position: static !important;
+        margin-top: 32px;
+    }
+
+    /* ── Specialist hero: photo above name ── */
+    .specialist-hero-grid,
+    [style*="grid-template-columns: 240px 1fr"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 20px !important;
+    }
+    [style*="grid-template-columns: 240px 1fr"] > div:first-child,
+    [style*="width: 240px; height: 280px"] {
+        width: 100% !important;
+        max-width: 280px !important;
+        height: 240px !important;
+    }
+
+    /* ── Sidebar: full-width on mobile ── */
+    [style*="position: sticky; top: 100px"] {
+        position: static !important;
+        width: 100% !important;
+    }
+
+    /* ── Accordion: larger tap targets ── */
+    .accordion-header {
+        padding: 16px 18px !important;
+        font-size: 15px !important;
+    }
+    .accordion-body {
+        padding: 0 18px 16px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    /* ── Hero breadcrumb: wrap properly ── */
+    [style*="display: flex; gap: 8px; align-items: center"] {
+        flex-wrap: wrap;
+    }
+
+    /* ── h1 on detail pages ── */
+    h1 {
+        font-size: clamp(26px, 8vw, 38px) !important;
+    }
+
+    /* ── Form cards: full-bleed ── */
+    .form-card {
+        border-radius: 12px;
+        padding: 20px 16px;
+    }
+
+    /* ── Booking sidebar buttons: full width ── */
+    .form-card .btn,
+    .location-card .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* ── Specialist hero photo: constrain ── */
+    [style*="width: 240px"] {
+        width: 100% !important;
+        max-width: 220px !important;
+    }
+}
+
+/* ===================================================
+   GOOGLE MOBILE SEO: Touch target minimums (48px)
+=================================================== */
+@media (max-width: 860px) {
+    .btn, button, a.btn, input[type="submit"] {
+        min-height: 48px;
+    }
+    .form-control {
+        min-height: 48px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    select.form-control {
+        font-size: 16px;
+    }
+
+    /* ── Floating buttons: always 52px on mobile ── */
+    .floating-action-btn {
+        width: 52px !important;
+        height: 52px !important;
+        min-width: 52px;
+        min-height: 52px;
+    }
+    .floating-action-btn.top-btn {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* ===================================================
+   GOOGLE MOBILE SEO: Font size legibility
+=================================================== */
+@media (max-width: 600px) {
+    body {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+    p {
+        font-size: 15px;
+    }
+    .nav-item {
+        font-size: 15px;
+    }
+    .top-bar {
+        font-size: 12px;
+    }
+}
+
