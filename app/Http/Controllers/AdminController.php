@@ -250,6 +250,8 @@ class AdminController extends Controller
             );
         }
 
+        \Illuminate\Support\Facades\Cache::forget('global_site_parameters');
+
         \App\Models\AdminNotification::log('edit', 'Site Parameters & Settings Updated', 'System configuration & site settings were saved.', route('admin.tab', 'general'));
 
         return redirect()->back()->with('success', 'Parameters and branding updated successfully!');

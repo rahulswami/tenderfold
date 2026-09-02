@@ -665,8 +665,20 @@
                         <span>{{ $site['address_hinjewadi'] ?? 'Atlanta Society, Hinjewadi, Pune - 411057' }}</span>
                     </div>
                     <div>
-                        <strong style="color: #fff; display: block; margin-bottom: 2px;">Helplines:</strong>
-                        <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" style="color: var(--brand-blue-soft); font-weight: 600;">{{ $site['phone_display'] ?? ($site['phone'] ?? '+91 95455 59434') }}</a>
+                        <strong style="color: #fff; display: block; margin-bottom: 6px;">Helplines:</strong>
+                        @php
+                            $footerHelplineRaw = $site['footer_helplines'] ?? '+91 8855950433, +91 9404963781, +91 9158143325, +91 9545559434';
+                            $footerHelplines = array_values(array_unique(array_filter(array_map('trim', preg_split('/[,\r\n]+/', $footerHelplineRaw)))));
+                        @endphp
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            @foreach($footerHelplines as $fHl)
+                                @php $cleanTel = preg_replace('/[^0-9\+]/', '', $fHl); @endphp
+                                <a href="tel:{{ $cleanTel }}" style="color: var(--brand-blue-soft); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--brand-blue-soft)'">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    <span>{{ $fHl }}</span>
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>

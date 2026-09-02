@@ -1245,7 +1245,7 @@
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 14px;">
                         <div><strong>Timings:</strong> Mon – Sat: 9:00 AM – 9:00 PM</div>
-                        <div><strong>Helpline:</strong> +91 95455 59434 / +91 88559 50433</div>
+                        <div><strong>Helpline:</strong> {{ $site['helpline_baner'] ?? '+91 95455 59434 / +91 88559 50433' }}</div>
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                         <a href="https://maps.google.com/?q=SumitZ+Clinic+Baner+Pune" target="_blank" class="btn btn-secondary btn-sm">
@@ -1287,7 +1287,7 @@
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 14px;">
                         <div><strong>Timings:</strong> Mon – Sat: 10:00 AM – 8:30 PM</div>
-                        <div><strong>Helpline:</strong> +91 94049 63781 / +91 91581 43325</div>
+                        <div><strong>Helpline:</strong> {{ $site['helpline_hinjewadi'] ?? '+91 94049 63781 / +91 91581 43325' }}</div>
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                         <a href="https://maps.google.com/?q=SumitZ+Clinic+Hinjewadi+Pune" target="_blank" class="btn btn-secondary btn-sm">

@@ -22,15 +22,64 @@
         <div class="container" style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: start;">
             <!-- Left Column: Locations & Phone Links -->
             <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Direct Clinic Helplines Card -->
+                <div class="location-card" style="background: linear-gradient(135deg, #ffffff 0%, #f4fbfb 100%); border: 1.5px solid var(--primary-teal, #146e78); box-shadow: 0 4px 16px rgba(20, 110, 120, 0.08);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                        <div style="background: var(--primary-teal, #146e78); color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i data-lucide="phone-call" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 18px; margin: 0; color: var(--navy-dark, #0d2a35); font-weight: 700;">Direct Clinic Helplines</h3>
+                            <span style="font-size: 13px; color: var(--muted-text);">Tap any number below for immediate assistance & appointments</span>
+                        </div>
+                    </div>
+                    
+                    @php
+                        $contactHelplinesRaw = $site['footer_helplines'] ?? '+91 8855950433, +91 9404963781, +91 9158143325, +91 9545559434';
+                        $contactHelplines = array_values(array_unique(array_filter(array_map('trim', preg_split('/[,\r\n]+/', $contactHelplinesRaw)))));
+                    @endphp
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 10px;">
+                        @foreach($contactHelplines as $cNum)
+                            @php 
+                                $cTel = preg_replace('/[^0-9\+]/', '', $cNum); 
+                                $label = '';
+                                if (str_contains($cNum, '88559') || str_contains($cNum, '95455')) {
+                                    $label = 'Baner';
+                                } elseif (str_contains($cNum, '94049') || str_contains($cNum, '91581')) {
+                                    $label = 'Hinjewadi';
+                                }
+                            @endphp
+                            <a href="tel:{{ $cTel }}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: white; border: 1px solid #d5ecee; border-radius: 8px; text-decoration: none; color: var(--navy-dark, #0d2a35); transition: all 0.2s; font-weight: 600; font-size: 14px;" onmouseover="this.style.borderColor='var(--primary-teal)'; this.style.boxShadow='0 2px 8px rgba(20,110,120,0.15)'" onmouseout="this.style.borderColor='#d5ecee'; this.style.boxShadow='none'">
+                                <span style="display: flex; align-items: center; gap: 8px;">
+                                    <i data-lucide="phone" style="width: 14px; height: 14px; color: var(--primary-teal);"></i>
+                                    {{ $cNum }}
+                                </span>
+                                @if($label)
+                                    <span style="font-size: 11px; padding: 2px 6px; background: rgba(20,110,120,0.1); color: var(--primary-teal); border-radius: 4px; font-weight: 700; text-transform: uppercase;">{{ $label }}</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+
                 <div class="location-card">
                     <h3 class="location-title">
                         <i data-lucide="map-pin" style="color: var(--primary-teal);"></i> Baner Clinic (Main Branch)
                     </h3>
                     <p style="font-size: 15px; color: var(--body-text); margin-bottom: 16px; line-height: 1.6;">
-                        First Floor, Krishna Avenue, Above Dominos Pizza, Main Baner Road, Baner, Pune, Maharashtra - 411045
+                        {{ $site['address_baner'] ?? 'First Floor, Krishna Avenue, Above Dominos Pizza, Main Baner Road, Baner, Pune, Maharashtra - 411045' }}
                     </p>
+                    @php
+                        $banerHelplineRaw = $site['helpline_baner'] ?? '+91 95455 59434 / +91 88559 50433';
+                        $banerHelplineNums = array_filter(array_map('trim', preg_split('/[\/\,]+/', $banerHelplineRaw)));
+                    @endphp
                     <div style="font-size: 14px; margin-bottom: 16px; color: var(--body-text);">
-                        <strong>Helpline:</strong> <a href="tel:+919545559434" style="color: var(--primary-teal); font-weight: 600;">+91 95455 59434</a> / <a href="tel:+918855950433" style="color: var(--primary-teal); font-weight: 600;">+91 88559 50433</a>
+                        <strong>Helpline:</strong>
+                        @foreach($banerHelplineNums as $idx => $bNum)
+                            @if($idx > 0) / @endif
+                            <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $bNum) }}" style="color: var(--primary-teal); font-weight: 600;">{{ $bNum }}</a>
+                        @endforeach
                     </div>
                     <a href="https://maps.google.com/?q=SumitZ+Clinic+Baner+Pune" target="_blank" class="btn btn-secondary btn-sm">
                         <i data-lucide="navigation"></i> Baner Directions
@@ -42,10 +91,18 @@
                         <i data-lucide="map-pin" style="color: var(--primary-teal);"></i> Hinjewadi Clinic
                     </h3>
                     <p style="font-size: 15px; color: var(--body-text); margin-bottom: 16px; line-height: 1.6;">
-                        Atlanta Society, Near Hinjewadi Phase 1 Circle, Hinjewadi, Pune, Maharashtra - 411057
+                        {{ $site['address_hinjewadi'] ?? 'Atlanta Society, Near Hinjewadi Phase 1 Circle, Hinjewadi, Pune, Maharashtra - 411057' }}
                     </p>
+                    @php
+                        $hinjewadiHelplineRaw = $site['helpline_hinjewadi'] ?? '+91 94049 63781 / +91 91581 43325';
+                        $hinjewadiHelplineNums = array_filter(array_map('trim', preg_split('/[\/\,]+/', $hinjewadiHelplineRaw)));
+                    @endphp
                     <div style="font-size: 14px; margin-bottom: 16px; color: var(--body-text);">
-                        <strong>Helpline:</strong> <a href="tel:+919404963781" style="color: var(--primary-teal); font-weight: 600;">+91 94049 63781</a> / <a href="tel:+919158143325" style="color: var(--primary-teal); font-weight: 600;">+91 91581 43325</a>
+                        <strong>Helpline:</strong>
+                        @foreach($hinjewadiHelplineNums as $idx => $hNum)
+                            @if($idx > 0) / @endif
+                            <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $hNum) }}" style="color: var(--primary-teal); font-weight: 600;">{{ $hNum }}</a>
+                        @endforeach
                     </div>
                     <a href="https://maps.google.com/?q=SumitZ+Clinic+Hinjewadi+Pune" target="_blank" class="btn btn-secondary btn-sm">
                         <i data-lucide="navigation"></i> Hinjewadi Directions

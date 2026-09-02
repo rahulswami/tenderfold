@@ -10,4 +10,14 @@ class SiteParameter extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = ['id', 'value', 'label', 'category'];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('global_site_parameters');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('global_site_parameters');
+        });
+    }
 }

@@ -1324,6 +1324,25 @@
                                 <label for="copyright_text">Footer Copyright Line</label>
                                 <input type="text" id="copyright_text" name="copyright_text" class="form-control" value="{{ $site['copyright_text'] ?? ('© ' . date('Y') . ' SumitZ Clinic. All Rights Reserved.') }}">
                             </div>
+                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--admin-border);">
+                                <label for="footer_helplines" style="font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="phone-call" style="width: 16px; height: 16px; color: var(--brand-blue);"></i> Footer Helpline Numbers
+                                </label>
+                                <textarea id="footer_helplines" name="footer_helplines" class="form-control" rows="2" placeholder="+91 8855950433, +91 9404963781, +91 9158143325">{{ $site['footer_helplines'] ?? '+91 8855950433, +91 9404963781, +91 9158143325, +91 9545559434' }}</textarea>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
+                                    Enter helpline numbers (comma or new-line separated) to show in the website footer and Contact Us page helpline sections.
+                                </span>
+                            </div>
+                            <div class="form-group">
+                                <label for="helpline_baner">Baner Clinic Helpline(s)</label>
+                                <input type="text" id="helpline_baner" name="helpline_baner" class="form-control" value="{{ $site['helpline_baner'] ?? '+91 95455 59434 / +91 88559 50433' }}">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Displayed under Baner Clinic branch card.</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="helpline_hinjewadi">Hinjewadi Clinic Helpline(s)</label>
+                                <input type="text" id="helpline_hinjewadi" name="helpline_hinjewadi" class="form-control" value="{{ $site['helpline_hinjewadi'] ?? '+91 94049 63781 / +91 91581 43325' }}">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Displayed under Hinjewadi Clinic branch card.</span>
+                            </div>
                         </div>
                     </div>
 
