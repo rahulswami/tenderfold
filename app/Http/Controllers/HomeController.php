@@ -75,10 +75,41 @@ class HomeController extends Controller
 
     public function blogShow($slug)
     {
+        // 1. Direct slug match
         $blog = \App\Models\Blog::where('slug', $slug)->first();
+
+        // 2. Normalized slug match (handle punctuation like "dr.", dashes, etc.)
+        if (!$blog) {
+            $normalized = strtolower($slug);
+            $normalized = str_replace(['dr.', 'dr-'], ['doctor', 'doctor-'], $normalized);
+            $cleanSlug = preg_replace('/[^a-z0-9\-]/', '', $normalized);
+            $blog = \App\Models\Blog::where('slug', $cleanSlug)->first();
+        }
+
+        // 3. Match by keyword or tag
+        if (!$blog) {
+            $term = str_replace(['-', '.'], ' ', $slug);
+            $blog = \App\Models\Blog::where('tags', 'LIKE', '%' . $term . '%')
+                ->orWhere('metakeywords', 'LIKE', '%' . $term . '%')
+                ->first();
+        }
+
+        // 4. Redirect if slug corresponds to a clinic Service or Treatment
+        if (!$blog) {
+            $service = \App\Models\Service::where('slug', $slug)->first();
+            if ($service) {
+                return redirect()->route('services.show', $slug, 301);
+            }
+            $treatment = \App\Models\Treatment::where('slug', $slug)->first();
+            if ($treatment) {
+                return redirect()->route('treatments.show', $slug, 301);
+            }
+        }
+
         if ($blog) {
             return view('blog.show', compact('blog'));
         }
+
         abort(404);
     }
 
