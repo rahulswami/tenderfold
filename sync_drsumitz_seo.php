@@ -149,32 +149,42 @@ foreach ($data['blogs'] as $b) {
     $slug = trim($b['slug'] ?? '');
     if (empty($slug)) continue;
 
-    $title = trim($b['title'] ?? '');
+    $title = trim($b['name'] ?? ($b['title'] ?? ''));
     $metaTitle = trim($b['metatitle'] ?? '');
     $metaDesc = trim($b['metadescription'] ?? '');
     $metaKeywords = trim($b['metakeywords'] ?? '');
-    $content = $b['content'] ?? '';
+    $tags = trim($b['tags'] ?? '') ?: $metaKeywords;
+    $content = $b['description'] ?? ($b['content'] ?? '');
     $image = $b['image'] ?? null;
+    $imagePath = !empty($image) ? (str_starts_with($image, 'uploads/') ? $image : 'uploads/product/' . $image) : null;
 
-    if (empty($metaTitle)) $metaTitle = $title;
+    if (empty($metaTitle)) $metaTitle = $title . ' | Dr. SumitZ Clinic';
     if (empty($metaDesc)) $metaDesc = Str::limit(strip_tags($content), 160);
+
+    $id = isset($b['id']) ? (int)$b['id'] : null;
+
+    $blogData = [
+        'title' => $title,
+        'category' => 'Orthopedics & Physiotherapy',
+        'image_path' => $imagePath,
+        'content' => $content,
+        'summary' => $metaDesc ?: Str::limit(strip_tags($content), 200),
+        'metatitle' => $metaTitle,
+        'metadescription' => $metaDesc,
+        'metakeywords' => $metaKeywords,
+        'tags' => $tags,
+        'published_at' => !empty($b['created_at']) ? $b['created_at'] : now(),
+        'updated_at' => !empty($b['updated_at']) ? $b['updated_at'] : now(),
+        'created_at' => !empty($b['created_at']) ? $b['created_at'] : now(),
+    ];
+
+    if ($id) {
+        $blogData['id'] = $id;
+    }
 
     DB::table('blogs')->updateOrInsert(
         ['slug' => $slug],
-        [
-            'title' => $title,
-            'category' => 'Orthopedics & Physiotherapy',
-            'image_path' => $image,
-            'content' => $content,
-            'summary' => Str::limit(strip_tags($content), 200),
-            'metatitle' => $metaTitle,
-            'metadescription' => $metaDesc,
-            'metakeywords' => $metaKeywords,
-            'tags' => $metaKeywords,
-            'published_at' => now(),
-            'updated_at' => now(),
-            'created_at' => now(),
-        ]
+        $blogData
     );
     $blogCount++;
 }

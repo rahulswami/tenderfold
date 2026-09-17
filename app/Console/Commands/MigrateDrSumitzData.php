@@ -73,12 +73,17 @@ class MigrateDrSumitzData extends Command
 
         // 3. Migrate Blogs
         $this->info('Migrating blogs...');
-        $stmt = $sourcePdo->query("SELECT * FROM blogs WHERE status = 1");
+        $stmt = $sourcePdo->query("SELECT * FROM blogs WHERE status = 1 ORDER BY id ASC");
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $content = $row['description'];
-            $summary = Str::limit(strip_tags($content), 150);
+            $metaDesc = trim($row['metadescription'] ?? '');
+            $summary = !empty($metaDesc) ? $metaDesc : Str::limit(strip_tags($content), 180);
+            $metaTitle = trim($row['metatitle'] ?? '') ?: ($row['name'] . ' | Dr. SumitZ Clinic');
+            $metaKeywords = trim($row['metakeywords'] ?? '');
+            $tags = trim($row['tags'] ?? '') ?: $metaKeywords;
             
             Blog::create([
+                'id' => (int)$row['id'],
                 'title' => $row['name'],
                 'slug' => $row['slug'],
                 'category' => 'Orthopedics & Physiotherapy',
@@ -86,7 +91,13 @@ class MigrateDrSumitzData extends Command
                 'content' => $content,
                 'image_path' => 'uploads/product/' . $row['image'],
                 'published_at' => $row['created_at'] ?: now(),
+                'created_at' => $row['created_at'] ?: now(),
+                'updated_at' => $row['updated_at'] ?: now(),
                 'schema_markup' => null,
+                'metatitle' => $metaTitle,
+                'metadescription' => $metaDesc ?: $summary,
+                'metakeywords' => $metaKeywords,
+                'tags' => $tags,
             ]);
         }
 
