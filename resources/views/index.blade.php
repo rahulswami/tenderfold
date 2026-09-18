@@ -69,14 +69,14 @@
         position: relative;
         background: var(--primary-navy);
         overflow: hidden;
-        min-height: 92vh;
+        min-height: 500px;
         display: flex;
         align-items: stretch;
     }
     .slider-track {
         position: relative;
         width: 100%;
-        min-height: 92vh;
+        min-height: 500px;
     }
     /* Every slide sits absolute/full-bleed inside the track */
     .slide-item {
@@ -100,6 +100,14 @@
         background: linear-gradient(120deg, rgba(7,26,46,0.92) 0%, rgba(0,133,200,0.18) 100%);
         z-index: 1;
     }
+    .slide-bg-pic {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        display: block;
+    }
     .slide-bg-img {
         position: absolute;
         inset: 0;
@@ -117,62 +125,64 @@
     }
     .hero-inner {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 56px;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 40px;
         align-items: center;
-        padding: 80px 0;
+        padding: 46px 0 42px;
     }
     @media (max-width: 900px) {
-        .hero-inner { grid-template-columns: 1fr; gap: 24px; padding: 40px 0 32px; }
+        .hero-inner { grid-template-columns: 1fr; gap: 16px; padding: 28px 0 24px; }
         .hero-visual-panel { display: none; }
         .hero-slider-section { min-height: unset; }
         .slider-track { min-height: unset; height: auto; }
         .slide-item { position: relative; inset: unset; opacity: 1; pointer-events: auto; }
         .slide-item:not(.active) { display: none; }
+        .slide-bg-pic { position: absolute; inset: 0; height: 100%; }
         .slide-bg-img { position: absolute; inset: 0; height: 100%; }
-        .hero-h1 { font-size: clamp(24px, 7vw, 38px); }
-        .hero-desc { font-size: 15px; margin-bottom: 24px; }
-        .hero-btn-row { gap: 10px; margin-bottom: 28px; }
-        .hero-btn-primary, .hero-btn-secondary { padding: 13px 20px; font-size: 14px; width: 100%; justify-content: center; }
-        .hero-trust-strip { gap: 20px; }
-        .hero-trust-num { font-size: 22px; }
+        .hero-h1 { font-size: clamp(22px, 6vw, 30px); margin-bottom: 10px; }
+        .hero-desc { font-size: 14px; margin-bottom: 18px; line-height: 1.5; }
+        .hero-btn-row { gap: 10px; margin-bottom: 20px; }
+        .hero-btn-primary, .hero-btn-secondary { padding: 11px 18px; font-size: 13.5px; width: 100%; justify-content: center; }
+        .hero-trust-strip { gap: 16px; }
+        .hero-trust-num { font-size: 20px; }
+        .hero-trust-lbl { font-size: 11px; }
     }
     .hero-eyebrow-badge {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         background: rgba(0,133,200,0.18);
         border: 1px solid rgba(0,133,200,0.4);
         color: #7DD3FC;
-        padding: 6px 16px;
+        padding: 5px 14px;
         border-radius: 999px;
-        font-size: 13px;
+        font-size: 12.5px;
         font-weight: 600;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
         letter-spacing: 0.3px;
     }
     .hero-h1 {
-        font-size: clamp(28px, 4vw, 52px);
+        font-size: clamp(26px, 3.4vw, 44px);
         font-weight: 800;
         color: #fff;
-        line-height: 1.15;
-        margin-bottom: 20px;
+        line-height: 1.18;
+        margin-bottom: 12px;
         letter-spacing: -0.5px;
     }
     .hero-h1 .highlight-blue { color: #38BDF8; }
     .hero-h1 .highlight-red { color: #FB7185; }
     .hero-desc {
-        font-size: 17px;
+        font-size: 15px;
         color: rgba(255,255,255,0.85);
-        line-height: 1.75;
-        margin-bottom: 32px;
-        max-width: 540px;
+        line-height: 1.6;
+        margin-bottom: 22px;
+        max-width: 520px;
     }
     .hero-btn-row {
         display: flex;
-        gap: 14px;
+        gap: 12px;
         flex-wrap: wrap;
-        margin-bottom: 40px;
+        margin-bottom: 26px;
     }
     .hero-btn-primary {
         display: inline-flex;
@@ -180,10 +190,10 @@
         gap: 8px;
         background: var(--brand-blue);
         color: #fff;
-        padding: 14px 28px;
+        padding: 12px 24px;
         border-radius: 8px;
         font-weight: 700;
-        font-size: 15px;
+        font-size: 14.5px;
         text-decoration: none;
         border: none;
         cursor: pointer;
@@ -196,10 +206,10 @@
         gap: 8px;
         background: rgba(255,255,255,0.1);
         color: #fff;
-        padding: 14px 28px;
+        padding: 12px 24px;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 15px;
+        font-size: 14.5px;
         text-decoration: none;
         border: 1px solid rgba(255,255,255,0.35);
         cursor: pointer;
@@ -208,19 +218,19 @@
     .hero-btn-secondary:hover { background: rgba(255,255,255,0.2); }
     .hero-trust-strip {
         display: flex;
-        gap: 32px;
+        gap: 26px;
         flex-wrap: wrap;
     }
     .hero-trust-item { color: rgba(255,255,255,0.9); }
     .hero-trust-num {
-        font-size: 26px;
+        font-size: 22px;
         font-weight: 800;
         color: #38BDF8;
         display: block;
         line-height: 1;
         margin-bottom: 2px;
     }
-    .hero-trust-lbl { font-size: 12.5px; color: rgba(255,255,255,0.65); font-weight: 500; }
+    .hero-trust-lbl { font-size: 11.5px; color: rgba(255,255,255,0.65); font-weight: 500; }
     /* Hero image panel */
     .hero-visual-panel { position: relative; }
     .hero-img-frame {
@@ -576,21 +586,33 @@
                 {{-- DB-managed slides --}}
                 @foreach($slides as $i => $slide)
                     <div class="slide-item {{ $i === 0 ? 'active' : '' }}" data-index="{{ $i }}">
-                        @if(!empty($slide->image_path))
-                            <img class="slide-bg-img"
-                                 src="{{ site_image($slide->image_path) }}"
-                                 alt="{{ $slide->title ?? 'SumitZ Clinic' }}"
-                                 {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
-                                 decoding="async"
-                                 width="1400" height="800">
-                        @else
-                            <img class="slide-bg-img"
-                                 src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=1400&q=80"
-                                 alt="SumitZ Orthopaedic Clinic"
-                                 {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
-                                 decoding="async"
-                                 width="1400" height="800">
-                        @endif
+                        <picture class="slide-bg-pic">
+                            @if(!empty($slide->mobile_image_path))
+                                <source media="(max-width: 768px)" srcset="{{ site_image($slide->mobile_image_path) }}">
+                            @endif
+                            @if(!empty($slide->image_path))
+                                <img class="slide-bg-img"
+                                     src="{{ site_image($slide->image_path) }}"
+                                     alt="{{ $slide->title ?? 'SumitZ Clinic' }}"
+                                     {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
+                                     decoding="async"
+                                     width="1400" height="700">
+                            @elseif(!empty($slide->mobile_image_path))
+                                <img class="slide-bg-img"
+                                     src="{{ site_image($slide->mobile_image_path) }}"
+                                     alt="{{ $slide->title ?? 'SumitZ Clinic' }}"
+                                     {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
+                                     decoding="async"
+                                     width="1400" height="700">
+                            @else
+                                <img class="slide-bg-img"
+                                     src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=1400&q=80"
+                                     alt="SumitZ Orthopaedic Clinic"
+                                     {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
+                                     decoding="async"
+                                     width="1400" height="700">
+                            @endif
+                        </picture>
                         <div class="hero-bg-overlay"></div>
                         <div class="slide-content-wrap">
                             <div class="container">
@@ -668,10 +690,12 @@
             @else
                 {{-- Fallback: no slides in DB yet — static hero --}}
                 <div class="slide-item active">
-                    <img class="slide-bg-img"
-                         src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=1400&q=80"
-                         alt="Dr. Sumit — Best Orthopedic Doctor Baner Pune"
-                         fetchpriority="high" decoding="async" width="1400" height="800">
+                    <picture class="slide-bg-pic">
+                        <img class="slide-bg-img"
+                             src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=1400&q=80"
+                             alt="Dr. Sumit — Best Orthopedic Doctor Baner Pune"
+                             fetchpriority="high" decoding="async" width="1400" height="700">
+                    </picture>
                     <div class="hero-bg-overlay"></div>
                     <div class="slide-content-wrap">
                         <div class="container">

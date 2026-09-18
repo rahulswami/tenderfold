@@ -1933,47 +1933,78 @@
 
             <!-- 3. HOMEPAGE SLIDER TAB -->
             <div class="tab-panel @if($activeTab === 'slider') active @endif" id="tab-slider">
-                <!-- Add New Slide -->
-                <div class="admin-card">
+                <!-- Add / Edit Slide Card -->
+                <div class="admin-card" id="slide-form-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
-                        <h2 style="margin: 0;">Add New Homepage Hero Slide</h2>
+                        <h2 style="margin: 0;" id="slide-form-title">Add New Homepage Hero Slide</h2>
                         <button type="button" class="btn-ai-sparkle" onclick="openAiModal('slider')" style="display: inline-flex; align-items: center; gap: 6px;">
                             <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i> Generate Slide via AI
                         </button>
                     </div>
-                    <form action="{{ route('admin.slides.store') }}" method="POST" enctype="multipart/form-data">
+                    <form id="slide-form" action="{{ route('admin.slides.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" name="id" id="slide_id" value="">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="slide_title">Slide Title</label>
+                                <label for="slide_title">Slide Title <span style="color:#ef4444;">*</span></label>
                                 <input type="text" id="slide_title" name="title" class="form-control" required placeholder="Enter slide main title">
                             </div>
                             <div class="form-group">
-                                <label for="slide_subtitle">Slide Subtitle</label>
+                                <label for="slide_subtitle">Slide Subtitle / Description</label>
                                 <input type="text" id="slide_subtitle" name="subtitle" class="form-control" placeholder="Enter slide supporting subtitle">
                             </div>
                             <div class="form-group">
                                 <label for="slide_btn_text">Button Text</label>
-                                <input type="text" id="slide_btn_text" name="button_text" class="form-control" placeholder="Get Free Consultation">
+                                <input type="text" id="slide_btn_text" name="button_text" class="form-control" placeholder="Book A Consultation Now">
                             </div>
                             <div class="form-group">
                                 <label for="slide_btn_link">Button Link</label>
                                 <input type="text" id="slide_btn_link" name="button_link" class="form-control" placeholder="#consultation">
                             </div>
                             <div class="form-group">
-                                <label for="slide_image">Slide Image (Upload File)</label>
-                                <input type="file" id="slide_image" name="image" class="form-control" accept="image/*">
-                                <div style="margin-top: 10px;">
-                                    <label for="slide_image_url">Or Paste Image URL</label>
-                                    <input type="text" id="slide_image_url" name="image_url" class="form-control" placeholder="https://images.mlgfinedge.com/your-image.webp">
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <label for="slide_sort">Sort Order</label>
                                 <input type="number" id="slide_sort" name="sort_order" class="form-control" value="0">
                             </div>
                         </div>
-                        <button type="submit" class="btn-submit" style="margin-top: 1rem;">Add Slide</button>
+
+                        <!-- Responsive Background Images Section -->
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border); border-radius: 12px; padding: 1.25rem; margin-top: 1rem; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1rem; margin-top: 0; margin-bottom: 0.75rem; color: var(--admin-text-main); display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="image" style="width: 18px; height: 18px; color: var(--mint-green);"></i> Slide Background Images (Desktop & Mobile)
+                            </h3>
+                            <div class="form-grid">
+                                <!-- Desktop Image -->
+                                <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px dashed var(--admin-border);">
+                                    <label for="slide_image" style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #38bdf8;">
+                                        <i data-lucide="monitor" style="width: 15px; height: 15px;"></i> Desktop Background Image
+                                    </label>
+                                    <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-bottom: 6px;">Recommended landscape aspect ratio (16:9, ~1920x900px)</span>
+                                    <input type="file" id="slide_image" name="image" class="form-control" accept="image/*">
+                                    <div style="margin-top: 8px;">
+                                        <label for="slide_image_url" style="font-size: 0.8rem;">Or Desktop Image URL</label>
+                                        <input type="text" id="slide_image_url" name="image_url" class="form-control" placeholder="https://pub-...r2.dev/desktop-hero.webp">
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Image -->
+                                <div class="form-group" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px dashed var(--admin-border);">
+                                    <label for="slide_mobile_image" style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #a78bfa;">
+                                        <i data-lucide="smartphone" style="width: 15px; height: 15px;"></i> Mobile Background Image
+                                    </label>
+                                    <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-bottom: 6px;">Recommended vertical ratio (9:16 or 4:5, ~750x1000px)</span>
+                                    <input type="file" id="slide_mobile_image" name="mobile_image" class="form-control" accept="image/*">
+                                    <div style="margin-top: 8px;">
+                                        <label for="slide_mobile_image_url" style="font-size: 0.8rem;">Or Mobile Image URL</label>
+                                        <input type="text" id="slide_mobile_image_url" name="mobile_image_url" class="form-control" placeholder="https://pub-...r2.dev/mobile-hero.webp">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; align-items: center; margin-top: 1rem;">
+                            <button type="submit" class="btn-submit" id="btn-slide-submit" style="width: auto;">Add Slide</button>
+                            <button type="button" class="btn-submit" id="btn-slide-cancel" style="display: none; background-color: var(--admin-input-bg); color: var(--admin-text-muted); width: auto;" onclick="resetSlideForm()">Cancel Edit</button>
+                        </div>
                     </form>
                 </div>
 
@@ -1984,7 +2015,8 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
+                                    <th>Desktop Image</th>
+                                    <th>Mobile Image</th>
                                     <th>Title</th>
                                     <th>Subtitle</th>
                                     <th>CTA Button</th>
@@ -1996,16 +2028,27 @@
                                 @forelse($slides as $slide)
                                     <tr>
                                         <td>
-                                            <div class="image-preview">
+                                            <div class="image-preview" style="width: 70px; height: 42px; border-radius: 6px; overflow: hidden; border: 1px solid var(--admin-border);">
                                                 @if($slide->image_path)
-                                                    <img src="{{ site_image($slide->image_path) }}" alt="Slide Preview">
+                                                    <img src="{{ site_image($slide->image_path) }}" alt="Desktop Slide" style="width: 100%; height: 100%; object-fit: cover;">
                                                 @else
-                                                    <span style="font-size:0.75rem; color:var(--admin-text-muted);">Generic Card</span>
+                                                    <span style="font-size:0.7rem; color:var(--admin-text-muted); display:flex; align-items:center; justify-content:center; height:100%;">Default</span>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="image-preview" style="width: 42px; height: 55px; border-radius: 6px; overflow: hidden; border: 1px solid var(--admin-border);">
+                                                @if($slide->mobile_image_path)
+                                                    <img src="{{ site_image($slide->mobile_image_path) }}" alt="Mobile Slide" style="width: 100%; height: 100%; object-fit: cover;">
+                                                @elseif($slide->image_path)
+                                                    <img src="{{ site_image($slide->image_path) }}" alt="Desktop Fallback" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.6;" title="Using Desktop fallback">
+                                                @else
+                                                    <span style="font-size:0.7rem; color:var(--admin-text-muted); display:flex; align-items:center; justify-content:center; height:100%;">Default</span>
                                                 @endif
                                             </div>
                                         </td>
                                         <td><strong>{{ $slide->title }}</strong></td>
-                                        <td>{{ Str::limit($slide->subtitle, 50) }}</td>
+                                        <td>{{ Str::limit($slide->subtitle, 45) }}</td>
                                         <td>
                                             @if($slide->button_text)
                                                 <span class="badge-webp" style="background-color: var(--accent-orange);">{{ $slide->button_text }} ({{ $slide->button_link }})</span>
@@ -2015,7 +2058,10 @@
                                         </td>
                                         <td>{{ $slide->sort_order }}</td>
                                         <td>
-                                            <div class="action-btns">
+                                            <div class="action-btns" style="display: flex; gap: 6px;">
+                                                <button type="button" class="btn-action edit" title="Edit Slide" onclick='editSlide(@json($slide))'>
+                                                    <i data-lucide="edit-2"></i>
+                                                </button>
                                                 <form action="{{ route('admin.slides.delete', $slide->id) }}" method="POST" onsubmit="return confirm('Delete this slide?')">
                                                     @csrf
                                                     <button type="submit" class="btn-action delete" title="Delete"><i data-lucide="trash-2"></i></button>
@@ -2025,7 +2071,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" style="text-align: center; color: var(--admin-text-muted);">No custom slides found. Showing default homepage layout as fallback.</td>
+                                        <td colspan="7" style="text-align: center; color: var(--admin-text-muted);">No custom slides found. Showing default homepage layout as fallback.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -6586,6 +6632,58 @@
             `;
             container.appendChild(faqRow);
             lucide.createIcons();
+        }
+
+        // Slide Edit functions
+        function editSlide(data) {
+            const form = document.getElementById('slide-form');
+            const title = document.getElementById('slide-form-title');
+            const submitBtn = document.getElementById('btn-slide-submit');
+            const cancelBtn = document.getElementById('btn-slide-cancel');
+
+            if (!form) return;
+
+            form.action = '/admin/slides/' + data.id + '/update';
+            document.getElementById('slide_id').value = data.id;
+            document.getElementById('slide_title').value = data.title || '';
+            document.getElementById('slide_subtitle').value = data.subtitle || '';
+            document.getElementById('slide_btn_text').value = data.button_text || '';
+            document.getElementById('slide_btn_link').value = data.button_link || '';
+            document.getElementById('slide_sort').value = data.sort_order || 0;
+            document.getElementById('slide_image_url').value = (data.image_path && data.image_path.startsWith('http')) ? data.image_path : '';
+            document.getElementById('slide_mobile_image_url').value = (data.mobile_image_path && data.mobile_image_path.startsWith('http')) ? data.mobile_image_path : '';
+
+            if (title) title.innerText = 'Edit Hero Slide: ' + (data.title || '');
+            if (submitBtn) submitBtn.innerText = '💾 Save Slide Changes';
+            if (cancelBtn) cancelBtn.style.display = 'inline-block';
+
+            const card = document.getElementById('slide-form-card');
+            if (card) card.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetSlideForm() {
+            const form = document.getElementById('slide-form');
+            const title = document.getElementById('slide-form-title');
+            const submitBtn = document.getElementById('btn-slide-submit');
+            const cancelBtn = document.getElementById('btn-slide-cancel');
+
+            if (!form) return;
+
+            form.action = "{{ route('admin.slides.store') }}";
+            document.getElementById('slide_id').value = '';
+            document.getElementById('slide_title').value = '';
+            document.getElementById('slide_subtitle').value = '';
+            document.getElementById('slide_btn_text').value = '';
+            document.getElementById('slide_btn_link').value = '';
+            document.getElementById('slide_sort').value = '0';
+            document.getElementById('slide_image_url').value = '';
+            document.getElementById('slide_mobile_image_url').value = '';
+            document.getElementById('slide_image').value = '';
+            document.getElementById('slide_mobile_image').value = '';
+
+            if (title) title.innerText = 'Add New Homepage Hero Slide';
+            if (submitBtn) submitBtn.innerText = 'Add Slide';
+            if (cancelBtn) cancelBtn.style.display = 'none';
         }
 
         // Testimonial Edit functions

@@ -265,6 +265,8 @@ class AdminController extends Controller
             'title' => 'required|string|max:255',
             'image' => 'nullable|image|max:5000',
             'image_url' => 'nullable|string',
+            'mobile_image' => 'nullable|image|max:5000',
+            'mobile_image_url' => 'nullable|string',
         ]);
 
         $imagePath = null;
@@ -274,6 +276,13 @@ class AdminController extends Controller
             $imagePath = $request->input('image_url');
         }
 
+        $mobileImagePath = null;
+        if ($request->hasFile('mobile_image')) {
+            $mobileImagePath = $this->uploadAndConvertToWebP($request->file('mobile_image'), 'slider');
+        } elseif ($request->filled('mobile_image_url')) {
+            $mobileImagePath = $request->input('mobile_image_url');
+        }
+
         HomeSlide::create([
             'title' => $request->title,
             'subtitle' => $request->subtitle,
@@ -281,6 +290,7 @@ class AdminController extends Controller
             'button_link' => $request->button_link,
             'sort_order' => $request->sort_order ?? 0,
             'image_path' => $imagePath,
+            'mobile_image_path' => $mobileImagePath,
         ]);
 
         return redirect()->back()->with('success', 'Slide added successfully!');
@@ -288,21 +298,37 @@ class AdminController extends Controller
 
     public function updateSlide(Request $request, $id)
     {
+        $this->checkPermission('slider');
         $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'nullable|image|max:5000',
             'image_url' => 'nullable|string',
+            'mobile_image' => 'nullable|image|max:5000',
+            'mobile_image_url' => 'nullable|string',
         ]);
 
         $slide = HomeSlide::findOrFail($id);
 
         if ($request->hasFile('image')) {
             if ($slide->image_path && !str_starts_with($slide->image_path, 'http') && !str_starts_with($slide->image_path, '//')) {
-                Storage::disk('public')->delete($slide->image_path);
+                try {
+                    Storage::disk('public')->delete($slide->image_path);
+                } catch (\Throwable $e) {}
             }
             $slide->image_path = $this->uploadAndConvertToWebP($request->file('image'), 'slider');
         } elseif ($request->has('image_url')) {
             $slide->image_path = $request->input('image_url');
+        }
+
+        if ($request->hasFile('mobile_image')) {
+            if ($slide->mobile_image_path && !str_starts_with($slide->mobile_image_path, 'http') && !str_starts_with($slide->mobile_image_path, '//')) {
+                try {
+                    Storage::disk('public')->delete($slide->mobile_image_path);
+                } catch (\Throwable $e) {}
+            }
+            $slide->mobile_image_path = $this->uploadAndConvertToWebP($request->file('mobile_image'), 'slider');
+        } elseif ($request->has('mobile_image_url')) {
+            $slide->mobile_image_path = $request->input('mobile_image_url');
         }
 
         $slide->update([
@@ -311,6 +337,8 @@ class AdminController extends Controller
             'button_text' => $request->button_text,
             'button_link' => $request->button_link,
             'sort_order' => $request->sort_order ?? 0,
+            'image_path' => $slide->image_path,
+            'mobile_image_path' => $slide->mobile_image_path,
         ]);
 
         return redirect()->back()->with('success', 'Slide updated successfully!');
@@ -325,6 +353,13 @@ class AdminController extends Controller
                 Storage::disk('public')->delete($slide->image_path);
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('Failed to delete slide image file: ' . $e->getMessage());
+            }
+        }
+        if ($slide->mobile_image_path && !str_starts_with($slide->mobile_image_path, 'http') && !str_starts_with($slide->mobile_image_path, '//')) {
+            try {
+                Storage::disk('public')->delete($slide->mobile_image_path);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to delete slide mobile image file: ' . $e->getMessage());
             }
         }
         $slide->delete();
