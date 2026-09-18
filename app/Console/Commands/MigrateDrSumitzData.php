@@ -142,22 +142,26 @@ class MigrateDrSumitzData extends Command
 
         // 6. Migrate Specialists (Teams)
         $this->info('Migrating specialists...');
-        $stmt = $sourcePdo->query("SELECT * FROM teams WHERE status = 1");
+        $stmt = $sourcePdo->query("SELECT * FROM teams WHERE name IS NOT NULL AND name != ''");
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $img = $row['image'] ?: '';
+            if (empty($img) && $row['slug'] == 'dr-ashwin-kumar-madavi') {
+                $img = '225300652_18_06_2025_03_43_03.jpg';
+            }
             TeamMember::create([
-                'name' => $row['name'],
-                'designation' => $row['designation'],
+                'name' => trim($row['name']),
+                'designation' => trim($row['designation'] ?: 'Specialist'),
                 'slug' => $row['slug'],
-                'image' => 'uploads/collection/' . $row['image'],
-                'description' => $row['description'],
-                'facebook' => $row['facebook'],
-                'twitter' => $row['twitter'],
-                'phone' => $row['phone'],
+                'image' => $img ? 'uploads/collection/' . $img : '',
+                'description' => $row['description'] ?: '',
+                'facebook' => $row['facebook'] ?: '',
+                'twitter' => $row['twitter'] ?: '',
+                'phone' => $row['phone'] ?: '',
                 'status' => true,
-                'metatitle' => $row['metatitle'],
-                'metadescription' => $row['metadescription'],
-                'metakeywords' => $row['metakeywords'],
-                'tags' => $row['tags'],
+                'metatitle' => $row['metatitle'] ?: (trim($row['name']) . ' | SumitZ Clinic'),
+                'metadescription' => $row['metadescription'] ?: '',
+                'metakeywords' => $row['metakeywords'] ?: '',
+                'tags' => $row['tags'] ?: '',
                 'schema_markup' => null,
             ]);
         }

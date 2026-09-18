@@ -380,13 +380,13 @@
                     <i data-lucide="message-circle"></i> WhatsApp
                 </a>
                 @if(!empty($site['social_instagram']))
-                    <a href="{{ $site['social_instagram'] }}" target="_blank" class="top-bar-link" title="Instagram @drsumitz" style="color: #e1306c; font-weight: 600;">
-                        <i data-lucide="instagram" style="width: 14px; height: 14px;"></i> Instagram
+                    <a href="{{ $site['social_instagram'] }}" target="_blank" style="color: white; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); vertical-align: middle; text-decoration: none; margin-left: 2px;" aria-label="Instagram @drsumitz" title="Follow Dr. Sumit on Instagram">
+                        {!! $site['social_instagram_svg'] ?? '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>' !!}
                     </a>
                 @endif
                 @if(!empty($site['social_facebook']))
-                    <a href="{{ $site['social_facebook'] }}" target="_blank" class="top-bar-link" title="Facebook Page" style="color: #1877f2;">
-                        <i data-lucide="facebook" style="width: 14px; height: 14px;"></i>
+                    <a href="{{ $site['social_facebook'] }}" target="_blank" style="color: white; background: #1877f2; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); vertical-align: middle; text-decoration: none; margin-left: 2px;" aria-label="Facebook" title="Facebook Page">
+                        {!! $site['social_facebook_svg'] ?? '<svg viewBox="0 0 24 24" width="15" height="15" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' !!}
                     </a>
                 @endif
             </div>
@@ -517,6 +517,18 @@
             <button class="btn btn-primary btn-full" onclick="toggleMobileDrawer(); openDialog('callback-dialog');">
                 <i data-lucide="calendar"></i> Request Appointment
             </button>
+            <div style="display: flex; gap: 12px; justify-content: center; margin-top: 16px;">
+                @if(!empty($site['social_instagram']))
+                    <a href="{{ $site['social_instagram'] }}" target="_blank" style="color: white; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.25);" aria-label="Instagram @drsumitz" title="Follow Dr. Sumit on Instagram">
+                        {!! $site['social_instagram_svg'] ?? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>' !!}
+                    </a>
+                @endif
+                @if(!empty($site['social_facebook']))
+                    <a href="{{ $site['social_facebook'] }}" target="_blank" style="color: white; background: #1877f2; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.25);" aria-label="Facebook" title="Facebook Page">
+                        {!! $site['social_facebook_svg'] ?? '<svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' !!}
+                    </a>
+                @endif
+            </div>
         </div>
     </div>
 

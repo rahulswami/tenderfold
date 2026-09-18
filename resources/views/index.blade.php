@@ -462,18 +462,18 @@
     .team-collage-box {
         background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
         border-radius: 20px;
-        padding: 28px 24px;
+        padding: 24px 20px;
         border: 1px solid var(--border-color);
         box-shadow: 0 12px 36px rgba(7, 26, 46, 0.08);
         text-align: center;
     }
     .team-collage-title {
-        font-size: 14px;
+        font-size: 13.5px;
         font-weight: 800;
         color: var(--heading-navy);
         letter-spacing: 1.5px;
         text-transform: uppercase;
-        margin-bottom: 24px;
+        margin-bottom: 18px;
         display: inline-block;
         padding: 6px 18px;
         background: rgba(0, 133, 200, 0.1);
@@ -481,11 +481,17 @@
     }
     .team-collage-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        max-height: 480px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+    @media (max-width: 991px) {
+        .team-collage-grid { grid-template-columns: repeat(3, 1fr); max-height: none; }
     }
     @media (max-width: 500px) {
-        .team-collage-grid { grid-template-columns: repeat(2, 1fr); }
+        .team-collage-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     }
     .team-collage-card {
         background: #ffffff;
@@ -494,11 +500,15 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         border: 1px solid var(--border-color);
         text-align: center;
-        transition: transform 0.25s ease;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
     }
     .team-collage-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 20px rgba(0, 133, 200, 0.15);
+        color: var(--brand-blue);
     }
     .team-collage-img {
         width: 100%;
@@ -507,21 +517,35 @@
         border-radius: 8px;
         margin-bottom: 6px;
         background: #e2e8f0;
+        display: block;
     }
     .team-collage-name {
-        font-size: 12.5px;
+        font-size: 11.5px;
         font-weight: 700;
         color: var(--heading-navy);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: block;
+        line-height: 1.3;
     }
     /* ─── HOME APPOINTMENT SECTION ─────────────────────────────────── */
+    #appointment-section {
+        padding: 44px 0 40px !important;
+    }
+    .home-appt-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+        align-items: center;
+    }
     @media (max-width: 860px) {
+        #appointment-section {
+            padding: 30px 0 24px !important;
+        }
         .home-appt-grid {
             grid-template-columns: 1fr !important;
-            gap: 32px !important;
+            gap: 24px !important;
         }
     }
 </style>
@@ -716,67 +740,67 @@
     </section>
 
     {{-- ===== 2. APPOINTMENT BOOKING CARD ===== --}}
-    <section class="section-spacing" id="appointment-section" style="background-color: var(--bg-surface);">
+    <section class="section-spacing" id="appointment-section" style="background-color: var(--bg-surface); padding: 44px 0 40px;">
         <div class="container">
-        <div class="home-appt-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+            <div class="home-appt-grid">
                 <div>
-                    <span class="badge badge-blue" style="margin-bottom: 12px;">Seamless Booking</span>
-                    <h2 style="margin-bottom: 16px;">{{ $pageContents['home']['appointment']['heading'] ?? 'Book Your Priority Consultation with Dr. Sumit' }}</h2>
-                    <p style="font-size: 16px; margin-bottom: 24px; color: var(--body-text);">
+                    <span class="badge badge-blue" style="margin-bottom: 10px;">Seamless Booking</span>
+                    <h2 style="margin-bottom: 12px; font-size: clamp(24px, 3vw, 32px);">{{ $pageContents['home']['appointment']['heading'] ?? 'Book Your Priority Consultation with Dr. Sumit' }}</h2>
+                    <p style="font-size: 15px; margin-bottom: 18px; color: var(--body-text); line-height: 1.6;">
                         {{ $pageContents['home']['appointment']['subtitle'] ?? 'Our clinical coordinators will help schedule your visit at our Baner, Balewadi, or Hinjewadi clinic. Fill in your details for a prompt callback.' }}
                     </p>
-                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 36px; height: 36px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700;">1</div>
-                            <span style="font-size: 15px; font-weight: 600; color: var(--heading-navy);">Submit your preferred service and contact details</span>
+                            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">1</div>
+                            <span style="font-size: 14.5px; font-weight: 600; color: var(--heading-navy);">Submit your preferred service and contact details</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 36px; height: 36px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
-                            <span style="font-size: 15px; font-weight: 600; color: var(--heading-navy);">Receive a confirmation call from our coordinator</span>
+                            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">2</div>
+                            <span style="font-size: 14.5px; font-weight: 600; color: var(--heading-navy);">Receive a confirmation call from our coordinator</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 36px; height: 36px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
-                            <span style="font-size: 15px; font-weight: 600; color: var(--heading-navy);">Visit Baner, Balewadi, or Hinjewadi clinic at your scheduled time</span>
+                            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">3</div>
+                            <span style="font-size: 14.5px; font-weight: 600; color: var(--heading-navy);">Visit Baner, Balewadi, or Hinjewadi clinic at your scheduled time</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-card">
+                <div class="form-card" style="padding: 24px 28px;">
                     <form action="{{ route('contact.submit') }}" method="POST">
                         @csrf
                         <input type="hidden" name="source" value="Homepage Booking Card">
-                        <div class="form-group">
-                            <label for="hp-name" class="form-label">Full Name</label>
-                            <input type="text" id="hp-name" name="name" class="form-control" placeholder="Enter your full name" required>
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="hp-name" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Full Name</label>
+                            <input type="text" id="hp-name" name="name" class="form-control" placeholder="Enter your full name" required style="height: 42px;">
                         </div>
-                        <div class="form-group">
-                            <label for="hp-phone" class="form-label">Phone Number</label>
-                            <input type="tel" id="hp-phone" name="phone" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="hp-phone" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Phone Number</label>
+                            <input type="tel" id="hp-phone" name="phone" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required style="height: 42px;">
                         </div>
-                        <div class="form-group">
-                            <label for="hp-service" class="form-label">Treatment / Service Needed</label>
-                            <select id="hp-service" name="service" class="form-control" required>
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="hp-service" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Treatment / Service Needed</label>
+                            <select id="hp-service" name="service" class="form-control" required style="height: 42px;">
                                 <option value="">-- Select Service --</option>
                                 @foreach($globalServices as $gs)
                                     <option value="{{ $gs->slug }}">{{ $gs->service_name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="hp-date" class="form-label">Preferred Appointment Date</label>
-                            <input type="date" id="hp-date" name="appointment_date" class="form-control">
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="hp-date" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Preferred Appointment Date</label>
+                            <input type="date" id="hp-date" name="appointment_date" class="form-control" style="height: 42px;">
                         </div>
                         @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
-                            <div class="form-group" style="display: flex; justify-content: center;">
+                            <div class="form-group" style="display: flex; justify-content: center; margin-bottom: 14px;">
                                 <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
                             </div>
                         @endif
-                        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 8px;">
+                        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 6px; height: 44px;">
                             <i data-lucide="calendar"></i> Request Consultation Slot
                         </button>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
         </div>
     </section>
 
@@ -813,10 +837,12 @@
                 @endforeach
             </div>
 
-            <div style="text-align: center; margin-top: 40px;">
+            <div style="text-align: center; margin-top: 40px; padding-bottom: 10px;">
                 <a href="{{ route('services') }}" class="btn btn-secondary btn-lg">View All Services</a>
             </div>
         </div>
+    </section>
+
     {{-- ===== CLINIC OVERVIEW & TEAM COLLAGE SECTION (Screenshot 3) ===== --}}
     <section class="section-spacing" style="background-color: var(--surface-white);">
         <div class="container">
@@ -848,24 +874,15 @@
                 <div class="team-collage-box">
                     <div class="team-collage-title">SUMITZ ORTHOPAEDIC TEAM</div>
                     <div class="team-collage-grid">
-                        @php
-                            $collageSlugs = ['dr-randhir-patil', 'dr-varun-agrawal', 'dr-sumit-gupta', 'dr-sachin-khalane', 'dr-ashish-ranade', 'dr-aniruddha-deshmukh', 'dr-pradnya-jagtap'];
-                            $collageDocs = $globalSpecialists->filter(function($d) use ($collageSlugs) {
-                                return in_array($d->slug, $collageSlugs);
-                            })->values();
-                            if ($collageDocs->isEmpty()) {
-                                $collageDocs = $globalSpecialists->take(7);
-                            }
-                        @endphp
-                        @foreach($collageDocs as $doc)
-                            <div class="team-collage-card">
+                        @foreach($globalSpecialists as $doc)
+                            <a href="{{ route('specialists.show', $doc->slug) }}" class="team-collage-card" title="{{ $doc->name }} ({{ $doc->designation }})">
                                 @if(!empty($doc->image))
                                     <img src="{{ site_image($doc->image) }}" alt="{{ $doc->name }}" class="team-collage-img" loading="lazy" decoding="async">
                                 @else
                                     <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80" alt="{{ $doc->name }}" class="team-collage-img" loading="lazy" decoding="async">
                                 @endif
                                 <span class="team-collage-name">{{ $doc->name }}</span>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                 </div>
