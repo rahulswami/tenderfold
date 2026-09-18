@@ -284,10 +284,19 @@ class AdminController extends Controller
         }
 
         HomeSlide::create([
+            'eyebrow' => $request->eyebrow,
             'title' => $request->title,
             'subtitle' => $request->subtitle,
             'button_text' => $request->button_text,
             'button_link' => $request->button_link,
+            'button_2_text' => $request->button_2_text,
+            'button_2_link' => $request->button_2_link,
+            'trust_1_num' => $request->trust_1_num,
+            'trust_1_label' => $request->trust_1_label,
+            'trust_2_num' => $request->trust_2_num,
+            'trust_2_label' => $request->trust_2_label,
+            'trust_3_num' => $request->trust_3_num,
+            'trust_3_label' => $request->trust_3_label,
             'sort_order' => $request->sort_order ?? 0,
             'image_path' => $imagePath,
             'mobile_image_path' => $mobileImagePath,
@@ -332,10 +341,19 @@ class AdminController extends Controller
         }
 
         $slide->update([
+            'eyebrow' => $request->eyebrow,
             'title' => $request->title,
             'subtitle' => $request->subtitle,
             'button_text' => $request->button_text,
             'button_link' => $request->button_link,
+            'button_2_text' => $request->button_2_text,
+            'button_2_link' => $request->button_2_link,
+            'trust_1_num' => $request->trust_1_num,
+            'trust_1_label' => $request->trust_1_label,
+            'trust_2_num' => $request->trust_2_num,
+            'trust_2_label' => $request->trust_2_label,
+            'trust_3_num' => $request->trust_3_num,
+            'trust_3_label' => $request->trust_3_label,
             'sort_order' => $request->sort_order ?? 0,
             'image_path' => $slide->image_path,
             'mobile_image_path' => $slide->mobile_image_path,

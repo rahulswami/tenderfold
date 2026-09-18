@@ -1936,7 +1936,10 @@
                 <!-- Add / Edit Slide Card -->
                 <div class="admin-card" id="slide-form-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
-                        <h2 style="margin: 0;" id="slide-form-title">Add New Homepage Hero Slide</h2>
+                        <div>
+                            <h2 style="margin: 0;" id="slide-form-title">Add New Homepage Hero Slide</h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 4px 0 0;">Manage your hero background images (desktop & mobile), title, description, buttons, and trust strip statistics.</p>
+                        </div>
                         <button type="button" class="btn-ai-sparkle" onclick="openAiModal('slider')" style="display: inline-flex; align-items: center; gap: 6px;">
                             <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i> Generate Slide via AI
                         </button>
@@ -1944,26 +1947,69 @@
                     <form id="slide-form" action="{{ route('admin.slides.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" id="slide_id" value="">
+                        
+                        <!-- Core Text Details -->
                         <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="slide_eyebrow">Eyebrow Badge Text</label>
+                                <input type="text" id="slide_eyebrow" name="eyebrow" class="form-control" placeholder="e.g. Best Orthopedic Doctor in Baner, Balewadi & Pune">
+                            </div>
                             <div class="form-group">
-                                <label for="slide_title">Slide Title <span style="color:#ef4444;">*</span></label>
-                                <input type="text" id="slide_title" name="title" class="form-control" required placeholder="Enter slide main title">
+                                <label for="slide_title">Slide Main Title <span style="color:#ef4444;">*</span> <small style="color:var(--admin-text-muted); font-weight:normal;">(supports &lt;span class="highlight-blue"&gt;)</small></label>
+                                <input type="text" id="slide_title" name="title" class="form-control" required placeholder="e.g. Dr Sumitz Orthopedic Clinic">
                             </div>
                             <div class="form-group">
                                 <label for="slide_subtitle">Slide Subtitle / Description</label>
-                                <input type="text" id="slide_subtitle" name="subtitle" class="form-control" placeholder="Enter slide supporting subtitle">
+                                <textarea id="slide_subtitle" name="subtitle" class="form-control" rows="2" placeholder="e.g. Best Orthopedic Clinic in Baner offering advanced joint care..."></textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="slide_btn_text">Button Text</label>
-                                <input type="text" id="slide_btn_text" name="button_text" class="form-control" placeholder="Book A Consultation Now">
+                        </div>
+
+                        <!-- CTA Buttons Configuration -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                            <h4 style="font-size: 0.9rem; margin: 0 0 0.75rem; color: var(--admin-text-main); display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="mouse-pointer-click" style="width: 15px; height: 15px; color: #38bdf8;"></i> Call-to-Action Buttons
+                            </h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="slide_btn_text">Primary Button Text</label>
+                                    <input type="text" id="slide_btn_text" name="button_text" class="form-control" placeholder="Book A Consultation Now">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slide_btn_link">Primary Button Link</label>
+                                    <input type="text" id="slide_btn_link" name="button_link" class="form-control" placeholder="#consultation">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slide_btn_2_text">Secondary Button Text</label>
+                                    <input type="text" id="slide_btn_2_text" name="button_2_text" class="form-control" placeholder="Call Clinic">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slide_btn_2_link">Secondary Button Link</label>
+                                    <input type="text" id="slide_btn_2_link" name="button_2_link" class="form-control" placeholder="tel:+919545559434">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="slide_btn_link">Button Link</label>
-                                <input type="text" id="slide_btn_link" name="button_link" class="form-control" placeholder="#consultation">
-                            </div>
-                            <div class="form-group">
-                                <label for="slide_sort">Sort Order</label>
-                                <input type="number" id="slide_sort" name="sort_order" class="form-control" value="0">
+                        </div>
+
+                        <!-- Trust Statistics Strip Configuration -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                            <h4 style="font-size: 0.9rem; margin: 0 0 0.75rem; color: var(--admin-text-main); display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="award" style="width: 15px; height: 15px; color: var(--mint-green);"></i> Trust Strip Statistics (Bottom Badges)
+                            </h4>
+                            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Stat 1 (Number / Label)</label>
+                                    <input type="text" id="slide_trust_1_num" name="trust_1_num" class="form-control" placeholder="20,000+" style="margin-bottom: 6px;">
+                                    <input type="text" id="slide_trust_1_label" name="trust_1_label" class="form-control" placeholder="Patients Recovered">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Stat 2 (Number / Label)</label>
+                                    <input type="text" id="slide_trust_2_num" name="trust_2_num" class="form-control" placeholder="15+ Yrs" style="margin-bottom: 6px;">
+                                    <input type="text" id="slide_trust_2_label" name="trust_2_label" class="form-control" placeholder="Clinical Experience">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Stat 3 (Number / Label)</label>
+                                    <input type="text" id="slide_trust_3_num" name="trust_3_num" class="form-control" placeholder="3 Locations" style="margin-bottom: 6px;">
+                                    <input type="text" id="slide_trust_3_label" name="trust_3_label" class="form-control" placeholder="Baner · Balewadi · Hinjewadi">
+                                </div>
                             </div>
                         </div>
 
@@ -1999,6 +2045,11 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="form-group" style="max-width: 200px;">
+                            <label for="slide_sort">Sort Order</label>
+                            <input type="number" id="slide_sort" name="sort_order" class="form-control" value="0">
                         </div>
 
                         <div style="display: flex; gap: 10px; align-items: center; margin-top: 1rem;">
@@ -6645,10 +6696,19 @@
 
             form.action = '/admin/slides/' + data.id + '/update';
             document.getElementById('slide_id').value = data.id;
+            document.getElementById('slide_eyebrow').value = data.eyebrow || '';
             document.getElementById('slide_title').value = data.title || '';
             document.getElementById('slide_subtitle').value = data.subtitle || '';
             document.getElementById('slide_btn_text').value = data.button_text || '';
             document.getElementById('slide_btn_link').value = data.button_link || '';
+            document.getElementById('slide_btn_2_text').value = data.button_2_text || '';
+            document.getElementById('slide_btn_2_link').value = data.button_2_link || '';
+            document.getElementById('slide_trust_1_num').value = data.trust_1_num || '';
+            document.getElementById('slide_trust_1_label').value = data.trust_1_label || '';
+            document.getElementById('slide_trust_2_num').value = data.trust_2_num || '';
+            document.getElementById('slide_trust_2_label').value = data.trust_2_label || '';
+            document.getElementById('slide_trust_3_num').value = data.trust_3_num || '';
+            document.getElementById('slide_trust_3_label').value = data.trust_3_label || '';
             document.getElementById('slide_sort').value = data.sort_order || 0;
             document.getElementById('slide_image_url').value = (data.image_path && data.image_path.startsWith('http')) ? data.image_path : '';
             document.getElementById('slide_mobile_image_url').value = (data.mobile_image_path && data.mobile_image_path.startsWith('http')) ? data.mobile_image_path : '';
@@ -6671,10 +6731,19 @@
 
             form.action = "{{ route('admin.slides.store') }}";
             document.getElementById('slide_id').value = '';
+            document.getElementById('slide_eyebrow').value = '';
             document.getElementById('slide_title').value = '';
             document.getElementById('slide_subtitle').value = '';
             document.getElementById('slide_btn_text').value = '';
             document.getElementById('slide_btn_link').value = '';
+            document.getElementById('slide_btn_2_text').value = '';
+            document.getElementById('slide_btn_2_link').value = '';
+            document.getElementById('slide_trust_1_num').value = '';
+            document.getElementById('slide_trust_1_label').value = '';
+            document.getElementById('slide_trust_2_num').value = '';
+            document.getElementById('slide_trust_2_label').value = '';
+            document.getElementById('slide_trust_3_num').value = '';
+            document.getElementById('slide_trust_3_label').value = '';
             document.getElementById('slide_sort').value = '0';
             document.getElementById('slide_image_url').value = '';
             document.getElementById('slide_mobile_image_url').value = '';

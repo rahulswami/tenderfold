@@ -124,15 +124,11 @@
         width: 100%;
     }
     .hero-inner {
-        display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: 40px;
-        align-items: center;
-        padding: 46px 0 42px;
+        max-width: 840px;
+        padding: 48px 0 44px;
     }
     @media (max-width: 900px) {
-        .hero-inner { grid-template-columns: 1fr; gap: 16px; padding: 28px 0 24px; }
-        .hero-visual-panel { display: none; }
+        .hero-inner { max-width: 100%; padding: 28px 0 24px; }
         .hero-slider-section { min-height: unset; }
         .slider-track { min-height: unset; height: auto; }
         .slide-item { position: relative; inset: unset; opacity: 1; pointer-events: auto; }
@@ -231,51 +227,6 @@
         margin-bottom: 2px;
     }
     .hero-trust-lbl { font-size: 11.5px; color: rgba(255,255,255,0.65); font-weight: 500; }
-    /* Hero image panel */
-    .hero-visual-panel { position: relative; }
-    .hero-img-frame {
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 24px 64px rgba(0,0,0,0.4);
-        aspect-ratio: 4/5;
-        max-height: 520px;
-    }
-    .hero-img-frame img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-float-badge {
-        position: absolute;
-        bottom: 28px;
-        left: -24px;
-        background: #fff;
-        border-radius: 12px;
-        padding: 14px 18px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-width: 220px;
-    }
-    .hero-float-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        background: var(--brand-blue-light);
-        color: var(--brand-blue);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-    .hero-rating-badge {
-        position: absolute;
-        top: 28px;
-        right: -16px;
-        background: #0A2540;
-        color: #fff;
-        border-radius: 12px;
-        padding: 10px 16px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        text-align: center;
-    }
     /* Slider Controls */
     .slider-nav-btn {
         position: absolute;
@@ -617,67 +568,72 @@
                         <div class="slide-content-wrap">
                             <div class="container">
                                 <div class="hero-inner">
-                                    <div>
-                                        <div class="hero-eyebrow-badge">
-                                            <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
-                                            {{ $pageContents['home']['hero']['eyebrow'] ?? 'Best Orthopedic Doctor in Baner, Balewadi & Pune' }}
-                                        </div>
+                                    <div class="hero-text-content">
+                                        @if(!empty($slide->eyebrow) || !empty($pageContents['home']['hero']['eyebrow']))
+                                            <div class="hero-eyebrow-badge">
+                                                <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
+                                                {{ !empty($slide->eyebrow) ? $slide->eyebrow : ($pageContents['home']['hero']['eyebrow'] ?? 'Best Orthopedic Doctor in Baner, Balewadi & Pune') }}
+                                            </div>
+                                        @endif
+
                                         <h1 class="hero-h1">
-                                            {!! $slide->title ?? ($pageContents['home']['hero']['title'] ?? 'Pune\'s Most Trusted <span class="highlight-blue">Orthopedic</span> &amp; Physiotherapy Expert') !!}
+                                            {!! !empty($slide->title) ? $slide->title : ($pageContents['home']['hero']['title'] ?? 'Pune\'s Most Trusted <span class="highlight-blue">Orthopedic</span> &amp; Physiotherapy Expert') !!}
                                         </h1>
-                                        <p class="hero-desc">
-                                            {{ $slide->subtitle ?? ($pageContents['home']['hero']['subtitle'] ?? 'Dr. Sumit offers world-class joint replacement, knee surgery, spine care, fracture treatment, and advanced physiotherapy at his clinics in Baner, Balewadi, and Hinjewadi, Pune.') }}
-                                        </p>
+
+                                        @if(!empty($slide->subtitle) || !empty($pageContents['home']['hero']['subtitle']))
+                                            <p class="hero-desc">
+                                                {{ !empty($slide->subtitle) ? $slide->subtitle : ($pageContents['home']['hero']['subtitle'] ?? 'Dr. Sumit offers world-class joint replacement, knee surgery, spine care, fracture treatment, and advanced physiotherapy at his clinics in Baner, Balewadi, and Hinjewadi, Pune.') }}
+                                            </p>
+                                        @endif
+
                                         <div class="hero-btn-row">
                                             @if(!empty($slide->button_text) && !empty($slide->button_link))
                                                 <a href="{{ $slide->button_link }}" class="hero-btn-primary">
                                                     <i data-lucide="calendar" style="width:18px;height:18px;"></i>
                                                     {{ $slide->button_text }}
                                                 </a>
+                                            @elseif(!empty($slide->button_text))
+                                                <button onclick="openDialog('callback-dialog');" class="hero-btn-primary">
+                                                    <i data-lucide="calendar" style="width:18px;height:18px;"></i>
+                                                    {{ $slide->button_text }}
+                                                </button>
                                             @else
                                                 <button onclick="openDialog('callback-dialog');" class="hero-btn-primary">
                                                     <i data-lucide="calendar" style="width:18px;height:18px;"></i>
                                                     Book Appointment
                                                 </button>
                                             @endif
-                                            <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="hero-btn-secondary">
-                                                <i data-lucide="phone" style="width:18px;height:18px;"></i>
-                                                Call Clinic
-                                            </a>
+
+                                            @if(!empty($slide->button_2_text) && !empty($slide->button_2_link))
+                                                <a href="{{ $slide->button_2_link }}" class="hero-btn-secondary">
+                                                    <i data-lucide="phone" style="width:18px;height:18px;"></i>
+                                                    {{ $slide->button_2_text }}
+                                                </a>
+                                            @elseif(!empty($slide->button_2_text))
+                                                <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="hero-btn-secondary">
+                                                    <i data-lucide="phone" style="width:18px;height:18px;"></i>
+                                                    {{ $slide->button_2_text }}
+                                                </a>
+                                            @else
+                                                <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="hero-btn-secondary">
+                                                    <i data-lucide="phone" style="width:18px;height:18px;"></i>
+                                                    Call Clinic
+                                                </a>
+                                            @endif
                                         </div>
+
                                         <div class="hero-trust-strip">
                                             <div class="hero-trust-item">
-                                                <span class="hero-trust-num">{{ $pageContents['home']['hero']['trust_1_num'] ?? '20,000+' }}</span>
-                                                <span class="hero-trust-lbl">{{ $pageContents['home']['hero']['trust_1_label'] ?? 'Patients Recovered' }}</span>
+                                                <span class="hero-trust-num">{{ !empty($slide->trust_1_num) ? $slide->trust_1_num : ($pageContents['home']['hero']['trust_1_num'] ?? '20,000+') }}</span>
+                                                <span class="hero-trust-lbl">{{ !empty($slide->trust_1_label) ? $slide->trust_1_label : ($pageContents['home']['hero']['trust_1_label'] ?? 'Patients Recovered') }}</span>
                                             </div>
                                             <div class="hero-trust-item">
-                                                <span class="hero-trust-num">{{ $pageContents['home']['hero']['trust_2_num'] ?? '15+ Yrs' }}</span>
-                                                <span class="hero-trust-lbl">{{ $pageContents['home']['hero']['trust_2_label'] ?? 'Clinical Experience' }}</span>
+                                                <span class="hero-trust-num">{{ !empty($slide->trust_2_num) ? $slide->trust_2_num : ($pageContents['home']['hero']['trust_2_num'] ?? '15+ Yrs') }}</span>
+                                                <span class="hero-trust-lbl">{{ !empty($slide->trust_2_label) ? $slide->trust_2_label : ($pageContents['home']['hero']['trust_2_label'] ?? 'Clinical Experience') }}</span>
                                             </div>
                                             <div class="hero-trust-item">
-                                                <span class="hero-trust-num">{{ $pageContents['home']['hero']['trust_3_num'] ?? '3 Locations' }}</span>
-                                                <span class="hero-trust-lbl">{{ $pageContents['home']['hero']['trust_3_label'] ?? 'Baner · Balewadi · Hinjewadi' }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="hero-visual-panel">
-                                        {{-- Panel intentionally minimal when slides are used; bg image is full-bleed --}}
-                                        <div style="text-align:right;">
-                                            <div style="display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:24px;backdrop-filter:blur(8px);max-width:280px;">
-                                                <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Why Choose Us</div>
-                                                @php $whyItems = [
-                                                    ['icon'=>'check-circle-2','text'=>'Board-Certified Orthopaedic Surgeon'],
-                                                    ['icon'=>'check-circle-2','text'=>'In-House Digital X-Ray & BMD'],
-                                                    ['icon'=>'check-circle-2','text'=>'Robotic-Assisted Joint Replacement'],
-                                                    ['icon'=>'check-circle-2','text'=>'Same-Day Appointment Available'],
-                                                    ['icon'=>'check-circle-2','text'=>'Insurance & Cashless Facility'],
-                                                ]; @endphp
-                                                @foreach($whyItems as $wi)
-                                                    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
-                                                        <i data-lucide="{{ $wi['icon'] }}" style="width:16px;height:16px;color:#38BDF8;flex-shrink:0;"></i>
-                                                        <span style="font-size:13.5px;color:rgba(255,255,255,0.9);">{{ $wi['text'] }}</span>
-                                                    </div>
-                                                @endforeach
+                                                <span class="hero-trust-num">{{ !empty($slide->trust_3_num) ? $slide->trust_3_num : ($pageContents['home']['hero']['trust_3_num'] ?? '3 Locations') }}</span>
+                                                <span class="hero-trust-lbl">{{ !empty($slide->trust_3_label) ? $slide->trust_3_label : ($pageContents['home']['hero']['trust_3_label'] ?? 'Baner · Balewadi · Hinjewadi') }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -700,7 +656,7 @@
                     <div class="slide-content-wrap">
                         <div class="container">
                             <div class="hero-inner">
-                                <div>
+                                <div class="hero-text-content">
                                     <div class="hero-eyebrow-badge">
                                         <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
                                         {{ $pageContents['home']['hero']['eyebrow'] ?? 'Best Orthopedic Doctor in Baner, Balewadi & Pune' }}
@@ -734,26 +690,6 @@
                                             <span class="hero-trust-num">{{ $pageContents['home']['hero']['trust_3_num'] ?? '3 Locations' }}</span>
                                             <span class="hero-trust-lbl">{{ $pageContents['home']['hero']['trust_3_label'] ?? 'Baner · Balewadi · Hinjewadi' }}</span>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="hero-visual-panel">
-                                    <div class="hero-img-frame">
-                                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80"
-                                             alt="Dr. Sumit — Orthopedic Surgeon Baner Pune"
-                                             fetchpriority="high" decoding="async" width="800" height="1000">
-                                    </div>
-                                    <div class="hero-float-badge">
-                                        <div class="hero-float-icon">
-                                            <i data-lucide="heart-pulse" style="width:20px;height:20px;"></i>
-                                        </div>
-                                        <div>
-                                            <strong style="font-size:14px;color:var(--heading-navy);display:block;">Multi-Specialty Care</strong>
-                                            <span style="font-size:12px;color:var(--muted-text);">Orthopedics · Spine · Sports</span>
-                                        </div>
-                                    </div>
-                                    <div class="hero-rating-badge">
-                                        <div style="color:#FBBF24;font-size:14px;margin-bottom:2px;">★★★★★</div>
-                                        <div style="font-size:11px;color:rgba(255,255,255,0.8);">500+ Google Reviews</div>
                                     </div>
                                 </div>
                             </div>
