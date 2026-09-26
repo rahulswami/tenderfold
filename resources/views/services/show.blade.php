@@ -1,184 +1,178 @@
 @extends('layouts.app')
 
-@section('title', ($service->metatitle ?? ($service->service_name . ' | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
-@section('meta_description', ($service->metadescription ?? $service->summary))
-@section('meta_keywords', ($service->metakeywords ?? ''))
-
-@section('schema')
-    @if(!empty($service->schema_markup))
-        {!! $service->schema_markup !!}
-    @else
-        <script type="application/ld+json">
-        {
-          "{{ '@' }}context": "https://schema.org",
-          "{{ '@graph' }}": [
-            {
-              "{{ '@type' }}": "MedicalProcedure",
-              "name": "{{ $service->service_name }}",
-              "description": "{{ $service->summary }}"
-            }
-          ]
-        }
-        </script>
-    @endif
-@endsection
+@section('title', $service->service_name . ' | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurugram')
+@section('meta_description', $service->summary . ' Doorstep collection across Gurugram. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.')
 
 @section('content')
+    @php
+        $serviceImages = [
+            'laundry-services' => 'assets/hands.jpg',
+            'dry-cleaning' => 'assets/suit.jpg',
+            'ironing' => 'assets/shirts.jpg',
+            'shoe-cleaning' => 'assets/shoe.jpg',
+            'carpet-cleaning' => 'assets/carpet.jpg',
+            'curtain-cleaning' => 'assets/curtain.jpg',
+        ];
+        $img = $serviceImages[$service->slug] ?? 'assets/whiteshirt.jpg';
+
+        $serviceRates = [
+            'laundry-services' => [
+                ['name' => 'Wash & Fold (Daily Wear)', 'price' => '₹80 / kg'],
+                ['name' => 'Wash & Steam Iron (Office Wear)', 'price' => '₹115 / kg'],
+                ['name' => 'Premium Laundry (Delicates & Linens)', 'price' => '₹185 / kg'],
+            ],
+            'dry-cleaning' => [
+                ['name' => 'Shirt / T-Shirt / Top', 'price' => 'From ₹130'],
+                ['name' => 'Trousers / Jeans / Chinos', 'price' => 'From ₹150'],
+                ['name' => 'Saree (Silk / Georgette)', 'price' => 'From ₹230'],
+                ['name' => '2-Piece Men’s Suit / Blazer', 'price' => 'From ₹400'],
+                ['name' => 'Heavy Bridal Lehenga / Sherwani', 'price' => 'From ₹550'],
+            ],
+            'ironing' => [
+                ['name' => 'Shirt / T-Shirt (Steam Pressed)', 'price' => 'From ₹19 / pc'],
+                ['name' => 'Trouser / Kurta', 'price' => 'From ₹25 / pc'],
+                ['name' => 'Saree / Heavy Garment', 'price' => 'From ₹65 / pc'],
+                ['name' => 'Wash & Iron Bulk Plan', 'price' => '₹115 / kg'],
+            ],
+            'shoe-cleaning' => [
+                ['name' => 'Sneakers / Sports Shoes', 'price' => '₹350 / pair'],
+                ['name' => 'Leather Shoes & Formal Loafers', 'price' => '₹450 / pair'],
+                ['name' => 'Suede / Luxury Boots', 'price' => '₹550 / pair'],
+            ],
+            'carpet-cleaning' => [
+                ['name' => 'Standard Floor Rugs', 'price' => '₹25 / sq.ft'],
+                ['name' => 'Wool & Persian Carpets', 'price' => '₹35 / sq.ft'],
+                ['name' => 'Large Living Area Carpets', 'price' => 'Quoted on size'],
+            ],
+            'curtain-cleaning' => [
+                ['name' => 'Single Window Drape (Unlined)', 'price' => 'From ₹230 / panel'],
+                ['name' => 'Floor Length Blackout / Velvet Curtain', 'price' => 'From ₹350 / panel'],
+                ['name' => 'Sheer & Net Curtains', 'price' => 'From ₹180 / panel'],
+            ]
+        ];
+
+        $ratesList = $serviceRates[$service->slug] ?? [
+            ['name' => 'Standard Care', 'price' => $service->rate_value],
+            ['name' => 'Express Same-Day Option', 'price' => 'Available on request']
+        ];
+    @endphp
 
     <!-- Hero Header -->
-    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 56px 0 40px;">
-        <div class="container" style="max-width: 1000px;">
-            <div style="font-size: 14px; color: var(--muted-text); margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
-                <a href="{{ route('home') }}">Home</a> /
-                <a href="{{ route('services') }}">Services</a> /
-                <span style="color: var(--primary-teal); font-weight: 600;">{{ $service->service_name }}</span>
-            </div>
-            <span class="badge badge-teal" style="margin-bottom: 12px;">{{ $service->hero_category ?? 'Clinical Facility' }}</span>
-            <h1 style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px;">{{ $service->hero_title ?? $service->service_name }}</h1>
-            <p style="font-size: 17.5px; color: var(--body-text); line-height: 1.7; max-width: 760px;">
-                {{ $service->hero_subtitle ?? $service->summary }}
-            </p>
+    <section class="bg-cream">
+      <div class="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
+        <div class="reveal">
+          <p class="text-sm font-semibold text-mute">
+            <a href="{{ route('home') }}" class="transition hover:text-navy">Home</a> <span aria-hidden="true">/</span> 
+            <a href="{{ route('services') }}" class="transition hover:text-navy">Services</a> <span aria-hidden="true">/</span> 
+            <span class="text-navy">{{ $service->service_name }}</span>
+          </p>
+          <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">{{ $service->hero_category ?? 'Tender Fold Care' }}</p>
+          <h1 class="mt-3 font-display text-4xl font-extrabold leading-tight text-navy sm:text-5xl">{{ $service->hero_title ?: $service->service_name }}</h1>
+          <p class="mt-4 text-lg leading-relaxed text-mute">{{ $service->hero_subtitle ?: $service->summary }}</p>
+          <p class="mt-4 font-display text-2xl font-extrabold text-navy">{{ $service->rate_value }}</p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button type="button" data-open-book data-service="{{ $service->service_name }}" class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep shadow-md">Schedule a Pickup</button>
+            <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">See rate card</a>
+          </div>
         </div>
+        <div class="reveal overflow-hidden rounded-[2rem] shadow-lift" style="animation-delay:80ms">
+          <img src="{{ asset($img) }}" alt="{{ $service->service_name }}" class="h-72 w-full object-cover sm:h-96 lg:h-[28rem]">
+        </div>
+      </div>
     </section>
 
-    <!-- Main Content & Sidebar Layout -->
-    <section class="section-spacing" style="background-color: var(--warm-ivory);">
-        <div class="container" style="display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start;">
-            <div>
-                <!-- Featured Image -->
-                <div style="border-radius: var(--radius-xl); overflow: hidden; margin-bottom: 36px; box-shadow: var(--shadow-md); aspect-ratio: 16/9; background-color: var(--mist-blue);">
-                    @if(!empty($service->image_path))
-                        <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    @else
-                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80" alt="{{ $service->service_name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    @endif
-                </div>
-
-                <div style="font-size: 16.5px; line-height: 1.8; color: var(--body-text);">
-                    <h2 style="font-size: 26px; margin-bottom: 16px;">{{ $service->intro_title ?? 'Overview & Facilities' }}</h2>
-                    {!! $service->intro_content !!}
-
-                    @if($service->eligibility_criteria)
-                        <div style="background-color: var(--surface-white); border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--border-color); margin: 32px 0;">
-                            <h3 style="font-size: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                <i data-lucide="check-circle" style="color: var(--primary-teal);"></i> Who Should Consider This Service
-                            </h3>
-                            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px;">
-                                @foreach(explode("\n", str_replace("\r", "", $service->eligibility_criteria)) as $item)
-                                    @if(trim($item))
-                                        <li style="display: flex; align-items: flex-start; gap: 8px;">
-                                            <i data-lucide="check" style="color: var(--primary-teal); width: 18px; margin-top: 3px;"></i>
-                                            <span>{{ trim($item) }}</span>
-                                        </li>
-                                    @endif
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    @if($service->tips_title)
-                        <h2 style="font-size: 24px; margin: 36px 0 16px;">{{ $service->tips_title }}</h2>
-                        {!! $service->tips_content !!}
-                    @endif
-
-                    @php
-                        $serviceFaqs = parse_faqs($service->faqs, $service->service_name);
-                    @endphp
-                    @if(!empty($serviceFaqs))
-                        <div style="margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border-color);">
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-                                <span class="badge badge-teal" style="font-size: 12px;">Patient Queries</span>
-                                <h2 style="font-size: 24px; margin: 0;">Frequently Asked Questions</h2>
-                            </div>
-                            <div class="accordion">
-                                @foreach($serviceFaqs as $index => $faq)
-                                    <div class="accordion-item {{ $index === 0 ? 'active' : '' }}" style="background: var(--surface-white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden;">
-                                        <button class="accordion-header" onclick="toggleAccordion(this)" style="width: 100%; text-align: left; padding: 18px 24px; background: none; border: none; font-size: 16.5px; font-weight: 600; color: var(--navy-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
-                                            <span>{{ $faq['question'] }}</span>
-                                            <i data-lucide="chevron-down" style="width: 20px; flex-shrink: 0; transition: transform 0.2s ease;"></i>
-                                        </button>
-                                        <div class="accordion-body" style="padding: 0 24px 20px; font-size: 15px; color: var(--body-text); line-height: 1.7; display: {{ $index === 0 ? 'block' : 'none' }};">
-                                            {{ $faq['answer'] }}
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        {{-- Google FAQPage Schema Markup --}}
-                        <script type="application/ld+json">
-                        {
-                            "{{ '@' }}context": "https://schema.org",
-                            "{{ '@' }}type": "FAQPage",
-                            "mainEntity": [
-                                @foreach($serviceFaqs as $index => $faq)
-                                {
-                                    "{{ '@' }}type": "Question",
-                                    "name": "{{ addslashes($faq['question']) }}",
-                                    "acceptedAnswer": {
-                                        "{{ '@' }}type": "Answer",
-                                        "text": "{{ addslashes($faq['answer']) }}"
-                                    }
-                                }{{ $index < count($serviceFaqs) - 1 ? ',' : '' }}
-                                @endforeach
-                            ]
-                        }
-                        </script>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Sticky Booking Sidebar -->
-            <div style="position: sticky; top: 100px;">
-                <div class="form-card" style="margin-bottom: 24px;">
-                    <h3 style="font-size: 20px; margin-bottom: 8px;">Request Consultation</h3>
-                    <p style="font-size: 13.5px; color: var(--muted-text); margin-bottom: 20px;">Schedule your visit for {{ $service->service_name }}.</p>
-                    <form action="{{ route('contact.submit') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="source" value="Service Page Form: {{ $service->service_name }}">
-                        <input type="hidden" name="service" value="{{ $service->slug }}">
-                        <div class="form-group">
-                            <label for="sbs-name" class="form-label">Full Name</label>
-                            <input type="text" id="sbs-name" name="name" class="form-control" placeholder="Enter full name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="sbs-phone" class="form-label">Phone Number</label>
-                            <input type="tel" id="sbs-phone" name="phone" class="form-control" placeholder="10-digit number" pattern="[0-9]{10}" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 8px;">
-                            <i data-lucide="calendar"></i> Book Consultation
-                        </button>
-                    </form>
-                </div>
-
-                <div class="location-card" style="padding: 24px;">
-                    <h4 style="font-size: 16px; margin-bottom: 8px;">Direct Clinic Helpline</h4>
-                    <p style="font-size: 13.5px; color: var(--body-text); margin-bottom: 16px;">Speak directly with our clinical coordinator.</p>
-                    <a href="tel:+919545559434" class="btn btn-secondary btn-full btn-sm">
-                        <i data-lucide="phone"></i> Call +91 95455 59434
-                    </a>
-                </div>
-            </div>
+    <!-- Handling & Process -->
+    <section class="bg-white py-16 md:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal max-w-2xl">
+          <h2 class="font-display text-3xl font-extrabold text-navy">How {{ $service->service_name }} is handled</h2>
+          <div class="mt-4 text-mute leading-relaxed text-base">
+            @if($service->intro_content)
+              {!! $service->intro_content !!}
+            @else
+              <p>Every piece is inspected for fabric type, color stability, and stains before selecting the optimal gentle cleaning path.</p>
+            @endif
+          </div>
         </div>
+
+        <div class="mt-10 grid gap-5 md:grid-cols-3">
+          <article class="reveal rounded-3xl bg-cream p-6 shadow-card" style="animation-delay:0ms">
+            <p class="font-display text-sm font-extrabold text-gold-deep">01</p>
+            <h3 class="mt-2 font-display text-xl font-extrabold text-navy">Fabric &amp; Color Sorted</h3>
+            <p class="mt-2 text-sm leading-relaxed text-mute">Lights, darks, and delicate embroidery stay in dedicated cycles so colors remain vibrant and unblemished.</p>
+          </article>
+          <article class="reveal rounded-3xl bg-cream p-6 shadow-card" style="animation-delay:80ms">
+            <p class="font-display text-sm font-extrabold text-gold-deep">02</p>
+            <h3 class="mt-2 font-display text-xl font-extrabold text-navy">Boutique Finish</h3>
+            <p class="mt-2 text-sm leading-relaxed text-mute">Delivered folded crisp or hung on custom hangers in breathable protective covers ready for your wardrobe.</p>
+          </article>
+          <article class="reveal rounded-3xl bg-cream p-6 shadow-card" style="animation-delay:160ms">
+            <p class="font-display text-sm font-extrabold text-gold-deep">03</p>
+            <h3 class="mt-2 font-display text-xl font-extrabold text-navy">Single Doorstep Pickup</h3>
+            <p class="mt-2 text-sm leading-relaxed text-mute">All items—from everyday laundry to shoes, rugs, and formal dry cleaning—can be collected together.</p>
+          </article>
+        </div>
+      </div>
     </section>
 
-    <script>
-        function toggleAccordion(button) {
-            const item = button.parentElement;
-            const body = item.querySelector('.accordion-body');
-            const isActive = item.classList.contains('active');
-            
-            document.querySelectorAll('.accordion-item').forEach(el => {
-                el.classList.remove('active');
-                const b = el.querySelector('.accordion-body');
-                if (b) b.style.display = 'none';
-            });
-            
-            if (!isActive) {
-                item.classList.add('active');
-                if (body) body.style.display = 'block';
-            }
-        }
-    </script>
+    <!-- Published Rates Table & Offer -->
+    <section class="bg-cream py-16 md:py-20">
+      <div class="mx-auto grid max-w-7xl items-start gap-8 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+        <div class="reveal overflow-hidden rounded-3xl bg-white shadow-card">
+          <header class="bg-navy px-6 py-5 text-white">
+            <h2 class="font-display text-xl font-extrabold">Published rates</h2>
+            <p class="text-sm text-white/70">{{ $service->service_name }}</p>
+          </header>
+          <ul class="text-sm divide-y divide-navy/5">
+            @foreach($ratesList as $rItem)
+              <li class="flex items-center justify-between gap-3 px-6 py-3.5">
+                <span class="font-medium text-ink">{{ $rItem['name'] }}</span>
+                <span class="font-display font-extrabold text-navy">{{ $rItem['price'] }}</span>
+              </li>
+            @endforeach
+          </ul>
+        </div>
+        <div class="reveal rounded-3xl bg-navy p-8 text-white shadow-lift" style="animation-delay:80ms">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Before we collect</p>
+          <h3 class="mt-2 font-display text-2xl font-extrabold">20% off your first pickup</h3>
+          <p class="mt-3 text-sm leading-relaxed text-white/80">Experience Tender Fold's premium care with 20% off your initial order and 100% free doorstep pickup and delivery across Gurugram.</p>
+          <button type="button" data-open-book data-service="{{ $service->service_name }}" class="mt-6 inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep shadow-md">Book {{ $service->service_name }}</button>
+        </div>
+      </div>
+    </section>
 
+    <!-- Other Services in the same pickup -->
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 class="reveal font-display text-2xl font-extrabold text-navy">Other services in the same pickup</h2>
+        <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          @foreach($allServices as $otherSrv)
+            @if($otherSrv->id !== $service->id)
+              <a href="{{ route('services.show', $otherSrv->slug) }}" class="group flex items-center justify-between gap-3 rounded-2xl bg-white px-5 py-4 shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lift border border-navy/5">
+                <span>
+                  <span class="block font-display text-base font-extrabold text-navy group-hover:text-gold transition">{{ $otherSrv->service_name }}</span>
+                  <span class="text-sm text-mute">{{ $otherSrv->rate_value }}</span>
+                </span>
+                <span class="text-navy transition group-hover:translate-x-1 group-hover:text-gold" aria-hidden="true">→</span>
+              </a>
+            @endif
+          @endforeach
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Banner -->
+    <section class="bg-navy">
+      <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center lg:px-8">
+        <div class="max-w-xl">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Free pickup &amp; delivery</p>
+          <h2 class="mt-2 font-display text-3xl font-extrabold text-white">Send {{ strtolower($service->service_name) }} with the next collection.</h2>
+          <p class="mt-2 text-sm leading-relaxed text-white/75">Call {{ $site['phone_display'] ?? $site['phone'] ?? '+91 95824 66445' }} or leave a pickup request. We confirm the window on WhatsApp from Sector 49 or Sector 83.</p>
+        </div>
+        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <button type="button" data-open-book data-service="{{ $service->service_name }}" class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep shadow-md">Schedule a Pickup</button>
+          <a href="tel:{{ preg_replace('/[^0-9+]/', '', $site['phone'] ?? '+919582466445') }}" class="inline-flex items-center justify-center rounded-full border-2 border-white/25 px-6 py-3.5 font-display text-sm font-extrabold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-navy">Call {{ $site['phone_display'] ?? $site['phone'] ?? '+91 95824 66445' }}</a>
+        </div>
+      </div>
+    </section>
 @endsection

@@ -96,7 +96,7 @@ class AdminController extends Controller
             $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
             $hasR2 = !empty($r2PublicUrl) && !empty(trim(SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value') ?? ''));
             if (empty($r2PublicUrl)) {
-                $r2PublicUrl = 'https://images.mlgfinedge.com';
+                $r2PublicUrl = 'https://images.tenderfold.in';
             }
             $r2PublicUrl = rtrim($r2PublicUrl, '/');
 
@@ -758,7 +758,7 @@ class AdminController extends Controller
         $extension = $file->getClientOriginalExtension();
         $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
         if (empty($r2PublicUrl)) {
-            $r2PublicUrl = 'https://images.mlgfinedge.com';
+            $r2PublicUrl = 'https://images.tenderfold.in';
         }
         $r2PublicUrl = rtrim($r2PublicUrl, '/');
         
@@ -1754,7 +1754,7 @@ User prompt: {$prompt}";
 
             $r2PublicUrl = SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value');
             if (empty($r2PublicUrl)) {
-                $r2PublicUrl = 'https://images.mlgfinedge.com';
+                $r2PublicUrl = 'https://images.tenderfold.in';
             }
             $r2PublicUrl = rtrim($r2PublicUrl, '/');
 

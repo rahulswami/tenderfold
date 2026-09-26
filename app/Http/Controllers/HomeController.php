@@ -34,11 +34,18 @@ class HomeController extends Controller
     {
         $service = \App\Models\Service::where('slug', $slug)->where('is_active', true)->first();
         if ($service) {
-            return view('services.show', compact('service'));
+            $allServices = \App\Models\Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
+            return view('services.show', compact('service', 'allServices'));
         }
         abort(404);
     }
 
+    public function pricing()
+    {
+        $pricingPage = \App\Models\CmsPage::where('slug', 'pricing')->first();
+        $services = \App\Models\Service::where('is_active', true)->orderBy('sort_order')->orderBy('id')->get();
+        return view('pricing', compact('services', 'pricingPage'));
+    }
 
     public function testimonials()
     {
@@ -228,8 +235,8 @@ class HomeController extends Controller
                     'mail.mailers.smtp.username' => $siteSettings['smtp_username'],
                     'mail.mailers.smtp.password' => $siteSettings['smtp_password'],
                     'mail.mailers.smtp.encryption' => ($siteSettings['smtp_encryption'] ?? 'tls') === 'none' ? null : ($siteSettings['smtp_encryption'] ?? 'tls'),
-                    'mail.from.address' => $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com',
-                    'mail.from.name' => $siteSettings['smtp_from_name'] ?? 'MLG Finedge Alerts',
+                    'mail.from.address' => $siteSettings['smtp_from_address'] ?? 'info@tenderfold.in',
+                    'mail.from.name' => $siteSettings['smtp_from_name'] ?? 'Tenderfold Alerts',
                     'mail.default' => 'smtp',
                 ]);
 
@@ -237,8 +244,8 @@ class HomeController extends Controller
                 \Illuminate\Support\Facades\Mail::purge('smtp');
 
                 $toEmail = $siteSettings['smtp_to_email'];
-                $fromAddress = $siteSettings['smtp_from_address'] ?? 'no-reply@mlgfinedge.com';
-                $fromName = $siteSettings['smtp_from_name'] ?? 'MLG Finedge Alerts';
+                $fromAddress = $siteSettings['smtp_from_address'] ?? 'info@tenderfold.in';
+                $fromName = $siteSettings['smtp_from_name'] ?? 'Tenderfold Alerts';
                 $leadName = $lead->name;
 
                 \Illuminate\Support\Facades\Mail::raw(
@@ -294,6 +301,14 @@ class HomeController extends Controller
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::error('WhatsApp notification failed: ' . $e->getMessage() . ' | Line: ' . $e->getLine());
             }
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Your request has been submitted successfully.',
+                'lead_id' => $lead ? $lead->id : null
+            ]);
         }
 
         return redirect()->route('thank-you')->with('success', 'Your inquiry has been submitted successfully.');

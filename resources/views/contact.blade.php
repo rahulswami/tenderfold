@@ -1,180 +1,218 @@
 @extends('layouts.app')
 
-@section('title', ($contactPage->metatitle ?? 'Contact Us & Clinic Locations | SumitZ Clinic'))
-@section('meta_description', ($contactPage->metadescription ?? 'Contact SumitZ Clinic Baner & Hinjewadi. Book appointments, get location directions, or call our medical team.'))
-@section('meta_keywords', ($contactPage->metakeywords ?? 'contact orthopedic doctor baner, book appointment sumitz, clinic phone number baner'))
+@section('title', ($contactPage->metatitle ?? 'Contact Tenderfold | Gurugram Laundry & Dry Cleaning Counters'))
+@section('meta_description', ($contactPage->metadescription ?? 'Call, WhatsApp, or visit Tenderfold in Sector 49 (Orchid Petals) and Sector 83 (Sapphire 83 Mall), Gurugram. Free doorstep laundry pickup & delivery across Gurugram.'))
+@section('meta_keywords', ($contactPage->metakeywords ?? 'tenderfold contact, dry cleaners gurugram contact, sector 49 laundry pickup, sector 83 dry cleaning'))
 
 @section('content')
-
-    <!-- Hero Header -->
-    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 64px 0 48px;">
-        <div class="container text-center" style="max-width: 760px;">
-            <span class="badge badge-teal" style="margin-bottom: 12px;">Get In Touch</span>
-            <h1 style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px;">Contact SumitZ Clinic</h1>
-            <p style="font-size: 17px; color: var(--body-text); line-height: 1.7;">
-                Reach out for appointment scheduling, diagnostic imaging queries, or consultation guidance at our Baner and Hinjewadi branches.
-            </p>
+<main id="main">
+  <!-- Contact Hero & Stores -->
+  <section class="bg-cream">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <div class="reveal max-w-2xl">
+        <p class="text-sm font-semibold text-mute">
+          <a href="{{ route('home') }}" class="transition hover:text-navy">Home</a> 
+          <span aria-hidden="true">/</span> 
+          <span class="text-navy">Contact</span>
+        </p>
+        <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Two counters · one number</p>
+        <h1 class="mt-3 font-display text-4xl font-extrabold text-navy sm:text-5xl">Call, WhatsApp, or ask for a pickup.</h1>
+        <p class="mt-4 text-lg text-mute">Both stores use {{ $site['phone'] ?? '+91 95824 66445' }}. A pickup request opens WhatsApp so the team can confirm a window.</p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
+          <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}?text={{ urlencode('Hi Tenderfold, I have a query about laundry pickup & services in Gurugram.') }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">WhatsApp the desk</a>
         </div>
-    </section>
+      </div>
 
-    <!-- Main Contact Layout -->
-    <section class="section-spacing" style="background-color: var(--warm-ivory);">
-        <div class="container" style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: start;">
-            <!-- Left Column: Locations & Phone Links -->
-            <div style="display: flex; flex-direction: column; gap: 24px;">
-                <!-- Direct Clinic Helplines Card -->
-                <div class="location-card" style="background: linear-gradient(135deg, #ffffff 0%, #f4fbfb 100%); border: 1.5px solid var(--primary-teal, #146e78); box-shadow: 0 4px 16px rgba(20, 110, 120, 0.08);">
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-                        <div style="background: var(--primary-teal, #146e78); color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i data-lucide="phone-call" style="width: 20px; height: 20px;"></i>
-                        </div>
-                        <div>
-                            <h3 style="font-size: 18px; margin: 0; color: var(--navy-dark, #0d2a35); font-weight: 700;">Direct Clinic Helplines</h3>
-                            <span style="font-size: 13px; color: var(--muted-text);">Tap any number below for immediate assistance & appointments</span>
-                        </div>
-                    </div>
-                    
-                    @php
-                        $contactHelplinesRaw = $site['footer_helplines'] ?? '+91 8855950433, +91 9404963781, +91 9158143325, +91 9545559434';
-                        $contactHelplines = array_values(array_unique(array_filter(array_map('trim', preg_split('/[,\r\n]+/', $contactHelplinesRaw)))));
-                    @endphp
+      <div class="mt-12 grid gap-6 lg:grid-cols-2">
+        <!-- Sector 49 Card -->
+        <article class="reveal rounded-3xl bg-white p-7 shadow-card">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 49</p>
+          <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Orchid Petals</h2>
+          <p class="mt-3 text-sm leading-relaxed text-mute">Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram, Haryana 122018</p>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018" target="_blank" rel="noopener" class="mt-5 inline-flex font-display text-sm font-extrabold text-navy">Get directions →</a>
+        </article>
 
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 10px;">
-                        @foreach($contactHelplines as $cNum)
-                            @php 
-                                $cTel = preg_replace('/[^0-9\+]/', '', $cNum); 
-                                $label = '';
-                                if (str_contains($cNum, '88559') || str_contains($cNum, '95455')) {
-                                    $label = 'Baner';
-                                } elseif (str_contains($cNum, '94049') || str_contains($cNum, '91581')) {
-                                    $label = 'Hinjewadi';
-                                }
-                            @endphp
-                            <a href="tel:{{ $cTel }}" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: white; border: 1px solid #d5ecee; border-radius: 8px; text-decoration: none; color: var(--navy-dark, #0d2a35); transition: all 0.2s; font-weight: 600; font-size: 14px;" onmouseover="this.style.borderColor='var(--primary-teal)'; this.style.boxShadow='0 2px 8px rgba(20,110,120,0.15)'" onmouseout="this.style.borderColor='#d5ecee'; this.style.boxShadow='none'">
-                                <span style="display: flex; align-items: center; gap: 8px;">
-                                    <i data-lucide="phone" style="width: 14px; height: 14px; color: var(--primary-teal);"></i>
-                                    {{ $cNum }}
-                                </span>
-                                @if($label)
-                                    <span style="font-size: 11px; padding: 2px 6px; background: rgba(20,110,120,0.1); color: var(--primary-teal); border-radius: 4px; font-weight: 700; text-transform: uppercase;">{{ $label }}</span>
-                                @endif
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
+        <!-- Sector 83 Card -->
+        <article class="reveal rounded-3xl bg-white p-7 shadow-card" style="animation-delay:80ms">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 83</p>
+          <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Sapphire 83 Mall</h2>
+          <p class="mt-3 text-sm leading-relaxed text-mute">F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon 122004</p>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=F-193%20First%20Floor%20Sapphire%2083%20Mall%20Sector%2083%20Gurgaon%20122004" target="_blank" rel="noopener" class="mt-5 inline-flex font-display text-sm font-extrabold text-navy">Get directions →</a>
+        </article>
+      </div>
 
-                <div class="location-card">
-                    <h3 class="location-title">
-                        <i data-lucide="map-pin" style="color: var(--primary-teal);"></i> Baner Clinic (Main Branch)
-                    </h3>
-                    <p style="font-size: 15px; color: var(--body-text); margin-bottom: 16px; line-height: 1.6;">
-                        {{ $site['address_baner'] ?? 'First Floor, Krishna Avenue, Above Dominos Pizza, Main Baner Road, Baner, Pune, Maharashtra - 411045' }}
-                    </p>
-                    @php
-                        $banerHelplineRaw = $site['helpline_baner'] ?? '+91 95455 59434 / +91 88559 50433';
-                        $banerHelplineNums = array_filter(array_map('trim', preg_split('/[\/\,]+/', $banerHelplineRaw)));
-                    @endphp
-                    <div style="font-size: 14px; margin-bottom: 16px; color: var(--body-text);">
-                        <strong>Helpline:</strong>
-                        @foreach($banerHelplineNums as $idx => $bNum)
-                            @if($idx > 0) / @endif
-                            <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $bNum) }}" style="color: var(--primary-teal); font-weight: 600;">{{ $bNum }}</a>
-                        @endforeach
-                    </div>
-                    <a href="https://maps.google.com/?q=SumitZ+Clinic+Baner+Pune" target="_blank" class="btn btn-secondary btn-sm">
-                        <i data-lucide="navigation"></i> Baner Directions
-                    </a>
-                </div>
-
-                <div class="location-card">
-                    <h3 class="location-title">
-                        <i data-lucide="map-pin" style="color: var(--primary-teal);"></i> Hinjewadi Clinic
-                    </h3>
-                    <p style="font-size: 15px; color: var(--body-text); margin-bottom: 16px; line-height: 1.6;">
-                        {{ $site['address_hinjewadi'] ?? 'Atlanta Society, Near Hinjewadi Phase 1 Circle, Hinjewadi, Pune, Maharashtra - 411057' }}
-                    </p>
-                    @php
-                        $hinjewadiHelplineRaw = $site['helpline_hinjewadi'] ?? '+91 94049 63781 / +91 91581 43325';
-                        $hinjewadiHelplineNums = array_filter(array_map('trim', preg_split('/[\/\,]+/', $hinjewadiHelplineRaw)));
-                    @endphp
-                    <div style="font-size: 14px; margin-bottom: 16px; color: var(--body-text);">
-                        <strong>Helpline:</strong>
-                        @foreach($hinjewadiHelplineNums as $idx => $hNum)
-                            @if($idx > 0) / @endif
-                            <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $hNum) }}" style="color: var(--primary-teal); font-weight: 600;">{{ $hNum }}</a>
-                        @endforeach
-                    </div>
-                    <a href="https://maps.google.com/?q=SumitZ+Clinic+Hinjewadi+Pune" target="_blank" class="btn btn-secondary btn-sm">
-                        <i data-lucide="navigation"></i> Hinjewadi Directions
-                    </a>
-                </div>
-
-                <div class="location-card" style="padding: 24px; display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <h4 style="font-size: 17px; margin-bottom: 4px;">WhatsApp Direct Contact</h4>
-                        <span style="font-size: 13.5px; color: var(--muted-text);">Instant appointment guidance</span>
-                    </div>
-                    <a href="https://wa.me/{{ $site['whatsapp_number'] ?? '919672777749' }}?text=Hi%20SumitZ%20Clinic,%20I'm%20interested%20in%20booking%20a%20consultation." target="_blank" class="btn btn-primary btn-sm">
-                        <i data-lucide="message-circle"></i> Chat Now
-                    </a>
-                </div>
-            </div>
-
-            <!-- Right Column: Appointment Form -->
-            <div class="form-card">
-                <h2 style="font-size: 24px; margin-bottom: 8px;">Request Appointment</h2>
-                <p style="font-size: 14.5px; color: var(--muted-text); margin-bottom: 24px;">Submit your details and our medical coordinator will confirm your slot.</p>
-
-                <form action="{{ route('contact.submit') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="source" value="Contact Page Form">
-                    <div class="form-group">
-                        <label for="cnt-name" class="form-label">Full Name</label>
-                        <input type="text" id="cnt-name" name="name" class="form-control" placeholder="Enter your full name" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cnt-phone" class="form-label">Phone Number</label>
-                        <input type="tel" id="cnt-phone" name="phone" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cnt-email" class="form-label">Email Address (Optional)</label>
-                        <input type="email" id="cnt-email" name="email" class="form-control" placeholder="name@example.com">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cnt-service" class="form-label">Service / Treatment Required</label>
-                        <select id="cnt-service" name="service" class="form-control" required>
-                            <option value="">-- Select Service --</option>
-                            @foreach($globalServices as $gs)
-                                <option value="{{ $gs->slug }}">{{ $gs->service_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cnt-date" class="form-label">Preferred Date</label>
-                        <input type="date" id="cnt-date" name="appointment_date" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cnt-msg" class="form-label">Symptoms / Notes (Optional)</label>
-                        <textarea id="cnt-msg" name="message" class="form-control" rows="3" placeholder="Describe your symptoms..."></textarea>
-                    </div>
-
-                    @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
-                        <div class="form-group" style="display: flex; justify-content: center;">
-                            <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
-                        </div>
-                    @endif
-
-                    <button type="submit" class="btn btn-primary btn-full" style="margin-top: 8px;">
-                        <i data-lucide="calendar"></i> Submit Booking Request
-                    </button>
-                </form>
-            </div>
+      <div class="reveal mt-6 grid gap-4 rounded-3xl bg-navy p-6 text-white sm:grid-cols-3 sm:p-8">
+        <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $site['phone'] ?? '+919582466445') }}" class="rounded-2xl bg-white/10 px-5 py-4 transition hover:bg-white/15">
+          <p class="text-xs font-bold uppercase tracking-wider text-gold">Phone</p>
+          <p class="mt-1 font-display text-xl font-extrabold">{{ $site['phone'] ?? '+91 95824 66445' }}</p>
+        </a>
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}" target="_blank" rel="noopener" class="rounded-2xl bg-white/10 px-5 py-4 transition hover:bg-white/15">
+          <p class="text-xs font-bold uppercase tracking-wider text-gold">WhatsApp</p>
+          <p class="mt-1 font-display text-xl font-extrabold">Message the desk</p>
+        </a>
+        <div class="rounded-2xl bg-white/10 px-5 py-4">
+          <span class="block text-xs font-bold uppercase tracking-wider text-gold">Pickup</span>
+          <span class="mt-1 block font-display text-xl font-extrabold">Free across Gurugram</span>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
+  <!-- Contact Form Section -->
+  <section class="bg-white py-16 md:py-20" aria-labelledby="contactFormTitle">
+    <div class="mx-auto grid max-w-7xl items-start gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <div class="reveal">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Message the desk</p>
+        <h2 id="contactFormTitle" class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">Send a note. We reply on WhatsApp.</h2>
+        <p class="mt-4 text-mute">There is no separate inbox. Your inquiry is recorded in our system and automatically formatted for direct WhatsApp coordination with the counter desk.</p>
+        <ul class="mt-6 space-y-3 text-sm text-ink">
+          <li class="flex gap-3"><span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy font-bold" aria-hidden="true">1</span> Tell us which counter is closer, or leave it as either.</li>
+          <li class="flex gap-3"><span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy font-bold" aria-hidden="true">2</span> Add the sector and what you want collected.</li>
+          <li class="flex gap-3"><span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy font-bold" aria-hidden="true">3</span> We confirm a window before the rider leaves.</li>
+        </ul>
+      </div>
+
+      <form id="contactPageForm" class="reveal rounded-3xl bg-cream p-6 shadow-card sm:p-8" style="animation-delay:80ms">
+        @csrf
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="contactName" class="mb-1.5 block text-sm font-semibold text-navy">Name</label>
+            <input id="contactName" name="name" required autocomplete="name" class="w-full rounded-2xl border border-navy/15 bg-white px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50" placeholder="Your full name">
+          </div>
+          <div>
+            <label for="contactPhone" class="mb-1.5 block text-sm font-semibold text-navy">Phone</label>
+            <input id="contactPhone" name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="10-digit mobile" class="w-full rounded-2xl border border-navy/15 bg-white px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50">
+          </div>
+        </div>
+        <div class="mt-4">
+          <label for="contactStore" class="mb-1.5 block text-sm font-semibold text-navy">Preferred counter</label>
+          <select id="contactStore" name="store" class="w-full rounded-2xl border border-navy/15 bg-white px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50">
+            <option value="Either counter">Either counter</option>
+            <option value="Orchid Petals, Sector 49">Orchid Petals, Sector 49</option>
+            <option value="Sapphire 83 Mall, Sector 83">Sapphire 83 Mall, Sector 83</option>
+          </select>
+        </div>
+        <div class="mt-4">
+          <label for="contactMessage" class="mb-1.5 block text-sm font-semibold text-navy">Message / Requirements</label>
+          <textarea id="contactMessage" name="message" required rows="4" class="w-full rounded-2xl border border-navy/15 bg-white px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50" placeholder="Sector, pieces, or a question about a fabric"></textarea>
+        </div>
+        <button type="submit" id="contactSubmitBtn" class="mt-5 inline-flex w-full items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep sm:w-auto">Send message</button>
+        <p id="contactMsg" class="mt-3 hidden text-sm font-semibold" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Interactive Map Section -->
+  <section class="bg-cream" aria-labelledby="mapTitle">
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-end sm:justify-between sm:px-6 lg:px-8">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">On the map</p>
+        <h2 id="mapTitle" class="mt-2 font-display text-3xl font-extrabold text-navy">Both counters</h2>
+      </div>
+      <div class="flex flex-wrap gap-2" role="tablist" aria-label="Choose a store map">
+        <button type="button" role="tab" id="mapOrchid" data-map-src="https://maps.google.com/maps?q=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018&amp;z=16&amp;output=embed" aria-selected="true" class="map-tab rounded-full bg-navy px-4 py-2.5 font-display text-sm font-extrabold text-white">Orchid Petals (Sec 49)</button>
+        <button type="button" role="tab" id="mapSapphire" data-map-src="https://maps.google.com/maps?q=F-193%2C%20First%20Floor%2C%20Sapphire%2083%20Mall%2C%20Sector%2083%2C%20Gurgaon%20122004&amp;z=16&amp;output=embed" aria-selected="false" class="map-tab rounded-full bg-white px-4 py-2.5 font-display text-sm font-extrabold text-navy shadow-card">Sapphire 83 Mall (Sec 83)</button>
+      </div>
+    </div>
+    <iframe id="storeMap" title="Orchid Petals, Sector 49, on Google Maps" class="block h-[420px] w-full border-0 sm:h-[520px] lg:h-[560px]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018&amp;z=16&amp;output=embed"></iframe>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="bg-navy">
+    <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center lg:px-8">
+      <div class="max-w-xl">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Free pickup &amp; delivery</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold text-white">Tell us the sector and what is in the bag.</h2>
+        <p class="mt-2 text-sm leading-relaxed text-white/75">Morning, afternoon or evening. We confirm on WhatsApp before the rider leaves.</p>
+      </div>
+      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <button type="button" data-open-book data-service="Mixed pickup" class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
+        <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $site['phone'] ?? '+919582466445') }}" class="inline-flex items-center justify-center rounded-full border-2 border-white/25 px-6 py-3.5 font-display text-sm font-extrabold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-navy">Call the store</a>
+      </div>
+    </div>
+  </section>
+</main>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Map Tabs
+  const mapEl = document.getElementById('storeMap');
+  const tabs = document.querySelectorAll('.map-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => {
+        t.setAttribute('aria-selected', 'false');
+        t.className = 'map-tab rounded-full bg-white px-4 py-2.5 font-display text-sm font-extrabold text-navy shadow-card';
+      });
+      tab.setAttribute('aria-selected', 'true');
+      tab.className = 'map-tab rounded-full bg-navy px-4 py-2.5 font-display text-sm font-extrabold text-white';
+      if (mapEl && tab.dataset.mapSrc) {
+        mapEl.src = tab.dataset.mapSrc;
+      }
+    });
+  });
+
+  // Contact Form AJAX
+  const cForm = document.getElementById('contactPageForm');
+  const cMsg = document.getElementById('contactMsg');
+  const cBtn = document.getElementById('contactSubmitBtn');
+
+  if (cForm) {
+    cForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const originalText = cBtn.textContent;
+      cBtn.disabled = true;
+      cBtn.textContent = 'Sending...';
+
+      const formData = new FormData(cForm);
+      const name = formData.get('name') || '';
+      const phone = formData.get('phone') || '';
+      const store = formData.get('store') || '';
+      const message = formData.get('message') || '';
+
+      try {
+        const res = await fetch("{{ route('contact.submit') }}", {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+            'Accept': 'application/json'
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+
+        cMsg.classList.remove('hidden', 'text-red-600', 'text-green-700');
+        cMsg.classList.add('text-green-700');
+        cMsg.textContent = 'Thank you! Redirecting to WhatsApp desk...';
+
+        const waText = encodeURIComponent(`Hi Tenderfold,\nName: ${name}\nPhone: ${phone}\nCounter: ${store}\nMessage: ${message}`);
+        const waUrl = `https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}?text=${waText}`;
+
+        setTimeout(() => {
+          window.open(waUrl, '_blank');
+          cForm.reset();
+          cBtn.disabled = false;
+          cBtn.textContent = originalText;
+        }, 1200);
+
+      } catch (err) {
+        cMsg.classList.remove('hidden', 'text-green-700');
+        cMsg.classList.add('text-red-600');
+        cMsg.textContent = 'Something went wrong. Opening WhatsApp directly...';
+        
+        const waText = encodeURIComponent(`Hi Tenderfold,\nName: ${name}\nPhone: ${phone}\nCounter: ${store}\nMessage: ${message}`);
+        const waUrl = `https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}?text=${waText}`;
+        window.open(waUrl, '_blank');
+        
+        cBtn.disabled = false;
+        cBtn.textContent = originalText;
+      }
+    });
+  }
+});
+</script>
+@endpush

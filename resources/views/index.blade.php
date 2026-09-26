@@ -1,1416 +1,516 @@
 @extends('layouts.app')
 
-@section('title', ($homePage->metatitle ?? 'Dr. Sumit — Best Orthopedic Doctor in Baner, Balewadi & Pune | SumitZ Clinic'))
-@section('meta_description', ($homePage->metadescription ?? 'SumitZ Clinic is Pune\'s top-rated Orthopedic & Physiotherapy clinic in Baner and Balewadi, led by Dr. Sumit. Expert in joint replacement, knee surgery, spine care, fractures, and sports injury rehabilitation.'))
-@section('meta_keywords', ($homePage->metakeywords ?? 'best orthopedic doctor in baner pune, best orthopedic clinic baner balewadi pune, dr sumit orthopedic surgeon baner, knee replacement surgeon pune, joint replacement clinic balewadi, physiotherapy clinic baner pune'))
-
-@section('schema')
-@if(!empty($site['home_schema_markup']))
-    {!! $site['home_schema_markup'] !!}
-@else
-<script type="application/ld+json">
-{
-  "{{ '@' }}context": "https://schema.org",
-  "{{ '@graph' }}": [
-    {
-      "{{ '@type' }}": "MedicalClinic",
-      "{{ '@id' }}": "{{ route('home') }}/#organization",
-      "name": "{{ $site['site_name'] ?? 'SumitZ Orthopaedic & Physiotherapy Clinic' }}",
-      "url": "{{ route('home') }}",
-      "logo": {
-        "{{ '@type' }}": "ImageObject",
-        "url": "{{ !empty($site['logo_path']) ? site_image($site['logo_path']) : asset('assets/images/logo.png') }}"
-      },
-      "telephone": "{{ $site['phone'] ?? '+919545559434' }}",
-      "description": "Best Orthopedic Doctor and Clinic in Baner, Balewadi, Pune. Dr. Sumit offers joint replacement, knee surgery, spine care, and physiotherapy.",
-      "medicalSpecialty": ["Orthopedic Surgery", "Physiotherapy", "Sports Medicine"],
-      "address": {
-        "{{ '@type' }}": "PostalAddress",
-        "streetAddress": "First Floor, Krishna Avenue, Baner Road",
-        "addressLocality": "Baner, Pune",
-        "addressRegion": "Maharashtra",
-        "postalCode": "411045",
-        "addressCountry": "IN"
-      },
-      "geo": {
-        "{{ '@type' }}": "GeoCoordinates",
-        "latitude": "18.5590",
-        "longitude": "73.7868"
-      },
-      "openingHoursSpecification": [
-        {
-          "{{ '@type' }}": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-          "opens": "09:00",
-          "closes": "21:00"
-        }
-      ]
-    },
-    {
-      "{{ '@type' }}": "Physician",
-      "name": "Dr. Sumit",
-      "medicalSpecialty": "Orthopedic Surgery",
-      "worksFor": {
-        "{{ '@type' }}": "MedicalClinic",
-        "name": "{{ $site['site_name'] ?? 'SumitZ Clinic' }}"
-      },
-      "url": "{{ route('home') }}"
-    }
-  ]
-}
-</script>
-@endif
-@endsection
-
-@section('styles')
-<style>
-    /* ─── HERO SLIDER ─────────────────────────────────────────────────── */
-    .hero-slider-section {
-        position: relative;
-        background: var(--primary-navy);
-        overflow: hidden;
-        min-height: 500px;
-        display: flex;
-        align-items: stretch;
-    }
-    .slider-track {
-        position: relative;
-        width: 100%;
-        min-height: 500px;
-    }
-    /* Every slide sits absolute/full-bleed inside the track */
-    .slide-item {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        transition: opacity 0.8s ease-in-out;
-        pointer-events: none;
-        display: flex;
-        align-items: center;
-    }
-    /* Active slide on top — keep position: absolute so width = track width */
-    .slide-item.active {
-        opacity: 1;
-        pointer-events: auto;
-        z-index: 2;
-    }
-    .hero-bg-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(120deg, rgba(7,26,46,0.92) 0%, rgba(0,133,200,0.18) 100%);
-        z-index: 1;
-    }
-    .slide-bg-pic {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        display: block;
-    }
-    .slide-bg-img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 0;
-        filter: brightness(0.55);
-    }
-    /* Content wrapper sits above overlay */
-    .slide-content-wrap {
-        position: relative;
-        z-index: 3;
-        width: 100%;
-    }
-    .hero-inner {
-        max-width: 840px;
-        padding: 48px 0 44px;
-    }
-    @media (max-width: 900px) {
-        .hero-inner { max-width: 100%; padding: 28px 0 24px; }
-        .hero-slider-section { min-height: unset; }
-        .slider-track { min-height: unset; height: auto; }
-        .slide-item { position: relative; inset: unset; opacity: 1; pointer-events: auto; }
-        .slide-item:not(.active) { display: none; }
-        .slide-bg-pic { position: absolute; inset: 0; height: 100%; }
-        .slide-bg-img { position: absolute; inset: 0; height: 100%; }
-        .hero-h1 { font-size: clamp(22px, 6vw, 30px); margin-bottom: 10px; }
-        .hero-desc { font-size: 14px; margin-bottom: 18px; line-height: 1.5; }
-        .hero-btn-row { gap: 10px; margin-bottom: 20px; }
-        .hero-btn-primary, .hero-btn-secondary { padding: 11px 18px; font-size: 13.5px; width: 100%; justify-content: center; }
-        .hero-trust-strip { gap: 16px; }
-        .hero-trust-num { font-size: 20px; }
-        .hero-trust-lbl { font-size: 11px; }
-    }
-    .hero-eyebrow-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(0,133,200,0.18);
-        border: 1px solid rgba(0,133,200,0.4);
-        color: #7DD3FC;
-        padding: 5px 14px;
-        border-radius: 999px;
-        font-size: 12.5px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        letter-spacing: 0.3px;
-    }
-    .hero-h1 {
-        font-size: clamp(26px, 3.4vw, 44px);
-        font-weight: 800;
-        color: #fff;
-        line-height: 1.18;
-        margin-bottom: 12px;
-        letter-spacing: -0.5px;
-    }
-    .hero-h1 .highlight-blue { color: #38BDF8; }
-    .hero-h1 .highlight-red { color: #FB7185; }
-    .hero-desc {
-        font-size: 15px;
-        color: rgba(255,255,255,0.85);
-        line-height: 1.6;
-        margin-bottom: 22px;
-        max-width: 520px;
-    }
-    .hero-btn-row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 26px;
-    }
-    .hero-btn-primary {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--brand-blue);
-        color: #fff;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 14.5px;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-        transition: background 0.2s, transform 0.2s;
-    }
-    .hero-btn-primary:hover { background: #006ca5; transform: translateY(-2px); }
-    .hero-btn-secondary {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 14.5px;
-        text-decoration: none;
-        border: 1px solid rgba(255,255,255,0.35);
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    .hero-btn-secondary:hover { background: rgba(255,255,255,0.2); }
-    .hero-trust-strip {
-        display: flex;
-        gap: 26px;
-        flex-wrap: wrap;
-    }
-    .hero-trust-item { color: rgba(255,255,255,0.9); }
-    .hero-trust-num {
-        font-size: 22px;
-        font-weight: 800;
-        color: #38BDF8;
-        display: block;
-        line-height: 1;
-        margin-bottom: 2px;
-    }
-    .hero-trust-lbl { font-size: 11.5px; color: rgba(255,255,255,0.65); font-weight: 500; }
-    /* Slider Controls */
-    .slider-nav-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.3);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background 0.2s;
-        backdrop-filter: blur(4px);
-    }
-    .slider-nav-btn:hover { background: rgba(0,133,200,0.7); }
-    .slider-prev { left: 16px; }
-    .slider-next { right: 16px; }
-    .slider-dots {
-        position: absolute;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 8px;
-        z-index: 10;
-    }
-    .slider-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.4);
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s;
-        padding: 0;
-    }
-    .slider-dot.active {
-        background: var(--brand-blue);
-        width: 24px;
-        border-radius: 4px;
-    }
-    /* ─── SYMPTOM FINDER ─────────────────────────────────────────────── */
-    .symptom-finder-section { background: var(--surface-white); padding: 0; }
-    .symptom-card-wrapper {
-        background: #fff;
-        border-radius: 0 0 20px 20px;
-        box-shadow: 0 8px 32px rgba(10,37,64,0.08);
-        padding: 24px 32px;
-    }
-    .symptom-card-top {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 18px;
-        flex-wrap: wrap;
-    }
-    .symptom-header { flex-shrink: 0; }
-    .symptom-header h2 { font-size: 15px; margin: 0; color: var(--heading-navy); }
-    .symptom-grid {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .symptom-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        background: var(--brand-blue-light);
-        color: var(--brand-blue);
-        padding: 9px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 600;
-        transition: all 0.2s;
-        white-space: nowrap;
-    }
-    .symptom-item:hover { background: var(--brand-blue); color: #fff; transform: translateY(-2px); }
-    .symptom-icon { width: 15px; height: 15px; flex-shrink: 0; }
-    /* ─── SPECIALISTS GRID (SECTION A) ─────────────────────────────────── */
-    .specialist-card-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 24px;
-    }
-    .specialist-card {
-        background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(10, 25, 47, 0.05);
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-        display: flex;
-        flex-direction: column;
-    }
-    .specialist-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 16px 40px rgba(0, 133, 200, 0.14);
-        border-color: var(--brand-blue-light);
-    }
-    .specialist-img-box {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 4/4;
-        background: #e2e8f0;
-        overflow: hidden;
-    }
-    .specialist-img-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top center;
-        transition: transform 0.5s ease;
-    }
-    .specialist-card:hover .specialist-img-box img {
-        transform: scale(1.05);
-    }
-    .specialist-card-body {
-        padding: 18px 16px;
-        text-align: center;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    .specialist-name {
-        font-size: 17.5px;
-        font-weight: 700;
-        color: var(--heading-navy);
-        margin-bottom: 4px;
-        line-height: 1.3;
-    }
-    .specialist-designation {
-        font-size: 13px;
-        color: var(--brand-blue);
-        font-weight: 600;
-        margin-bottom: 14px;
-        min-height: 20px;
-    }
-    .specialist-action-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        width: 100%;
-        padding: 9px 14px;
-        background: var(--brand-blue-light);
-        color: var(--brand-blue);
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 13px;
-        text-decoration: none;
-        transition: background 0.2s, color 0.2s;
-    }
-    .specialist-card:hover .specialist-action-btn {
-        background: var(--brand-blue);
-        color: #ffffff;
-    }
-
-    /* ─── WHY CHOOSE US (SECTION B) ───────────────────────────────────── */
-    .why-choose-grid {
-        display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
-        gap: 48px;
-        align-items: center;
-    }
-    @media (max-width: 900px) {
-        .why-choose-grid { grid-template-columns: 1fr; gap: 36px; }
-    }
-    .why-item-row {
-        display: flex;
-        gap: 20px;
-        align-items: flex-start;
-        padding: 20px 24px;
-        background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
-    }
-    .why-item-row:hover {
-        transform: translateX(6px);
-        border-color: var(--brand-blue);
-        box-shadow: 0 10px 30px rgba(0, 133, 200, 0.12);
-    }
-    .why-number-circle {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--brand-blue-light) 0%, #e0f2fe 100%);
-        color: var(--brand-blue);
-        font-size: 20px;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        border: 1px solid rgba(0, 133, 200, 0.2);
-    }
-    .why-item-row:hover .why-number-circle {
-        background: var(--brand-blue);
-        color: #ffffff;
-    }
-    .why-content-title {
-        font-size: 19px;
-        font-weight: 700;
-        color: var(--heading-navy);
-        margin-bottom: 6px;
-    }
-    .why-content-desc {
-        font-size: 14.5px;
-        color: var(--body-text);
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    /* ─── CLINIC OVERVIEW & TEAM COLLAGE (SECTION C) ─────────────────── */
-    .clinic-overview-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 48px;
-        align-items: center;
-    }
-    @media (max-width: 900px) {
-        .clinic-overview-grid { grid-template-columns: 1fr; gap: 36px; }
-    }
-    .team-collage-box {
-        background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
-        border-radius: 20px;
-        padding: 24px 20px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 12px 36px rgba(7, 26, 46, 0.08);
-        text-align: center;
-    }
-    .team-collage-title {
-        font-size: 13.5px;
-        font-weight: 800;
-        color: var(--heading-navy);
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        margin-bottom: 18px;
-        display: inline-block;
-        padding: 6px 18px;
-        background: rgba(0, 133, 200, 0.1);
-        border-radius: 20px;
-    }
-    .team-collage-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        max-height: 480px;
-        overflow-y: auto;
-        padding-right: 4px;
-    }
-    @media (max-width: 991px) {
-        .team-collage-grid { grid-template-columns: repeat(3, 1fr); max-height: none; }
-    }
-    @media (max-width: 500px) {
-        .team-collage-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    }
-    .team-collage-card {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        border: 1px solid var(--border-color);
-        text-align: center;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-    }
-    .team-collage-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 133, 200, 0.15);
-        color: var(--brand-blue);
-    }
-    .team-collage-img {
-        width: 100%;
-        aspect-ratio: 1/1;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-bottom: 6px;
-        background: #e2e8f0;
-        display: block;
-    }
-    .team-collage-name {
-        font-size: 11.5px;
-        font-weight: 700;
-        color: var(--heading-navy);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-        line-height: 1.3;
-    }
-    /* ─── HOME APPOINTMENT SECTION ─────────────────────────────────── */
-    #appointment-section {
-        padding: 44px 0 40px !important;
-    }
-    .home-appt-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 36px;
-        align-items: center;
-    }
-    @media (max-width: 860px) {
-        #appointment-section {
-            padding: 30px 0 24px !important;
-        }
-        .home-appt-grid {
-            grid-template-columns: 1fr !important;
-            gap: 24px !important;
-        }
-    }
-</style>
-@endsection
+@section('title', ($site['site_name'] ?? 'Tender Fold') . ' | ' . ($site['site_tagline'] ?? 'Premium Laundry & Dry Cleaner in Gurugram'))
 
 @section('content')
+    @php
+        $site = \App\Models\SiteParameter::all()->pluck('value', 'id')->toArray();
+        $recentBlogs = \App\Models\Blog::orderBy('published_at', 'desc')->take(3)->get();
+    @endphp
 
-    {{-- ===== 1. HERO SLIDER SECTION ===== --}}
-    <section class="hero-slider-section" id="hero-slider" aria-label="Hero Slider">
-        <div class="slider-track" id="slider-track">
-
-            @if(isset($slides) && $slides->count() > 0)
-                {{-- DB-managed slides --}}
-                @foreach($slides as $i => $slide)
-                    <div class="slide-item {{ $i === 0 ? 'active' : '' }}" data-index="{{ $i }}">
-                        <picture class="slide-bg-pic">
-                            @if(!empty($slide->mobile_image_path))
-                                <source media="(max-width: 768px)" srcset="{{ site_image($slide->mobile_image_path) }}">
-                            @endif
-                            @if(!empty($slide->image_path))
-                                <img class="slide-bg-img"
-                                     src="{{ site_image($slide->image_path) }}"
-                                     alt="{{ $slide->title ?? 'SumitZ Clinic' }}"
-                                     {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
-                                     decoding="async"
-                                     width="1400" height="700">
-                            @elseif(!empty($slide->mobile_image_path))
-                                <img class="slide-bg-img"
-                                     src="{{ site_image($slide->mobile_image_path) }}"
-                                     alt="{{ $slide->title ?? 'SumitZ Clinic' }}"
-                                     {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
-                                     decoding="async"
-                                     width="1400" height="700">
-                            @else
-                                <img class="slide-bg-img"
-                                     src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=1400&q=80"
-                                     alt="SumitZ Orthopaedic Clinic"
-                                     {{ $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }}
-                                     decoding="async"
-                                     width="1400" height="700">
-                            @endif
-                        </picture>
-                        <div class="hero-bg-overlay"></div>
-                        <div class="slide-content-wrap">
-                            <div class="container">
-                                <div class="hero-inner">
-                                    <div class="hero-text-content">
-                                        @if(!empty($slide->eyebrow) || !empty($pageContents['home']['hero']['eyebrow']))
-                                            <div class="hero-eyebrow-badge">
-                                                <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
-                                                {{ !empty($slide->eyebrow) ? $slide->eyebrow : ($pageContents['home']['hero']['eyebrow'] ?? 'Best Orthopedic Doctor in Baner, Balewadi & Pune') }}
-                                            </div>
-                                        @endif
-
-                                        <h1 class="hero-h1">
-                                            {!! !empty($slide->title) ? $slide->title : ($pageContents['home']['hero']['title'] ?? 'Pune\'s Most Trusted <span class="highlight-blue">Orthopedic</span> &amp; Physiotherapy Expert') !!}
-                                        </h1>
-
-                                        @if(!empty($slide->subtitle) || !empty($pageContents['home']['hero']['subtitle']))
-                                            <p class="hero-desc">
-                                                {{ !empty($slide->subtitle) ? $slide->subtitle : ($pageContents['home']['hero']['subtitle'] ?? 'Dr. Sumit offers world-class joint replacement, knee surgery, spine care, fracture treatment, and advanced physiotherapy at his clinics in Baner, Balewadi, and Hinjewadi, Pune.') }}
-                                            </p>
-                                        @endif
-
-                                        <div class="hero-btn-row">
-                                            @if(!empty($slide->button_text) && !empty($slide->button_link))
-                                                <a href="{{ $slide->button_link }}" class="hero-btn-primary">
-                                                    <i data-lucide="calendar" style="width:18px;height:18px;"></i>
-                                                    {{ $slide->button_text }}
-                                                </a>
-                                            @elseif(!empty($slide->button_text))
-                                                <button onclick="openDialog('callback-dialog');" class="hero-btn-primary">
-                                                    <i data-lucide="calendar" style="width:18px;height:18px;"></i>
-                                                    {{ $slide->button_text }}
-                                                </button>
-                                            @else
-                                                <button onclick="openDialog('callback-dialog');" class="hero-btn-primary">
-                                                    <i data-lucide="calendar" style="width:18px;height:18px;"></i>
-                                                    Book Appointment
-                                                </button>
-                                            @endif
-
-                                            @if(!empty($slide->button_2_text) && !empty($slide->button_2_link))
-                                                <a href="{{ $slide->button_2_link }}" class="hero-btn-secondary">
-                                                    <i data-lucide="phone" style="width:18px;height:18px;"></i>
-                                                    {{ $slide->button_2_text }}
-                                                </a>
-                                            @elseif(!empty($slide->button_2_text))
-                                                <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="hero-btn-secondary">
-                                                    <i data-lucide="phone" style="width:18px;height:18px;"></i>
-                                                    {{ $slide->button_2_text }}
-                                                </a>
-                                            @else
-                                                <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="hero-btn-secondary">
-                                                    <i data-lucide="phone" style="width:18px;height:18px;"></i>
-                                                    Call Clinic
-                                                </a>
-                                            @endif
-                                        </div>
-
-                                        <div class="hero-trust-strip">
-                                            <div class="hero-trust-item">
-                                                <span class="hero-trust-num">{{ !empty($slide->trust_1_num) ? $slide->trust_1_num : ($pageContents['home']['hero']['trust_1_num'] ?? '20,000+') }}</span>
-                                                <span class="hero-trust-lbl">{{ !empty($slide->trust_1_label) ? $slide->trust_1_label : ($pageContents['home']['hero']['trust_1_label'] ?? 'Patients Recovered') }}</span>
-                                            </div>
-                                            <div class="hero-trust-item">
-                                                <span class="hero-trust-num">{{ !empty($slide->trust_2_num) ? $slide->trust_2_num : ($pageContents['home']['hero']['trust_2_num'] ?? '15+ Yrs') }}</span>
-                                                <span class="hero-trust-lbl">{{ !empty($slide->trust_2_label) ? $slide->trust_2_label : ($pageContents['home']['hero']['trust_2_label'] ?? 'Clinical Experience') }}</span>
-                                            </div>
-                                            <div class="hero-trust-item">
-                                                <span class="hero-trust-num">{{ !empty($slide->trust_3_num) ? $slide->trust_3_num : ($pageContents['home']['hero']['trust_3_num'] ?? '3 Locations') }}</span>
-                                                <span class="hero-trust-lbl">{{ !empty($slide->trust_3_label) ? $slide->trust_3_label : ($pageContents['home']['hero']['trust_3_label'] ?? 'Baner · Balewadi · Hinjewadi') }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-
-            @else
-                {{-- Fallback: no slides in DB yet — static hero --}}
-                <div class="slide-item active">
-                    <picture class="slide-bg-pic">
-                        <img class="slide-bg-img"
-                             src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=1400&q=80"
-                             alt="Dr. Sumit — Best Orthopedic Doctor Baner Pune"
-                             fetchpriority="high" decoding="async" width="1400" height="700">
-                    </picture>
-                    <div class="hero-bg-overlay"></div>
-                    <div class="slide-content-wrap">
-                        <div class="container">
-                            <div class="hero-inner">
-                                <div class="hero-text-content">
-                                    <div class="hero-eyebrow-badge">
-                                        <i data-lucide="shield-check" style="width:14px;height:14px;"></i>
-                                        {{ $pageContents['home']['hero']['eyebrow'] ?? 'Best Orthopedic Doctor in Baner, Balewadi & Pune' }}
-                                    </div>
-                                    <h1 class="hero-h1">
-                                        {!! $pageContents['home']['hero']['title'] ?? 'Pune\'s Most Trusted <span class="highlight-blue">Orthopedic</span> Surgeon &amp; Physiotherapy Expert' !!}
-                                    </h1>
-                                    <p class="hero-desc">
-                                        {{ $pageContents['home']['hero']['subtitle'] ?? 'Dr. Sumit provides world-class joint replacement, knee surgery, spine care, fracture treatment, and advanced physiotherapy at his clinics in Baner, Balewadi, and Hinjewadi, Pune.' }}
-                                    </p>
-                                    <div class="hero-btn-row">
-                                        <button onclick="openDialog('callback-dialog');" class="hero-btn-primary">
-                                            <i data-lucide="calendar" style="width:18px;height:18px;"></i>
-                                            Book Appointment
-                                        </button>
-                                        <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="hero-btn-secondary">
-                                            <i data-lucide="phone" style="width:18px;height:18px;"></i>
-                                            Call Clinic Now
-                                        </a>
-                                    </div>
-                                    <div class="hero-trust-strip">
-                                        <div class="hero-trust-item">
-                                            <span class="hero-trust-num">{{ $pageContents['home']['hero']['trust_1_num'] ?? '20,000+' }}</span>
-                                            <span class="hero-trust-lbl">{{ $pageContents['home']['hero']['trust_1_label'] ?? 'Patients Recovered' }}</span>
-                                        </div>
-                                        <div class="hero-trust-item">
-                                            <span class="hero-trust-num">{{ $pageContents['home']['hero']['trust_2_num'] ?? '15+ Yrs' }}</span>
-                                            <span class="hero-trust-lbl">{{ $pageContents['home']['hero']['trust_2_label'] ?? 'Clinical Experience' }}</span>
-                                        </div>
-                                        <div class="hero-trust-item">
-                                            <span class="hero-trust-num">{{ $pageContents['home']['hero']['trust_3_num'] ?? '3 Locations' }}</span>
-                                            <span class="hero-trust-lbl">{{ $pageContents['home']['hero']['trust_3_label'] ?? 'Baner · Balewadi · Hinjewadi' }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Hero Section with Swiper Slider -->
+    <section id="top" class="relative overflow-hidden bg-cream">
+      <div class="swiper hero-swiper relative">
+        <div class="swiper-wrapper">
+          @forelse($slides as $slide)
+            <div class="swiper-slide">
+              <div class="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-16">
+                <div>
+                  <p class="inline-flex items-center gap-2 rounded-full bg-gold/15 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-navy">
+                    <span class="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true"></span>
+                    Premium laundry &amp; dry cleaner
+                  </p>
+                  <h1 class="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
+                    {{ $slide->title }}
+                  </h1>
+                  <p class="mt-5 max-w-xl text-base leading-relaxed text-mute sm:text-lg">
+                    {{ $slide->subtitle }}
+                  </p>
+                  <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    @if(str_starts_with($slide->button_link ?? '#bookModal', '#'))
+                      <button type="button" data-open-book class="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy shadow-md transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep hover:shadow-lg">
+                        {{ $slide->button_text ?? 'Schedule a Pickup' }}
+                      </button>
+                    @else
+                      <a href="{{ $slide->button_link }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy shadow-md transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep hover:shadow-lg">
+                        {{ $slide->button_text ?? 'Schedule a Pickup' }}
+                      </a>
+                    @endif
+                    <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">See our prices</a>
+                  </div>
                 </div>
-            @endif
+                <div class="relative">
+                  <div class="group relative overflow-hidden rounded-[2rem] shadow-lift">
+                    <img src="{{ asset($slide->image_path ?: 'assets/hero.jpg') }}" alt="{{ $slide->title }}" class="aspect-[4/5] max-h-[520px] w-full object-cover transition duration-700 group-hover:scale-105 sm:aspect-auto sm:h-[500px]" width="1400" height="1600" fetchpriority="high">
+                    <div class="absolute right-4 top-4 rounded-full bg-gold px-4 py-2 font-display text-sm font-extrabold text-navy shadow-md">20% off first order</div>
+                    <div class="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/95 p-4 shadow-lift backdrop-blur sm:right-auto sm:max-w-xs">
+                      <p class="font-display text-lg font-extrabold text-navy">Free pickup &amp; delivery</p>
+                      <p class="mt-1 text-sm text-mute">Across Gurugram. Terms apply on the welcome offer.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          @empty
+            <div class="swiper-slide">
+              <div class="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-16">
+                <div>
+                  <p class="inline-flex items-center gap-2 rounded-full bg-gold/15 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-navy">
+                    <span class="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true"></span>
+                    Premium laundry &amp; dry cleaner
+                  </p>
+                  <h1 class="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
+                    You leave it,<br><span class="text-gold">we clean it.</span>
+                  </h1>
+                  <p class="mt-5 max-w-xl text-base leading-relaxed text-mute sm:text-lg">
+                    Doorstep laundry and dry cleaning for homes and offices in Gurugram. We collect the pile, care for every fabric, and bring it back folded, pressed and ready to wear.
+                  </p>
+                  <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <button type="button" data-open-book class="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy shadow-md transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep hover:shadow-lg">Schedule a Pickup</button>
+                    <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">See our prices</a>
+                  </div>
+                </div>
+                <div class="relative">
+                  <div class="group relative overflow-hidden rounded-[2rem] shadow-lift">
+                    <img src="{{ asset('assets/hero.jpg') }}" alt="Freshly folded clothes" class="aspect-[4/5] max-h-[520px] w-full object-cover transition duration-700 group-hover:scale-105 sm:aspect-auto sm:h-[500px]" width="1400" height="1600" fetchpriority="high">
+                    <div class="absolute right-4 top-4 rounded-full bg-gold px-4 py-2 font-display text-sm font-extrabold text-navy shadow-md">20% off first order</div>
+                    <div class="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/95 p-4 shadow-lift backdrop-blur sm:right-auto sm:max-w-xs">
+                      <p class="font-display text-lg font-extrabold text-navy">Free pickup &amp; delivery</p>
+                      <p class="mt-1 text-sm text-mute">Across Gurugram. Terms apply on the welcome offer.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          @endforelse
         </div>
 
-        {{-- Slider navigation (only shown if multiple slides) --}}
-        @if(isset($slides) && $slides->count() > 1)
-            <button class="slider-nav-btn slider-prev" onclick="sliderPrev()" aria-label="Previous Slide">
-                <i data-lucide="chevron-left" style="width:22px;height:22px;"></i>
-            </button>
-            <button class="slider-nav-btn slider-next" onclick="sliderNext()" aria-label="Next Slide">
-                <i data-lucide="chevron-right" style="width:22px;height:22px;"></i>
-            </button>
-            <div class="slider-dots" id="slider-dots">
-                @foreach($slides as $i => $slide)
-                    <button class="slider-dot {{ $i === 0 ? 'active' : '' }}" onclick="goToSlide({{ $i }})" aria-label="Slide {{ $i+1 }}"></button>
-                @endforeach
+        <button type="button" class="hero-prev absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-navy shadow-lift transition hover:bg-gold sm:flex" aria-label="Previous slide">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="hero-next absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-navy shadow-lift transition hover:bg-gold sm:flex" aria-label="Next slide">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="pointer-events-auto relative z-10 mx-auto mb-8 flex max-w-7xl px-4 sm:px-6 lg:absolute lg:bottom-6 lg:left-0 lg:right-0 lg:mb-0 lg:px-8">
+          <div class="hero-pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Professional care & Pillars -->
+    <section id="about" class="scroll-mt-36 bg-white py-16 md:py-24">
+      <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20 lg:px-8">
+        <div class="reveal relative mx-auto w-fit">
+          <div class="absolute -inset-4 rounded-full bg-gold/20" aria-hidden="true"></div>
+          <img src="{{ asset('assets/blog1.jpg') }}" alt="Someone sorting a pile of folded shirts, jeans and everyday wear" class="relative h-72 w-72 rounded-full object-cover shadow-lift sm:h-80 sm:w-80" width="800" height="800">
+          <div class="absolute -bottom-2 right-0 rounded-2xl bg-white px-4 py-3 shadow-lift sm:-right-4">
+            <p class="font-display text-2xl font-extrabold leading-none text-gold">Free</p>
+            <p class="mt-1 text-xs font-bold uppercase tracking-wide text-navy">Doorstep pickup</p>
+          </div>
+        </div>
+
+        <div class="reveal" style="animation-delay: 100ms">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Home &amp; office</p>
+          <h2 class="mt-3 font-display text-3xl font-extrabold leading-tight text-navy sm:text-4xl">Care for every fabric, from Monday shirts to wedding silks.</h2>
+          <p class="mt-4 text-base leading-relaxed text-mute sm:text-lg">
+            Tender Fold is built around one habit: the cloth decides the process. Daily cottons are washed and finished. Formals, silks and embroidered pieces are dry cleaned. You leave the pile with us. We return it ready for the cupboard.
+          </p>
+          <ul class="mt-6 space-y-3">
+            <li class="flex gap-3">
+              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy" aria-hidden="true">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12.5l4.2 4.2L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="text-ink"><strong class="font-semibold">Professional cleaning</strong> for daily wear and clothes that only come out on occasion.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy" aria-hidden="true">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12.5l4.2 4.2L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="text-ink"><strong class="font-semibold">Fabric care</strong> matched to cotton, silk, wool, linen and embellished wear.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy" aria-hidden="true">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12.5l4.2 4.2L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="text-ink"><strong class="font-semibold">Stain removal</strong> chosen for the mark and the material, not a single harsh wash.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy" aria-hidden="true">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12.5l4.2 4.2L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="text-ink"><strong class="font-semibold">Doorstep pickup &amp; delivery</strong> across Gurugram, for the house and the workplace.</span>
+            </li>
+          </ul>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="{{ route('about') }}" class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">About Tender Fold</a>
+            <a href="{{ route('services') }}" class="inline-flex items-center justify-center rounded-full bg-navy px-6 py-3.5 font-display text-sm font-extrabold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-navy-dark hover:shadow-lg">Explore services</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Dynamic Slider -->
+    <section id="services" class="scroll-mt-36 bg-white py-16 md:py-24 border-t border-navy/5">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">What we take in</p>
+          <h2 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">Laundry, pressing and dry cleaning under one pickup.</h2>
+          <p class="mt-4 text-mute">From everyday wash &amp; fold to bridal dry cleaning, shoe care, drapes, and rugs in Gurugram.</p>
+        </div>
+
+        <div class="relative mt-12">
+          <div class="swiper services-swiper">
+            <div class="swiper-wrapper">
+              @php
+                $serviceImages = [
+                  'laundry-services' => 'assets/hands.jpg',
+                  'dry-cleaning' => 'assets/suit.jpg',
+                  'ironing' => 'assets/shirts.jpg',
+                  'shoe-cleaning' => 'assets/shoe.jpg',
+                  'carpet-cleaning' => 'assets/carpet.jpg',
+                  'curtain-cleaning' => 'assets/curtain.jpg',
+                ];
+              @endphp
+
+              @foreach(($services ?? $navServices ?? []) as $srv)
+                <div class="swiper-slide">
+                  <article class="group flex h-full flex-col rounded-3xl bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+                    <div class="overflow-hidden rounded-t-3xl">
+                      <img src="{{ asset($serviceImages[$srv->slug] ?? 'assets/whiteshirt.jpg') }}" alt="{{ $srv->service_name }}" class="h-52 w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
+                    </div>
+                    <div class="relative flex flex-1 flex-col px-6 pb-6 pt-8">
+                      <div class="absolute -top-6 left-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-gold text-navy shadow-md" aria-hidden="true">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2" stroke-linecap="round"/></svg>
+                      </div>
+                      <p class="text-xs font-bold uppercase tracking-wider text-gold-deep">{{ $srv->rate_value }}</p>
+                      <h3 class="mt-1 font-display text-2xl font-extrabold text-navy"><a href="{{ route('services.show', $srv->slug) }}" class="transition hover:text-navy-mid">{{ $srv->service_name }}</a></h3>
+                      <p class="mt-2 flex-1 text-sm leading-relaxed text-mute">{{ $srv->summary }}</p>
+                      <a href="{{ route('services.show', $srv->slug) }}" class="mt-4 inline-flex items-center gap-1 font-display text-sm font-extrabold text-navy transition hover:gap-2">Open this service <span aria-hidden="true">→</span></a>
+                    </div>
+                  </article>
+                </div>
+              @endforeach
             </div>
+          </div>
+          <div class="mt-8 flex justify-center gap-3">
+            <button type="button" class="services-prev inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy shadow-lift transition hover:bg-gold" aria-label="Previous services">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="services-next inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy shadow-lift transition hover:bg-gold" aria-label="Next services">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Welcome Offer Banner -->
+    <section class="bg-cream py-6 md:py-10" aria-label="Welcome offer">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal grid items-center gap-8 overflow-hidden rounded-[2rem] bg-navy shadow-lift lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="group relative h-64 overflow-hidden sm:h-80 lg:h-full lg:min-h-[340px]">
+            <img src="{{ asset('assets/shirts.jpg') }}" alt="A rail of freshly pressed colourful shirts" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy">
+          </div>
+          <div class="px-6 pb-8 sm:px-10 lg:py-12 lg:pr-12">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Welcome offer</p>
+            <h2 class="mt-3 font-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">20% off your first order.</h2>
+            <p class="mt-4 max-w-lg text-white/75">Start with a lighter bill and a free doorstep pickup. The welcome saving applies to your first Tender Fold order. Terms apply.</p>
+            <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+              <button type="button" data-open-book data-note="Asking about the 20% first-order offer" class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy shadow-md transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep hover:shadow-lg">Claim the offer</button>
+              <a href="tel:{{ preg_replace('/[^0-9+]/', '', $site['phone'] ?? '+919582466445') }}" class="inline-flex items-center justify-center rounded-full border-2 border-white/25 px-6 py-3.5 font-display text-sm font-extrabold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-navy">Call {{ $site['phone_display'] ?? $site['phone'] ?? '+91 95824 66445' }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="relative scroll-mt-36 overflow-hidden bg-cream py-16 md:py-24">
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <svg class="mx-auto h-9 w-9 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M12 4v3" stroke-linecap="round"/>
+            <path d="M8 7h8" stroke-linecap="round"/>
+            <path d="M9 7c0 6-2 9-2 12h10c0-3-2-6-2-12" stroke-linejoin="round"/>
+          </svg>
+          <p class="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-gold-deep">Four simple steps</p>
+          <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight text-navy sm:text-5xl">How it works</h2>
+        </div>
+
+        <div class="relative mt-14">
+          <ol class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            <li class="reveal text-center">
+              <div class="relative z-10 mx-auto h-36 w-36">
+                <div class="flex h-full w-full items-center justify-center rounded-full border-[2.5px] border-dashed border-gold bg-white shadow-sm">
+                  <svg class="h-14 w-14" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <path d="M8 30h28v16H8z" fill="#143572"/>
+                    <path d="M36 36h10l8 8v2H36" fill="#1E4A96"/>
+                    <circle cx="18" cy="48" r="4" fill="#0C2454"/>
+                    <circle cx="44" cy="48" r="4" fill="#0C2454"/>
+                    <circle cx="46" cy="18" r="10" fill="#F5B400"/>
+                    <path d="M46 13v6l3 2" stroke="#143572" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <span class="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gold font-display text-sm font-extrabold text-navy ring-4 ring-cream">1</span>
+              </div>
+              <h3 class="mt-5 font-display text-xl font-extrabold text-navy">Book a pickup</h3>
+              <p class="mx-auto mt-2 max-w-[15rem] text-sm leading-relaxed text-mute">Tell us the service, your society and a time window. Call or WhatsApp.</p>
+            </li>
+            <li class="reveal text-center" style="animation-delay: 80ms">
+              <div class="relative z-10 mx-auto h-36 w-36">
+                <div class="flex h-full w-full items-center justify-center rounded-full border-[2.5px] border-dashed border-gold bg-white shadow-sm">
+                  <svg class="h-14 w-14" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <path d="M18 14h4l2 6h16l2-6h4v28H18V14Z" fill="#143572"/>
+                    <path d="M24 20h16v16H24z" fill="#F5B400"/>
+                    <path d="M28 24v8M32 24v8M36 24v8" stroke="#143572" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M22 14c1-4 4-6 10-6s9 2 10 6" stroke="#1E4A96" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <span class="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gold font-display text-sm font-extrabold text-navy ring-4 ring-cream">2</span>
+              </div>
+              <h3 class="mt-5 font-display text-xl font-extrabold text-navy">We collect</h3>
+              <p class="mx-auto mt-2 max-w-[15rem] text-sm leading-relaxed text-mute">A rider picks the bag up from your door. No counter, no second trip downstairs.</p>
+            </li>
+            <li class="reveal text-center" style="animation-delay: 160ms">
+              <div class="relative z-10 mx-auto h-36 w-36">
+                <div class="flex h-full w-full items-center justify-center rounded-full border-[2.5px] border-dashed border-gold bg-white shadow-sm">
+                  <svg class="h-14 w-14" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <rect x="16" y="16" width="32" height="8" rx="2" fill="#1E4A96"/>
+                    <rect x="14" y="26" width="36" height="8" rx="2" fill="#143572"/>
+                    <rect x="16" y="36" width="32" height="8" rx="2" fill="#F5B400"/>
+                    <path d="M18 20h28M16 30h32M18 40h28" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".45"/>
+                  </svg>
+                </div>
+                <span class="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gold font-display text-sm font-extrabold text-navy ring-4 ring-cream">3</span>
+              </div>
+              <h3 class="mt-5 font-display text-xl font-extrabold text-navy">Expert care</h3>
+              <p class="mx-auto mt-2 max-w-[15rem] text-sm leading-relaxed text-mute">Wash, steam iron or dry clean. The finish follows the fabric, the stain and the label.</p>
+            </li>
+            <li class="reveal text-center" style="animation-delay: 240ms">
+              <div class="relative z-10 mx-auto h-36 w-36">
+                <div class="flex h-full w-full items-center justify-center rounded-full border-[2.5px] border-dashed border-gold bg-white shadow-sm">
+                  <svg class="h-14 w-14" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <rect x="22" y="10" width="20" height="36" rx="3" fill="#143572"/>
+                    <rect x="25" y="16" width="14" height="20" rx="1" fill="#E8EEF8"/>
+                    <circle cx="32" cy="41" r="2" fill="#F5B400"/>
+                    <circle cx="46" cy="22" r="9" fill="#F5B400"/>
+                    <path d="M42 22l3 3 5-6" stroke="#143572" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gold font-display text-sm font-extrabold text-navy ring-4 ring-cream">4</span>
+              </div>
+              <h3 class="mt-5 font-display text-xl font-extrabold text-navy">We deliver</h3>
+              <p class="mx-auto mt-2 max-w-[15rem] text-sm leading-relaxed text-mute">Clothes come back folded or on hangers, ready for the cupboard, the office or the day.</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="reveal mt-12 text-center">
+          <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-8 py-3.5 font-display text-sm font-extrabold uppercase tracking-wide text-navy shadow-md transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep hover:shadow-lg">Schedule a Pickup</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Summary Section -->
+    <section id="pricing" class="scroll-mt-36 bg-white py-16 md:py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Laundry plans</p>
+          <h2 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">Simple plans, published rates.</h2>
+          <p class="mt-4 text-mute">Laundry is priced per kilogram. Dry cleaning, linen, footwear and bags are priced per piece on the rate card.</p>
+        </div>
+
+        <div class="mt-12 grid items-stretch gap-6 lg:grid-cols-3 lg:pt-4">
+          <article class="reveal flex flex-col rounded-3xl border border-navy/10 bg-white p-6 shadow-card transition duration-300 hover:-translate-y-2 hover:shadow-lift sm:p-8">
+            <h3 class="font-display text-xl font-extrabold text-navy">Wash &amp; Fold</h3>
+            <p class="mt-1 text-sm text-mute">Everyday care, made easy.</p>
+            <p class="mt-5 font-display text-4xl font-extrabold text-navy">₹80 <span class="text-base font-bold text-mute">/ kg</span></p>
+            <ul class="mt-6 flex-1 space-y-3 text-sm text-ink">
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Colour-sorted wash</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Dried and neatly folded</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Daily cottons and home wear</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Packed for the cupboard</li>
+            </ul>
+            <button type="button" data-open-book data-service="Wash &amp; Fold" class="mt-8 inline-flex items-center justify-center rounded-full border-2 border-navy/15 px-5 py-3 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">Choose this plan</button>
+          </article>
+
+          <article class="reveal relative flex flex-col rounded-3xl bg-navy p-6 text-white shadow-lift transition duration-300 hover:-translate-y-2 sm:p-8 lg:-translate-y-3 lg:hover:-translate-y-5" style="animation-delay: 80ms">
+            <p class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gold px-4 py-1 font-display text-xs font-extrabold uppercase tracking-wide text-navy">Most chosen</p>
+            <h3 class="font-display text-xl font-extrabold">Wash &amp; Iron</h3>
+            <p class="mt-1 text-sm text-white/70">Pressed, hung and office-ready.</p>
+            <p class="mt-5 font-display text-4xl font-extrabold text-gold">₹115 <span class="text-base font-bold text-white/70">/ kg</span></p>
+            <ul class="mt-6 flex-1 space-y-3 text-sm">
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Washed and steam pressed</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Shirts finished on hangers</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Kurtas, trousers and office wear</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Creases only where you want them</li>
+            </ul>
+            <button type="button" data-open-book data-service="Wash &amp; Iron" class="mt-8 inline-flex items-center justify-center rounded-full bg-gold px-5 py-3 font-display text-sm font-extrabold text-navy shadow-md transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep hover:shadow-lg">Choose this plan</button>
+          </article>
+
+          <article class="reveal flex flex-col rounded-3xl border border-navy/10 bg-white p-6 shadow-card transition duration-300 hover:-translate-y-2 hover:shadow-lift sm:p-8" style="animation-delay: 160ms">
+            <h3 class="font-display text-xl font-extrabold text-navy">Premium Laundry</h3>
+            <p class="mt-1 text-sm text-mute">A finer finish for finer cloth.</p>
+            <p class="mt-5 font-display text-4xl font-extrabold text-navy">₹185 <span class="text-base font-bold text-mute">/ kg</span></p>
+            <ul class="mt-6 flex-1 space-y-3 text-sm text-ink">
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Gentler cycle for finer fabrics</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Extra inspection and finishing</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Delicates welcome</li>
+              <li class="flex gap-2"><span class="text-gold" aria-hidden="true">●</span> Wardrobe-ready packing</li>
+            </ul>
+            <button type="button" data-open-book data-service="Premium Laundry" class="mt-8 inline-flex items-center justify-center rounded-full border-2 border-navy/15 px-5 py-3 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">Choose this plan</button>
+          </article>
+        </div>
+
+        <div class="reveal mt-8 flex flex-wrap justify-center gap-2">
+          <span class="rounded-full bg-cream px-4 py-2 text-sm font-semibold text-navy">Shirt ₹130</span>
+          <span class="rounded-full bg-cream px-4 py-2 text-sm font-semibold text-navy">Saree ₹230+</span>
+          <span class="rounded-full bg-cream px-4 py-2 text-sm font-semibold text-navy">2-pc suit ₹400</span>
+          <span class="rounded-full bg-cream px-4 py-2 text-sm font-semibold text-navy">Lehenga ₹550+</span>
+          <span class="rounded-full bg-cream px-4 py-2 text-sm font-semibold text-navy">Shoes from ₹350</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials / Quotes -->
+    <section id="reviews" class="scroll-mt-36 bg-cream py-16 md:py-24">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Neighbourhood reviews</p>
+        <h2 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">From cupboards across Gurugram.</h2>
+
+        @if($testimonials->count() > 0)
+          @php $firstT = $testimonials->first(); @endphp
+          <figure class="reveal mt-10 rounded-3xl bg-white p-8 shadow-card sm:p-12">
+            <blockquote id="quoteText" class="font-display text-xl font-extrabold leading-relaxed text-navy sm:text-2xl">
+              “{{ $firstT->content }}”
+            </blockquote>
+            <figcaption class="mt-8">
+              <div class="flex justify-center gap-3">
+                @foreach($testimonials as $idx => $tItem)
+                  <button type="button" class="quote-tab rounded-full transition duration-300 ring-2 {{ $idx === 0 ? 'h-14 w-14 ring-gold ring-offset-2 ring-offset-cream' : 'h-12 w-12 opacity-70 ring-transparent' }}"
+                    data-quote="{{ $tItem->content }}"
+                    data-name="{{ $tItem->name }}"
+                    data-place="{{ $tItem->role }}"
+                    aria-label="Read review from {{ $tItem->name }}"
+                    aria-selected="{{ $idx === 0 ? 'true' : 'false' }}">
+                    <img src="{{ asset($tItem->avatar_path ?: ('assets/face' . (($idx % 4) + 1) . '.jpg')) }}" alt="{{ $tItem->name }}" class="h-full w-full rounded-full object-cover">
+                  </button>
+                @endforeach
+              </div>
+              <p id="quoteName" class="mt-4 font-display text-lg font-extrabold text-navy">{{ $firstT->name }}</p>
+              <p id="quotePlace" class="text-sm text-mute">{{ $firstT->role }}</p>
+            </figcaption>
+          </figure>
         @endif
+      </div>
     </section>
 
-    {{-- ===== 2. APPOINTMENT BOOKING CARD ===== --}}
-    <section class="section-spacing" id="appointment-section" style="background-color: var(--bg-surface); padding: 44px 0 40px;">
-        <div class="container">
-            <div class="home-appt-grid">
-                <div>
-                    <span class="badge badge-blue" style="margin-bottom: 10px;">Seamless Booking</span>
-                    <h2 style="margin-bottom: 12px; font-size: clamp(24px, 3vw, 32px);">{{ $pageContents['home']['appointment']['heading'] ?? 'Book Your Priority Consultation with Dr. Sumit' }}</h2>
-                    <p style="font-size: 15px; margin-bottom: 18px; color: var(--body-text); line-height: 1.6;">
-                        {{ $pageContents['home']['appointment']['subtitle'] ?? 'Our clinical coordinators will help schedule your visit at our Baner, Balewadi, or Hinjewadi clinic. Fill in your details for a prompt callback.' }}
-                    </p>
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">1</div>
-                            <span style="font-size: 14.5px; font-weight: 600; color: var(--heading-navy);">Submit your preferred service and contact details</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">2</div>
-                            <span style="font-size: 14.5px; font-weight: 600; color: var(--heading-navy);">Receive a confirmation call from our coordinator</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background-color: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">3</div>
-                            <span style="font-size: 14.5px; font-weight: 600; color: var(--heading-navy);">Visit Baner, Balewadi, or Hinjewadi clinic at your scheduled time</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-card" style="padding: 24px 28px;">
-                    <form action="{{ route('contact.submit') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="source" value="Homepage Booking Card">
-                        <div class="form-group" style="margin-bottom: 14px;">
-                            <label for="hp-name" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Full Name</label>
-                            <input type="text" id="hp-name" name="name" class="form-control" placeholder="Enter your full name" required style="height: 42px;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 14px;">
-                            <label for="hp-phone" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Phone Number</label>
-                            <input type="tel" id="hp-phone" name="phone" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required style="height: 42px;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 14px;">
-                            <label for="hp-service" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Treatment / Service Needed</label>
-                            <select id="hp-service" name="service" class="form-control" required style="height: 42px;">
-                                <option value="">-- Select Service --</option>
-                                @foreach($globalServices as $gs)
-                                    <option value="{{ $gs->slug }}">{{ $gs->service_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group" style="margin-bottom: 14px;">
-                            <label for="hp-date" class="form-label" style="font-size: 13.5px; margin-bottom: 5px;">Preferred Appointment Date</label>
-                            <input type="date" id="hp-date" name="appointment_date" class="form-control" style="height: 42px;">
-                        </div>
-                        @if(!empty($site['recaptcha_enabled']) && $site['recaptcha_enabled'] == '1' && !empty($site['recaptcha_site_key']))
-                            <div class="form-group" style="display: flex; justify-content: center; margin-bottom: 14px;">
-                                <div class="g-recaptcha" data-sitekey="{{ $site['recaptcha_site_key'] }}"></div>
-                            </div>
-                        @endif
-                        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 6px; height: 44px;">
-                            <i data-lucide="calendar"></i> Request Consultation Slot
-                        </button>
-                    </form>
-                </div>
+    <!-- Care Journal / Blog Previews -->
+    @if($recentBlogs->count() > 0)
+      <section class="bg-white py-16 md:py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Fabric care notes</p>
+              <h2 class="mt-2 font-display text-3xl font-extrabold text-navy sm:text-4xl">The Care Journal</h2>
             </div>
+            <a href="{{ route('blog') }}" class="font-display text-sm font-extrabold text-navy transition hover:text-gold">View all articles →</a>
+          </div>
+
+          <div class="mt-10 grid gap-8 md:grid-cols-3">
+            @foreach($recentBlogs as $rb)
+              <article class="group flex flex-col rounded-3xl border border-navy/10 bg-white p-4 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+                <div class="overflow-hidden rounded-2xl">
+                  <img src="{{ asset($rb->image_path ?: 'assets/blog1.jpg') }}" alt="{{ $rb->title }}" class="h-48 w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
+                </div>
+                <div class="flex flex-1 flex-col p-3">
+                  <span class="text-xs font-bold uppercase tracking-wider text-gold-deep">{{ $rb->category ?? 'Fabric Care' }}</span>
+                  <h3 class="mt-1.5 font-display text-lg font-extrabold text-navy">
+                    <a href="{{ route('blog.show', $rb->slug) }}" class="transition hover:text-navy-mid">{{ $rb->title }}</a>
+                  </h3>
+                  <p class="mt-2 flex-1 text-sm text-mute line-clamp-2">{{ $rb->summary }}</p>
+                  <a href="{{ route('blog.show', $rb->slug) }}" class="mt-4 font-display text-xs font-extrabold text-navy transition hover:text-gold">Read guide →</a>
+                </div>
+              </article>
+            @endforeach
+          </div>
         </div>
-    </section>
-
-    {{-- ===== 4. SERVICES GRID ===== --}}
-    <section class="section-spacing" style="background-color: var(--brand-blue-light);">
-        <div class="container">
-            <div style="text-align: center; max-width: 680px; margin: 0 auto 48px;">
-                <span class="badge badge-blue" style="margin-bottom: 12px;">Multidisciplinary Facilities</span>
-                <h2>{{ $pageContents['home']['services']['title'] ?? 'Comprehensive Orthopedic & Physiotherapy Services' }}</h2>
-                <p style="color: var(--body-text); font-size: 16.5px;">{{ $pageContents['home']['services']['subtitle'] ?? 'From specialist orthopaedic evaluations and robotic joint replacement to full-spectrum physiotherapy and diagnostic imaging in Baner, Balewadi & Hinjewadi.' }}</p>
-            </div>
-
-            <div class="card-grid">
-                @foreach($globalServices->take(6) as $index => $service)
-                    <div class="medical-card">
-                        <div class="card-img-wrapper">
-                            @if(!empty($service->image_path))
-                                <img src="{{ site_image($service->image_path) }}" alt="{{ $service->service_name }}" loading="lazy" decoding="async">
-                            @else
-                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="{{ $service->service_name }}" loading="lazy" decoding="async">
-                            @endif
-                        </div>
-                        <div class="card-body">
-                            <span class="card-category">{{ $service->hero_category ?? 'Clinical Facility' }}</span>
-                            <h3 class="card-title">{{ $service->service_name }}</h3>
-                            <p class="card-text">{{ Str::limit(strip_tags($service->summary ?? $service->intro_content), 110) }}</p>
-                            <div class="card-footer">
-                                <a href="{{ route('services.show', $service->slug) }}" class="card-link">
-                                    Explore Service <i data-lucide="arrow-right" style="width: 16px;"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div style="text-align: center; margin-top: 40px; padding-bottom: 10px;">
-                <a href="{{ route('services') }}" class="btn btn-secondary btn-lg">View All Services</a>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== CLINIC OVERVIEW & TEAM COLLAGE SECTION (Screenshot 3) ===== --}}
-    <section class="section-spacing" style="background-color: var(--surface-white);">
-        <div class="container">
-            <div class="clinic-overview-grid">
-                <div>
-                    <span class="badge badge-blue" style="margin-bottom: 12px;">Established Excellence</span>
-                    <h2 style="font-size: 34px; margin-bottom: 6px; color: var(--heading-navy); line-height: 1.2;">
-                        Orthopedic &amp; Physiotherapy Clinic In Baner <span style="color: var(--brand-blue);">SUMITZ</span>
-                    </h2>
-                    <span style="font-size: 18px; font-weight: 700; color: var(--brand-blue); display: block; margin-bottom: 20px;">
-                        Your Health is in Good Hands
-                    </span>
-                    <p style="font-size: 16px; line-height: 1.7; color: var(--body-text); margin-bottom: 16px;">
-                        SumitZ is one of the leading Orthopaedic &amp; Physiotherapy clinics in Baner and has been serving patients since 2006.
-                    </p>
-                    <p style="font-size: 16px; line-height: 1.7; color: var(--body-text); margin-bottom: 16px;">
-                        We offer proactive, quality healthcare in a safe and comfortable environment tailored to your specific musculoskeletal needs.
-                    </p>
-                    <p style="font-size: 16px; line-height: 1.7; color: var(--body-text); margin-bottom: 28px;">
-                        Your health is our number one priority, and we make sure to meet all your needs in a timely manner.
-                    </p>
-                    <div>
-                        <a href="{{ route('services') }}" class="btn btn-primary btn-lg" style="display: inline-flex; align-items: center; gap: 8px;">
-                            Our Services <i data-lucide="arrow-right" style="width: 18px;"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="team-collage-box">
-                    <div class="team-collage-title">SUMITZ ORTHOPAEDIC TEAM</div>
-                    <div class="team-collage-grid">
-                        @foreach($globalSpecialists as $doc)
-                            <a href="{{ route('specialists.show', $doc->slug) }}" class="team-collage-card" title="{{ $doc->name }} ({{ $doc->designation }})">
-                                @if(!empty($doc->image))
-                                    <img src="{{ site_image($doc->image) }}" alt="{{ $doc->name }}" class="team-collage-img" loading="lazy" decoding="async">
-                                @else
-                                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80" alt="{{ $doc->name }}" class="team-collage-img" loading="lazy" decoding="async">
-                                @endif
-                                <span class="team-collage-name">{{ $doc->name }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== WHY CHOOSE US SECTION (Screenshot 2) ===== --}}
-    <section class="section-spacing" style="background-color: var(--brand-blue-light);">
-        <div class="container">
-            <div class="why-choose-grid">
-                <div style="position: relative;">
-                    <div style="border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(7, 26, 46, 0.15); aspect-ratio: 4/3;">
-                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80" alt="Why Choose SumitZ Orthopedic Specialists Baner" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
-                    </div>
-                    <div style="position: absolute; bottom: -20px; right: -20px; background: #ffffff; border-radius: 16px; padding: 18px 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.12); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px;">
-                        <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--brand-blue-light); color: var(--brand-blue); display: flex; align-items: center; justify-content: center;">
-                            <i data-lucide="award" style="width: 24px; height: 24px;"></i>
-                        </div>
-                        <div>
-                            <strong style="font-size: 18px; color: var(--heading-navy); display: block;">15+ Yrs</strong>
-                            <span style="font-size: 13px; color: var(--muted-text);">Clinical Expertise in Baner</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <span class="badge badge-blue" style="margin-bottom: 12px;">Patient Advantage</span>
-                    <h2 style="font-size: 34px; margin-bottom: 24px; color: var(--heading-navy); line-height: 1.25;">
-                        Why Choose Us As Orthopedic &amp; Physiotherapy Specialist In Baner?
-                    </h2>
-
-                    <div class="why-item-row">
-                        <div class="why-number-circle">01.</div>
-                        <div>
-                            <h3 class="why-content-title">Patient-Centred</h3>
-                            <p class="why-content-desc">
-                                While our team brings important experience and knowledge, we know that each patient is the expert in their own life.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="why-item-row">
-                        <div class="why-number-circle">02.</div>
-                        <div>
-                            <h3 class="why-content-title">Comprehensive</h3>
-                            <p class="why-content-desc">
-                                We offer comprehensive health care focusing on the whole person, at all ages and stages of life.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="why-item-row" style="margin-bottom: 0;">
-                        <div class="why-number-circle">03.</div>
-                        <div>
-                            <h3 class="why-content-title">Flexible Working Hours</h3>
-                            <p class="why-content-desc">
-                                We have flexible hours and are open on certain evenings and during the weekend, to accommodate your schedule.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== MEET THE TEAM: SPECIALISTS GRID SECTION (Screenshot 1) ===== --}}
-    @if($globalSpecialists->count() > 0)
-        <section class="section-spacing" style="background-color: var(--surface-white);">
-            <div class="container">
-                <div style="text-align: center; max-width: 720px; margin: 0 auto 48px;">
-                    <span class="badge badge-blue" style="margin-bottom: 12px;">Meet the Team</span>
-                    <h2 style="font-size: 36px; margin-bottom: 12px; color: var(--heading-navy);">
-                        Our Orthopedic &amp; Physiotherapy Specialists
-                    </h2>
-                    <p style="color: var(--body-text); font-size: 16.5px; line-height: 1.6;">
-                        We offer highly specialised medical care, on one site, from some of the foremost national and international specialists in their fields of medicine.
-                    </p>
-                </div>
-
-                <div class="specialist-card-grid">
-                    @foreach($globalSpecialists->take(8) as $doc)
-                        <div class="specialist-card">
-                            <div class="specialist-img-box">
-                                @if(!empty($doc->image))
-                                    <img src="{{ site_image($doc->image) }}" alt="{{ $doc->name }}" loading="lazy" decoding="async">
-                                @else
-                                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80" alt="{{ $doc->name }}" loading="lazy" decoding="async">
-                                @endif
-                            </div>
-                            <div class="specialist-card-body">
-                                <div>
-                                    <h3 class="specialist-name">{{ $doc->name }}</h3>
-                                    <div class="specialist-designation">{{ $doc->designation ?: 'Medical Specialist' }}</div>
-                                </div>
-                                <a href="{{ route('specialists.show', $doc->slug) }}" class="specialist-action-btn">
-                                    View Doctor Profile <i data-lucide="arrow-right" style="width: 15px;"></i>
-                                </a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                @if($globalSpecialists->count() > 8)
-                    <div style="text-align: center; margin-top: 40px;">
-                        <a href="{{ route('specialists') }}" class="btn btn-secondary btn-lg">
-                            View All Specialists ({{ $globalSpecialists->count() }})
-                        </a>
-                    </div>
-                @endif
-            </div>
-        </section>
-    @endif
-    @if($globalSpecialists->count() > 0)
-        @php $leadDoc = $globalSpecialists->first(); @endphp
-        <section class="section-spacing" style="background-color: var(--surface-white);">
-            <div class="container">
-                <div style="display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: center;">
-                    <div class="doctor-img-container" style="border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg);">
-                        @if(!empty($leadDoc->image))
-                            <img src="{{ site_image($leadDoc->image) }}" alt="{{ $leadDoc->name }} — Best Orthopedic Doctor Baner Pune" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
-                        @else
-                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80" alt="Dr. Sumit — Orthopedic Surgeon Baner Balewadi Pune" loading="lazy" decoding="async">
-                        @endif
-                    </div>
-                    <div>
-                        <span class="badge badge-blue" style="margin-bottom: 12px;">Lead Consultant</span>
-                        <h2 style="font-size: 36px; margin-bottom: 8px;">{{ $leadDoc->name }}</h2>
-                        <span style="font-size: 16px; font-weight: 700; color: var(--brand-blue); display: block; margin-bottom: 8px;">
-                            {{ $leadDoc->designation }}
-                        </span>
-                        <span style="font-size: 14px; color: var(--muted-text); display: block; margin-bottom: 20px;">
-                            Best Orthopedic Doctor in Baner, Balewadi &amp; Pune
-                        </span>
-                        <p style="font-size: 16.5px; line-height: 1.7; color: var(--body-text); margin-bottom: 24px;">
-                            {{ Str::limit(strip_tags($leadDoc->description), 280) }}
-                        </p>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px;">
-                            @foreach([
-                                'Joint Replacement Surgery', 'Robotic-Assisted Surgery',
-                                'Spine Care & Treatment', 'Trauma & Fracture Management',
-                                'Sports Injury Rehabilitation', 'Knee & Hip Arthroplasty'
-                            ] as $skill)
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <i data-lucide="check-circle-2" style="color: var(--brand-blue); width: 20px; flex-shrink:0;"></i>
-                                <span style="font-size: 14px; font-weight: 600; color: var(--heading-navy);">{{ $skill }}</span>
-                            </div>
-                            @endforeach
-                        </div>
-                        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                            <a href="{{ route('specialists.show', $leadDoc->slug) }}" class="btn btn-primary">
-                                Meet {{ $leadDoc->name }}'s Profile
-                            </a>
-                            <button onclick="openDialog('callback-dialog');" class="btn btn-secondary">
-                                <i data-lucide="calendar"></i> Book Consultation
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+      </section>
     @endif
 
-    {{-- ===== 6. 4-STEP RECOVERY PATH ===== --}}
-    <section class="section-spacing" style="background-color: var(--bg-surface);">
-        <div class="container">
-            <div style="text-align: center; max-width: 640px; margin: 0 auto 48px;">
-                <span class="badge badge-blue" style="margin-bottom: 12px;">Clear Patient Pathway</span>
-                <h2>{{ $pageContents['home']['process']['heading'] ?? 'Your Journey to Pain-Free Living' }}</h2>
-                <p style="color: var(--body-text); font-size: 16px;">{{ $pageContents['home']['process']['subtitle'] ?? 'We follow a systematic, compassionate four-step protocol for every patient at our Baner and Balewadi clinics.' }}</p>
-            </div>
-
-            <div class="process-grid">
-                <div class="process-step">
-                    <div class="step-number">01</div>
-                    <h3 style="font-size: 19px; margin-bottom: 8px;">Detailed Consultation</h3>
-                    <p style="font-size: 14.5px; color: var(--body-text);">Comprehensive physical examination and review of your pain history by Dr. Sumit.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">02</div>
-                    <h3 style="font-size: 19px; margin-bottom: 8px;">Precision Diagnosis</h3>
-                    <p style="font-size: 14.5px; color: var(--body-text);">In-house Digital X-Ray, OPG, and BMD bone density testing for accurate insights.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">03</div>
-                    <h3 style="font-size: 19px; margin-bottom: 8px;">Targeted Treatment</h3>
-                    <p style="font-size: 14.5px; color: var(--body-text);">Custom physiotherapy, non-invasive therapies, or precision surgical care tailored for you.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">04</div>
-                    <h3 style="font-size: 19px; margin-bottom: 8px;">Guided Rehabilitation</h3>
-                    <p style="font-size: 14.5px; color: var(--body-text);">Progressive exercise tracking to ensure long-term mobility and strength recovery.</p>
-                </div>
-            </div>
+    <!-- FAQ Accordions -->
+    <section id="faq" class="scroll-mt-36 bg-cream py-16 md:py-24">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal text-center">
+          <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Clear answers</p>
+          <h2 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">Frequently asked questions</h2>
         </div>
-    </section>
 
-    {{-- ===== 7. ADVANCED FACILITIES ===== --}}
-    <section class="section-spacing" style="background-color: var(--mist-blue);">
-        <div class="container">
-            <div style="text-align: center; max-width: 640px; margin: 0 auto 48px;">
-                <span class="badge badge-blue" style="margin-bottom: 12px;">In-House Diagnostics</span>
-                <h2>{{ $pageContents['home']['facilities']['heading'] ?? 'State-of-the-Art Clinical Facilities in Baner' }}</h2>
-                <p style="color: var(--body-text); font-size: 16px;">{{ $pageContents['home']['facilities']['subtitle'] ?? 'Modern diagnostic and therapeutic equipment ensuring accurate answers and faster recovery — all under one roof.' }}</p>
-            </div>
-
-            <div class="card-grid">
-                <div class="medical-card">
-                    <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80" alt="Digital X-Ray Unit Baner Clinic" loading="lazy" decoding="async">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">High-Frequency Digital X-Ray</h3>
-                        <p class="card-text">Ultra-low radiation digital radiography providing instant high-resolution bone images for rapid orthopedic diagnosis.</p>
-                    </div>
-                </div>
-
-                <div class="medical-card">
-                    <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80" alt="Physiotherapy Equipment Baner" loading="lazy" decoding="async">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">Advanced Physiotherapy Gym</h3>
-                        <p class="card-text">Electrotherapy, IFT, ultrasound, and dedicated muscle rehabilitation equipment for comprehensive recovery programs.</p>
-                    </div>
-                </div>
-
-                <div class="medical-card">
-                    <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=600&q=80" alt="BMD Bone Density Scan" loading="lazy" decoding="async">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">BMD Bone Density Scan</h3>
-                        <p class="card-text">Accurate osteoporosis screening and bone mineral density assessment for early prevention and treatment planning.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== 8. TREATMENTS GRID ===== --}}
-    <section class="section-spacing" style="background-color: var(--surface-white);">
-        <div class="container">
-            <div style="text-align: center; max-width: 640px; margin: 0 auto 48px;">
-                <span class="badge badge-blue" style="margin-bottom: 12px;">Conditions We Treat</span>
-                <h2>{{ $pageContents['home']['treatments']['heading'] ?? 'Specialized Orthopedic Treatments in Pune' }}</h2>
-                <p style="color: var(--body-text); font-size: 16px;">{{ $pageContents['home']['treatments']['subtitle'] ?? 'Targeted interventions for joint, bone, muscle, and ligament disorders by Pune\'s leading orthopedic specialist.' }}</p>
-            </div>
-
-            <div class="card-grid">
-                @foreach($globalTreatments->take(6) as $treatment)
-                    <div class="medical-card">
-                        <div class="card-img-wrapper">
-                            @if(!empty($treatment->image))
-                                <img src="{{ site_image($treatment->image) }}" alt="{{ $treatment->name }}" loading="lazy" decoding="async">
-                            @else
-                                <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80" alt="{{ $treatment->name }}" loading="lazy" decoding="async">
-                            @endif
-                        </div>
-                        <div class="card-body">
-                            <span class="card-category">Orthopaedic Speciality</span>
-                            <h3 class="card-title">{{ $treatment->name }}</h3>
-                            <p class="card-text">{{ Str::limit(strip_tags($treatment->description), 110) }}</p>
-                            <div class="card-footer">
-                                <a href="{{ route('treatments.show', $treatment->slug) }}" class="card-link">
-                                    Read Treatment Guide <i data-lucide="arrow-right" style="width: 16px;"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="{{ route('treatments') }}" class="btn btn-secondary btn-lg">Explore All Treatments</a>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== 9. TESTIMONIALS ===== --}}
-    @if(isset($testimonials) && $testimonials->count() > 0)
-        <section class="section-spacing" style="background-color: var(--bg-surface);">
-            <div class="container">
-                <div style="text-align: center; max-width: 640px; margin: 0 auto 48px;">
-                    <span class="badge badge-blue" style="margin-bottom: 12px;">Verified Patient Feedback</span>
-                    <h2>{{ $pageContents['home']['testimonials']['heading'] ?? 'Stories of Recovery & Renewed Hope' }}</h2>
-                    <p style="color: var(--body-text); font-size: 16px;">{{ $pageContents['home']['testimonials']['subtitle'] ?? 'Read how Dr. Sumit\'s patient-first approach helped individuals in Baner, Balewadi & Pune regain comfortable daily living.' }}</p>
-                </div>
-
-                <div class="card-grid">
-                    @foreach($testimonials->take(3) as $testimonial)
-                        <div class="testimonial-card">
-                            <div style="color: #F59E0B; margin-bottom: 16px; display: flex; gap: 4px;">
-                                @for($s = 0; $s < 5; $s++)
-                                    <i data-lucide="star" style="fill: currentColor; width: 18px;"></i>
-                                @endfor
-                            </div>
-                            <p class="testimonial-quote">
-                                "{{ Str::limit(strip_tags($testimonial->content ?? $testimonial->quote), 180) }}"
-                            </p>
-                            <div class="testimonial-author">
-                                <div class="author-avatar">
-                                    {{ substr($testimonial->patient_name ?? $testimonial->name ?? 'P', 0, 1) }}
-                                </div>
-                                <div class="author-info">
-                                    <h4>{{ $testimonial->patient_name ?? $testimonial->name }}</h4>
-                                    <span>{{ $testimonial->service_taken ?? 'Orthopaedic Patient' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <div style="text-align: center; margin-top: 40px;">
-                    <a href="{{ route('testimonials') }}" class="btn btn-secondary">Read More Patient Stories</a>
-                </div>
-            </div>
-        </section>
-    @endif
-
-    {{-- ===== 10. CLINIC LOCATIONS ===== --}}
-    <section class="section-spacing" style="background-color: var(--surface-white);">
-        <div class="container">
-            <div style="text-align: center; max-width: 640px; margin: 0 auto 48px;">
-                <span class="badge badge-blue" style="margin-bottom: 12px;">Convenient Access</span>
-                <h2>{{ $pageContents['home']['locations']['heading'] ?? 'Visit SumitZ Clinic — Baner, Balewadi & Hinjewadi' }}</h2>
-                <p style="color: var(--body-text); font-size: 16px;">{{ $pageContents['home']['locations']['subtitle'] ?? 'Three conveniently located clinics serving patients across Pune with expert orthopedic care.' }}</p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px;">
-                <div class="location-card">
-                    <h3 class="location-title">
-                        <i data-lucide="map-pin" style="color: var(--brand-blue);"></i> Baner Clinic
-                    </h3>
-                    <p style="font-size: 15px; color: var(--body-text); margin-bottom: 20px; line-height: 1.6;">
-                        {{ $site['address_baner'] ?? 'First Floor, Krishna Avenue, Above Dominos Pizza, Main Baner Road, Baner, Pune - 411045' }}
-                    </p>
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 14px;">
-                        <div><strong>Timings:</strong> Mon – Sat: 9:00 AM – 9:00 PM</div>
-                        <div><strong>Helpline:</strong> {{ $site['helpline_baner'] ?? '+91 95455 59434 / +91 88559 50433' }}</div>
-                    </div>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <a href="https://maps.google.com/?q=SumitZ+Clinic+Baner+Pune" target="_blank" class="btn btn-secondary btn-sm">
-                            <i data-lucide="navigation"></i> Directions
-                        </a>
-                        <a href="tel:+919545559434" class="btn btn-primary btn-sm">
-                            <i data-lucide="phone"></i> Call Now
-                        </a>
-                    </div>
-                </div>
-
-                <div class="location-card">
-                    <h3 class="location-title">
-                        <i data-lucide="map-pin" style="color: var(--brand-blue);"></i> Balewadi Clinic
-                    </h3>
-                    <p style="font-size: 15px; color: var(--body-text); margin-bottom: 20px; line-height: 1.6;">
-                        {{ $site['address_balewadi'] ?? 'Balewadi, Pune, Maharashtra — Near Balewadi Stadium, Pune - 411045' }}
-                    </p>
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 14px;">
-                        <div><strong>Timings:</strong> Mon – Sat: 9:00 AM – 8:00 PM</div>
-                        <div><strong>Helpline:</strong> {{ $site['phone'] ?? '+91 95455 59434' }}</div>
-                    </div>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <a href="https://maps.google.com/?q=SumitZ+Clinic+Balewadi+Pune" target="_blank" class="btn btn-secondary btn-sm">
-                            <i data-lucide="navigation"></i> Directions
-                        </a>
-                        <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="btn btn-primary btn-sm">
-                            <i data-lucide="phone"></i> Call Now
-                        </a>
-                    </div>
-                </div>
-
-                <div class="location-card">
-                    <h3 class="location-title">
-                        <i data-lucide="map-pin" style="color: var(--brand-blue);"></i> Hinjewadi Clinic
-                    </h3>
-                    <p style="font-size: 15px; color: var(--body-text); margin-bottom: 20px; line-height: 1.6;">
-                        {{ $site['address_hinjewadi'] ?? 'Atlanta Society, Near Hinjewadi Phase 1 Circle, Hinjewadi, Pune - 411057' }}
-                    </p>
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 14px;">
-                        <div><strong>Timings:</strong> Mon – Sat: 10:00 AM – 8:30 PM</div>
-                        <div><strong>Helpline:</strong> {{ $site['helpline_hinjewadi'] ?? '+91 94049 63781 / +91 91581 43325' }}</div>
-                    </div>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <a href="https://maps.google.com/?q=SumitZ+Clinic+Hinjewadi+Pune" target="_blank" class="btn btn-secondary btn-sm">
-                            <i data-lucide="navigation"></i> Directions
-                        </a>
-                        <a href="tel:+919404963781" class="btn btn-primary btn-sm">
-                            <i data-lucide="phone"></i> Call Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== 11. FAQ ACCORDION ===== --}}
-    <section class="section-spacing" style="background-color: var(--brand-blue-light);">
-        <div class="container" style="max-width: 800px;">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <span class="badge badge-blue" style="margin-bottom: 12px;">Frequently Asked Questions</span>
-                <h2>{{ $pageContents['home']['faq']['heading'] ?? 'Common Questions About Orthopedic Treatment in Pune' }}</h2>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-item active">
-                    <button class="accordion-header" onclick="toggleAccordion(this)">
-                        Who is the best orthopedic doctor in Baner, Pune?
-                        <i data-lucide="chevron-down" style="width: 20px;"></i>
-                    </button>
-                    <div class="accordion-body">
-                        Dr. Sumit at SumitZ Clinic in Baner is recognized as one of Pune's leading board-certified orthopaedic surgeons, with over 15 years of experience in joint replacement, knee surgery, spine care, and sports injury rehabilitation. The clinic also serves patients in Balewadi and Hinjewadi.
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <button class="accordion-header" onclick="toggleAccordion(this)">
-                        Do I need a doctor's referral to book a physiotherapy session?
-                        <i data-lucide="chevron-down" style="width: 20px;"></i>
-                    </button>
-                    <div class="accordion-body">
-                        No. You can directly schedule a consultation with our experienced physiotherapists or orthopaedic specialists at our Baner, Balewadi, or Hinjewadi clinics without any prior referral.
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <button class="accordion-header" onclick="toggleAccordion(this)">
-                        Are digital X-ray and diagnostic scans available at the clinic?
-                        <i data-lucide="chevron-down" style="width: 20px;"></i>
-                    </button>
-                    <div class="accordion-body">
-                        Yes! SumitZ Clinic features in-house high-frequency Digital X-Ray, Digital OPG, and BMD bone density scanning facilities for same-visit rapid diagnosis.
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <button class="accordion-header" onclick="toggleAccordion(this)">
-                        What non-surgical options are available for knee and joint pain?
-                        <i data-lucide="chevron-down" style="width: 20px;"></i>
-                    </button>
-                    <div class="accordion-body">
-                        We offer customized conservative care including therapeutic electrotherapy, targeted joint exercises, posture correction, intra-articular injections, and lifestyle management — before considering surgical options. Many patients achieve excellent results without surgery.
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <button class="accordion-header" onclick="toggleAccordion(this)">
-                        Does SumitZ Clinic offer cashless insurance and EMI options?
-                        <i data-lucide="chevron-down" style="width: 20px;"></i>
-                    </button>
-                    <div class="accordion-body">
-                        Yes. SumitZ Clinic is empanelled with most major health insurance providers and offers cashless treatment facilities. EMI options for surgical procedures can also be arranged. Please contact our Baner clinic coordinator for details.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ===== 12. FINAL CTA ===== --}}
-    <section class="section-spacing" style="background: linear-gradient(135deg, var(--primary-navy) 0%, #071A2E 100%); color: white; text-align: center;">
-        <div class="container" style="max-width: 760px;">
-            <span class="badge badge-blue" style="background: rgba(255,255,255,0.15); color: #fff; border: none; margin-bottom: 16px;">Take The Next Step</span>
-            <h2 style="color: white; font-size: 38px; margin-bottom: 16px;">
-                {{ $pageContents['home']['cta']['heading'] ?? 'Ready to Live Pain-Free? Consult Pune\'s Best Orthopedic Doctor Today' }}
-            </h2>
-            <p style="color: rgba(255,255,255,0.85); font-size: 18px; margin-bottom: 32px; line-height: 1.6;">
-                {{ $pageContents['home']['cta']['subtitle'] ?? 'Book an appointment at SumitZ Clinic Baner, Balewadi, or Hinjewadi for expert orthopedic consultation and personalized recovery planning.' }}
+        <div class="mt-10 space-y-4">
+          <details class="group rounded-2xl bg-white p-6 shadow-card transition duration-200 open:shadow-lift" open>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-extrabold text-navy">
+              <span>Do you provide doorstep pickup and delivery across Gurugram?</span>
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream text-navy transition duration-200 group-open:rotate-180 group-open:bg-gold">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-base leading-relaxed text-mute">
+              Yes! We provide free doorstep pickup and delivery across all major sectors, DLF phases, Golf Course Ext Rd, and New Gurugram societies.
             </p>
-            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                <button onclick="openDialog('callback-dialog');" class="btn btn-primary btn-lg" style="background: white; color: var(--primary-navy);">
-                    <i data-lucide="calendar"></i> Book Appointment Now
-                </button>
-                <a href="tel:{{ $site['phone'] ?? '+919545559434' }}" class="btn btn-secondary btn-lg" style="color: white; border-color: rgba(255,255,255,0.4);">
-                    <i data-lucide="phone"></i> Call {{ $site['phone_display'] ?? ($site['phone'] ?? '+91 95455 59434') }}
-                </a>
-            </div>
+          </details>
+
+          <details class="group rounded-2xl bg-white p-6 shadow-card transition duration-200 open:shadow-lift">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-extrabold text-navy">
+              <span>Are my clothes washed in an individual drum?</span>
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream text-navy transition duration-200 group-open:rotate-180 group-open:bg-gold">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-base leading-relaxed text-mute">
+              Always. We maintain strict hygiene protocols. Your clothes are never mixed with anyone else’s clothes. Each batch is color-sorted and washed in dedicated commercial drums.
+            </p>
+          </details>
+
+          <details class="group rounded-2xl bg-white p-6 shadow-card transition duration-200 open:shadow-lift">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-extrabold text-navy">
+              <span>What is the difference between steam pressing and dry cleaning?</span>
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream text-navy transition duration-200 group-open:rotate-180 group-open:bg-gold">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-base leading-relaxed text-mute">
+              Steam pressing removes wrinkles on vacuum steam tables with zero scorching or shine marks. Dry cleaning is a specialized solvent bath for delicate silks, woolens, suits, and ethnic wear that cannot withstand water washing.
+            </p>
+          </details>
+
+          <details class="group rounded-2xl bg-white p-6 shadow-card transition duration-200 open:shadow-lift">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-extrabold text-navy">
+              <span>How fast is the turnaround time?</span>
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream text-navy transition duration-200 group-open:rotate-180 group-open:bg-gold">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </summary>
+            <p class="mt-4 text-base leading-relaxed text-mute">
+              Standard wash &amp; fold or steam pressing is returned within 24 to 48 hours. Dry cleaning and specialized carpet/shoe restoration takes 48 to 72 hours. Same-day express options are also available.
+            </p>
+          </details>
         </div>
+      </div>
     </section>
 
-    <script>
-    // ─── Accordion ───────────────────────────────────────────
-    function toggleAccordion(button) {
-        const item = button.parentElement;
-        const isActive = item.classList.contains('active');
-        document.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('active'));
-        if (!isActive) item.classList.add('active');
-    }
-
-    // ─── Hero Slider ─────────────────────────────────────────
-    (function() {
-        const track  = document.getElementById('slider-track');
-        const slides = document.querySelectorAll('#slider-track .slide-item');
-        const dots   = document.querySelectorAll('#slider-dots .slider-dot');
-        if (!slides.length) return;
-
-        // Single slide — make it fully visible, nothing else needed
-        if (slides.length < 2) {
-            slides[0].classList.add('active');
-            // Ensure track has height based on slide content
-            if (track) track.style.minHeight = slides[0].scrollHeight + 'px';
-            return;
-        }
-
-        let current = 0;
-        let timer   = null;
-
-        function activate(n) {
-            slides[current].classList.remove('active');
-            if (dots[current]) dots[current].classList.remove('active');
-            current = (n + slides.length) % slides.length;
-            slides[current].classList.add('active');
-            if (dots[current]) dots[current].classList.add('active');
-        }
-
-        function startAuto() {
-            stopAuto();
-            timer = setInterval(() => activate(current + 1), 5000);
-        }
-        function stopAuto() {
-            if (timer) { clearInterval(timer); timer = null; }
-        }
-
-        window.sliderPrev = () => { stopAuto(); activate(current - 1); startAuto(); };
-        window.sliderNext = () => { stopAuto(); activate(current + 1); startAuto(); };
-        window.goToSlide  = (n) => { stopAuto(); activate(n); startAuto(); };
-
-        startAuto();
-    })();
-    </script>
-
+    <!-- Fabrics in our care -->
+    <section class="border-y border-navy/5 bg-white py-10" aria-label="Fabrics we care for">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-xs font-bold uppercase tracking-[0.2em] text-mute">In our care</p>
+        <ul class="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:gap-x-12">
+          <li class="font-display text-lg font-extrabold tracking-wide text-navy/35 transition duration-300 hover:text-navy sm:text-xl">COTTON</li>
+          <li class="font-display text-lg font-extrabold tracking-wide text-navy/35 transition duration-300 hover:text-navy sm:text-xl">SILK</li>
+          <li class="font-display text-lg font-extrabold tracking-wide text-navy/35 transition duration-300 hover:text-navy sm:text-xl">WOOL</li>
+          <li class="font-display text-lg font-extrabold tracking-wide text-navy/35 transition duration-300 hover:text-navy sm:text-xl">LINEN</li>
+          <li class="font-display text-lg font-extrabold tracking-wide text-navy/35 transition duration-300 hover:text-navy sm:text-xl">DENIM</li>
+          <li class="font-display text-lg font-extrabold tracking-wide text-navy/35 transition duration-300 hover:text-navy sm:text-xl">LEATHER</li>
+          <li class="font-display text-lg font-extrabold tracking-wide text-navy/35 transition duration-300 hover:text-navy sm:text-xl">ETHNIC WEAR</li>
+        </ul>
+      </div>
+    </section>
 @endsection

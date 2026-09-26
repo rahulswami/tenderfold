@@ -1397,7 +1397,7 @@
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="cloudflare_r2_public_url">R2 Public Custom Domain URL</label>
-                                <input type="text" id="cloudflare_r2_public_url" name="cloudflare_r2_public_url" class="form-control" value="{{ $site['cloudflare_r2_public_url'] ?? '' }}" placeholder="e.g., https://assets.mlgfinedge.com">
+                                <input type="text" id="cloudflare_r2_public_url" name="cloudflare_r2_public_url" class="form-control" value="{{ $site['cloudflare_r2_public_url'] ?? '' }}" placeholder="e.g., https://assets.tenderfold.in">
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     Create R2 credentials & connect a custom domain by following the <a href="https://developers.cloudflare.com/r2/" target="_blank" style="color: var(--mint-green); text-decoration: underline;">Cloudflare R2 Storage Guide</a>.
                                 </span>
@@ -1415,7 +1415,7 @@
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="live_site_url">Live Site Base URL</label>
-                                <input type="text" id="live_site_url" name="live_site_url" class="form-control" value="{{ $site['live_site_url'] ?? 'https://mlgfinedge.com' }}" placeholder="e.g., https://mlgfinedge.com">
+                                <input type="text" id="live_site_url" name="live_site_url" class="form-control" value="{{ $site['live_site_url'] ?? 'https://tenderfold.in' }}" placeholder="e.g., https://tenderfold.in">
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     This is the target live domain where data will be pushed. The Sync uses your configured <strong>R2 Secret Access Key</strong> as a secure verification token between your local and live servers.
                                 </span>
@@ -1460,15 +1460,15 @@
                             </div>
                             <div class="form-group">
                                 <label for="smtp_from_address">From Email Address</label>
-                                <input type="email" id="smtp_from_address" name="smtp_from_address" class="form-control" value="{{ $site['smtp_from_address'] ?? 'no-reply@mlgfinedge.com' }}" placeholder="no-reply@mlgfinedge.com">
+                                <input type="email" id="smtp_from_address" name="smtp_from_address" class="form-control" value="{{ $site['smtp_from_address'] ?? 'info@tenderfold.in' }}" placeholder="info@tenderfold.in">
                             </div>
                             <div class="form-group">
                                 <label for="smtp_from_name">From Sender Name</label>
-                                <input type="text" id="smtp_from_name" name="smtp_from_name" class="form-control" value="{{ $site['smtp_from_name'] ?? 'MLG Finedge Alerts' }}" placeholder="MLG Finedge Alerts">
+                                <input type="text" id="smtp_from_name" name="smtp_from_name" class="form-control" value="{{ $site['smtp_from_name'] ?? 'Tenderfold Alerts' }}" placeholder="Tenderfold Alerts">
                             </div>
                             <div class="form-group">
                                 <label for="smtp_to_email">Recipient Email Address (Admin Alert)</label>
-                                <input type="email" id="smtp_to_email" name="smtp_to_email" class="form-control" value="{{ $site['smtp_to_email'] ?? 'admin@mlgfinedge.com' }}" placeholder="admin@mlgfinedge.com">
+                                <input type="email" id="smtp_to_email" name="smtp_to_email" class="form-control" value="{{ $site['smtp_to_email'] ?? 'admin@tenderfold.in' }}" placeholder="admin@tenderfold.in">
                             </div>
                         </div>
                     </div>
@@ -2178,7 +2178,7 @@
                                 <input type="file" id="test_avatar" name="avatar" class="form-control" accept="image/*">
                                 <div style="margin-top: 10px;">
                                     <label for="test_avatar_url">Or Paste Avatar URL</label>
-                                    <input type="text" id="test_avatar_url" name="avatar_url" class="form-control" placeholder="https://images.mlgfinedge.com/avatar.webp">
+                                    <input type="text" id="test_avatar_url" name="avatar_url" class="form-control" placeholder="https://images.tenderfold.in/avatar.webp">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -3331,7 +3331,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="blog_image_url">Or Paste Cover Image URL</label>
-                                <input type="text" id="blog_image_url" name="image_url" class="form-control" placeholder="https://images.mlgfinedge.com/cover.webp">
+                                <input type="text" id="blog_image_url" name="image_url" class="form-control" placeholder="https://images.tenderfold.in/cover.webp">
                             </div>
                         </div>
                         <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--accent-teal);">SEO Metadata (Optional)</h4>
@@ -3342,7 +3342,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="blog_metakeywords">Meta Keywords (Comma separated)</label>
-                                <input type="text" id="blog_metakeywords" name="metakeywords" class="form-control" placeholder="orthopedic, clinic, baner">
+                                <input type="text" id="blog_metakeywords" name="metakeywords" class="form-control" placeholder="laundry, dry cleaning, gurugram">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="blog_metadescription">Meta Description (SEO)</label>
@@ -5017,7 +5017,7 @@
 
         function pushLocalDatabaseToLive(btn) {
             const liveUrlInput = document.getElementById('live_site_url');
-            const liveUrl = liveUrlInput ? liveUrlInput.value.trim() : 'https://mlgfinedge.com';
+            const liveUrl = liveUrlInput ? liveUrlInput.value.trim() : 'https://tenderfold.in';
             
             if (!liveUrl) {
                 showToast('Please enter a valid Live Site Base URL first.', 'error');
@@ -6026,7 +6026,7 @@
             document.getElementById('gmb_post_type').value = type;
             document.getElementById('gmb_post_id').value = data.id;
             
-            const baseUrl = 'https://www.mlgfinedge.com';
+            const baseUrl = 'https://tenderfold.in';
             let targetUrl = '';
             if (type === 'blog') {
                 targetUrl = baseUrl + '/blog/' + data.slug;

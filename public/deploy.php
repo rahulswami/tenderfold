@@ -380,7 +380,7 @@ try {
     }
 
     $adminHash = password_hash('admin123', PASSWORD_BCRYPT);
-    $pdo->exec("UPDATE `users` SET `password` = '{$adminHash}', `role` = 'superadmin' WHERE `email` IN ('admin@drsumitz.com', 'admin@mlgfinedge.com') OR `id` = 1;");
+    $pdo->exec("UPDATE `users` SET `email` = 'admin@tenderfold.in', `password` = '{$adminHash}', `role` = 'superadmin' WHERE `id` = 1;");
     $results['live_admin_auth'] = "UPDATED LIVE ADMIN PASSWORDS TO admin123 ✅";
 } catch (Exception $e) {
     $results['treatments_faqs_sync'] = "FAIL ❌ " . $e->getMessage();
@@ -388,7 +388,7 @@ try {
 
 // ── 16. Auto-generate XML Sitemap & Robots.txt ───────────────────────────
 try {
-    $domain = 'https://www.drsumitz.com';
+    $domain = 'https://tenderfold.in';
     $stmtDom = $pdo->query("SELECT `value` FROM `site_parameters` WHERE `id` = 'sitemap_domain' LIMIT 1");
     if ($stmtDom && $rDom = $stmtDom->fetch(PDO::FETCH_ASSOC)) {
         if (!empty($rDom['value'])) {

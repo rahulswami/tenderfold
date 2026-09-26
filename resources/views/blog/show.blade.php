@@ -1,167 +1,114 @@
 @extends('layouts.app')
 
-@section('title', ($blog->metatitle ?? ($blog->title . ' | ' . ($site['site_name'] ?? 'SumitZ Clinic'))))
-@section('meta_description', ($blog->metadescription ?? $blog->summary))
-@section('meta_keywords', ($blog->metakeywords ?? ''))
+@section('title', ($blog->metatitle ?? ($blog->title . ' | Tenderfold Journal')))
+@section('meta_description', ($blog->metadescription ?? Str::limit(strip_tags($blog->summary ?? $blog->content), 160)))
+@section('meta_keywords', ($blog->metakeywords ?? 'tenderfold journal, fabric care, dry cleaning tips'))
 
 @section('schema')
-    @if(!empty($blog->schema_markup))
-        {!! $blog->schema_markup !!}
-    @else
-        <script type="application/ld+json">
-        {
-          "{{ '@' }}context": "https://schema.org",
-          "{{ '@graph' }}": [
-            {
-              "{{ '@type' }}": "BlogPosting",
-              "headline": "{{ $blog->title }}",
-              "description": "{{ $blog->summary }}",
-              "datePublished": "{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}",
-              "publisher": {
-                "{{ '@type' }}": "Organization",
-                "name": "{{ $site['site_name'] ?? 'SumitZ Clinic' }}"
-              }
-            }
-          ]
+  @if(!empty($blog->schema_markup))
+    {!! $blog->schema_markup !!}
+  @else
+    <script type="application/ld+json">
+    {
+      "{{ '@' }}context": "https://schema.org",
+      "{{ '@' }}type": "BlogPosting",
+      "headline": "{{ addslashes($blog->title) }}",
+      "description": "{{ addslashes($blog->summary ?? Str::limit(strip_tags($blog->content), 160)) }}",
+      "datePublished": "{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}",
+      "image": "{{ !empty($blog->image_path) ? site_image($blog->image_path) : asset('assets/whiteshirt.jpg') }}",
+      "publisher": {
+        "{{ '@' }}type": "Organization",
+        "name": "{{ $site['site_name'] ?? 'Tenderfold' }}",
+        "logo": {
+          "{{ '@' }}type": "ImageObject",
+          "url": "{{ asset('assets/logo.png') }}"
         }
-        </script>
-    @endif
+      }
+    }
+    </script>
+  @endif
 @endsection
 
 @section('content')
-
-    <!-- Hero Header -->
-    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 56px 0 40px;">
-        <div class="container" style="max-width: 800px;">
-            <div style="font-size: 14px; color: var(--muted-text); margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
-                <a href="{{ route('home') }}">Home</a> /
-                <a href="{{ route('blog') }}">Health Hub</a> /
-                <span style="color: var(--primary-teal); font-weight: 600;">{{ $blog->category ?? 'Article' }}</span>
-            </div>
-            <span class="badge badge-teal" style="margin-bottom: 12px;">{{ $blog->category ?? 'Health Guide' }}</span>
-            <h1 style="font-size: clamp(28px, 3.5vw, 42px); margin-bottom: 12px; line-height: 1.25;">{{ $blog->title }}</h1>
-            <div style="font-size: 14px; color: var(--muted-text);">
-                Published on {{ $blog->published_at ? $blog->published_at->format('F d, Y') : $blog->created_at->format('F d, Y') }} • By SumitZ Medical Team
-            </div>
+<main id="main">
+  <!-- Article Header & Hero -->
+  <section class="bg-cream">
+    <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+      <div class="reveal">
+        <p class="text-sm font-semibold text-mute">
+          <a href="{{ route('home') }}" class="transition hover:text-navy">Home</a> 
+          <span aria-hidden="true">/</span> 
+          <a href="{{ route('blog') }}" class="transition hover:text-navy">Journal</a> 
+          <span aria-hidden="true">/</span> 
+          <span class="text-navy truncate">{{ Str::limit($blog->title, 30) }}</span>
+        </p>
+        <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">{{ $blog->category ?? 'Care Notes' }}</p>
+        <h1 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl lg:text-5xl leading-tight">{{ $blog->title }}</h1>
+        <div class="mt-4 flex flex-wrap items-center gap-4 text-sm text-mute">
+          <span>Published: {{ $blog->published_at ? $blog->published_at->format('F d, Y') : $blog->created_at->format('F d, Y') }}</span>
+          <span aria-hidden="true">•</span>
+          <span>Tenderfold Fabric Care Desk</span>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Editorial Article Content -->
-    <article class="section-spacing" style="background-color: var(--warm-ivory);">
-        <div class="container" style="max-width: 740px;">
-            <!-- Featured Image -->
-            <div style="border-radius: var(--radius-xl); overflow: hidden; margin-bottom: 36px; box-shadow: var(--shadow-md); aspect-ratio: 16/9; background-color: var(--mist-blue);">
-                @if(!empty($blog->image_path))
-                    <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->title }}" style="width: 100%; height: 100%; object-fit: cover;">
-                @else
-                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1000&q=80" alt="{{ $blog->title }}" style="width: 100%; height: 100%; object-fit: cover;">
-                @endif
-            </div>
+  <!-- Article Body -->
+  <section class="bg-white py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <!-- Featured Image -->
+      <div class="reveal overflow-hidden rounded-3xl shadow-card bg-cream mb-10">
+        @if(!empty($blog->image_path))
+          <img src="{{ site_image($blog->image_path) }}" alt="{{ $blog->title }}" class="w-full max-h-[500px] object-cover">
+        @else
+          <img src="{{ asset('assets/whiteshirt.jpg') }}" alt="{{ $blog->title }}" class="w-full max-h-[500px] object-cover">
+        @endif
+      </div>
 
-            <!-- Article Body -->
-            <div class="blog-content-body" style="font-size: 17.5px; line-height: 1.8; color: var(--body-text); margin-bottom: 48px;">
-                {!! $blog->content !!}
-            </div>
+      <!-- Content Container -->
+      <div class="reveal prose prose-lg max-w-none text-ink text-base sm:text-lg leading-relaxed space-y-6">
+        {!! $blog->content !!}
+      </div>
 
-            <style>
-                .blog-content-body h2 {
-                    font-size: clamp(22px, 2.5vw, 28px);
-                    color: var(--heading-navy);
-                    margin-top: 32px;
-                    margin-bottom: 16px;
-                    font-weight: 700;
-                    line-height: 1.3;
-                }
-                .blog-content-body h3 {
-                    font-size: clamp(19px, 2vw, 23px);
-                    color: var(--heading-navy);
-                    margin-top: 28px;
-                    margin-bottom: 14px;
-                    font-weight: 600;
-                    line-height: 1.35;
-                }
-                .blog-content-body h4 {
-                    font-size: 18px;
-                    color: var(--heading-navy);
-                    margin-top: 24px;
-                    margin-bottom: 12px;
-                    font-weight: 600;
-                }
-                .blog-content-body p {
-                    margin-bottom: 18px;
-                }
-                .blog-content-body ul, .blog-content-body ol {
-                    margin-bottom: 24px;
-                    padding-left: 28px;
-                }
-                .blog-content-body li {
-                    margin-bottom: 8px;
-                }
-                .blog-content-body img {
-                    max-width: 100%;
-                    height: auto;
-                    border-radius: var(--radius-lg, 12px);
-                    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
-                    margin: 24px auto;
-                    display: block;
-                }
-                .blog-content-body a {
-                    color: var(--primary-teal);
-                    text-decoration: underline;
-                    font-weight: 500;
-                    transition: color 0.2s ease;
-                }
-                .blog-content-body a:hover {
-                    color: var(--dark-teal);
-                }
-                .blog-content-body blockquote {
-                    border-left: 4px solid var(--primary-teal);
-                    padding: 14px 20px;
-                    background: var(--light-mint);
-                    border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
-                    margin: 24px 0;
-                    font-style: italic;
-                }
-                .blog-content-body table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin: 24px 0;
-                }
-                .blog-content-body th, .blog-content-body td {
-                    border: 1px solid var(--border-color, #e2e8f0);
-                    padding: 12px 16px;
-                    text-align: left;
-                }
-                .blog-content-body th {
-                    background-color: var(--light-mint);
-                    font-weight: 600;
-                }
-            </style>
-
-            <!-- Medical Disclaimer Box -->
-            <div style="background-color: var(--light-mint); border-radius: var(--radius-lg); padding: 24px; border-left: 4px solid var(--primary-teal); margin-bottom: 36px;">
-                <h4 style="font-size: 16px; margin-bottom: 6px; color: var(--heading-navy);">Medical Disclaimer</h4>
-                <p style="font-size: 13.5px; color: var(--body-text); margin: 0;">
-                    This article is for educational and informational purposes only. It should not be used as a substitute for professional orthopaedic diagnosis or personalized treatment. Always consult a qualified specialist for pain or injury.
-                </p>
-            </div>
-
-            <!-- Consultation Banner CTA -->
-            <div class="form-card" style="text-align: center; padding: 36px; background-color: var(--surface-white);">
-                <h3 style="font-size: 24px; margin-bottom: 8px;">Consult Our Specialists Today</h3>
-                <p style="font-size: 15px; color: var(--body-text); margin-bottom: 24px;">
-                    Schedule a consultation at SumitZ Clinic Baner or Hinjewadi for personalized pain evaluation.
-                </p>
-                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="openDialog('callback-dialog');" class="btn btn-primary">
-                        <i data-lucide="calendar"></i> Book Appointment
-                    </button>
-                    <a href="tel:+919545559434" class="btn btn-secondary">
-                        <i data-lucide="phone"></i> Call Clinic
-                    </a>
-                </div>
-            </div>
+      <!-- Action Card in Article -->
+      <div class="reveal mt-12 rounded-3xl bg-cream p-8 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6 border border-navy/10">
+        <div>
+          <h3 class="font-display text-xl font-extrabold text-navy">Need help caring for your clothes?</h3>
+          <p class="mt-1 text-sm text-mute">We pick up and deliver across Gurugram from Sector 49 & Sector 83.</p>
         </div>
-    </article>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" data-open-book class="rounded-full bg-gold px-6 py-3 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
+          <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}?text={{ urlencode('Hi Tenderfold, I read your article: ' . $blog->title . ' and have a question.') }}" target="_blank" rel="noopener" class="rounded-full border border-navy/20 bg-white px-5 py-3 font-display text-sm font-extrabold text-navy transition hover:bg-navy hover:text-white">Ask on WhatsApp</a>
+        </div>
+      </div>
 
+      <!-- Related Posts -->
+      @if(isset($relatedBlogs) && $relatedBlogs->count() > 0)
+        <div class="mt-16 pt-12 border-t border-navy/10">
+          <h2 class="font-display text-2xl font-extrabold text-navy mb-8">More Care Notes</h2>
+          <div class="grid gap-6 sm:grid-cols-2">
+            @foreach($relatedBlogs as $rBlog)
+              @include('blog.partials.card', ['blog' => $rBlog])
+            @endforeach
+          </div>
+        </div>
+      @endif
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="bg-navy">
+    <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center lg:px-8">
+      <div class="max-w-xl">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Free pickup &amp; delivery</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold text-white">Ready to experience tender fabric care?</h2>
+        <p class="mt-2 text-sm leading-relaxed text-white/75">Schedule your free pickup now or reach out to our desk on WhatsApp.</p>
+      </div>
+      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
+        <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $site['phone'] ?? '+919582466445') }}" class="inline-flex items-center justify-center rounded-full border-2 border-white/25 px-6 py-3.5 font-display text-sm font-extrabold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-navy">Call the store</a>
+      </div>
+    </div>
+  </section>
+</main>
 @endsection

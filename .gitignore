@@ -32,3 +32,5 @@ u709314437_smpune.sql
 *.sql
 test_home.html
 _static_backup/
+*.zip
+tender-fold/

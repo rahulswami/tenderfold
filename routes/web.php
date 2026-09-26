@@ -12,6 +12,7 @@ Route::get('/about-us', [HomeController::class, 'about'])->name('about');
 Route::get('/services', [HomeController::class, 'services'])->name('services');
 Route::get('/services/{slug}', [HomeController::class, 'servicesShow'])->name('services.show');
 Route::get('/testimonials', [HomeController::class, 'testimonials'])->name('testimonials');
+Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/blogs', [HomeController::class, 'blog'])->name('blog');
 Route::get('/blogs/{slug}', [HomeController::class, 'blogShow'])->name('blog.show');
@@ -31,24 +32,13 @@ Route::get('/mobile-app/{any}', function () {
     return response(file_get_contents(public_path('mobile-app/index.html')), 200)->header('Content-Type', 'text/html');
 })->where('any', '.*');
 
-// Clinic Treatments
-Route::get('/treatments', [HomeController::class, 'treatments'])->name('treatments');
-Route::get('/treatments/{slug}', [HomeController::class, 'treatmentDetail'])->name('treatments.show');
-
-// Clinic Specialists
-Route::get('/specialists', [HomeController::class, 'specialists'])->name('specialists');
-Route::get('/specialists/{slug}', [HomeController::class, 'specialistdetails'])->name('specialists.show');
-
-// 301 Redirects for Old SEO URLs
+// 301 Redirects for Common URLs
 Route::redirect('/blog', '/blogs', 301);
 Route::redirect('/blog/{slug}', '/blogs/{slug}', 301);
 Route::redirect('/about', '/about-us', 301);
 Route::redirect('/contact', '/contact-us', 301);
 Route::redirect('/faqs', '/faq', 301);
-Route::redirect('/facilities', '/', 301); // Redirect facilities to home page if not explicitly managed
 
-// Legacy redirect for SEO compatibility
-Route::redirect('/compare-loans', '/', 301);
 Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);
 
 // Live server DB setup — creates all missing tables in one request

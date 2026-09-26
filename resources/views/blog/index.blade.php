@@ -1,84 +1,63 @@
 @extends('layouts.app')
 
-@section('title', ($blogsPage->metatitle ?? 'Orthopaedic, Joint Care & Physiotherapy Blog | SumitZ Clinic'))
-@section('meta_description', ($blogsPage->metadescription ?? 'Read expert health advice, recovery guides, arthritis tips, and physiotherapy exercises written by Dr. Sumit at SumitZ Clinic in Baner & Hinjewadi, Pune.'))
-@section('meta_keywords', ($blogsPage->metakeywords ?? 'health blog sumitz, orthopedic guides, back pain tips, joint health articles'))
+@section('title', ($blogsPage->metatitle ?? 'Journal & Care Notes | Tenderfold Gurugram'))
+@section('meta_description', ($blogsPage->metadescription ?? 'Care notes, fabric tips, and wardrobe advice from the Tenderfold laundry counter. Learn what to wash, dry clean, or steam press in Gurugram.'))
+@section('meta_keywords', ($blogsPage->metakeywords ?? 'laundry tips gurugram, dry cleaning advice, silk care guide, woolens dry clean gurgaon'))
 
 @section('content')
+<main id="main">
+  <!-- Journal Hero -->
+  <section class="bg-cream">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <div class="reveal max-w-2xl">
+        <p class="text-sm font-semibold text-mute">
+          <a href="{{ route('home') }}" class="transition hover:text-navy">Home</a> 
+          <span aria-hidden="true">/</span> 
+          <span class="text-navy">Journal</span>
+        </p>
+        <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Care notes</p>
+        <h1 class="mt-3 font-display text-4xl font-extrabold text-navy sm:text-5xl">What to send, and what to keep out of the machine.</h1>
+        <p class="mt-4 text-lg text-mute">Practical fabric notes and wardrobe care advice from our counters in Sector 49 and Sector 83, Gurugram.</p>
+        <button type="button" data-open-book class="mt-8 inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Ask us about a piece</button>
+      </div>
 
-    <!-- Hero Header -->
-    <section class="section-spacing" style="background: linear-gradient(135deg, var(--light-mint) 0%, var(--mist-blue) 100%); padding: 64px 0 48px;">
-        <div class="container text-center" style="max-width: 760px;">
-            <span class="badge badge-teal" style="margin-bottom: 12px;">Health & Wellness Hub</span>
-            <h1 style="font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px;">Orthopaedic & Recovery Guides</h1>
-            <p style="font-size: 17px; color: var(--body-text); line-height: 1.7;">
-                Medical insights, exercise routines, arthritis care, and rehabilitation advice written by our clinical team to help you maintain healthy joints and spine.
-            </p>
-        </div>
-    </section>
+      <!-- Journal Articles Listing -->
+      <div class="mt-12">
+        @if($blogs->count() > 0)
+          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach($blogs as $blog)
+              @include('blog.partials.card', ['blog' => $blog])
+            @endforeach
+          </div>
 
-    <!-- Blog Listing Grid -->
-    <section class="section-spacing" style="background-color: var(--warm-ivory);">
-        <div class="container">
-            <div class="card-grid" id="blogs-wrapper">
-                @forelse($blogs as $blog)
-                    @include('blog.partials.card', ['blog' => $blog])
-                @empty
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted-text);">
-                        <p>No health guides published yet.</p>
-                    </div>
-                @endforelse
+          <!-- Pagination -->
+          @if($blogs->hasPages())
+            <div class="mt-12 flex justify-center">
+              {{ $blogs->links() }}
             </div>
+          @endif
+        @else
+          <div class="rounded-3xl bg-white p-12 text-center shadow-card">
+            <p class="text-mute font-semibold">No care notes published yet. Check back soon!</p>
+          </div>
+        @endif
+      </div>
+    </div>
+  </section>
 
-            <div id="blogs-loading" style="text-align: center; display: none; padding: 32px 0;">
-                <span style="color: var(--primary-teal); font-weight: 600; font-size: 15px;">Loading more recovery guides...</span>
-            </div>
-        </div>
-    </section>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let nextPageUrl = "{{ $blogs->nextPageUrl() }}";
-            let loading = false;
-            
-            const wrapper = document.getElementById('blogs-wrapper');
-            const loader = document.getElementById('blogs-loading');
-
-            window.addEventListener('scroll', function() {
-                if (!nextPageUrl || loading) return;
-                
-                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
-                    loading = true;
-                    loader.style.display = 'block';
-
-                    fetch(nextPageUrl, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    })
-                    .then(response => response.json())
-                    .then(res => {
-                        nextPageUrl = res.next_page;
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = res.html;
-                        
-                        while (tempDiv.firstChild) {
-                            wrapper.appendChild(tempDiv.firstChild);
-                        }
-                        
-                        if (typeof lucide !== 'undefined') {
-                            lucide.createIcons();
-                        }
-
-                        loading = false;
-                        loader.style.display = 'none';
-                    })
-                    .catch(err => {
-                        console.error('Error loading page:', err);
-                        loading = false;
-                        loader.style.display = 'none';
-                    });
-                }
-            });
-        });
-    </script>
-
+  <!-- CTA Banner -->
+  <section class="bg-navy">
+    <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center lg:px-8">
+      <div class="max-w-xl">
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Free pickup &amp; delivery</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold text-white">A piece that does not fit these notes?</h2>
+        <p class="mt-2 text-sm leading-relaxed text-white/75">Describe it in the pickup note, or send a photo on WhatsApp. We will say whether it is laundry, dry cleaning, or a quote.</p>
+      </div>
+      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <button type="button" data-open-book data-service="Mixed pickup" class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
+        <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $site['phone'] ?? '+919582466445') }}" class="inline-flex items-center justify-center rounded-full border-2 border-white/25 px-6 py-3.5 font-display text-sm font-extrabold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-navy">Call the store</a>
+      </div>
+    </div>
+  </section>
+</main>
 @endsection
