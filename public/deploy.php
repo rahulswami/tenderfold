@@ -32,8 +32,36 @@ if (file_exists($envPath)) {
         }
     }
     $checks['.env File'] = ['status' => true, 'msg' => 'Found & Loaded'];
+
+    // 2.1 Auto-generate APP_KEY if missing or empty
+    if (empty($env['APP_KEY']) || strlen($env['APP_KEY']) < 20) {
+        $generatedKey = 'base64:' . base64_encode(random_bytes(32));
+        $envContent = file_get_contents($envPath);
+        if (preg_match('/^APP_KEY=.*$/m', $envContent)) {
+            $envContent = preg_replace('/^APP_KEY=.*$/m', 'APP_KEY=' . $generatedKey, $envContent);
+        } else {
+            $envContent = "APP_KEY=" . $generatedKey . "\n" . $envContent;
+        }
+        @file_put_contents($envPath, $envContent);
+        $env['APP_KEY'] = $generatedKey;
+        $actions[] = "Generated and saved fresh <code>APP_KEY</code> in <code>.env</code> ✅";
+    }
+
+    $checks['Application Key (APP_KEY)'] = [
+        'status' => !empty($env['APP_KEY']),
+        'msg' => !empty($env['APP_KEY']) ? 'Configured (' . substr($env['APP_KEY'], 0, 15) . '...)' : 'Missing APP_KEY'
+    ];
 } else {
     $checks['.env File'] = ['status' => false, 'msg' => 'Missing .env file in root directory'];
+    $checks['Application Key (APP_KEY)'] = ['status' => false, 'msg' => 'Missing .env'];
+}
+
+// 2.2 Clear any cached bootstrap config files
+$bootstrapCacheFiles = glob($basePath . '/bootstrap/cache/*.php');
+foreach ($bootstrapCacheFiles as $bFile) {
+    if (basename($bFile) !== 'packages.php' && basename($bFile) !== 'services.php') {
+        @unlink($bFile);
+    }
 }
 
 // 3. Ensure Storage & Cache Directories Exist with Proper Permissions
