@@ -139,9 +139,16 @@ HTACCESS;
     @file_put_contents($publicHtaccess, $pubContent);
     $actions[] = "Created <code>public/.htaccess</code> for Laravel URL routing ✅";
 }
-$checks['Public .htaccess'] = ['status' => true, 'msg' => 'Configured'];
+// 5.1 Ensure SQLite database file exists as fallback
+$sqlitePath = $basePath . '/database/database.sqlite';
+if (!file_exists($sqlitePath)) {
+    @touch($sqlitePath);
+    @chmod($sqlitePath, 0666);
+    $actions[] = "Created fallback <code>database/database.sqlite</code> ✅";
+}
 
-// 6. Connect to MySQL Database & Seed/Repair Schema
+// 6. Connect to Database & Seed/Repair Schema
+$dbConn = $env['DB_CONNECTION'] ?? 'mysql';
 $dbHost = $env['DB_HOST'] ?? '127.0.0.1';
 $dbPort = $env['DB_PORT'] ?? '3306';
 $dbName = $env['DB_DATABASE'] ?? '';
@@ -152,12 +159,32 @@ $pdo = null;
 $dbConnected = false;
 $dbError = '';
 
-if (!empty($dbName)) {
+if ($dbConn === 'sqlite') {
+    try {
+        $pdo = new PDO("sqlite:" . $sqlitePath);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $dbConnected = true;
+    } catch (PDOException $e) {
+        $dbError = $e->getMessage();
+    }
+} elseif (!empty($dbName)) {
     try {
         $pdo = new PDO("mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
+        $dbConnected = true;
+    } catch (PDOException $e) {
+        $dbError = $e->getMessage();
+    }
+} else {
+    $dbError = "DB_DATABASE is not configured in .env (DB_CONNECTION={$dbConn})";
+}
+
+$checks['Database Connection'] = [
+    'status' => $dbConnected,
+    'msg' => $dbConnected ? "Connected ({$dbConn}: <strong>" . ($dbConn === 'sqlite' ? 'database.sqlite' : $dbName) . "</strong>)" : "Failed: {$dbError}"
+];
         $dbConnected = true;
     } catch (PDOException $e) {
         $dbError = $e->getMessage();
@@ -344,6 +371,32 @@ if ($pdo) {
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // 7.10 Sessions table (prevent SQLiteDatabaseDoesNotExistException / session table missing errors)
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `sessions` (
+            `id` VARCHAR(255) PRIMARY KEY,
+            `user_id` BIGINT UNSIGNED NULL,
+            `ip_address` VARCHAR(45) NULL,
+            `user_agent` TEXT NULL,
+            `payload` LONGTEXT NOT NULL,
+            `last_activity` INT NOT NULL,
+            INDEX (`user_id`),
+            INDEX (`last_activity`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `cache` (
+            `key` VARCHAR(255) PRIMARY KEY,
+            `value` MEDIUMTEXT NOT NULL,
+            `expiration` INT NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `cache_locks` (
+            `key` VARCHAR(255) PRIMARY KEY,
+            `owner` VARCHAR(255) NOT NULL,
+            `expiration` INT NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+    } catch (\Throwable $e) {}
 
     // Universal replacement for any leftover â‚¹
     try {
