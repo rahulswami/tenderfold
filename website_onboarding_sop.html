@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standard Operating Procedure (SOP) — Universal Website Onboarding & Live Deployment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #143572;
+      --primary-dark: #0c2454;
+      --accent: #F5B400;
+      --accent-dark: #d99e00;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --emerald-600: #059669;
+      --emerald-50: #ecfdf5;
+      --rose-600: #e11d48;
+      --rose-50: #fff1f2;
+      --amber-600: #d97706;
+      --amber-50: #fffbeb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--slate-800);
+      background-color: #f8fafc;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Print / Export Action Bar */
+    .action-bar {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 12px 20px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 13.5px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-gold {
+      background: var(--accent);
+      color: var(--primary-dark);
+    }
+    .btn-gold:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    /* SOP Cover Header */
+    .doc-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: white;
+      padding: 48px;
+      border-radius: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 12px 30px rgba(20, 53, 114, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-header::after {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(245, 180, 0, 0.2) 0%, rgba(245, 180, 0, 0) 70%);
+      border-radius: 50%;
+    }
+
+    .doc-badge {
+      display: inline-block;
+      background: rgba(245, 180, 0, 0.2);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .doc-title {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .doc-subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 720px;
+      line-height: 1.5;
+    }
+
+    .doc-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 13px;
+    }
+
+    .meta-item span {
+      display: block;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .meta-item strong {
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Process Workflow Section Cards */
+    .phase-card {
+      background: white;
+      border-radius: 20px;
+      border: 1px solid var(--slate-200);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      page-break-inside: avoid;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--slate-100);
+    }
+
+    .phase-number {
+      width: 44px;
+      height: 44px;
+      background: var(--primary);
+      color: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .phase-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .phase-desc {
+      font-size: 14px;
+      color: var(--slate-600);
+      margin-top: 2px;
+    }
+
+    /* Mockup & Screenshot UI Elements */
+    .mockup-window {
+      background: var(--slate-900);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 18px 0;
+      border: 1px solid var(--slate-700);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .mockup-topbar {
+      background: #1e293b;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .mockup-title {
+      margin-left: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: #94a3b8;
+    }
+
+    .mockup-body {
+      padding: 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .mockup-body .keyword { color: #f43f5e; font-weight: 600; }
+    .mockup-body .variable { color: #38bdf8; }
+    .mockup-body .string { color: #a3e635; }
+    .mockup-body .comment { color: #64748b; font-style: italic; }
+
+    /* Visual Dashboard UI Mockup */
+    .visual-card {
+      background: var(--slate-50);
+      border: 1.5px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .status-success { background: var(--emerald-50); color: var(--emerald-600); border: 1px solid #a7f3d0; }
+    .status-danger { background: var(--rose-50); color: var(--rose-600); border: 1px solid #fecdd3; }
+    .status-warning { background: var(--amber-50); color: var(--amber-600); border: 1px solid #fde68a; }
+
+    /* Tables */
+    .sop-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    .sop-table th {
+      background: var(--slate-100);
+      color: var(--slate-800);
+      font-weight: 700;
+      text-align: left;
+      padding: 10px 14px;
+      border: 1px solid var(--slate-200);
+    }
+    .sop-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--slate-200);
+      color: var(--slate-700);
+    }
+    .sop-table tr:nth-child(even) {
+      background: var(--slate-50);
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      margin: 14px 0;
+    }
+    .checklist li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--slate-700);
+    }
+    .checklist li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      background: var(--emerald-50);
+      color: var(--emerald-600);
+      border: 1.5px solid var(--emerald-600);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* Callout Note */
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: var(--slate-50);
+      padding: 14px 18px;
+      border-radius: 0 12px 12px 0;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    .callout-warning {
+      border-left-color: var(--amber-600);
+      background: var(--amber-50);
+      color: #78350f;
+    }
+    .callout-success {
+      border-left-color: var(--emerald-600);
+      background: var(--emerald-50);
+      color: #064e3b;
+    }
+
+    /* Print Optimization Rules */
+    @media print {
+      body { background: white; padding: 0; font-size: 12pt; }
+      .container { max-width: 100%; padding: 0; }
+      .action-bar { display: none !important; }
+      .doc-header { box-shadow: none; border: 1px solid #cbd5e1; page-break-after: avoid; }
+      .phase-card { box-shadow: none; border: 1px solid #cbd5e1; page-break-inside: avoid; margin-bottom: 20px; }
+      .mockup-window { border: 1px solid #475569; page-break-inside: avoid; }
+      .btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Floating Print & PDF Trigger -->
+  <div class="action-bar">
+    <div style="font-weight: 700; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+      <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
+      Universal Website Onboarding SOP &amp; Deployment Manual
+    </div>
+    <button onclick="window.print()" class="btn btn-gold">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+
+  <!-- Document Header -->
+  <header class="doc-header">
+    <span class="doc-badge">Standard Operating Procedure</span>
+    <h1 class="doc-title">Universal Website Onboarding &amp; Rapid Transformation Engine</h1>
+    <p class="doc-subtitle">
+      Step-by-step technical blueprint for cloning, rebranding, toggling dynamic business modules, converting raw HTML templates into Blade layouts, and deploying to Hostinger/cPanel with zero errors.
+    </p>
+    <div class="doc-meta-grid">
+      <div class="meta-item">
+        <span>Target Framework</span>
+        <strong>Laravel 11 / 12 / 13 (PHP 8.2+)</strong>
+      </div>
+      <div class="meta-item">
+        <span>Production Host</span>
+        <strong>Hostinger (hPanel / Cloud / VPS)</strong>
+      </div>
+      <div class="meta-item">
+        <span>Database Engine</span>
+        <strong>MySQL 8.0+ (utf8mb4)</strong>
+      </div>
+      <div class="meta-item">
+        <span>Estimated Setup Time</span>
+        <strong>5 - 10 Minutes Total</strong>
+      </div>
+    </div>
+  </header>
+
+  <!-- Phase 1 -->
+  <section class="phase-card">
+    <div class="phase-header">
+      <div class="phase-number">1</div>
+      <div>
+        <h2 class="phase-title">New Git Repository &amp; Environment Setup</h2>
+        <p class="phase-desc">Sever old database links, isolate the repository, and generate a clean production environment file.</p>
+      </div>
+    </div>
+
+    <p style="font-size: 14px; color: var(--slate-700); margin-bottom: 12px;">
+      Whenever onboarding a new domain (e.g., <code>tenderfold.in</code>), create an independent Git repository to prevent accidental production overwrite of legacy clients.
+    </p>
+
+    <!-- Terminal Mockup -->
+    <div class="mockup-window">
+      <div class="mockup-topbar">
+        <div class="mockup-dot dot-red"></div>
+        <div class="mockup-dot dot-yellow"></div>
+        <div class="mockup-dot dot-green"></div>
+        <span class="mockup-title">Terminal &mdash; Git Remote &amp; Env Initialization</span>
+      </div>
+      <div class="mockup-body">
+<span class="comment"># 1. Create and connect to new GitHub Repository</span>
+<span class="keyword">git</span> remote set-url origin https://github.com/rahulswami/<span class="variable">[new_repo_name]</span>.git
+
+<span class="comment"># 2. Copy and configure .env</span>
+<span class="keyword">cp</span> .env.example .env
+<span class="keyword">php</span> artisan key:generate
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Key Values to set in <code>.env</code>:</strong>
+      <ul style="margin-left: 20px; margin-top: 6px;">
+        <li><code>APP_NAME="[New Brand Name]"</code></li>
+        <li><code>APP_URL=https://[newdomain.in]</code></li>
+        <li><code>DB_DATABASE=[new_db_name]</code></li>
+        <li><code>DB_USERNAME=[new_db_user]</code> &amp; <code>DB_PASSWORD=[password]</code></li>
+        <li><code>SESSION_DRIVER=file</code> &amp; <code>CACHE_STORE=file</code> <em>(Ensures zero crash on initial setup)</em></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Phase 2 -->
+  <section class="phase-card">
+    <div class="phase-header">
+      <div class="phase-number">2</div>
+      <div>
+        <h2 class="phase-title">Database Creation, Isolation &amp; Zero-Bleed Reset</h2>
+        <p class="phase-desc">Purge old clinic/store data while retaining CMS schema, security roles, and admin accounts.</p>
+      </div>
+    </div>
+
+    <p style="font-size: 14px; color: var(--slate-700);">
+      Execute the SQL cleanup script to truncate legacy operational data, chat histories, doctor listings, and old leads:
+    </p>
+
+    <!-- SQL Snippet Mockup -->
+    <div class="mockup-window">
+      <div class="mockup-topbar">
+        <div class="mockup-dot dot-red"></div>
+        <div class="mockup-dot dot-yellow"></div>
+        <div class="mockup-dot dot-green"></div>
+        <span class="mockup-title">phpMyAdmin / MySQL Query &mdash; Zero-Bleed Reset</span>
+      </div>
+      <div class="mockup-body">
+<span class="keyword">SET</span> FOREIGN_KEY_CHECKS = 0;
+
+<span class="comment">-- Purge Old Operational Data &amp; Leads</span>
+<span class="keyword">TRUNCATE TABLE</span> `leads`;
+<span class="keyword">TRUNCATE TABLE</span> `lead_activities`;
+<span class="keyword">TRUNCATE TABLE</span> `form_submissions`;
+<span class="keyword">TRUNCATE TABLE</span> `chat_rooms`;
+<span class="keyword">TRUNCATE TABLE</span> `chat_messages`;
+<span class="keyword">TRUNCATE TABLE</span> `admin_notifications`;
+<span class="keyword">TRUNCATE TABLE</span> `web_notifications`;
+<span class="keyword">TRUNCATE TABLE</span> `push_subscriptions`;
+
+<span class="comment">-- Reset Admin User Credentials</span>
+<span class="keyword">UPDATE</span> `users` <span class="keyword">SET</span> `email` = <span class="string">'admin@[newdomain].in'</span>, `name` = <span class="string">'[Brand] Admin'</span> <span class="keyword">WHERE</span> `id` = 1;
+
+<span class="keyword">SET</span> FOREIGN_KEY_CHECKS = 1;
+      </div>
+    </div>
+
+    <div class="visual-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:700; font-size:14px; color:var(--primary);">Clean Database Verification</span>
+        <span class="status-badge status-success">Ready for New Seeding</span>
+      </div>
+      <p style="font-size:12.5px; color:var(--slate-600); margin-top:4px;">
+        Database schema is ready for seeding new service records, pricing lists, testimonials, and home slides.
+      </p>
+    </div>
+  </section>
+
+  <!-- Phase 3 -->
+  <section class="phase-card">
+    <div class="phase-header">
+      <div class="phase-number">3</div>
+      <div>
+        <h2 class="phase-title">Business Module Switchboard</h2>
+        <p class="phase-desc">Activate or deactivate business features based on the new website's niche.</p>
+      </div>
+    </div>
+
+    <table class="sop-table">
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Purpose &amp; Niche</th>
+          <th>Database Table</th>
+          <th>Default State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dynamic Services</strong></td>
+          <td>Laundry, Dry Cleaning, Repairs, Salon, Agencies</td>
+          <td><code>services</code></td>
+          <td><span class="status-badge status-success">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>Rate Cards / Pricing</strong></td>
+          <td>Per Kg / Per Piece Rate Tables</td>
+          <td><code>site_parameters</code></td>
+          <td><span class="status-badge status-success">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>Specialists / Doctors</strong></td>
+          <td>Medical Clinics, Law Firms, Consulting</td>
+          <td><code>team_members</code></td>
+          <td><span class="status-badge status-warning">Toggle (Deactivate for Laundry)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Treatments</strong></td>
+          <td>Hospitals, Dental, Orthopedic</td>
+          <td><code>treatments</code></td>
+          <td><span class="status-badge status-warning">Toggle (Deactivate for Laundry)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Products / E-Commerce</strong></td>
+          <td>Retail, D2C, Catalog</td>
+          <td><code>products</code></td>
+          <td><span class="status-badge status-warning">Optional</span></td>
+        </tr>
+        <tr>
+          <td><strong>Journal &amp; Care Notes</strong></td>
+          <td>SEO Articles &amp; Customer Guides</td>
+          <td><code>blogs</code></td>
+          <td><span class="status-badge status-success">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>Instant WhatsApp Booking</strong></td>
+          <td>Lead capture &amp; automatic WhatsApp dispatch</td>
+          <td><code>leads</code></td>
+          <td><span class="status-badge status-success">Active</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Phase 4 -->
+  <section class="phase-card">
+    <div class="phase-header">
+      <div class="phase-number">4</div>
+      <div>
+        <h2 class="phase-title">HTML-to-Blade Conversion Engine</h2>
+        <p class="phase-desc">Transform raw HTML files into clean, dynamic, CMS-connected Blade templates.</p>
+      </div>
+    </div>
+
+    <ul class="checklist">
+      <li><strong>Copy Assets:</strong> Move all template images, icons, CSS, and JS into <code>public/assets/</code>.</li>
+      <li><strong>Extract Master Layout:</strong> Create <code>resources/views/layouts/app.blade.php</code> containing the common <code>&lt;head&gt;</code>, sticky Header, dynamic Services dropdown, <code>#bookModal</code>, and Footer.</li>
+      <li><strong>Inject Blade Yields:</strong> Ensure <code>@yield('title')</code>, <code>@yield('meta_description')</code>, <code>@yield('schema')</code>, and <code>@yield('content')</code> are present in <code>layouts/app.blade.php</code>.</li>
+      <li><strong>Bind Dynamic Placeholders:</strong>
+        <ul style="margin-top:6px; margin-left: 20px; list-style: disc; font-size:13px; color:var(--slate-600);">
+          <li>Phone Number: <code>{{ $site['phone'] }}</code></li>
+          <li>WhatsApp Link: <code>https://wa.me/{{ $site['whatsapp_number'] }}</code></li>
+          <li>Dynamic Services Loop: <code>@foreach($services as $service)</code></li>
+          <li>Dynamic Reviews: <code>@foreach($testimonials as $test)</code></li>
+        </ul>
+      </li>
+      <li><strong>Form Action:</strong> Point contact &amp; pickup forms to <code>route('contact.submit')</code> with <code>@csrf</code>.</li>
+    </ul>
+
+    <!-- Architecture Mapping Mockup -->
+    <div class="mockup-window">
+      <div class="mockup-topbar">
+        <div class="mockup-dot dot-red"></div>
+        <div class="mockup-dot dot-yellow"></div>
+        <div class="mockup-dot dot-green"></div>
+        <span class="mockup-title">File Structure Conversion Mapping</span>
+      </div>
+      <div class="mockup-body">
+<span class="string">raw-template/assets/</span>      ──►  <span class="variable">public/assets/</span>
+<span class="string">raw-template/index.html</span>      ──►  <span class="variable">resources/views/index.blade.php</span>
+<span class="string">raw-template/about.html</span>      ──►  <span class="variable">resources/views/about.blade.php</span>
+<span class="string">raw-template/services.html</span>   ──►  <span class="variable">resources/views/services.blade.php</span>
+<span class="string">raw-template/contact.html</span>    ──►  <span class="variable">resources/views/contact.blade.php</span>
+<span class="string">raw-template/pricing.html</span>    ──►  <span class="variable">resources/views/pricing.blade.php</span>
+<span class="string">raw-template/journal.html</span>    ──►  <span class="variable">resources/views/blog/index.blade.php</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Phase 5 -->
+  <section class="phase-card">
+    <div class="phase-header">
+      <div class="phase-number">5</div>
+      <div>
+        <h2 class="phase-title">Hostinger Live Deployment &amp; Self-Healing</h2>
+        <p class="phase-desc">1-Click deployment procedure with automated resolution for 403 Forbidden and AppKey errors.</p>
+      </div>
+    </div>
+
+    <p style="font-size: 14px; color: var(--slate-700); margin-bottom: 14px;">
+      Follow these exact steps inside Hostinger <strong>hPanel</strong> to launch in under 2 minutes:
+    </p>
+
+    <!-- Visual Step Cards -->
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 16px;">
+      <div style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:12px; padding:16px;">
+        <span style="font-size:11px; font-weight:800; color:var(--primary); text-transform:uppercase;">Step 1: Git Deploy</span>
+        <h4 style="font-size:14px; font-weight:700; margin-top:4px;">Connect Repository</h4>
+        <p style="font-size:12.5px; color:var(--slate-600); margin-top:4px;">In hPanel &gt; Git, add repo URL and branch <code>main</code>. Click Deploy.</p>
+      </div>
+
+      <div style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:12px; padding:16px;">
+        <span style="font-size:11px; font-weight:800; color:var(--primary); text-transform:uppercase;">Step 2: MySQL DB</span>
+        <h4 style="font-size:14px; font-weight:700; margin-top:4px;">Import SQL Dump</h4>
+        <p style="font-size:12.5px; color:var(--slate-600); margin-top:4px;">Create database in hPanel and import <code>database.sql</code> via phpMyAdmin.</p>
+      </div>
+
+      <div style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:12px; padding:16px;">
+        <span style="font-size:11px; font-weight:800; color:var(--primary); text-transform:uppercase;">Step 3: Self-Heal</span>
+        <h4 style="font-size:14px; font-weight:700; margin-top:4px;">Run /deploy.php</h4>
+        <p style="font-size:12.5px; color:var(--slate-600); margin-top:4px;">Open <code>https://[domain]/deploy.php</code> in your browser for 1-click verification.</p>
+      </div>
+    </div>
+
+    <!-- Troubleshooting Table -->
+    <h3 style="font-size: 16px; font-weight: 700; margin-top: 20px; margin-bottom: 8px;">Common Live Server Errors &amp; Instant Fixes</h3>
+    <table class="sop-table">
+      <thead>
+        <tr>
+          <th>Error Message</th>
+          <th>Root Cause</th>
+          <th>Instant Fix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--rose-600);">403 Forbidden</strong></td>
+          <td>Document root points to <code>public_html</code> instead of <code>public_html/public</code>.</td>
+          <td>Root <code>.htaccess</code> is pre-configured in this repository to rewrite into <code>public/</code> automatically.</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--rose-600);">MissingAppKeyException</strong></td>
+          <td><code>APP_KEY</code> is blank in production <code>.env</code>.</td>
+          <td>Opening <code>/deploy.php</code> auto-generates a secure 32-byte key and writes it directly to <code>.env</code>.</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--rose-600);">Database file ... does not exist</strong></td>
+          <td><code>.env</code> has <code>DB_CONNECTION=sqlite</code> instead of <code>mysql</code>.</td>
+          <td>Set <code>DB_CONNECTION=mysql</code> and update database name/user in <code>.env</code>.</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--rose-600);">Currency symbol &ldquo;â‚¹&rdquo; artifact</strong></td>
+          <td>Mojibake UTF-8 encoding issue on import.</td>
+          <td>Running <code>/deploy.php</code> automatically replaces all <code>â‚¹</code> with <code>₹</code> across all database tables.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Summary Footer -->
+  <footer style="text-align: center; margin-top: 32px; font-size: 13px; color: var(--slate-600);">
+    <p><strong>Universal Website Onboarding Framework</strong> &bull; Production Manual &bull; Confidential &amp; Proprietary</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
