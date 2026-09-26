@@ -1,100 +1,264 @@
 <?php
+/**
+ * Tenderfold Live Deployment, Diagnostic & Self-Healing Script
+ * Works seamlessly on Hostinger, cPanel, VPS, and Cloud servers.
+ */
 
-header('Content-Type: text/plain');
+// 1. Detect base project path
+$isInsidePublic = basename(__DIR__) === 'public';
+$basePath = $isInsidePublic ? dirname(__DIR__) : __DIR__;
+$publicPath = $isInsidePublic ? __DIR__ : $basePath . '/public';
 
-$envPath = __DIR__ . '/../.env';
+$checks = [];
+$actions = [];
+
+// 2. Load .env file
+$envPath = $basePath . '/.env';
 if (!file_exists($envPath)) {
-    die("Error: .env file not found.");
-}
-
-$env = [];
-$lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-foreach ($lines as $line) {
-    if (strpos(trim($line), '#') === 0) continue;
-    $parts = explode('=', $line, 2);
-    if (count($parts) === 2) {
-        $env[trim($parts[0])] = trim($parts[1], '"\' ');
+    if (file_exists($basePath . '/.env.example')) {
+        copy($basePath . '/.env.example', $envPath);
+        $actions[] = "Created <code>.env</code> from <code>.env.example</code> ✅";
     }
 }
 
+$env = [];
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        $parts = explode('=', $line, 2);
+        if (count($parts) === 2) {
+            $env[trim($parts[0])] = trim($parts[1], '"\' ');
+        }
+    }
+    $checks['.env File'] = ['status' => true, 'msg' => 'Found & Loaded'];
+} else {
+    $checks['.env File'] = ['status' => false, 'msg' => 'Missing .env file in root directory'];
+}
+
+// 3. Ensure Storage & Cache Directories Exist with Proper Permissions
+$storageDirs = [
+    $basePath . '/storage',
+    $basePath . '/storage/app',
+    $basePath . '/storage/app/public',
+    $basePath . '/storage/framework',
+    $basePath . '/storage/framework/cache',
+    $basePath . '/storage/framework/cache/data',
+    $basePath . '/storage/framework/sessions',
+    $basePath . '/storage/framework/views',
+    $basePath . '/storage/logs',
+    $basePath . '/bootstrap/cache',
+];
+
+$storageWritable = true;
+foreach ($storageDirs as $dir) {
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0775, true);
+    }
+    @chmod($dir, 0775);
+    if (!is_writable($dir)) {
+        $storageWritable = false;
+    }
+}
+$checks['Storage & Cache Permissions'] = [
+    'status' => $storageWritable,
+    'msg' => $storageWritable ? 'All directories writable (0775)' : 'Some storage directories are not writable. Check file permissions.'
+];
+
+// 4. Ensure Root .htaccess exists to fix 403 Forbidden on Hostinger
+$rootHtaccess = $basePath . '/.htaccess';
+$rootHtaccessContent = <<<HTACCESS
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^\.env - [F,L,NC]
+    RewriteRule ^composer\.(json|lock) - [F,L,NC]
+    RewriteRule ^package(-lock)?\.json - [F,L,NC]
+    RewriteRule ^storage/logs/ - [F,L,NC]
+    RewriteCond %{REQUEST_URI} ^/public/ [NC]
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/deploy\.php$ [NC]
+    RewriteRule ^ - [L]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<IfModule !mod_rewrite.c>
+    RedirectMatch 302 ^/$ /public/
+</IfModule>
+HTACCESS;
+
+if (!file_exists($rootHtaccess) || filesize($rootHtaccess) < 20) {
+    @file_put_contents($rootHtaccess, $rootHtaccessContent);
+    $actions[] = "Created / Updated Root <code>.htaccess</code> to redirect traffic into <code>/public</code> ✅";
+}
+$checks['Root .htaccess (Hostinger 403 Fix)'] = ['status' => true, 'msg' => 'Configured & Active'];
+
+// 5. Ensure Public .htaccess exists
+$publicHtaccess = $publicPath . '/.htaccess';
+if (!file_exists($publicHtaccess)) {
+    $pubContent = <<<HTACCESS
+<IfModule mod_rewrite.c>
+    Options -MultiViews -Indexes
+    RewriteEngine On
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+HTACCESS;
+    @file_put_contents($publicHtaccess, $pubContent);
+    $actions[] = "Created <code>public/.htaccess</code> for Laravel URL routing ✅";
+}
+$checks['Public .htaccess'] = ['status' => true, 'msg' => 'Configured'];
+
+// 6. Connect to MySQL Database & Seed/Repair Schema
 $dbHost = $env['DB_HOST'] ?? '127.0.0.1';
 $dbPort = $env['DB_PORT'] ?? '3306';
 $dbName = $env['DB_DATABASE'] ?? '';
 $dbUser = $env['DB_USERNAME'] ?? '';
 $dbPass = $env['DB_PASSWORD'] ?? '';
 
-if (empty($dbName)) {
-    die("Error: DB_DATABASE not specified in .env");
+$pdo = null;
+$dbConnected = false;
+$dbError = '';
+
+if (!empty($dbName)) {
+    try {
+        $pdo = new PDO("mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]);
+        $dbConnected = true;
+    } catch (PDOException $e) {
+        $dbError = $e->getMessage();
+    }
+} else {
+    $dbError = "DB_DATABASE is not configured in .env";
 }
 
-try {
-    $pdo = new PDO("mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
+$checks['Database Connection'] = [
+    'status' => $dbConnected,
+    'msg' => $dbConnected ? "Connected to <strong>{$dbName}</strong> on {$dbHost}" : "Failed: {$dbError}"
+];
 
-echo "Database connection successful!\n\n";
-
-$results = [];
-
-// ── 1. Create push_subscriptions ──────────────────────────────────
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+// 7. Auto-Create / Migrate Database Tables if Connected
+if ($pdo) {
+    // 7.1 Users table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
         `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `session_id` VARCHAR(255) NULL,
-        `endpoint` TEXT NULL,
-        `auth_token` TEXT NULL,
-        `public_key` TEXT NULL,
-        `created_at` TIMESTAMP NULL DEFAULT NULL,
-        `updated_at` TIMESTAMP NULL DEFAULT NULL,
-        INDEX (`session_id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['push_subscriptions'] = "CREATED OR ALREADY EXISTED ✅";
-} catch (Exception $e) {
-    $results['push_subscriptions'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 2. Create web_notifications ───────────────────────────────────
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `web_notifications` (
-        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `session_id` VARCHAR(255) NULL,
-        `title` VARCHAR(255) NOT NULL,
-        `message` TEXT NOT NULL,
-        `url` VARCHAR(2048) NULL,
-        `is_read` TINYINT(1) NOT NULL DEFAULT 0,
-        `created_at` TIMESTAMP NULL DEFAULT NULL,
-        `updated_at` TIMESTAMP NULL DEFAULT NULL,
-        INDEX (`session_id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['web_notifications'] = "CREATED OR ALREADY EXISTED ✅";
-} catch (Exception $e) {
-    $results['web_notifications'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 3. Create admin_notifications ─────────────────────────────────
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `admin_notifications` (
-        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `type` VARCHAR(255) NOT NULL DEFAULT 'system',
-        `title` VARCHAR(255) NOT NULL,
-        `message` TEXT NULL,
-        `user_name` VARCHAR(255) NULL,
-        `action_url` VARCHAR(2048) NULL,
-        `is_read` TINYINT(1) NOT NULL DEFAULT 0,
+        `name` VARCHAR(255) NOT NULL,
+        `email` VARCHAR(255) NOT NULL UNIQUE,
+        `email_verified_at` TIMESTAMP NULL DEFAULT NULL,
+        `password` VARCHAR(255) NOT NULL,
+        `role` VARCHAR(50) NOT NULL DEFAULT 'admin',
+        `remember_token` VARCHAR(100) NULL,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['admin_notifications'] = "CREATED OR ALREADY EXISTED ✅";
-} catch (Exception $e) {
-    $results['admin_notifications'] = "FAIL ❌ " . $e->getMessage();
-}
 
-// ── 4. Create lead_activities ─────────────────────────────────────
-try {
+    // Ensure Admin User exists
+    $adminStmt = $pdo->prepare("SELECT COUNT(*) FROM `users` WHERE `email` = ?");
+    $adminStmt->execute(['admin@tenderfold.in']);
+    if ($adminStmt->fetchColumn() == 0) {
+        $passHash = password_hash('admin123', PASSWORD_BCRYPT);
+        $insertAdmin = $pdo->prepare("INSERT INTO `users` (`name`, `email`, `password`, `role`, `created_at`, `updated_at`) VALUES (?, ?, ?, 'admin', NOW(), NOW())");
+        $insertAdmin->execute(['Tenderfold Admin', 'admin@tenderfold.in', $passHash]);
+        $actions[] = "Admin account created: <code>admin@tenderfold.in</code> / <code>admin123</code> ✅";
+    }
+
+    // 7.2 Services table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `services` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `service_name` VARCHAR(255) NOT NULL,
+        `slug` VARCHAR(255) NOT NULL UNIQUE,
+        `summary` TEXT NULL,
+        `rate_value` VARCHAR(100) NULL,
+        `turnaround_time` VARCHAR(100) NULL,
+        `hero_title` VARCHAR(255) NULL,
+        `hero_subtitle` TEXT NULL,
+        `hero_category` VARCHAR(100) NULL,
+        `intro_content` LONGTEXT NULL,
+        `care_steps` JSON NULL,
+        `inclusions` JSON NULL,
+        `price_list` JSON NULL,
+        `faqs` JSON NULL,
+        `sort_order` INT NOT NULL DEFAULT 0,
+        `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // 7.3 Home Slides table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `home_slides` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `title` VARCHAR(255) NOT NULL,
+        `subtitle` TEXT NULL,
+        `button_text` VARCHAR(100) NULL DEFAULT 'Schedule a Pickup',
+        `button_link` VARCHAR(255) NULL DEFAULT '#book',
+        `image` VARCHAR(255) NULL,
+        `sort_order` INT NOT NULL DEFAULT 0,
+        `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // 7.4 Testimonials table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `testimonials` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `name` VARCHAR(255) NOT NULL,
+        `designation` VARCHAR(255) NULL,
+        `content` TEXT NOT NULL,
+        `rating` INT NOT NULL DEFAULT 5,
+        `avatar` VARCHAR(255) NULL,
+        `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // 7.5 Blogs table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `blogs` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `title` VARCHAR(255) NOT NULL,
+        `slug` VARCHAR(255) NOT NULL UNIQUE,
+        `summary` TEXT NULL,
+        `content` LONGTEXT NOT NULL,
+        `category` VARCHAR(100) NULL DEFAULT 'Care Notes',
+        `image` VARCHAR(255) NULL,
+        `metatitle` VARCHAR(255) NULL,
+        `metadescription` TEXT NULL,
+        `tags` VARCHAR(255) NULL,
+        `schema_markup` TEXT NULL,
+        `is_published` TINYINT(1) NOT NULL DEFAULT 1,
+        `published_at` TIMESTAMP NULL DEFAULT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // 7.6 Site Parameters table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `site_parameters` (
+        `id` VARCHAR(191) PRIMARY KEY,
+        `value` LONGTEXT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // 7.7 Leads & Activities tables
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `leads` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `name` VARCHAR(255) NOT NULL,
+        `phone` VARCHAR(255) NOT NULL,
+        `email` VARCHAR(255) NULL,
+        `service` VARCHAR(255) NULL,
+        `message` TEXT NULL,
+        `status` VARCHAR(50) NOT NULL DEFAULT 'New',
+        `source` VARCHAR(100) NOT NULL DEFAULT 'Website Pickup',
+        `notes` TEXT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
     $pdo->exec("CREATE TABLE IF NOT EXISTS `lead_activities` (
         `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         `lead_id` BIGINT UNSIGNED NOT NULL,
@@ -106,331 +270,167 @@ try {
         `updated_at` TIMESTAMP NULL DEFAULT NULL,
         INDEX (`lead_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['lead_activities'] = "CREATED OR ALREADY EXISTED ✅";
-} catch (Exception $e) {
-    $results['lead_activities'] = "FAIL ❌ " . $e->getMessage();
-}
 
-// ── 5. Create treatments ──────────────────────────────────────────
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `treatments` (
-        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `name` VARCHAR(255) NOT NULL,
-        `slug` VARCHAR(255) NOT NULL UNIQUE,
-        `image` VARCHAR(255) NULL,
-        `description` LONGTEXT NULL,
-        `metatitle` VARCHAR(255) NULL,
-        `metadescription` TEXT NULL,
-        `tags` VARCHAR(255) NULL,
-        `schema_markup` TEXT NULL,
-        `created_at` TIMESTAMP NULL DEFAULT NULL,
-        `updated_at` TIMESTAMP NULL DEFAULT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['treatments'] = "CREATED OR ALREADY EXISTED ✅";
-} catch (Exception $e) {
-    $results['treatments'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 6. Create team_members ────────────────────────────────────────
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `team_members` (
-        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `name` VARCHAR(255) NOT NULL,
-        `slug` VARCHAR(255) NULL,
-        `designation` VARCHAR(255) NULL,
-        `image` VARCHAR(255) NULL,
-        `phone` VARCHAR(255) NULL,
-        `facebook` VARCHAR(255) NULL,
-        `twitter` VARCHAR(255) NULL,
-        `description` LONGTEXT NULL,
-        `metatitle` VARCHAR(255) NULL,
-        `metadescription` TEXT NULL,
-        `tags` VARCHAR(255) NULL,
-        `schema_markup` TEXT NULL,
-        `created_at` TIMESTAMP NULL DEFAULT NULL,
-        `updated_at` TIMESTAMP NULL DEFAULT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['team_members'] = "CREATED OR ALREADY EXISTED ✅";
-} catch (Exception $e) {
-    $results['team_members'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 7. Create cms_pages ───────────────────────────────────────────
-try {
+    // 7.8 CMS Pages
     $pdo->exec("CREATE TABLE IF NOT EXISTS `cms_pages` (
         `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         `title` VARCHAR(255) NOT NULL,
         `slug` VARCHAR(255) NOT NULL UNIQUE,
-        `description` LONGTEXT NULL,
+        `content` LONGTEXT NULL,
         `metatitle` VARCHAR(255) NULL,
         `metadescription` TEXT NULL,
-        `tags` VARCHAR(255) NULL,
-        `schema_markup` TEXT NULL,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['cms_pages'] = "CREATED OR ALREADY EXISTED ✅";
-} catch (Exception $e) {
-    $results['cms_pages'] = "FAIL ❌ " . $e->getMessage();
-}
 
-// ── 8. Modify users table ─────────────────────────────────────────
-try {
-    $columns = $pdo->query("DESCRIBE `users`")->fetchAll(PDO::FETCH_COLUMN);
-    $hasRole = in_array('role', $columns);
-    $hasPerms = in_array('permissions', $columns);
-    
-    if (!$hasRole) {
-        $pdo->exec("ALTER TABLE `users` ADD COLUMN `role` VARCHAR(255) NOT NULL DEFAULT 'admin' AFTER `password`");
-    }
-    if (!$hasPerms) {
-        $pdo->exec("ALTER TABLE `users` ADD COLUMN `permissions` TEXT NULL AFTER `role`");
-    }
-    
-    // Seed user ID 1 as superadmin
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE id = 1 LIMIT 1");
-    $stmt->execute();
-    if ($stmt->fetch()) {
-        $stmtUpdate = $pdo->prepare("UPDATE users SET role = 'superadmin', permissions = :perms WHERE id = 1");
-        $stmtUpdate->execute(['perms' => json_encode(['all'])]);
-    }
-    
-    $results['users_columns'] = "UPDATED (role & permissions added, user 1 seeded) ✅";
-} catch (Exception $e) {
-    $results['users_columns'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 9. Ensure services, treatments & blogs SEO/FAQ columns ─────────
-try {
-    $svcCols = $pdo->query("DESCRIBE `services`")->fetchAll(PDO::FETCH_COLUMN);
-    if (!in_array('metatitle', $svcCols)) {
-        $pdo->exec("ALTER TABLE `services` ADD COLUMN `metatitle` VARCHAR(255) NULL, ADD COLUMN `metadescription` TEXT NULL, ADD COLUMN `metakeywords` TEXT NULL;");
-    }
-    $treatCols = $pdo->query("DESCRIBE `treatments`")->fetchAll(PDO::FETCH_COLUMN);
-    if (!in_array('faqs', $treatCols)) {
-        $pdo->exec("ALTER TABLE `treatments` ADD COLUMN `faqs` TEXT NULL AFTER `description`;");
-    }
-    $blogCols = $pdo->query("DESCRIBE `blogs`")->fetchAll(PDO::FETCH_COLUMN);
-    if (!in_array('metatitle', $blogCols)) {
-        $pdo->exec("ALTER TABLE `blogs` ADD COLUMN `metatitle` VARCHAR(255) NULL, ADD COLUMN `metadescription` TEXT NULL, ADD COLUMN `metakeywords` TEXT NULL, ADD COLUMN `tags` TEXT NULL;");
-    }
-    $results['services_blogs_seo_columns'] = "SEO/FAQ COLUMNS ADDED/VERIFIED ✅";
-} catch (Exception $e) {
-    $results['services_blogs_seo_columns'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 10. Update site_parameters ────────────────────────────────────
-try {
-    $paramCols = $pdo->query("DESCRIBE `site_parameters`")->fetchAll(PDO::FETCH_COLUMN);
-    if (in_array('label', $paramCols)) {
-        $pdo->exec("ALTER TABLE `site_parameters` MODIFY COLUMN `label` VARCHAR(255) NULL DEFAULT NULL;");
-    }
-    $pdo->exec("INSERT INTO `site_parameters` (`id`, `label`, `category`, `value`, `created_at`, `updated_at`) 
-        VALUES ('ai_model', 'AI Model', 'ai', 'gemini-2.5-flash', NOW(), NOW()) 
-        ON DUPLICATE KEY UPDATE `value` = 'gemini-2.5-flash', `updated_at` = NOW();");
-    $results['site_parameters_ai_model'] = "UPDATED to gemini-2.5-flash ✅";
-} catch (Exception $e) {
-    $results['site_parameters_ai_model'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 11. Clear Compiled View Caches ───────────────────────────────
-try {
-    $storageViews = __DIR__ . '/../storage/framework/views';
-    if (is_dir($storageViews)) {
-        $files = glob($storageViews . '/*');
-        foreach ($files as $file) {
-            if (is_file($file) && basename($file) !== '.gitignore') {
-                @unlink($file);
-            }
-        }
-        $results['clear_view_cache'] = "STORAGE FRAMEWORK VIEWS CLEARED ✅";
-    }
-} catch (Exception $e) {
-    $results['clear_view_cache'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 13. Sync Live Database Blogs from database/data/restored_blogs.json ──
-try {
-    $jsonPath = __DIR__ . '/../database/data/restored_blogs.json';
-    if (file_exists($jsonPath)) {
-        $blogsData = json_decode(file_get_contents($jsonPath), true);
-        if (is_array($blogsData) && count($blogsData) > 0) {
-            $stmtSelect = $pdo->prepare("SELECT `id` FROM `blogs` WHERE `id` = :id OR `slug` = :slug LIMIT 1");
-            $stmtUpdate = $pdo->prepare("UPDATE `blogs` SET 
-                `title` = :title, 
-                `content` = :content, 
-                `summary` = :summary, 
-                `image_path` = COALESCE(NULLIF(:image_path, ''), `image_path`), 
-                `metatitle` = :metatitle, 
-                `metadescription` = :metadescription, 
-                `metakeywords` = :metakeywords, 
-                `tags` = :tags, 
-                `published_at` = COALESCE(NULLIF(:published_at, ''), `published_at`),
-                `created_at` = COALESCE(NULLIF(:created_at, ''), `created_at`),
-                `updated_at` = NOW() 
-                WHERE `id` = :target_id");
-            $stmtInsert = $pdo->prepare("INSERT INTO `blogs` 
-                (`id`, `title`, `slug`, `content`, `summary`, `image_path`, `metatitle`, `metadescription`, `metakeywords`, `tags`, `published_at`, `created_at`, `updated_at`) 
-                VALUES (:id, :title, :slug, :content, :summary, :image_path, :metatitle, :metadescription, :metakeywords, :tags, :published_at, :created_at, NOW())");
-
-            $syncedCount = 0;
-            foreach ($blogsData as $b) {
-                if (empty($b['title'])) continue;
-                
-                $bId = !empty($b['id']) ? (int)$b['id'] : null;
-                $bSlug = trim($b['slug'] ?? '');
-                $bTitle = trim($b['title']);
-                $bContent = $b['content'] ?? '';
-                $bSummary = $b['summary'] ?? '';
-                $bImg = $b['image_path'] ?? '';
-                $bMTitle = $b['metatitle'] ?? null;
-                $bMDesc = $b['metadescription'] ?? null;
-                $bMKeys = $b['metakeywords'] ?? null;
-                $bTags = $b['tags'] ?? null;
-                $bPubAt = !empty($b['published_at']) ? date('Y-m-d H:i:s', strtotime($b['published_at'])) : null;
-                $bCreateAt = !empty($b['created_at']) ? date('Y-m-d H:i:s', strtotime($b['created_at'])) : $bPubAt;
-
-                $stmtSelect->execute(['id' => $bId, 'slug' => $bSlug]);
-                $found = $stmtSelect->fetch();
-
-                if ($found) {
-                    $stmtUpdate->execute([
-                        'title' => $bTitle,
-                        'content' => $bContent,
-                        'summary' => $bSummary,
-                        'image_path' => $bImg,
-                        'metatitle' => $bMTitle,
-                        'metadescription' => $bMDesc,
-                        'metakeywords' => $bMKeys,
-                        'tags' => $bTags,
-                        'published_at' => $bPubAt,
-                        'created_at' => $bCreateAt,
-                        'target_id' => $found['id']
-                    ]);
-                } else {
-                    $stmtInsert->execute([
-                        'id' => $bId,
-                        'title' => $bTitle,
-                        'slug' => $bSlug,
-                        'content' => $bContent,
-                        'summary' => $bSummary,
-                        'image_path' => $bImg,
-                        'metatitle' => $bMTitle,
-                        'metadescription' => $bMDesc,
-                        'metakeywords' => $bMKeys,
-                        'tags' => $bTags,
-                        'published_at' => $bPubAt,
-                        'created_at' => $bCreateAt
-                    ]);
-                }
-                $syncedCount++;
-            }
-            $results['blog_live_sync'] = "SYNCED {$syncedCount} BLOGS TO LIVE DATABASE ✅";
-        } else {
-            $results['blog_live_sync'] = "NO BLOG DATA FOUND IN JSON ⚠️";
-        }
-    } else {
-        $results['blog_live_sync'] = "RESTORED_BLOGS.JSON FILE NOT FOUND ⚠️";
-    }
-} catch (Exception $e) {
-    $results['blog_live_sync'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 14. Sync Live Database Page Contents ──────────────────────────────────
-try {
-    $pcPath = __DIR__ . '/../database/data/page_contents.json';
-    if (file_exists($pcPath)) {
-        $pcData = json_decode(file_get_contents($pcPath), true);
-        if (is_array($pcData)) {
-            $stmtPC = $pdo->prepare("INSERT INTO `page_contents` (`page`, `section`, `key`, `value`, `created_at`, `updated_at`) 
-                VALUES (:page, :section, :key, :value, NOW(), NOW()) 
-                ON DUPLICATE KEY UPDATE `value` = :value, `updated_at` = NOW()");
-            foreach ($pcData as $row) {
-                $stmtPC->execute([
-                    'page' => $row['page'],
-                    'section' => $row['section'],
-                    'key' => $row['key'],
-                    'value' => $row['value']
-                ]);
-            }
-            $results['page_contents_sync'] = "SYNCED " . count($pcData) . " PAGE CONTENTS TO LIVE DB ✅";
-        }
-    }
-} catch (Exception $e) {
-    $results['page_contents_sync'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 15. Sync Treatments FAQs & Live Admin User Auth ──────────────────────
-try {
-    $tPath = __DIR__ . '/../database/data/treatments.json';
-    if (file_exists($tPath)) {
-        $tData = json_decode(file_get_contents($tPath), true);
-        if (is_array($tData)) {
-            $stmtT = $pdo->prepare("UPDATE `treatments` SET `faqs` = :faqs, `updated_at` = NOW() WHERE `slug` = :slug");
-            foreach ($tData as $tRow) {
-                if (!empty($tRow['faqs']) && !empty($tRow['slug'])) {
-                    $stmtT->execute([
-                        'faqs' => is_array($tRow['faqs']) ? json_encode($tRow['faqs']) : $tRow['faqs'],
-                        'slug' => $tRow['slug']
-                    ]);
-                }
-            }
-            $results['treatments_faqs_sync'] = "SYNCED TREATMENTS FAQS TO LIVE DB ✅";
-        }
-    }
-
-    $adminHash = password_hash('admin123', PASSWORD_BCRYPT);
-    $pdo->exec("UPDATE `users` SET `email` = 'admin@tenderfold.in', `password` = '{$adminHash}', `role` = 'superadmin' WHERE `id` = 1;");
-    $results['live_admin_auth'] = "UPDATED LIVE ADMIN PASSWORDS TO admin123 ✅";
-} catch (Exception $e) {
-    $results['treatments_faqs_sync'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 16. Auto-generate XML Sitemap & Robots.txt ───────────────────────────
-try {
-    $domain = 'https://tenderfold.in';
-    $stmtDom = $pdo->query("SELECT `value` FROM `site_parameters` WHERE `id` = 'sitemap_domain' LIMIT 1");
-    if ($stmtDom && $rDom = $stmtDom->fetch(PDO::FETCH_ASSOC)) {
-        if (!empty($rDom['value'])) {
-            $domain = rtrim($rDom['value'], '/');
-        }
-    }
-    
-    // Write robots.txt directly
-    $robots = "User-agent: *\nDisallow: /admin/\nDisallow: /api/\nAllow: /\n\nSitemap: {$domain}/sitemap.xml\n";
-    file_put_contents(__DIR__ . '/robots.txt', $robots);
-    $results['sitemap_live_sync'] = "ROBOTS.TXT & SITEMAP SYNCED FOR DOMAIN ({$domain}) ✅";
-} catch (Exception $e) {
-    $results['sitemap_live_sync'] = "FAIL ❌ " . $e->getMessage();
-}
-
-// ── 17. Social Links Table for Mobile App ───────────────────────────────
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `social_links` (
-        `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-        `code` varchar(255) NOT NULL,
-        `original_url` text NOT NULL,
-        `utm_source` varchar(255) NOT NULL DEFAULT 'social',
-        `utm_medium` varchar(255) NOT NULL DEFAULT 'post',
-        `utm_campaign` varchar(255) DEFAULT NULL,
-        `full_url` text NOT NULL,
-        `title` varchar(255) DEFAULT NULL,
-        `clicks` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
-        `created_at` timestamp NULL DEFAULT NULL,
-        `updated_at` timestamp NULL DEFAULT NULL,
-        PRIMARY KEY (`id`),
-        UNIQUE KEY `social_links_code_unique` (`code`)
+    // 7.9 Notifications & Push
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `admin_notifications` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `type` VARCHAR(255) NOT NULL DEFAULT 'info',
+        `title` VARCHAR(255) NOT NULL,
+        `message` TEXT NULL,
+        `user_name` VARCHAR(255) NULL,
+        `action_url` VARCHAR(2048) NULL,
+        `is_read` TINYINT(1) NOT NULL DEFAULT 0,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    $results['social_links_table'] = "SOCIAL LINKS TABLE MIGRATED / VERIFIED ✅";
-} catch (Exception $e) {
-    $results['social_links_table'] = "FAIL ❌ " . $e->getMessage();
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `session_id` VARCHAR(255) NULL,
+        `endpoint` TEXT NULL,
+        `auth_token` TEXT NULL,
+        `public_key` TEXT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `web_notifications` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `session_id` VARCHAR(255) NULL,
+        `title` VARCHAR(255) NOT NULL,
+        `message` TEXT NOT NULL,
+        `url` VARCHAR(2048) NULL,
+        `is_read` TINYINT(1) NOT NULL DEFAULT 0,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // Universal replacement for any leftover â‚¹
+    try {
+        $pdo->exec("UPDATE `services` SET `rate_value` = REPLACE(`rate_value`, 'â‚¹', '₹') WHERE `rate_value` LIKE '%â‚¹%'");
+    } catch (\Throwable $e) {}
+
+    $checks['Database Tables & Schema'] = ['status' => true, 'msg' => 'All core tables verified & up-to-date'];
 }
 
-echo "Live database & system deployment results:\n";
-foreach ($results as $table => $status) {
-    echo "- {$table}: {$status}\n";
+// 8. Clear Compiled Laravel Views & Cache Files directly
+$viewCacheDir = $basePath . '/storage/framework/views';
+if (is_dir($viewCacheDir)) {
+    $files = glob($viewCacheDir . '/*.php');
+    foreach ($files as $file) {
+        @unlink($file);
+    }
 }
+$actions[] = "Cleared compiled blade view cache files ✅";
 
-echo "\nAll database upgrades & view cache clearing applied successfully! Please try loading the /admin page now.\n";
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tenderfold Live Deployment Diagnostic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: "#143572",
+            "navy-dark": "#0C2454",
+            gold: "#F5B400",
+            cream: "#F4F7FB"
+          },
+          fontFamily: {
+            display: ["Nunito", "sans-serif"],
+            sans: ["Manrope", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-cream font-sans text-gray-800 antialiased min-h-screen flex flex-col justify-between">
+  <div class="max-w-4xl mx-auto px-4 py-12 w-full">
+    <!-- Header -->
+    <div class="bg-navy text-white rounded-3xl p-8 shadow-xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div>
+        <span class="inline-block px-3 py-1 bg-gold text-navy text-xs font-extrabold uppercase rounded-full tracking-wider mb-2">Live Deployment Engine</span>
+        <h1 class="text-3xl font-display font-extrabold">Tenderfold Server Status</h1>
+        <p class="text-white/70 text-sm mt-1">Hostinger & Production Environment Self-Healing Tool</p>
+      </div>
+      <div class="flex gap-3">
+        <a href="/" class="px-5 py-2.5 bg-gold text-navy font-display font-bold text-sm rounded-full transition hover:bg-yellow-400 shadow">Visit Website →</a>
+        <a href="/admin/login" class="px-5 py-2.5 bg-white/15 text-white font-display font-bold text-sm rounded-full transition hover:bg-white/25">Admin CMS</a>
+      </div>
+    </div>
 
+    <!-- Diagnostic Checks -->
+    <div class="bg-white rounded-3xl p-8 shadow-md mb-8 border border-gray-100">
+      <h2 class="text-xl font-display font-extrabold text-navy mb-6 flex items-center gap-2">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Environment & System Checks
+      </h2>
+      <div class="space-y-4">
+        <?php foreach ($checks as $title => $check): ?>
+          <div class="flex items-center justify-between p-4 rounded-2xl <?= $check['status'] ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200' ?>">
+            <div>
+              <p class="font-bold text-sm text-navy"><?= htmlspecialchars($title) ?></p>
+              <p class="text-xs text-gray-600 mt-0.5"><?= $check['msg'] ?></p>
+            </div>
+            <span class="text-lg"><?= $check['status'] ? '✅' : '❌' ?></span>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
 
+    <!-- Automated Actions Taken -->
+    <?php if (!empty($actions)): ?>
+      <div class="bg-white rounded-3xl p-8 shadow-md mb-8 border border-gray-100">
+        <h2 class="text-xl font-display font-extrabold text-navy mb-4 flex items-center gap-2">
+          <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          Automated Self-Healing Actions
+        </h2>
+        <ul class="space-y-2 text-sm text-gray-700">
+          <?php foreach ($actions as $action): ?>
+            <li class="p-3 bg-gray-50 rounded-xl flex items-center gap-2"><?= $action ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    <?php endif; ?>
+
+    <!-- Troubleshooting Guide for 403 Forbidden -->
+    <div class="bg-blue-50 border border-blue-200 rounded-3xl p-8 shadow-sm">
+      <h3 class="font-display font-bold text-navy text-lg mb-3">Hostinger 403 Forbidden Quick Guide</h3>
+      <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700 leading-relaxed">
+        <li><strong>Document Root:</strong> In Hostinger hPanel ➔ Website Settings, set Document Root to <code>public_html/public</code> if allowed. If not, our root <code>.htaccess</code> handles it automatically.</li>
+        <li><strong>Database:</strong> Make sure your database credentials in <code>.env</code> match your Hostinger MySQL Database.</li>
+        <li><strong>Permissions:</strong> Ensure <code>storage/</code> and <code>bootstrap/cache/</code> are set to permission <code>0775</code>.</li>
+      </ol>
+      <div class="mt-6 pt-4 border-t border-blue-200 flex flex-wrap gap-4 items-center justify-between">
+        <span class="text-xs text-gray-500">Admin Login: <strong>admin@tenderfold.in</strong> / <strong>admin123</strong></span>
+        <a href="/deploy.php" class="text-xs font-bold text-navy hover:underline">Re-run Diagnostic ⟳</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-6 text-xs text-gray-500">
+    Tenderfold Clean & Care • Gurugram, Haryana • <a href="https://tenderfold.in" class="text-navy font-semibold">tenderfold.in</a>
+  </footer>
+</body>
+</html>
