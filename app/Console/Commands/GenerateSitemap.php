@@ -4,8 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Service;
-use App\Models\Treatment;
-use App\Models\TeamMember;
 use App\Models\Blog;
 use App\Models\SiteParameter;
 use Carbon\Carbon;
@@ -24,7 +22,7 @@ class GenerateSitemap extends Command
      *
      * @var string
      */
-    protected $description = 'Generate XML sitemap and robots.txt for the live site domain';
+    protected $description = 'Generate XML sitemap and LLMs.txt for Tenderfold';
 
     /**
      * Execute the console command.
@@ -36,9 +34,14 @@ class GenerateSitemap extends Command
         
         $baseUrl = $domainOption ?: ($savedDomain ?: config('app.url'));
         if (empty($baseUrl) || str_contains($baseUrl, 'localhost') || str_contains($baseUrl, '127.0.0.1')) {
-            $baseUrl = 'https://www.drsumitz.com';
+            $baseUrl = 'https://tenderfold.in';
         }
         $baseUrl = rtrim($baseUrl, '/');
+
+        $siteParams = SiteParameter::all()->pluck('value', 'id')->toArray();
+        $siteName = $siteParams['site_name'] ?? 'Tenderfold';
+        $siteTagline = $siteParams['site_tagline'] ?? 'Premium Laundry & Dry Cleaning in Gurugram';
+        $phone = $siteParams['phone'] ?? '+91 95824 66445';
 
         $xml = [];
         $xml[] = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -49,8 +52,7 @@ class GenerateSitemap extends Command
             '/' => ['priority' => '1.0', 'changefreq' => 'daily'],
             '/about-us' => ['priority' => '0.9', 'changefreq' => 'monthly'],
             '/services' => ['priority' => '0.9', 'changefreq' => 'weekly'],
-            '/treatments' => ['priority' => '0.9', 'changefreq' => 'weekly'],
-            '/specialists' => ['priority' => '0.8', 'changefreq' => 'monthly'],
+            '/pricing' => ['priority' => '0.9', 'changefreq' => 'weekly'],
             '/testimonials' => ['priority' => '0.8', 'changefreq' => 'monthly'],
             '/faq' => ['priority' => '0.7', 'changefreq' => 'monthly'],
             '/blogs' => ['priority' => '0.9', 'changefreq' => 'daily'],
@@ -67,7 +69,7 @@ class GenerateSitemap extends Command
         }
 
         // Dynamic Services
-        $services = Service::all();
+        $services = Service::where('is_active', true)->orderBy('sort_order')->get();
         foreach ($services as $service) {
             $lastMod = $service->updated_at ? $service->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
             $xml[] = '  <url>';
@@ -78,36 +80,12 @@ class GenerateSitemap extends Command
             $xml[] = '  </url>';
         }
 
-        // Dynamic Treatments
-        $treatments = Treatment::all();
-        foreach ($treatments as $tr) {
-            $lastMod = $tr->updated_at ? $tr->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
-            $xml[] = '  <url>';
-            $xml[] = '    <loc>' . $baseUrl . '/treatments/' . $tr->slug . '</loc>';
-            $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
-            $xml[] = '    <changefreq>weekly</changefreq>';
-            $xml[] = '    <priority>0.8</priority>';
-            $xml[] = '  </url>';
-        }
-
-        // Dynamic Specialists
-        $specialists = TeamMember::all();
-        foreach ($specialists as $sp) {
-            $lastMod = $sp->updated_at ? $sp->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
-            $xml[] = '  <url>';
-            $xml[] = '    <loc>' . $baseUrl . '/specialists/' . $sp->slug . '</loc>';
-            $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
-            $xml[] = '    <changefreq>monthly</changefreq>';
-            $xml[] = '    <priority>0.7</priority>';
-            $xml[] = '  </url>';
-        }
-
         // Dynamic Blogs
-        $blogs = Blog::whereNotNull('published_at')->get();
+        $blogs = Blog::all();
         foreach ($blogs as $blog) {
             $lastMod = $blog->updated_at ? $blog->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
             $xml[] = '  <url>';
-            $xml[] = '    <loc>' . $baseUrl . '/blog/' . $blog->slug . '</loc>';
+            $xml[] = '    <loc>' . $baseUrl . '/blogs/' . $blog->slug . '</loc>';
             $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
             $xml[] = '    <changefreq>monthly</changefreq>';
             $xml[] = '    <priority>0.7</priority>';
@@ -115,15 +93,17 @@ class GenerateSitemap extends Command
         }
 
         // Dynamic Landing Pages
-        $landingPages = \App\Models\LandingPage::all();
-        foreach ($landingPages as $lp) {
-            $lastMod = $lp->updated_at ? $lp->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
-            $xml[] = '  <url>';
-            $xml[] = '    <loc>' . $baseUrl . '/l/' . $lp->slug . '</loc>';
-            $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
-            $xml[] = '    <changefreq>weekly</changefreq>';
-            $xml[] = '    <priority>0.8</priority>';
-            $xml[] = '  </url>';
+        if (\Illuminate\Support\Facades\Schema::hasTable('landing_pages')) {
+            $landingPages = \App\Models\LandingPage::all();
+            foreach ($landingPages as $lp) {
+                $lastMod = $lp->updated_at ? $lp->updated_at->toW3cString() : Carbon::now()->startOfDay()->toW3cString();
+                $xml[] = '  <url>';
+                $xml[] = '    <loc>' . $baseUrl . '/l/' . $lp->slug . '</loc>';
+                $xml[] = '    <lastmod>' . $lastMod . '</lastmod>';
+                $xml[] = '    <changefreq>weekly</changefreq>';
+                $xml[] = '    <priority>0.8</priority>';
+                $xml[] = '  </url>';
+            }
         }
 
         $xml[] = '</urlset>';
@@ -136,37 +116,44 @@ class GenerateSitemap extends Command
         $robotsContent = "User-agent: *\nDisallow: /admin/\nDisallow: /api/\nAllow: /\n\nSitemap: " . $baseUrl . "/sitemap.xml\n";
         file_put_contents(public_path('robots.txt'), $robotsContent);
 
-        // Generate LLMs.txt
+        // Generate dynamic LLMs.txt for Tenderfold
         $llm = [];
-        $llm[] = '# SumitZ Orthopaedic & Physiotherapy Clinic - AI & LLM Resource Directory';
+        $llm[] = "# {$siteName} - AI & LLM Resource Directory";
         $llm[] = '';
-        $llm[] = 'SumitZ Clinic is Pune\'s leading Orthopaedic and Physiotherapy recovery centre in Baner, Balewadi, and Hinjewadi. Directed by Dr. Sumit, a board-certified orthopaedic surgeon, we offer patient-focused care for joint replacement, knee replacement, spine treatment, fracture care, and sports injury rehabilitation.';
+        $llm[] = "{$siteName} is Gurugram's premier laundry and dry cleaning brand with physical store counters at Orchid Petals, Sector 49, and Sapphire 83 Mall, Sector 83. We offer professional garment care, wash & fold (₹80/kg), wash & steam iron (₹115/kg), eco-friendly dry cleaning, designer ethnic wear preservation, luxury sneaker restoration, carpet cleaning, and curtain cleaning with free doorstep pickup and delivery across Gurugram.";
         $llm[] = '';
-        $llm[] = 'This directory lists core services, treatments, and pages for LLM agents (ChatGPT, Claude, Gemini, Perplexity) to index and answer user queries accurately.';
+        $llm[] = 'This directory lists our core fabric care services, pricing structures, store locations, and care notes for LLM agents (ChatGPT, Claude, Gemini, Perplexity) to index and answer queries accurately.';
         $llm[] = '';
-        $llm[] = '## Core Orthopaedic & Physiotherapy Services';
+        $llm[] = '## Core Fabric Care & Laundry Services';
         $llm[] = '';
         foreach ($services as $service) {
-            $summary = trim($service->summary ?: 'Expert orthopaedic care for ' . $service->service_name);
-            $llm[] = '- [' . $service->service_name . '](' . $baseUrl . '/services/' . $service->slug . ') - ' . $summary;
+            $rate = $service->rate_value ? " ({$service->rate_value})" : '';
+            $summary = trim($service->summary ?: 'Expert fabric care for ' . $service->service_name);
+            $llm[] = "- [{$service->service_name}]({$baseUrl}/services/{$service->slug}){$rate} - {$summary}";
         }
+        $llm[] = '';
+        $llm[] = '## Store Locations & Counters';
+        $llm[] = '';
+        $llm[] = '- **Sector 49 Counter:** Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram, Haryana - 122018.';
+        $llm[] = '- **Sector 83 Counter:** F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurugram, Haryana - 122004.';
+        $llm[] = "- **Direct Desk & Pickup Helpline:** {$phone} (Call or WhatsApp)";
         $llm[] = '';
         $llm[] = '## Static Information Pages';
         $llm[] = '';
-        $llm[] = '- [Home Page](' . $baseUrl . '/) - Best Orthopedic Doctor & Clinic in Baner, Balewadi, Pune.';
-        $llm[] = '- [About Us](' . $baseUrl . '/about-us) - Dr. Sumit profile, team credentials, and clinic history.';
-        $llm[] = '- [All Services](' . $baseUrl . '/services) - Comprehensive orthopaedic and physiotherapy services.';
-        $llm[] = '- [Treatments](' . $baseUrl . '/treatments) - Specialized treatment guides for joint, spine, and fracture conditions.';
-        $llm[] = '- [Our Specialists](' . $baseUrl . '/specialists) - Meet Dr. Sumit and the clinical team.';
-        $llm[] = '- [Frequently Asked Questions](' . $baseUrl . '/faq) - Direct answers to common orthopaedic questions.';
-        $llm[] = '- [Contact Us](' . $baseUrl . '/contact-us) - Inquiry forms, map coordinates, and clinic helplines.';
+        $llm[] = "- [Home Page]({$baseUrl}/) - Premium Laundry & Dry Cleaning Services in Gurugram with free doorstep pickup.";
+        $llm[] = "- [About Us]({$baseUrl}/about-us) - Our fabric care philosophy, workshop standards, and counter locations.";
+        $llm[] = "- [All Services]({$baseUrl}/services) - Full breakdown of laundry, dry cleaning, steam ironing, shoe, curtain, and carpet care.";
+        $llm[] = "- [Pricing & Rate Cards]({$baseUrl}/pricing) - Per-kilogram laundry rates and itemized dry cleaning piece prices.";
+        $llm[] = "- [Customer Reviews]({$baseUrl}/testimonials) - Verified reviews from residents across Gurugram.";
+        $llm[] = "- [Frequently Asked Questions]({$baseUrl}/faq) - Clear answers on pickup slots, wash vs dry clean, turnaround times.";
+        $llm[] = "- [Contact Us]({$baseUrl}/contact-us) - Counter addresses, interactive Google Map directions, and WhatsApp pickup booking.";
         $llm[] = '';
-        $llm[] = '## Blog Posts';
+        $llm[] = '## Journal & Care Notes';
         $llm[] = '';
         if ($blogs->count() > 0) {
             foreach ($blogs as $blog) {
-                $summary = trim($blog->summary ?: 'Read our complete guide to ' . $blog->title);
-                $llm[] = '- [' . $blog->title . '](' . $baseUrl . '/blog/' . $blog->slug . ') - ' . $summary;
+                $summary = trim($blog->summary ?: 'Care note: ' . $blog->title);
+                $llm[] = "- [{$blog->title}]({$baseUrl}/blogs/{$blog->slug}) - {$summary}";
             }
         }
         $llm[] = '';

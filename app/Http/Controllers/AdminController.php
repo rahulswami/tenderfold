@@ -1235,8 +1235,11 @@ class AdminController extends Controller
         $existingSummary = $request->input('existing_summary');
         $existingContent = $request->input('existing_content');
 
+        $siteName = \App\Models\SiteParameter::where('id', 'site_name')->value('value') ?: 'Tenderfold';
+        $siteTagline = \App\Models\SiteParameter::where('id', 'site_tagline')->value('value') ?: 'Premium Laundry & Dry Cleaning in Gurugram';
+
         if (!empty($existingContent)) {
-            $systemPrompt = "You are an expert orthopedic, physical therapy, and health care copywriter and SEO specialist. The user wants to EXTEND the content of an existing blog article at SumitZ Clinic, Pune.
+            $systemPrompt = "You are an expert fabric care, laundry, dry cleaning, and lifestyle copywriter and SEO specialist. The user wants to EXTEND the content of an existing blog article for {$siteName} ({$siteTagline}).
 Existing Article Title: \"{$existingTitle}\"
 Existing Article Summary: \"{$existingSummary}\"
 Existing Article Content (HTML): \"{$existingContent}\"
@@ -1255,13 +1258,13 @@ You MUST return the output ONLY as a raw, single-line valid JSON object matching
 JSON Schema:
 {
   \"title\": \"Expanded SEO-optimized blog title\",
-  \"category\": \"Choose the most appropriate category from: Orthopaedics, Physiotherapy, Spine & Disc Care, Sports Injuries, Joint Recovery, Healthy Tips\",
+  \"category\": \"Choose the most appropriate category (e.g. Care Notes, Wardrobe, Occasion Wear, Seasonal, Sneaker Care, Fabric Tips)\",
   \"summary\": \"Refined and engaging summary of the article\",
   \"content\": \"The original HTML content plus your newly appended text at the end, properly formatted in HTML. Do not repeat the original text twice.\",
   \"image_prompt\": \"A detailed text-to-image prompt to generate a cover image matching this article's topic.\"
 }";
         } else {
-            $systemPrompt = "You are an expert orthopedic, physical therapy, and health care copywriter and SEO specialist. Create a complete, high-quality blog article in English for SumitZ Orthopaedic & Physiotherapy Clinic, Pune, based on the user's prompt.
+            $systemPrompt = "You are an expert fabric care, laundry, dry cleaning, and lifestyle copywriter and SEO specialist. Create a complete, high-quality blog article in English for {$siteName} ({$siteTagline}), based on the user's prompt.
 The writing tone must be: {$tone}.
 
 You MUST return the output ONLY as a raw, single-line valid JSON object matching the schema below. Do not wrap the JSON in Markdown code block quotes (e.g. do not use ```json ... ```). Output must start with { and end with }.
@@ -1269,7 +1272,7 @@ You MUST return the output ONLY as a raw, single-line valid JSON object matching
 JSON Schema:
 {
   \"title\": \"A compelling SEO-optimized blog title\",
-  \"category\": \"Choose the most appropriate category from: Orthopaedics, Physiotherapy, Spine & Disc Care, Sports Injuries, Joint Recovery, Healthy Tips\",
+  \"category\": \"Choose the most appropriate category (e.g. Care Notes, Wardrobe, Occasion Wear, Seasonal, Sneaker Care, Fabric Tips)\",
   \"summary\": \"A short, engaging 1-2 sentence summary of the article to be shown on listing cards\",
   \"content\": \"The full blog article content formatted in clean, modern HTML. Use paragraphs <p>, subheadings <h3>/<h4>, lists <ul>/<li>, and emphasized text. Do not include raw CSS or javascript. Make the article comprehensive, informative, and around 400-600 words.\",
   \"image_prompt\": \"A detailed, descriptive text-to-image prompt to generate a high-quality featured cover image matching this article's topic. Do not include adjectives like 'photorealistic', instead describe lighting, context, objects, and style (e.g. 'A professional photograph of ...')\"
@@ -2680,7 +2683,7 @@ JSON Schema:
                 }
             }
 
-            $domain = \App\Models\SiteParameter::where('id', 'sitemap_domain')->value('value') ?: 'https://www.drsumitz.com';
+            $domain = \App\Models\SiteParameter::where('id', 'sitemap_domain')->value('value') ?: (config('app.url') ?: 'https://tenderfold.in');
             \Illuminate\Support\Facades\Artisan::call('sitemap:generate', ['--domain' => $domain]);
 
             return redirect()->back()->with('success', 'Sitemap & robots.txt successfully updated for live domain (' . $domain . ')!');
@@ -2706,7 +2709,7 @@ JSON Schema:
         $title = '';
         $summary = '';
         $url = '';
-        $baseUrl = rtrim(config('app.url') ?? 'https://www.drsumitz.com', '/');
+        $baseUrl = rtrim(config('app.url') ?? 'https://tenderfold.in', '/');
 
         if ($type === 'blog') {
             $blog = \App\Models\Blog::findOrFail($id);
@@ -2731,8 +2734,8 @@ Summary: \"{$summary}\"
 Page Link: \"{$url}\"
 
 Strict Instructions:
-1. Write a compelling summary of the article/service suitable for local audiences in Pune (under 800 characters).
-2. Incorporate 2-3 relevant hashtags (e.g. #OrthopedicsPune, #PhysiotherapyBaner, #SumitzClinic, etc.).
+1. Write a compelling summary of the article/service suitable for local audiences in Gurugram (under 800 characters).
+2. Incorporate 2-3 relevant hashtags (e.g. #LaundryGurugram, #DryCleaningGurgaon, #Tenderfold, etc.).
 3. End with a strong call-to-action phrase prompting users to click 'Learn More' to visit the link.
 4. Keep the draft strictly under 1400 characters (Google GBP limit is 1500).
 5. Output ONLY the drafted post text directly without markdown quotes, backticks, or introduction.";
@@ -2830,19 +2833,21 @@ Strict Instructions:
         $pageDescription = '';
         $extraContext = '';
 
-        $baseUrl = rtrim(config('app.url') ?? 'https://www.drsumitz.com', '/');
+        $siteParams = SiteParameter::all()->pluck('value', 'id')->toArray();
+        $siteName = $siteParams['site_name'] ?? 'Tenderfold';
+        $siteTagline = $siteParams['site_tagline'] ?? 'Premium Laundry & Dry Cleaning in Gurugram';
+        $baseUrl = rtrim(config('app.url') ?? 'https://tenderfold.in', '/');
 
         if ($type === 'home') {
-            $pageTitle = 'Home Page | SumitZ Clinic';
+            $pageTitle = 'Home Page | ' . $siteName;
             $pageUrl = $baseUrl . '/';
-            $pageDescription = 'SumitZ is one of the leading Orthopaedic & Physiotherapy clinics in Baner, Pune.';
+            $pageDescription = $siteName . ' — ' . $siteTagline . '. Premium laundry, wash & fold, steam ironing, and dry cleaning with doorstep pickup in Gurugram.';
             
-            // Fetch branding parameters
-            $siteParams = SiteParameter::all()->pluck('value', 'id')->toArray();
-            $extraContext = "Clinic Name: " . ($siteParams['site_name'] ?? 'SumitZ Clinic') . "\n" .
-                            "Phone: " . ($siteParams['phone'] ?? '+91 9545559434') . "\n" .
-                            "Email: " . ($siteParams['email'] ?? 'drgsumit@gmail.com') . "\n" .
-                            "Address: " . ($siteParams['address'] ?? 'Baner, Pune');
+            $extraContext = "Business Name: " . $siteName . "\n" .
+                            "Tagline: " . $siteTagline . "\n" .
+                            "Phone: " . ($siteParams['phone'] ?? '+91 95824 66445') . "\n" .
+                            "Email: " . ($siteParams['email'] ?? 'info@tenderfold.in') . "\n" .
+                            "Address: " . ($siteParams['address'] ?? 'Sector 49 & Sector 83, Gurugram');
         } elseif ($type === 'service') {
             $service = \App\Models\Service::find($id);
             if (!$service) {
