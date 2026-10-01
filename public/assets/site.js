@@ -156,71 +156,46 @@
     });
   }
 
-  var modal = document.getElementById("bookModal");
-  var bookForm = document.getElementById("bookForm");
-  var bookService = document.getElementById("bookService");
-  var bookNote = document.getElementById("bookNote");
-  var bookMsg = document.getElementById("bookMsg");
-  var lastTrigger = null;
-
   function openBook(trigger) {
-    if (!modal) return;
     setMenu(false);
     setServices(false);
-    lastTrigger = trigger || null;
-    var service = trigger && trigger.getAttribute("data-service");
-    var note = trigger && trigger.getAttribute("data-note");
-    if (service && bookService) bookService.value = service;
-    if (bookNote) bookNote.value = note || "";
-    if (bookMsg) bookMsg.classList.add("hidden");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-    document.body.classList.add("overflow-hidden");
-    var nameField = document.getElementById("bookName");
-    if (nameField) nameField.focus();
+    if (window.openPickupScheduler) {
+      window.openPickupScheduler();
+      return;
+    }
+    var o = document.getElementById("o-pickup-scheduler-us0z1bz0a");
+    var c = document.getElementById("c-pickup-scheduler-us0z1bz0a");
+    var f = document.getElementById("f-pickup-scheduler-us0z1bz0a");
+    if (o && c) {
+      if (f && (!f.src || f.src === "about:blank")) {
+        f.src = "https://pickup-scheduler.quickdrycleaning.com/en/TenderFold/pickup";
+      }
+      o.classList.add("s");
+      c.classList.add("s");
+      document.body.classList.add("m-o");
+    }
   }
 
   function closeBook() {
-    if (!modal) return;
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-    document.body.classList.remove("overflow-hidden");
-    if (lastTrigger) lastTrigger.focus();
+    if (window.closePickupScheduler) {
+      window.closePickupScheduler();
+      return;
+    }
+    var o = document.getElementById("o-pickup-scheduler-us0z1bz0a");
+    var c = document.getElementById("c-pickup-scheduler-us0z1bz0a");
+    if (o && c) {
+      o.classList.remove("s");
+      c.classList.remove("s");
+      document.body.classList.remove("m-o");
+    }
   }
 
-  document.querySelectorAll("[data-open-book]").forEach(function (btn) {
-    btn.addEventListener("click", function () { openBook(btn); });
+  document.querySelectorAll("[data-open-book], [data-open-pickup], #pickup-scheduler-us0z1bz0a").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      if (e && e.preventDefault) e.preventDefault();
+      openBook(btn);
+    });
   });
-
-  if (modal) {
-    modal.querySelectorAll("[data-close-book]").forEach(function (btn) {
-      btn.addEventListener("click", closeBook);
-    });
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && !modal.classList.contains("hidden")) closeBook();
-    });
-  }
-
-  if (bookForm) {
-    bookForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      var data = new FormData(bookForm);
-      var text = [
-        "Tender Fold pickup request",
-        "Name: " + data.get("name"),
-        "Phone: " + data.get("phone"),
-        "Area: " + data.get("area"),
-        "Service: " + data.get("service"),
-        "Window: " + data.get("time"),
-        "Note: " + (data.get("note") || "—")
-      ].join("\n");
-      if (bookMsg) {
-        bookMsg.textContent = "Opening WhatsApp with your pickup details.";
-        bookMsg.classList.remove("hidden");
-      }
-      window.open("https://wa.me/919582466445?text=" + encodeURIComponent(text), "_blank", "noopener");
-    });
-  }
 
   var contactForm = document.getElementById("contactForm");
   var contactMsg = document.getElementById("contactMsg");

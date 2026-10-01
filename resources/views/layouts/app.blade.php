@@ -272,121 +272,159 @@
     <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 6.4 2.15 11.83c0 1.74.46 3.44 1.34 4.94L2 22l5.39-1.4a10.1 10.1 0 0 0 4.65 1.12h.01c5.46 0 9.89-4.4 9.89-9.84C21.94 6.4 17.5 2 12.04 2Zm5.76 14.04c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.14-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.16-1.54-1.16-2.94s.73-2.08 1-2.37c.24-.28.64-.41 1.02-.41h.37c.12 0 .28-.04.44.34.16.4.56 1.38.61 1.48.06.1.1.22.02.36-.08.14-.12.22-.24.34l-.36.42c-.12.12-.24.25-.1.48.14.24.62 1.02 1.33 1.66.92.82 1.7 1.08 1.94 1.2.24.12.38.1.52-.06.14-.16.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.4.66 1.64.78.24.12.4.18.46.28.06.1.06.6-.18 1.28Z"/></svg>
   </a>
 
-  <!-- Booking Modal Component -->
-  <div id="bookModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
-    <button type="button" class="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm" data-close-book aria-label="Close dialog"></button>
-    <div class="modal-scroll relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-6 shadow-lift sm:p-8">
-      <button type="button" data-close-book class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full text-navy transition hover:bg-cream" aria-label="Close">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
-      </button>
-      <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Schedule a pickup</p>
-      <h2 id="bookTitle" class="mt-2 font-display text-2xl font-extrabold text-navy">Tell us where to collect.</h2>
-      <p class="mt-2 text-sm text-mute">We will confirm your pickup window immediately. Or call <a href="tel:{{ preg_replace('/[^0-9+]/', '', $site['phone'] ?? '+919582466445') }}" class="font-semibold text-navy underline decoration-gold decoration-2">{{ $site['phone_display'] ?? $site['phone'] ?? '+91 95824 66445' }}</a>.</p>
+  <!-- CRM Pickup Scheduler Modal & Integration -->
+  <style>
+    body.m-o { overflow: hidden; }
+    #o-pickup-scheduler-us0z1bz0a {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 27, 44, 0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 999;
+    }
+    #c-pickup-scheduler-us0z1bz0a {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 900px;
+      height: 90vh;
+      z-index: 1000;
+    }
+    #i-pickup-scheduler-us0z1bz0a {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+    #h-pickup-scheduler-us0z1bz0a {
+      display: flex;
+      justify-content: flex-end;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      background: #fff;
+      z-index: 10;
+    }
+    #x-pickup-scheduler-us0z1bz0a {
+      border: 0;
+      background: #f5f5f5;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b1b2c;
+    }
+    #x-pickup-scheduler-us0z1bz0a:hover {
+      background: #e0e0e0;
+    }
+    #f-pickup-scheduler-us0z1bz0a {
+      flex: 1;
+      width: calc(100% + 20px);
+      margin-right: -20px;
+      border: 0;
+      scrollbar-width: none;
+    }
+    #f-pickup-scheduler-us0z1bz0a::-webkit-scrollbar {
+      display: none;
+    }
+    #o-pickup-scheduler-us0z1bz0a.s,
+    #c-pickup-scheduler-us0z1bz0a.s {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      #c-pickup-scheduler-us0z1bz0a {
+        width: 95%;
+        height: 85vh;
+      }
+      #f-pickup-scheduler-us0z1bz0a {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  </style>
 
-      <form id="bookForm" action="{{ route('contact.submit') }}" method="POST" class="mt-6 space-y-4">
-        @csrf
-        <input type="hidden" name="source" value="Schedule Pickup Modal">
-        <div>
-          <label for="bookName" class="mb-1.5 block text-sm font-semibold text-navy">Name *</label>
-          <input id="bookName" name="name" required autocomplete="name" class="w-full rounded-2xl border border-navy/15 px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50" placeholder="Your full name">
-        </div>
-        <div>
-          <label for="bookPhone" class="mb-1.5 block text-sm font-semibold text-navy">Phone *</label>
-          <input id="bookPhone" name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="10-digit mobile number" class="w-full rounded-2xl border border-navy/15 px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50">
-        </div>
-        <div>
-          <label for="bookArea" class="mb-1.5 block text-sm font-semibold text-navy">Area in Gurugram *</label>
-          <input id="bookArea" name="area" required placeholder="Sector, Society, or Landmark" class="w-full rounded-2xl border border-navy/15 px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50">
-        </div>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label for="bookService" class="mb-1.5 block text-sm font-semibold text-navy">Service</label>
-            <select id="bookService" name="service" class="w-full rounded-2xl border border-navy/15 bg-white px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50">
-              @foreach($navServices as $nService)
-                <option value="{{ $nService->service_name }}">{{ $nService->service_name }}</option>
-              @endforeach
-              <option value="Wash & Fold">Wash &amp; Fold</option>
-              <option value="Dry Cleaning">Dry Cleaning</option>
-              <option value="Steam Ironing">Steam Ironing</option>
-              <option value="Shoe Cleaning">Shoe Cleaning</option>
-              <option value="Carpet Cleaning">Carpet Cleaning</option>
-              <option value="Curtain Cleaning">Curtain Cleaning</option>
-              <option value="Mixed Order">Mixed Order</option>
-            </select>
-          </div>
-          <div>
-            <label for="bookTime" class="mb-1.5 block text-sm font-semibold text-navy">Preferred window</label>
-            <select id="bookTime" name="time" class="w-full rounded-2xl border border-navy/15 bg-white px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50">
-              <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
-              <option value="Afternoon (12 PM - 4 PM)">Afternoon (12 PM - 4 PM)</option>
-              <option value="Evening (4 PM - 8 PM)">Evening (4 PM - 8 PM)</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label for="bookNote" class="mb-1.5 block text-sm font-semibold text-navy">Special Note / Instructions</label>
-          <textarea id="bookNote" name="message" rows="2" class="w-full rounded-2xl border border-navy/15 px-4 py-3 text-sm outline-none transition focus:border-navy focus:ring-2 focus:ring-gold/50" placeholder="Pieces, stains, or gate entry notes"></textarea>
-        </div>
-        <button type="submit" id="bookSubmitBtn" class="inline-flex w-full items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep shadow-md">Schedule Pickup</button>
-        <p id="bookMsg" class="hidden text-sm font-semibold text-emerald-600 text-center" role="status"></p>
-      </form>
+  <div id="o-pickup-scheduler-us0z1bz0a"></div>
+  <div id="c-pickup-scheduler-us0z1bz0a" role="dialog" aria-modal="true" aria-label="Schedule Pickup">
+    <div id="i-pickup-scheduler-us0z1bz0a">
+      <div id="h-pickup-scheduler-us0z1bz0a">
+        <button id="x-pickup-scheduler-us0z1bz0a" type="button" aria-label="Close">×</button>
+      </div>
+      <iframe id="f-pickup-scheduler-us0z1bz0a" title="Tender Fold Pickup Scheduler" src="https://pickup-scheduler.quickdrycleaning.com/en/TenderFold/pickup"></iframe>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="{{ asset('assets/site.js') }}"></script>
   <script>
-    // AJAX Enhanced Form Submission for Modal
-    document.addEventListener('DOMContentLoaded', function() {
-      const bookForm = document.getElementById('bookForm');
-      const bookMsg = document.getElementById('bookMsg');
-      const bookSubmitBtn = document.getElementById('bookSubmitBtn');
-      const waNumber = "{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}";
+    !function() {
+      const d = document,
+            o = d.getElementById("o-pickup-scheduler-us0z1bz0a"),
+            c = d.getElementById("c-pickup-scheduler-us0z1bz0a"),
+            x = d.getElementById("x-pickup-scheduler-us0z1bz0a"),
+            f = d.getElementById("f-pickup-scheduler-us0z1bz0a");
 
-      if (bookForm) {
-        bookForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          const formData = new FormData(bookForm);
-          bookSubmitBtn.disabled = true;
-          bookSubmitBtn.textContent = 'Scheduling...';
+      if (!o || !c || !x || !f) return;
 
-          // Post to server to save lead
-          fetch(bookForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'Accept': 'application/json'
-            }
-          })
-          .then(res => res.json())
-          .catch(() => ({ status: 'success' }))
-          .finally(() => {
-            bookSubmitBtn.disabled = false;
-            bookSubmitBtn.textContent = 'Schedule Pickup';
-            if (bookMsg) {
-              bookMsg.textContent = 'Pickup requested! Opening WhatsApp with details...';
-              bookMsg.classList.remove('hidden');
-            }
+      const openModal = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (!f.src || f.src === "about:blank") {
+          f.src = "https://pickup-scheduler.quickdrycleaning.com/en/TenderFold/pickup";
+        }
+        o.classList.add("s");
+        c.classList.add("s");
+        d.body.classList.add("m-o");
+      };
 
-            // Also open WhatsApp message for immediate dispatch
-            const text = [
-              "🧺 *Tender Fold Pickup Request*",
-              "👤 Name: " + formData.get("name"),
-              "📞 Phone: " + formData.get("phone"),
-              "📍 Area: " + formData.get("area"),
-              "✨ Service: " + formData.get("service"),
-              "⏰ Window: " + formData.get("time"),
-              "📝 Notes: " + (formData.get("message") || "—")
-            ].join("\n");
+      const closeModal = function() {
+        o.classList.remove("s");
+        c.classList.remove("s");
+        d.body.classList.remove("m-o");
+      };
 
-            setTimeout(function() {
-              window.open("https://wa.me/" + waNumber + "?text=" + encodeURIComponent(text), "_blank", "noopener");
-            }, 600);
-          });
+      window.openPickupScheduler = openModal;
+      window.closePickupScheduler = closeModal;
+
+      x.onclick = closeModal;
+      o.onclick = closeModal;
+      d.onkeydown = function(e) {
+        if (e.key === "Escape" && c.classList.contains("s")) closeModal();
+      };
+
+      function bindTriggers() {
+        d.querySelectorAll('[data-open-book], [data-open-pickup], #pickup-scheduler-us0z1bz0a, a[href="#bookModal"]').forEach(function(btn) {
+          if (!btn._crmBound) {
+            btn._crmBound = true;
+            btn.addEventListener('click', openModal);
+          }
         });
       }
-    });
+
+      bindTriggers();
+      d.addEventListener('DOMContentLoaded', bindTriggers);
+
+      let l = 0;
+      f.onload = function() {
+        if (++l > 1) {
+          f.onload = null;
+          closeModal();
+          window.location.href = "{{ route('thank-you') }}";
+          f.src = "about:blank";
+        }
+      };
+    }();
   </script>
   @stack('scripts')
 </body>
