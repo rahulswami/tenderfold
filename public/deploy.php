@@ -56,7 +56,17 @@ if (file_exists($envPath)) {
     $checks['Application Key (APP_KEY)'] = ['status' => false, 'msg' => 'Missing .env'];
 }
 
-// 2.2 Clear any cached bootstrap config files
+// 2.2 Auto Git Pull if repository exists
+if (is_dir($basePath . '/.git')) {
+    $gitOutput = [];
+    $gitStatus = 0;
+    @exec("cd " . escapeshellarg($basePath) . " && git pull origin main 2>&1", $gitOutput, $gitStatus);
+    if (!empty($gitOutput)) {
+        $actions[] = "Git Pull: <code>" . htmlspecialchars(implode(' ', $gitOutput)) . "</code> ✅";
+    }
+}
+
+// 2.3 Clear any cached bootstrap config files & cache
 $bootstrapCacheFiles = glob($basePath . '/bootstrap/cache/*.php');
 foreach ($bootstrapCacheFiles as $bFile) {
     if (basename($bFile) !== 'packages.php' && basename($bFile) !== 'services.php') {
@@ -184,18 +194,6 @@ if ($dbConn === 'sqlite') {
 $checks['Database Connection'] = [
     'status' => $dbConnected,
     'msg' => $dbConnected ? "Connected ({$dbConn}: <strong>" . ($dbConn === 'sqlite' ? 'database.sqlite' : $dbName) . "</strong>)" : "Failed: {$dbError}"
-];
-        $dbConnected = true;
-    } catch (PDOException $e) {
-        $dbError = $e->getMessage();
-    }
-} else {
-    $dbError = "DB_DATABASE is not configured in .env";
-}
-
-$checks['Database Connection'] = [
-    'status' => $dbConnected,
-    'msg' => $dbConnected ? "Connected to <strong>{$dbName}</strong> on {$dbHost}" : "Failed: {$dbError}"
 ];
 
 // 7. Auto-Create / Migrate Database Tables if Connected
