@@ -12,7 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS Admin Dashboard | {{ $site['site_name'] ?? 'SumitZ Clinic' }}</title>
+    <title>CMS Admin Dashboard | {{ $site['site_name'] ?? 'Tenderfold' }}</title>
 
     <!-- Outfit Font -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -932,15 +932,15 @@
         <div class="sidebar-brand" style="padding: 1.2rem 1rem;">
             <a href="{{ route('home') }}" target="_blank" class="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: white;">
                 @if(!empty($site['logo_path']))
-                    <img src="{{ site_image($site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'SumitZ Clinic' }}" style="height: 38px; width: auto; object-fit: contain;">
+                    <img src="{{ site_image($site['logo_path']) }}" alt="{{ $site['site_name'] ?? 'Tenderfold' }}" style="height: 38px; width: auto; object-fit: contain;">
                 @else
                     <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="stroke: #5ccbb3; stroke-width: 6; width: 32px; height: 32px; flex-shrink: 0;">
                         <circle cx="50" cy="50" r="40" stroke="currentColor" fill="none"/>
                         <path d="M50 25 V75 M25 50 H75" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
                     </svg>
                     <div style="text-align: left; display: flex; flex-direction: column;">
-                        <span class="logo-text" style="font-size: 1.05rem; font-weight: 800; line-height: 1.1; color: white; letter-spacing: -0.5px;">{{ $site['site_name'] ?? 'SumitZ Clinic' }}</span>
-                        <span class="logo-tagline" style="font-size: 0.58rem; opacity: 0.8; font-weight: 600; color: #a5f3fc; line-height: 1;">{{ Str::limit($site['site_tagline'] ?? 'Orthopaedic & Physiotherapy', 22) }}</span>
+                        <span class="logo-text" style="font-size: 1.05rem; font-weight: 800; line-height: 1.1; color: white; letter-spacing: -0.5px;">{{ $site['site_name'] ?? 'Tenderfold' }}</span>
+                        <span class="logo-tagline" style="font-size: 0.58rem; opacity: 0.8; font-weight: 600; color: #a5f3fc; line-height: 1;">{{ Str::limit($site['site_tagline'] ?? 'Freshness in Every Single Fold', 28) }}</span>
                     </div>
                 @endif
             </a>
@@ -1161,11 +1161,11 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="social_practo">Practo Profile URL</label>
-                                <input type="url" id="social_practo" name="social_practo" class="form-control" value="{{ $site['social_practo'] ?? '' }}" placeholder="https://practo.com/clinic/yourprofile">
+                                <label for="social_practo">Google Business Profile / Maps URL</label>
+                                <input type="url" id="social_practo" name="social_practo" class="form-control" value="{{ $site['social_practo'] ?? '' }}" placeholder="https://maps.app.goo.gl/tenderfold">
                             </div>
                             <div class="form-group">
-                                <label for="social_practo_svg">Practo Custom SVG Icon (optional)</label>
+                                <label for="social_practo_svg">Google Maps / Review Custom SVG Icon (optional)</label>
                                 <input type="text" id="social_practo_svg" name="social_practo_svg" class="form-control" value="{{ $site['social_practo_svg'] ?? '' }}" placeholder="<svg>...</svg>">
                             </div>
                         </div>
@@ -1281,20 +1281,20 @@
                         <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Customize the announcement bar, header tagline, location indicators, and helpline numbers.</p>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="clinic_timings">Announcement Clinic Timings</label>
-                                <input type="text" id="clinic_timings" name="clinic_timings" class="form-control" value="{{ $site['clinic_timings'] ?? 'Mon - Sat: 9:00 AM - 9:00 PM | Sun: By Appointment' }}">
+                                <label for="clinic_timings">Operational Timings</label>
+                                <input type="text" id="clinic_timings" name="clinic_timings" class="form-control" value="{{ $site['clinic_timings'] ?? 'Mon - Sun: 8:00 AM - 9:00 PM' }}">
                             </div>
                             <div class="form-group">
                                 <label for="clinic_locations_short">Header Short Locations Text</label>
-                                <input type="text" id="clinic_locations_short" name="clinic_locations_short" class="form-control" value="{{ $site['clinic_locations_short'] ?? 'Baner & Hinjewadi, Pune' }}">
+                                <input type="text" id="clinic_locations_short" name="clinic_locations_short" class="form-control" value="{{ $site['clinic_locations_short'] ?? 'Sector 49 & Sector 83, Gurugram' }}">
                             </div>
                             <div class="form-group">
                                 <label for="phone_display">Display Helpline Number</label>
-                                <input type="text" id="phone_display" name="phone_display" class="form-control" value="{{ $site['phone_display'] ?? '+91 95455 59434' }}">
+                                <input type="text" id="phone_display" name="phone_display" class="form-control" value="{{ $site['phone_display'] ?? '+91 95824 66445' }}">
                             </div>
                             <div class="form-group">
                                 <label for="site_tagline">Logo Sub-Tagline</label>
-                                <input type="text" id="site_tagline" name="site_tagline" class="form-control" value="{{ $site['site_tagline'] ?? 'ORTHOPAEDIC & PHYSIOTHERAPY CENTER' }}">
+                                <input type="text" id="site_tagline" name="site_tagline" class="form-control" value="{{ $site['site_tagline'] ?? 'PREMIUM LAUNDRY & DRY CLEANING' }}">
                             </div>
                         </div>
                     </div>
@@ -1302,42 +1302,42 @@
                     <!-- Footer Content Manager Card -->
                     <div class="admin-card">
                         <h2>Footer Content & Links Manager</h2>
-                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Manage footer description, clinic branch addresses, and copyright line.</p>
+                        <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Manage footer description, hub addresses, and copyright line.</p>
                         <div class="form-group" style="margin-bottom: 1.25rem;">
                             <label for="footer_description">Footer About Description</label>
-                            <textarea id="footer_description" name="footer_description" class="form-control" rows="3">{{ $site['footer_description'] ?? 'SumitZ Clinic is Pune\'s leading Orthopaedic and Physiotherapy recovery centre in Baner and Hinjewadi. Directed by Dr. Sumit, we offer patient-focused care for joint, spine, fracture, and sports injury rehabilitation.' }}</textarea>
+                            <textarea id="footer_description" name="footer_description" class="form-control" rows="3">{{ $site['footer_description'] ?? 'Tenderfold is Gurugram\'s trusted premium laundry, dry cleaning & specialized fabric care service. Doorstep pickup across all major sectors.' }}</textarea>
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="address_baner">Baner Clinic Address</label>
-                                <input type="text" id="address_baner" name="address_baner" class="form-control" value="{{ $site['address_baner'] ?? 'First Floor, Krishna Avenue, Baner, Pune - 411045' }}">
+                                <label for="address_baner">Sector 49 Hub Address</label>
+                                <input type="text" id="address_baner" name="address_baner" class="form-control" value="{{ $site['address_baner'] ?? 'Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram - 122018' }}">
                             </div>
                             <div class="form-group">
-                                <label for="address_hinjewadi">Hinjewadi Clinic Address</label>
-                                <input type="text" id="address_hinjewadi" name="address_hinjewadi" class="form-control" value="{{ $site['address_hinjewadi'] ?? 'Atlanta Society, Hinjewadi, Pune - 411057' }}">
+                                <label for="address_hinjewadi">Sector 83 Hub Address</label>
+                                <input type="text" id="address_hinjewadi" name="address_hinjewadi" class="form-control" value="{{ $site['address_hinjewadi'] ?? 'F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurugram - 122004' }}">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="copyright_text">Footer Copyright Line</label>
-                                <input type="text" id="copyright_text" name="copyright_text" class="form-control" value="{{ $site['copyright_text'] ?? ('© ' . date('Y') . ' SumitZ Clinic. All Rights Reserved.') }}">
+                                <input type="text" id="copyright_text" name="copyright_text" class="form-control" value="{{ $site['copyright_text'] ?? ('© ' . date('Y') . ' Tenderfold. Freshness in Every Single Fold. All Rights Reserved.') }}">
                             </div>
                             <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--admin-border);">
                                 <label for="footer_helplines" style="font-weight: 600; display: flex; align-items: center; gap: 6px;">
                                     <i data-lucide="phone-call" style="width: 16px; height: 16px; color: var(--brand-blue);"></i> Footer Helpline Numbers
                                 </label>
-                                <textarea id="footer_helplines" name="footer_helplines" class="form-control" rows="2" placeholder="+91 8855950433, +91 9404963781, +91 9158143325">{{ $site['footer_helplines'] ?? '+91 8855950433, +91 9404963781, +91 9158143325, +91 9545559434' }}</textarea>
+                                <textarea id="footer_helplines" name="footer_helplines" class="form-control" rows="2" placeholder="+91 95824 66445">{{ $site['footer_helplines'] ?? '+91 95824 66445' }}</textarea>
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 5px;">
                                     Enter helpline numbers (comma or new-line separated) to show in the website footer and Contact Us page helpline sections.
                                 </span>
                             </div>
                             <div class="form-group">
-                                <label for="helpline_baner">Baner Clinic Helpline(s)</label>
-                                <input type="text" id="helpline_baner" name="helpline_baner" class="form-control" value="{{ $site['helpline_baner'] ?? '+91 95455 59434 / +91 88559 50433' }}">
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Displayed under Baner Clinic branch card.</span>
+                                <label for="helpline_baner">Sector 49 Hub Helpline(s)</label>
+                                <input type="text" id="helpline_baner" name="helpline_baner" class="form-control" value="{{ $site['helpline_baner'] ?? '+91 95824 66445' }}">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Displayed under Sector 49 branch card.</span>
                             </div>
                             <div class="form-group">
-                                <label for="helpline_hinjewadi">Hinjewadi Clinic Helpline(s)</label>
-                                <input type="text" id="helpline_hinjewadi" name="helpline_hinjewadi" class="form-control" value="{{ $site['helpline_hinjewadi'] ?? '+91 94049 63781 / +91 91581 43325' }}">
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Displayed under Hinjewadi Clinic branch card.</span>
+                                <label for="helpline_hinjewadi">Sector 83 Hub Helpline(s)</label>
+                                <input type="text" id="helpline_hinjewadi" name="helpline_hinjewadi" class="form-control" value="{{ $site['helpline_hinjewadi'] ?? '+91 95824 66445' }}">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Displayed under Sector 83 branch card.</span>
                             </div>
                         </div>
                     </div>
@@ -1792,19 +1792,19 @@
                             
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="chat_welcome_message">Welcome Auto-Greeting Message</label>
-                                <input type="text" id="chat_welcome_message" name="chat_welcome_message" class="form-control" value="{{ $site['chat_welcome_message'] ?? 'Hello! Welcome to SumitZ Clinic. How can we help you today with your joint, spine, or physiotherapy recovery?' }}" placeholder="e.g. Hello! Welcome to SumitZ Clinic...">
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Sent automatically as the initial greeting when a patient opens live chat.</span>
+                                <input type="text" id="chat_welcome_message" name="chat_welcome_message" class="form-control" value="{{ $site['chat_welcome_message'] ?? 'Hello! Welcome to Tenderfold. How can we help you today with your laundry, dry cleaning, or pickup?' }}" placeholder="e.g. Hello! Welcome to Tenderfold...">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Sent automatically as the initial greeting when a customer opens live chat.</span>
                             </div>
 
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="chat_ai_custom_prompt">Custom AI Receptionist System Prompt / Instructions</label>
-                                <textarea id="chat_ai_custom_prompt" name="chat_ai_custom_prompt" class="form-control" rows="4" placeholder="e.g. Clinic is open Mon-Sat 9am-9pm. First consultation fee is Rs 500. Dr. Sumit Diwan is lead knee and joint surgeon.">{{ $site['chat_ai_custom_prompt'] ?? '' }}</textarea>
-                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Add specific clinic details, pricing, timings, or rules to instruct Gemini AI.</span>
+                                <textarea id="chat_ai_custom_prompt" name="chat_ai_custom_prompt" class="form-control" rows="4" placeholder="e.g. Tenderfold is open Mon-Sun 8am-9pm. Free pickup & delivery across Gurugram. Premium wash & fold, dry cleaning, steam ironing, shoe spa.">{{ $site['chat_ai_custom_prompt'] ?? '' }}</textarea>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Add specific laundry pricing, timings, or pickup guidelines to instruct Gemini AI.</span>
                             </div>
 
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="chat_fallback_message">Offline / Human Assistance Fallback Message</label>
-                                <input type="text" id="chat_fallback_message" name="chat_fallback_message" class="form-control" value="{{ $site['chat_fallback_message'] ?? 'Thank you for your message. Our clinical coordinator will respond shortly. You can also request an appointment directly or call us at +91 95455 59434.' }}" placeholder="e.g. Thank you for your message...">
+                                <input type="text" id="chat_fallback_message" name="chat_fallback_message" class="form-control" value="{{ $site['chat_fallback_message'] ?? 'Thank you for your message! Our team will connect with you shortly. You can also schedule a pickup directly or call us at +91 95824 66445.' }}" placeholder="e.g. Thank you for your message...">
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Sent when AI is turned OFF or when Gemini API is unavailable.</span>
                             </div>
                         </div>
@@ -1894,7 +1894,7 @@
                             <!-- Chat Assistant Name -->
                             <div class="form-group">
                                 <label for="chat_assistant_name">Chat Assistant Display Name</label>
-                                <input type="text" id="chat_assistant_name" name="chat_assistant_name" class="form-control" value="{{ $site['chat_assistant_name'] ?? 'Clinic Assistant' }}" required>
+                                <input type="text" id="chat_assistant_name" name="chat_assistant_name" class="form-control" value="{{ $site['chat_assistant_name'] ?? 'Tenderfold Assistant' }}" required>
                             </div>
                             
                             <!-- Chat Assistant Avatar File -->
@@ -1911,7 +1911,7 @@
                                             <img src="{{ site_image($site['chat_assistant_avatar']) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                                         @else
                                             <div style="background-color: var(--secondary-teal); color: white; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 0.95rem; font-weight: bold; font-family: 'Outfit';">
-                                                CA
+                                                TA
                                             </div>
                                         @endif
                                     </div>
@@ -1948,15 +1948,15 @@
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="slide_eyebrow">Eyebrow Badge Text</label>
-                                <input type="text" id="slide_eyebrow" name="eyebrow" class="form-control" placeholder="e.g. Best Orthopedic Doctor in Baner, Balewadi & Pune">
+                                <input type="text" id="slide_eyebrow" name="eyebrow" class="form-control" placeholder="e.g. Premium Laundry & Dry Cleaner in Gurugram">
                             </div>
                             <div class="form-group">
                                 <label for="slide_title">Slide Main Title <span style="color:#ef4444;">*</span> <small style="color:var(--admin-text-muted); font-weight:normal;">(supports &lt;span class="highlight-blue"&gt;)</small></label>
-                                <input type="text" id="slide_title" name="title" class="form-control" required placeholder="e.g. Dr Sumitz Orthopedic Clinic">
+                                <input type="text" id="slide_title" name="title" class="form-control" required placeholder="e.g. Freshness in Every Single Fold">
                             </div>
                             <div class="form-group">
                                 <label for="slide_subtitle">Slide Subtitle / Description</label>
-                                <textarea id="slide_subtitle" name="subtitle" class="form-control" rows="2" placeholder="e.g. Best Orthopedic Clinic in Baner offering advanced joint care..."></textarea>
+                                <textarea id="slide_subtitle" name="subtitle" class="form-control" rows="2" placeholder="e.g. Gurugram's trusted premium laundry, dry cleaning & specialized fabric spa. Doorstep pickup across all major sectors."></textarea>
                             </div>
                         </div>
 
@@ -1968,19 +1968,19 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label for="slide_btn_text">Primary Button Text</label>
-                                    <input type="text" id="slide_btn_text" name="button_text" class="form-control" placeholder="Book A Consultation Now">
+                                    <input type="text" id="slide_btn_text" name="button_text" class="form-control" placeholder="Book Free Pickup">
                                 </div>
                                 <div class="form-group">
                                     <label for="slide_btn_link">Primary Button Link</label>
-                                    <input type="text" id="slide_btn_link" name="button_link" class="form-control" placeholder="#consultation">
+                                    <input type="text" id="slide_btn_link" name="button_link" class="form-control" placeholder="#book">
                                 </div>
                                 <div class="form-group">
                                     <label for="slide_btn_2_text">Secondary Button Text</label>
-                                    <input type="text" id="slide_btn_2_text" name="button_2_text" class="form-control" placeholder="Call Clinic">
+                                    <input type="text" id="slide_btn_2_text" name="button_2_text" class="form-control" placeholder="See Our Prices">
                                 </div>
                                 <div class="form-group">
                                     <label for="slide_btn_2_link">Secondary Button Link</label>
-                                    <input type="text" id="slide_btn_2_link" name="button_2_link" class="form-control" placeholder="tel:+919545559434">
+                                    <input type="text" id="slide_btn_2_link" name="button_2_link" class="form-control" placeholder="/services">
                                 </div>
                             </div>
                         </div>
@@ -1993,18 +1993,18 @@
                             <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label>Stat 1 (Number / Label)</label>
-                                    <input type="text" id="slide_trust_1_num" name="trust_1_num" class="form-control" placeholder="20,000+" style="margin-bottom: 6px;">
-                                    <input type="text" id="slide_trust_1_label" name="trust_1_label" class="form-control" placeholder="Patients Recovered">
+                                    <input type="text" id="slide_trust_1_num" name="trust_1_num" class="form-control" placeholder="50,000+" style="margin-bottom: 6px;">
+                                    <input type="text" id="slide_trust_1_label" name="trust_1_label" class="form-control" placeholder="Garments Delivered">
                                 </div>
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label>Stat 2 (Number / Label)</label>
-                                    <input type="text" id="slide_trust_2_num" name="trust_2_num" class="form-control" placeholder="15+ Yrs" style="margin-bottom: 6px;">
-                                    <input type="text" id="slide_trust_2_label" name="trust_2_label" class="form-control" placeholder="Clinical Experience">
+                                    <input type="text" id="slide_trust_2_num" name="trust_2_num" class="form-control" placeholder="100%" style="margin-bottom: 6px;">
+                                    <input type="text" id="slide_trust_2_label" name="trust_2_label" class="form-control" placeholder="Eco-Friendly Solvents">
                                 </div>
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label>Stat 3 (Number / Label)</label>
-                                    <input type="text" id="slide_trust_3_num" name="trust_3_num" class="form-control" placeholder="3 Locations" style="margin-bottom: 6px;">
-                                    <input type="text" id="slide_trust_3_label" name="trust_3_label" class="form-control" placeholder="Baner · Balewadi · Hinjewadi">
+                                    <input type="text" id="slide_trust_3_num" name="trust_3_num" class="form-control" placeholder="Sector 49 & 83" style="margin-bottom: 6px;">
+                                    <input type="text" id="slide_trust_3_label" name="trust_3_label" class="form-control" placeholder="Gurugram Hubs">
                                 </div>
                             </div>
                         </div>
@@ -2470,16 +2470,6 @@
                         </div>
                     </div>
 
-                    <div style="text-align: right; margin-top: 1.5rem;">
-                        <button type="submit" class="btn-submit">Save Page Contents</button>
-                    </div>
-                </form>
-            </div>
-                                <input type="text" name="contents[header][menu][cta]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'cta')->first()->value ?? 'Call Now' }}">
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Website Footer Settings -->
                     <div class="admin-card">
                         <h2>Website Footer Blocks</h2>
@@ -2496,8 +2486,8 @@
                                 <input type="text" name="contents[footer][headings][quick_links]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'quick_links')->first()->value ?? 'Quick Links' }}">
                             </div>
                             <div class="form-group">
-                                <label>Column 3 Heading (Clinic Services)</label>
-                                <input type="text" name="contents[footer][headings][services]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'services')->first()->value ?? 'Clinic Services' }}">
+                                <label>Column 3 Heading (Services / Fabric Care)</label>
+                                <input type="text" name="contents[footer][headings][services]" class="form-control" value="{{ $pageContents->where('page', 'footer')->where('section', 'headings')->where('key', 'services')->first()->value ?? 'Services' }}">
                             </div>
                             <div class="form-group">
                                 <label>Column 4 Heading (Contact Info)</label>
@@ -3118,17 +3108,17 @@
                             </div>
                             <div class="form-group">
                                 <label for="cms_metatitle">Meta Title (SEO)</label>
-                                <input type="text" id="cms_metatitle" name="metatitle" class="form-control" placeholder="Disclaimer | SumitZ Clinic">
+                                <input type="text" id="cms_metatitle" name="metatitle" class="form-control" placeholder="Terms & Conditions | Tenderfold">
                             </div>
                             <div class="form-group">
                                 <label for="cms_metakeywords">Meta Keywords (comma separated)</label>
-                                <input type="text" id="cms_metakeywords" name="metakeywords" class="form-control" placeholder="disclaimer, clinic rules">
+                                <input type="text" id="cms_metakeywords" name="metakeywords" class="form-control" placeholder="laundry terms, dry cleaning policy">
                             </div>
                         </div>
 
                         <div class="form-group" style="margin-top: 1rem;">
                             <label for="cms_metadescription">Meta Description (SEO)</label>
-                            <textarea id="cms_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Disclaimer for SumitZ Clinic services."></textarea>
+                            <textarea id="cms_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Terms and conditions for Tenderfold laundry and dry cleaning services."></textarea>
                         </div>
 
                         <div class="form-group" style="margin-top: 1rem;">
@@ -3990,7 +3980,7 @@
                         <div class="form-grid" style="grid-template-columns: 2fr 1fr; align-items: end; gap: 1rem; margin-bottom: 1.25rem;">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label for="sitemap_domain">Production Domain Name (with protocol, no trailing slash)</label>
-                                <input type="url" id="sitemap_domain" name="sitemap_domain" class="form-control" value="{{ $site['sitemap_domain'] ?? 'https://www.drsumitz.com' }}" placeholder="https://www.drsumitz.com" required>
+                                <input type="url" id="sitemap_domain" name="sitemap_domain" class="form-control" value="{{ $site['sitemap_domain'] ?? 'https://tenderfold.in' }}" placeholder="https://tenderfold.in" required>
                             </div>
                             <div>
                                 <button type="submit" class="btn-submit" style="width: 100%; padding: 0.75rem 1.25rem; font-weight: 600;">
@@ -4217,7 +4207,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="google_search_console_site_url">Search Console Site URL</label>
-                                <input type="text" id="google_search_console_site_url" name="google_search_console_site_url" class="form-control" value="{{ $site['google_search_console_site_url'] ?? '' }}" placeholder="e.g. https://www.drsumitz.com">
+                                <input type="text" id="google_search_console_site_url" name="google_search_console_site_url" class="form-control" value="{{ $site['google_search_console_site_url'] ?? '' }}" placeholder="e.g. https://tenderfold.in">
                             </div>
                             <div class="form-group">
                                 <label for="gmb_location_id">GMB Location ID</label>
@@ -4424,16 +4414,9 @@
                                     @foreach($services as $s)
                                         <option value="{{ $s->id }}" data-title="{{ $s->service_name }}" data-summary="{{ Str::limit(strip_tags($s->short_description ?? ''), 150) }}" data-url="{{ route('services.show', $s->slug) }}">{{ $s->service_name }}</option>
                                     @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group" id="group-select-cms_page" style="display: none; margin-bottom: 1rem;">
-                                <label for="select_cms_page">Select Custom Page:</label>
-                                <select id="select_cms_page" class="form-control" onchange="autoFillFromEntity('cms_page', this.value)">
-                                    <option value="">-- Choose CMS Page --</option>
-                                    @foreach($cmsPages as $cp)
-                                        <option value="{{ $cp->id }}" data-title="{{ $cp->title }}" data-summary="Learn more about our clinic services: {{ $cp->title }}" data-url="{{ url('/' . $cp->slug) }}">{{ $cp->title }}</option>
-                                    @endforeach
+                                     @foreach($cmsPages as $cp)
+                                        <option value="{{ $cp->id }}" data-title="{{ $cp->title }}" data-summary="Learn more about Tenderfold services: {{ $cp->title }}" data-url="{{ url('/' . $cp->slug) }}">{{ $cp->title }}</option>
+                                     @endforeach
                                 </select>
                             </div>
 
@@ -4447,20 +4430,10 @@
                                 </select>
                             </div>
 
-                            <div class="form-group" id="group-select-specialist" style="display: none; margin-bottom: 1rem;">
-                                <label for="select_specialist">Select Specialist Profile:</label>
-                                <select id="select_specialist" class="form-control" onchange="autoFillFromEntity('specialist', this.value)">
-                                    <option value="">-- Choose Specialist --</option>
-                                    @foreach($specialists as $sp)
-                                        <option value="{{ $sp->id }}" data-title="{{ $sp->name }}" data-summary="{{ $sp->designation }} - specialist profile." data-url="{{ route('specialists.show', $sp->slug) }}">{{ $sp->name }} ({{ $sp->designation }})</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
                             <!-- Title, Message, URL -->
                             <div class="form-group" style="margin-bottom: 1rem;">
                                 <label for="broadcast_title">Notification Title</label>
-                                <input type="text" id="broadcast_title" name="title" class="form-control" required placeholder="e.g. New Treatment Available!" oninput="updateLivePreview()">
+                                <input type="text" id="broadcast_title" name="title" class="form-control" required placeholder="e.g. Free Laundry Pickup in Gurugram!" oninput="updateLivePreview()">
                             </div>
 
                             <div class="form-group" style="margin-bottom: 1rem;">
@@ -4470,7 +4443,7 @@
 
                             <div class="form-group" style="margin-bottom: 1.5rem;">
                                 <label for="broadcast_url">Notification Redirect URL</label>
-                                <input type="url" id="broadcast_url" name="url" class="form-control" placeholder="e.g. https://www.drsumitz.com/blogs/my-post" oninput="updateLivePreview()">
+                                <input type="url" id="broadcast_url" name="url" class="form-control" placeholder="e.g. https://tenderfold.in/services" oninput="updateLivePreview()">
                             </div>
 
                             <button type="submit" class="btn-submit" style="background-color: var(--mint-green); color: #0d1718; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -4492,11 +4465,11 @@
                             </div>
                             <div style="flex-grow: 1; overflow: hidden;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                                    <strong id="preview-title" style="font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">Dr. Sumitz Clinic</strong>
+                                    <strong id="preview-title" style="font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">Tenderfold</strong>
                                     <span style="font-size: 0.65rem; color: #94a3b8;">now</span>
                                 </div>
                                 <p id="preview-message" style="margin: 0; font-size: 0.75rem; color: #cbd5e1; line-height: 1.3; word-break: break-word;">Waiting for input details...</p>
-                                <span id="preview-url" style="display: block; font-size: 0.65rem; color: var(--mint-green); margin-top: 4px; text-decoration: underline; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">https://www.drsumitz.com</span>
+                                <span id="preview-url" style="display: block; font-size: 0.65rem; color: var(--mint-green); margin-top: 4px; text-decoration: underline; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">https://tenderfold.in</span>
                             </div>
                         </div>
                     </div>
@@ -4546,6 +4519,8 @@
                 </div>
             </div>
             @endif
+        </div> <!-- end .admin-content -->
+    </div> <!-- end .main-panel -->
 
     <!-- AI Toast Notification Container -->
     <div id="ai-toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999; display: flex; flex-direction: column; gap: 10px;"></div>
@@ -4774,8 +4749,8 @@
             </p>
             <div id="ai-slider-form-wrapper">
                 <div class="form-group" style="margin-bottom: 1.25rem;">
-                    <label for="ai_slider_prompt">What is the slider slide about? (e.g. Spine recovery program, Knee replacement offer)</label>
-                    <textarea id="ai_slider_prompt" class="form-control" rows="3" placeholder="Describe the offer, treatment, or campaign detail for this slide..."></textarea>
+                    <label for="ai_slider_prompt">What is the slider slide about? (e.g. Free doorstep laundry pickup, 20% off dry cleaning)</label>
+                    <textarea id="ai_slider_prompt" class="form-control" rows="3" placeholder="Describe the offer, fabric care service, or seasonal campaign for this slide..."></textarea>
                 </div>
                 <div class="form-group" style="margin-bottom: 1.5rem;">
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: white;">
@@ -4796,32 +4771,6 @@
         </div>
     </div>
 
-    <!-- AI Treatment Generator Modal -->
-    <div class="ai-modal-overlay" id="ai-treatment-modal">
-        <div class="ai-modal-card">
-            <button class="ai-modal-close" onclick="closeAiModal('treatment')">&times;</button>
-            <h3><i data-lucide="sparkles"></i> AI Treatment Generator</h3>
-            
-            <div id="ai-treatment-form-wrapper">
-                <div class="form-group">
-                    <label for="ai_treatment_prompt">What Treatment do you want to generate?</label>
-                    <textarea id="ai_treatment_prompt" class="form-control" rows="4" placeholder="e.g. ACL Reconstruction & Arthroscopic Knee Surgery for sports injury patients in Pune..."></textarea>
-                </div>
-                
-                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button type="button" class="btn-submit" style="background-color: var(--admin-input-bg); color: #fff;" onclick="closeAiModal('treatment')">Cancel</button>
-                    <button type="button" class="btn-ai-sparkle" onclick="generateAiTreatment()"><i data-lucide="sparkles"></i> Generate Treatment</button>
-                </div>
-            </div>
-            
-            <div class="ai-loader-container" id="ai-treatment-loader" style="display: none;">
-                <div class="ai-sparkle-loader"></div>
-                <p class="ai-loader-text">Gemini is writing treatment details...</p>
-                <p class="ai-loader-subtext">Structuring title, SEO meta descriptions, and clinical procedures.</p>
-            </div>
-        </div>
-    </div>
-
     <!-- AI CMS Page Generator Modal -->
     <div class="ai-modal-overlay" id="ai-cms-modal">
         <div class="ai-modal-card">
@@ -4831,7 +4780,7 @@
             <div id="ai-cms-form-wrapper">
                 <div class="form-group">
                     <label for="ai_cms_prompt">Describe the CMS Page topic/content:</label>
-                    <textarea id="ai_cms_prompt" class="form-control" rows="4" placeholder="e.g. Patient Care Guidelines & Pre-Operative Preparation for Orthopedic Surgery at SumitZ Clinic, Pune..."></textarea>
+                    <textarea id="ai_cms_prompt" class="form-control" rows="4" placeholder="e.g. Fabric Care Guidelines & Stain Removal Policy for Tenderfold Laundry Services, Gurugram..."></textarea>
                 </div>
                 
                 <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
@@ -6193,7 +6142,7 @@
                 if ("Notification" in window) {
                     if (Notification.permission === "granted") {
                         new Notification("New Live Chat Message", {
-                            body: "A website visitor sent a new chat message to SumitZ Clinic.",
+                            body: "A website visitor sent a new chat message to Tenderfold.",
                             icon: "/favicon.ico"
                         });
                     } else if (Notification.permission === "default") {
@@ -8150,9 +8099,9 @@
         }
 
         function updateLivePreview() {
-            const title = document.getElementById('broadcast_title').value || 'Dr. Sumitz Clinic';
+            const title = document.getElementById('broadcast_title').value || 'Tenderfold';
             const message = document.getElementById('broadcast_message').value || 'Waiting for input details...';
-            const url = document.getElementById('broadcast_url').value || 'https://www.drsumitz.com';
+            const url = document.getElementById('broadcast_url').value || 'https://tenderfold.in';
             
             document.getElementById('preview-title').textContent = title;
             document.getElementById('preview-message').textContent = message;
