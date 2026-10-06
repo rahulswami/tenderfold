@@ -175,14 +175,24 @@
                         @else
                             <!-- Fallbacks if empty -->
                             <div class="feature-card-lp">
-                                <div class="icon-lp-wrap"><i data-lucide="shield-check"></i></div>
-                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Opaque Charge Filters</h3>
-                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">We scan and eliminate hidden penalties, compound rates, and administration fees.</p>
+                                <div class="icon-lp-wrap"><i data-lucide="truck"></i></div>
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Free Doorstep Pickup</h3>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Scheduled collection and delivery from your doorstep across all sectors of Gurgaon.</p>
                             </div>
                             <div class="feature-card-lp">
-                                <div class="icon-lp-wrap"><i data-lucide="percent"></i></div>
-                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Optimized Interest Match</h3>
-                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Comparing 15+ prime lenders to find the cheapest rate fitting your credit score.</p>
+                                <div class="icon-lp-wrap"><i data-lucide="sparkles"></i></div>
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Skin-Safe & Eco Solvents</h3>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Non-toxic, allergen-free German detergents that preserve fibers and protect delicate skin.</p>
+                            </div>
+                            <div class="feature-card-lp">
+                                <div class="icon-lp-wrap"><i data-lucide="layers"></i></div>
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Individual Batch Washing</h3>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Your garments are never mixed with other customers' clothes. 100% segregated and hygienic.</p>
+                            </div>
+                            <div class="feature-card-lp">
+                                <div class="icon-lp-wrap"><i data-lucide="award"></i></div>
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Vacuum Steam Finishing</h3>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Crisp, wrinkle-free finish using temperature-controlled Italian vacuum tables.</p>
                             </div>
                         @endif
                     </div>
@@ -225,6 +235,15 @@
                                     Schedule a pickup online or via WhatsApp. Our executive collects your garments, tags them with barcodes, processes them according to fabric type, and delivers them back fresh and ready to wear.
                                 </div>
                             </div>
+                            <div class="faq-item-lp">
+                                <div class="faq-q-lp" onclick="toggleFaqLp(1)">
+                                    <span>Do you wash my clothes with other people's clothes?</span>
+                                    <i data-lucide="plus" id="faq-icon-lp-1"></i>
+                                </div>
+                                <div class="faq-a-lp" id="faq-a-lp-1">
+                                    Never. We practice strict batch washing where every order is processed in its own dedicated washing and drying cycle for total hygiene and care.
+                                </div>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -233,17 +252,17 @@
                 <!-- SERVICE LAYOUT SECTIONS -->
                 <!-- Service Details -->
                 <div style="margin-bottom: 3rem;">
-                    <span class="pre-title">Program Overview</span>
-                    <h2>{{ $landingPage->content['service_details_title'] ?? 'Comprehensive Recovery & Care' }}</h2>
+                    <span class="pre-title">Service Details</span>
+                    <h2>{{ $landingPage->content['service_details_title'] ?? 'Comprehensive Garment & Fabric Care' }}</h2>
                     <p style="margin-top: 1rem; line-height: 1.7; color: var(--text-muted);">
-                        {!! nl2br(e($landingPage->content['service_details_text'] ?? 'Our advanced treatment plans combine manual therapy, clinical expertise, and modern diagnostic technologies to provide rapid pain relief and long-term functional recovery.')) !!}
+                        {!! nl2br(e($landingPage->content['service_details_text'] ?? 'Our advanced fabric spa combines gentler Italian cleaning processes, specialized stain spotting agents, and customized temperature controls to maintain the longevity, color brilliance, and texture of every garment.')) !!}
                     </p>
                 </div>
 
                 <!-- Bullets -->
                 <div class="features-wrapper">
                     <span class="pre-title">Core Benefits</span>
-                    <h2>Key Advantages of the Program</h2>
+                    <h2>Key Advantages of the Service</h2>
                     
                     <div class="why-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); margin-top: 1.5rem; margin-bottom: 3rem;">
                         @if(!empty($landingPage->content['service_bullets']))
@@ -258,14 +277,14 @@
                             @endforeach
                         @else
                             <div class="feature-card-lp">
-                                <div class="icon-lp-wrap"><i data-lucide="activity"></i></div>
-                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Evidence-Based Treatment</h3>
-                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Every diagnostic and therapeutic plan follows validated medical protocols.</p>
+                                <div class="icon-lp-wrap"><i data-lucide="shield-check"></i></div>
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Color & Texture Protection</h3>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Targeted stain removal and gentle detergents prevent fading and fiber damage.</p>
                             </div>
                             <div class="feature-card-lp">
                                 <div class="icon-lp-wrap"><i data-lucide="clock"></i></div>
-                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Personalized Care Schedules</h3>
-                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">One-on-one recovery timelines built entirely around your daily life and physical conditions.</p>
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: var(--primary-teal-dark);">Fast 24-48h Turnaround</h3>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">Convenient pickup schedules with timely doorstep delivery right to your closet.</p>
                             </div>
                         @endif
                     </div>
@@ -273,16 +292,16 @@
 
                 <!-- Process Steps -->
                 <div style="margin-bottom: 3rem;">
-                    <span class="pre-title">Treatment Journey</span>
-                    <h2>{{ $landingPage->content['process_title'] ?? 'Your Step-by-Step Path to Relief' }}</h2>
+                    <span class="pre-title">How It Works</span>
+                    <h2>{{ $landingPage->content['process_title'] ?? 'Your 4-Step Doorstep Care Process' }}</h2>
                     <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
                         @if(!empty($landingPage->content['process_steps']))
                             @foreach($landingPage->content['process_steps'] as $idx => $step)
                                 <div style="display: flex; gap: 1.5rem; align-items: start; background: rgba(92, 203, 179, 0.05); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-teal);">
                                     <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-teal); line-height: 1;">0{{ $idx + 1 }}</div>
                                     <div>
-                                        <h3 style="font-size: 1.1rem; color: var(--primary-teal-dark); margin-bottom: 0.25rem;">{{ $step['title'] ?? 'Assessment Step' }}</h3>
-                                        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">{{ $step['desc'] ?? 'Details of assessment step.' }}</p>
+                                        <h3 style="font-size: 1.1rem; color: var(--primary-teal-dark); margin-bottom: 0.25rem;">{{ $step['title'] ?? 'Care Step' }}</h3>
+                                        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">{{ $step['desc'] ?? 'Details of step.' }}</p>
                                     </div>
                                 </div>
                             @endforeach
@@ -290,8 +309,29 @@
                             <div style="display: flex; gap: 1.5rem; align-items: start; background: rgba(92, 203, 179, 0.05); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-teal);">
                                 <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-teal); line-height: 1;">01</div>
                                 <div>
-                                    <h3 style="font-size: 1.1rem; color: var(--primary-teal-dark); margin-bottom: 0.25rem;">Comprehensive Diagnostic Interview</h3>
-                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Initial clinical session including digital orthology and flexibility scans.</p>
+                                    <h3 style="font-size: 1.1rem; color: var(--primary-teal-dark); margin-bottom: 0.25rem;">Doorstep Collection & Barcoding</h3>
+                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">We pick up garments from your home, barcode tag each piece, and check care labels.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1.5rem; align-items: start; background: rgba(92, 203, 179, 0.05); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-teal);">
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-teal); line-height: 1;">02</div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; color: var(--primary-teal-dark); margin-bottom: 0.25rem;">Custom Washing & Dry Cleaning</h3>
+                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Individual batch washing with pH-neutral eco detergents or gentle dry cleaning.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1.5rem; align-items: start; background: rgba(92, 203, 179, 0.05); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-teal);">
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-teal); line-height: 1;">03</div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; color: var(--primary-teal-dark); margin-bottom: 0.25rem;">Vacuum Steam Pressing</h3>
+                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Wrinkle-free pressing on padded vacuum suction tables with zero fabric shine.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1.5rem; align-items: start; background: rgba(92, 203, 179, 0.05); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary-teal);">
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-teal); line-height: 1;">04</div>
+                                <div>
+                                    <h3 style="font-size: 1.1rem; color: var(--primary-teal-dark); margin-bottom: 0.25rem;">Boutique Packaging & Delivery</h3>
+                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Garments are hung or folded neatly in breathable garment bags and delivered on time.</p>
                                 </div>
                             </div>
                         @endif
@@ -300,19 +340,19 @@
 
             @elseif($landingPage->layout_type === 'specialist')
                 <!-- SPECIALIST LAYOUT SECTIONS -->
-                <!-- Doctor Bio -->
+                <!-- Master Artisan Bio -->
                 <div style="margin-bottom: 3rem;">
-                    <span class="pre-title">Meet Our Lead Specialist</span>
-                    <h2>{{ $landingPage->content['specialist_bio_title'] ?? 'Dedicated Orthopedic & Joint Care Leadership' }}</h2>
+                    <span class="pre-title">Fabric Care Craftsmanship</span>
+                    <h2>{{ $landingPage->content['specialist_bio_title'] ?? 'Trained Technicians & Master Dry Cleaners' }}</h2>
                     <p style="margin-top: 1rem; line-height: 1.7; color: var(--text-muted);">
-                        {!! nl2br(e($landingPage->content['specialist_bio_text'] ?? 'Consult with Pune\'s premier joint, bone, and spine expert. Our specialist doctor brings clinical mastery, advanced surgical credentials, and a compassionate patient-first philosophy to ensure a complete, healthy return to movement.')) !!}
+                        {!! nl2br(e($landingPage->content['specialist_bio_text'] ?? 'Every fabric at Tenderfold is handled by certified dry cleaning specialists and garment technicians. From couture silk sarees to bespoke suits and luxury designer sneakers, our craftsmen inspect, spot-clean, and finish every item to perfection.')) !!}
                     </p>
                 </div>
 
                 <!-- Credentials / Qualifications -->
                 <div style="margin-bottom: 3rem;">
-                    <span class="pre-title">Credentials</span>
-                    <h2>Qualifications & Experience</h2>
+                    <span class="pre-title">Care Standards</span>
+                    <h2>Quality Certifications & Infrastructure</h2>
                     <div style="margin-top: 1.5rem; display: grid; grid-template-columns: 1fr; gap: 1rem;">
                         @if(!empty($landingPage->content['specialist_qualifications']))
                             @foreach($landingPage->content['specialist_qualifications'] as $qual)
@@ -321,8 +361,8 @@
                                         <i data-lucide="award" style="width: 20px; height: 20px;"></i>
                                     </div>
                                     <div>
-                                        <h4 style="font-size: 1rem; color: var(--primary-teal-dark); margin: 0;">{{ $qual['title'] ?? 'Fellowship Title' }}</h4>
-                                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">{{ $qual['desc'] ?? 'Details of qualification or hospital training.' }}</p>
+                                        <h4 style="font-size: 1rem; color: var(--primary-teal-dark); margin: 0;">{{ $qual['title'] ?? 'Certification Title' }}</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">{{ $qual['desc'] ?? 'Details of certification.' }}</p>
                                     </div>
                                 </div>
                             @endforeach
@@ -332,40 +372,9 @@
                                     <i data-lucide="award" style="width: 20px; height: 20px;"></i>
                                 </div>
                                 <div>
-                                    <h4 style="font-size: 1rem; color: var(--primary-teal-dark); margin: 0;">Board Certified Joint Specialist</h4>
-                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">Advanced orthopedic clinical training with 15+ years of active practice.</p>
+                                    <h4 style="font-size: 1rem; color: var(--primary-teal-dark); margin: 0;">Certified Hydrocarbon & Eco Dry Cleaning Plant</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">State-of-the-art closed-loop Italian dry cleaning machinery for fabric safety.</p>
                                 </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Case Studies / Patient Stories -->
-                <div style="margin-bottom: 2rem;">
-                    <span class="pre-title">Patient Outcomes</span>
-                    <h2>Recent Case Studies & Recovery Outcomes</h2>
-                    <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                        @if(!empty($landingPage->content['case_studies']))
-                            @foreach($landingPage->content['case_studies'] as $cs)
-                                <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 0.75rem; align-items: center;">
-                                        <span style="font-weight: 700; color: var(--primary-teal-dark); font-size: 0.95rem;">Patient: {{ $cs['patient_name'] ?? 'Anonymous' }}</span>
-                                        <span style="background: rgba(92, 203, 179, 0.15); color: var(--primary-teal-dark); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">{{ $cs['case'] ?? 'Spine Recovery' }}</span>
-                                    </div>
-                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
-                                        <strong>Outcome:</strong> {{ $cs['result'] ?? 'Full mobility restored with 8 weeks of therapy program.' }}
-                                    </p>
-                                </div>
-                            @endforeach
-                        @else
-                            <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 0.75rem; align-items: center;">
-                                    <span style="font-weight: 700; color: var(--primary-teal-dark); font-size: 0.95rem;">Patient: Mrs. P. Joshi (Pune)</span>
-                                    <span style="background: rgba(92, 203, 179, 0.15); color: var(--primary-teal-dark); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">Chronic Knee Arthritis</span>
-                                </div>
-                                <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
-                                    <strong>Outcome:</strong> Complete pain reduction and return to walking without support after custom physiotherapy program.
-                                </p>
                             </div>
                         @endif
                     </div>
@@ -377,9 +386,9 @@
                 <!-- Story section -->
                 <div style="margin-bottom: 3rem;">
                     <span class="pre-title">Our Story</span>
-                    <h2>{{ $landingPage->content['story_title'] ?? 'Strategic Vision & Background' }}</h2>
+                    <h2>{{ $landingPage->content['story_title'] ?? 'The Story Behind Tenderfold' }}</h2>
                     <p style="margin-top: 1rem; line-height: 1.7; color: var(--text-muted);">
-                        {!! nl2br(e($landingPage->content['story_text'] ?? 'Founded to solve the complexities of modern credit approvals, we assist small businesses and individuals in navigating rate options across lenders.')) !!}
+                        {!! nl2br(e($landingPage->content['story_text'] ?? 'Founded in Gurgaon, Tenderfold was created with a single vision: to elevate everyday laundry and dry cleaning into a reliable, premium fabric care service that Gurgaon households can trust.')) !!}
                     </p>
                 </div>
 
@@ -389,7 +398,7 @@
                         <div class="benefit-icon-lp"><i data-lucide="eye" style="width: 24px; height: 24px;"></i></div>
                         <h3>Our Vision</h3>
                         <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
-                            {{ $landingPage->content['vision'] ?? 'To empower Indian families and business ventures with secure, structured asset creation options.' }}
+                            {{ $landingPage->content['vision'] ?? 'To deliver pristine freshness and fabric longevity to every home across Gurgaon.' }}
                         </p>
                     </div>
                     
@@ -397,7 +406,7 @@
                         <div class="benefit-icon-lp" style="background-color: rgba(255,255,255,0.2); color: var(--mint-green);"><i data-lucide="target" style="width: 24px; height: 24px;"></i></div>
                         <h3>Our Mission</h3>
                         <p style="color: var(--text-light-muted); font-size: 0.95rem; margin-top: 0.5rem;">
-                            {{ $landingPage->content['mission'] ?? 'To make the credit evaluation cycle transparent and prevent unneeded rejections.' }}
+                            {{ $landingPage->content['mission'] ?? 'To make garment care seamless and transparent through modern technology and doorstep pickup.' }}
                         </p>
                     </div>
 
@@ -405,30 +414,10 @@
                         <div class="benefit-icon-lp"><i data-lucide="heart" style="width: 24px; height: 24px;"></i></div>
                         <h3>Core Values</h3>
                         <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
-                            {{ $landingPage->content['values'] ?? 'Objective evaluations, transparent cost analysis, and complete safety of customer files.' }}
+                            {{ $landingPage->content['values'] ?? 'Uncompromising hygiene, eco-friendly solvents, and punctual doorstep service.' }}
                         </p>
                     </div>
                 </div>
-
-                <!-- Team Section -->
-                @if(!empty($landingPage->content['team']))
-                    <div style="margin-bottom: 2rem;">
-                        <span class="pre-title">Guiding Specialists</span>
-                        <h2>Advisory Team</h2>
-                        <div class="why-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); margin-top: 1.5rem;">
-                            @foreach($landingPage->content['team'] as $idx => $member)
-                                <div class="service-card text-center" style="padding: 2rem;">
-                                    <div style="width:70px; height:70px; border-radius:50%; background-color:var(--primary-teal-light); margin:0 auto 1.5rem auto; display:flex; align-items:center; justify-content:center; color:white; font-size:1.5rem; font-weight:700;">
-                                        {{ substr($member['name'] ?? 'C', 0, 2) }}
-                                    </div>
-                                    <h3 style="font-size: 1.2rem;">{{ $member['name'] ?? 'Advisor' }}</h3>
-                                    <span class="color-accent" style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:1rem;">{{ $member['role'] ?? 'Consultant' }}</span>
-                                    <p style="font-size:0.85rem; color: var(--text-muted); line-height: 1.6;">{{ $member['bio'] ?? 'Bio details...' }}</p>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
 
             @endif
 
@@ -437,8 +426,8 @@
         <!-- Right Column: Conversion Lead Form -->
         <div class="right-column" id="lead-form-section">
             <div class="lead-form-card sticky-sidebar" style="position: sticky; top: 100px;">
-                <h3>Get Consultation</h3>
-                <p>Submit your parameters and secure a call with our advisory specialist.</p>
+                <h3>Schedule a Pickup</h3>
+                <p>Fill out your details to arrange a free doorstep laundry pickup in Gurgaon.</p>
                 
                 <form action="{{ route('contact.submit') }}" method="POST">
                     @csrf

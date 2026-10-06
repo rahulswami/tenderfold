@@ -30,6 +30,8 @@ mlg_finedge_backup.zip
 mlg_finedge_backup.sql
 u709314437_smpune.sql
 *.sql
+!tenderfold_production.sql
+!database/tenderfold_production.sql
 test_home.html
 _static_backup/
 *.zip
