@@ -178,6 +178,46 @@
             </span>
             Sector 49 &amp; Sector 83, Gurgaon
           </a>
+          @if(!empty($site['social_instagram']) || !empty($site['social_facebook']) || !empty($site['social_twitter']) || !empty($site['social_linkedin']) || !empty($site['social_youtube']) || !empty($site['social_practo']))
+            <div class="flex items-center gap-2 border-l border-navy/15 pl-4">
+              @if(!empty($site['social_instagram']))
+                <a href="{{ $site['social_instagram'] }}" target="_blank" rel="noopener noreferrer" class="flex h-7 w-7 items-center justify-center rounded-full bg-navy/5 text-navy transition hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white" aria-label="Instagram" title="Instagram">
+                  @if(!empty($site['social_instagram_svg']))
+                    {!! $site['social_instagram_svg'] !!}
+                  @else
+                    <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_facebook']))
+                <a href="{{ $site['social_facebook'] }}" target="_blank" rel="noopener noreferrer" class="flex h-7 w-7 items-center justify-center rounded-full bg-navy/5 text-navy transition hover:bg-[#1877F2] hover:text-white" aria-label="Facebook" title="Facebook">
+                  @if(!empty($site['social_facebook_svg']))
+                    {!! $site['social_facebook_svg'] !!}
+                  @else
+                    <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_twitter']))
+                <a href="{{ $site['social_twitter'] }}" target="_blank" rel="noopener noreferrer" class="flex h-7 w-7 items-center justify-center rounded-full bg-navy/5 text-navy transition hover:bg-black hover:text-white" aria-label="X (Twitter)" title="X / Twitter">
+                  @if(!empty($site['social_twitter_svg']))
+                    {!! $site['social_twitter_svg'] !!}
+                  @else
+                    <svg class="h-3 w-3 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_practo']))
+                <a href="{{ $site['social_practo'] }}" target="_blank" rel="noopener noreferrer" class="flex h-7 w-7 items-center justify-center rounded-full bg-navy/5 text-navy transition hover:bg-[#4285F4] hover:text-white" aria-label="Google Maps" title="Google Maps">
+                  @if(!empty($site['social_practo_svg']))
+                    {!! $site['social_practo_svg'] !!}
+                  @else
+                    <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                  @endif
+                </a>
+              @endif
+            </div>
+          @endif
         </div>
       </div>
     </div>
@@ -238,6 +278,41 @@
         <a href="{{ route('pricing') }}" class="rounded-xl px-3 py-3 font-semibold text-navy hover:bg-cream {{ request()->routeIs('pricing') ? 'bg-cream text-gold' : '' }}">Pricing</a>
         <a href="{{ route('blog') }}" class="rounded-xl px-3 py-3 font-semibold text-navy hover:bg-cream {{ request()->routeIs('blog*') ? 'bg-cream text-gold' : '' }}">Journal</a>
         <a href="{{ route('contact') }}" class="rounded-xl px-3 py-3 font-semibold text-navy hover:bg-cream {{ request()->routeIs('contact') ? 'bg-cream text-gold' : '' }}">Contact</a>
+        
+        @if(!empty($site['social_instagram']) || !empty($site['social_facebook']) || !empty($site['social_twitter']) || !empty($site['social_linkedin']) || !empty($site['social_youtube']) || !empty($site['social_practo']))
+          <div class="mt-2 flex items-center gap-3 border-t border-navy/10 pt-3 px-3 sm:col-span-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-mute">Follow Us:</span>
+            <div class="flex items-center gap-2">
+              @if(!empty($site['social_instagram']))
+                <a href="{{ $site['social_instagram'] }}" target="_blank" rel="noopener noreferrer" class="flex h-8 w-8 items-center justify-center rounded-full bg-navy/5 text-navy transition hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white" aria-label="Instagram">
+                  @if(!empty($site['social_instagram_svg']))
+                    {!! $site['social_instagram_svg'] !!}
+                  @else
+                    <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_facebook']))
+                <a href="{{ $site['social_facebook'] }}" target="_blank" rel="noopener noreferrer" class="flex h-8 w-8 items-center justify-center rounded-full bg-navy/5 text-navy transition hover:bg-[#1877F2] hover:text-white" aria-label="Facebook">
+                  @if(!empty($site['social_facebook_svg']))
+                    {!! $site['social_facebook_svg'] !!}
+                  @else
+                    <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_twitter']))
+                <a href="{{ $site['social_twitter'] }}" target="_blank" rel="noopener noreferrer" class="flex h-8 w-8 items-center justify-center rounded-full bg-navy/5 text-navy transition hover:bg-black hover:text-white" aria-label="X (Twitter)">
+                  @if(!empty($site['social_twitter_svg']))
+                    {!! $site['social_twitter_svg'] !!}
+                  @else
+                    <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  @endif
+                </a>
+              @endif
+            </div>
+          </div>
+        @endif
       </nav>
     </div>
   </header>
@@ -257,6 +332,68 @@
       <div>
         <img src="{{ asset('assets/logo-light.png') }}" alt="{{ $site['site_name'] ?? 'Tender Fold' }}" class="h-12 w-auto" width="685" height="193">
         <p class="mt-4 max-w-xs text-sm leading-relaxed text-white/70">{{ $site['site_tagline'] ?? 'Premium laundry and dry cleaning in Gurgaon. More than laundry — it is a care routine.' }}</p>
+        
+        @if(!empty($site['social_instagram']) || !empty($site['social_facebook']) || !empty($site['social_twitter']) || !empty($site['social_linkedin']) || !empty($site['social_youtube']) || !empty($site['social_practo']))
+          <div class="mt-6">
+            <span class="block text-xs font-extrabold uppercase tracking-wider text-gold">Follow Our Care Journey</span>
+            <div class="mt-3 flex flex-wrap items-center gap-2.5">
+              @if(!empty($site['social_instagram']))
+                <a href="{{ $site['social_instagram'] }}" target="_blank" rel="noopener noreferrer" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 hover:-translate-y-0.5 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white hover:shadow-lg" aria-label="Follow Tenderfold on Instagram" title="Instagram">
+                  @if(!empty($site['social_instagram_svg']))
+                    {!! $site['social_instagram_svg'] !!}
+                  @else
+                    <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_facebook']))
+                <a href="{{ $site['social_facebook'] }}" target="_blank" rel="noopener noreferrer" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1877F2] hover:text-white hover:shadow-lg" aria-label="Follow Tenderfold on Facebook" title="Facebook">
+                  @if(!empty($site['social_facebook_svg']))
+                    {!! $site['social_facebook_svg'] !!}
+                  @else
+                    <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_twitter']))
+                <a href="{{ $site['social_twitter'] }}" target="_blank" rel="noopener noreferrer" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 hover:-translate-y-0.5 hover:bg-black hover:text-white hover:shadow-lg" aria-label="Follow Tenderfold on X (Twitter)" title="X / Twitter">
+                  @if(!empty($site['social_twitter_svg']))
+                    {!! $site['social_twitter_svg'] !!}
+                  @else
+                    <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_linkedin']))
+                <a href="{{ $site['social_linkedin'] }}" target="_blank" rel="noopener noreferrer" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#0A66C2] hover:text-white hover:shadow-lg" aria-label="Follow Tenderfold on LinkedIn" title="LinkedIn">
+                  @if(!empty($site['social_linkedin_svg']))
+                    {!! $site['social_linkedin_svg'] !!}
+                  @else
+                    <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" clip-rule="evenodd"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_youtube']))
+                <a href="{{ $site['social_youtube'] }}" target="_blank" rel="noopener noreferrer" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#FF0000] hover:text-white hover:shadow-lg" aria-label="Subscribe to Tenderfold on YouTube" title="YouTube">
+                  @if(!empty($site['social_youtube_svg']))
+                    {!! $site['social_youtube_svg'] !!}
+                  @else
+                    <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  @endif
+                </a>
+              @endif
+              @if(!empty($site['social_practo']))
+                <a href="{{ $site['social_practo'] }}" target="_blank" rel="noopener noreferrer" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#4285F4] hover:text-white hover:shadow-lg" aria-label="View Tenderfold on Google Maps" title="Google Maps / Reviews">
+                  @if(!empty($site['social_practo_svg']))
+                    {!! $site['social_practo_svg'] !!}
+                  @else
+                    <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                  @endif
+                </a>
+              @endif
+            </div>
+          </div>
+        @endif
       </div>
 
       <div>
@@ -309,8 +446,25 @@
       </div>
     </div>
     <div class="border-t border-white/10">
-      <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 pb-20 pt-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:pb-5 lg:px-8">
+      <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 pb-20 pt-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:pb-5 lg:px-8">
         <p>© <span id="year">{{ date('Y') }}</span> {{ $site['site_name'] ?? 'Tender Fold' }}. Freshness in every fold.</p>
+        @if(!empty($site['social_instagram']) || !empty($site['social_facebook']) || !empty($site['social_twitter']) || !empty($site['social_linkedin']) || !empty($site['social_youtube']) || !empty($site['social_practo']))
+          <div class="flex items-center gap-3">
+            <span class="text-white/40">Connect:</span>
+            @if(!empty($site['social_instagram']))
+              <a href="{{ $site['social_instagram'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Instagram">Instagram</a>
+            @endif
+            @if(!empty($site['social_facebook']))
+              <a href="{{ $site['social_facebook'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Facebook">Facebook</a>
+            @endif
+            @if(!empty($site['social_twitter']))
+              <a href="{{ $site['social_twitter'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Twitter">Twitter</a>
+            @endif
+            @if(!empty($site['social_practo']))
+              <a href="{{ $site['social_practo'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Google Maps">Google Maps</a>
+            @endif
+          </div>
+        @endif
         <p>Cleaner · Fresher · Happier you</p>
       </div>
     </div>
