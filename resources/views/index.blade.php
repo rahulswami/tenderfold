@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', ($site['site_name'] ?? 'Tenderfold') . ' | ' . ($site['site_tagline'] ?? 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurugram'))
+@section('title', ($site['site_name'] ?? 'Tenderfold') . ' | ' . ($site['site_tagline'] ?? 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurgaon'))
 
 @section('content')
     @php
@@ -51,7 +51,7 @@
                     <div class="absolute right-4 top-4 rounded-full bg-gold px-4 py-2 font-display text-sm font-extrabold text-navy shadow-md">20% off first order</div>
                     <div class="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/95 p-4 shadow-lift backdrop-blur sm:right-auto sm:max-w-xs">
                       <p class="font-display text-lg font-extrabold text-navy">Free pickup &amp; delivery</p>
-                      <p class="mt-1 text-sm text-mute">Across Gurugram. Terms apply on the welcome offer.</p>
+                      <p class="mt-1 text-sm text-mute">Across Gurgaon. Terms apply on the welcome offer.</p>
                     </div>
                   </div>
                 </div>
@@ -69,7 +69,7 @@
                     You leave it,<br><span class="text-gold">we clean it.</span>
                   </h1>
                   <p class="mt-5 max-w-xl text-base leading-relaxed text-mute sm:text-lg">
-                    Doorstep laundry and dry cleaning for homes and offices in Gurugram. We collect the pile, care for every fabric, and bring it back folded, pressed and ready to wear.
+                    Doorstep laundry and dry cleaning for homes and offices in Gurgaon. We collect the pile, care for every fabric, and bring it back folded, pressed and ready to wear.
                   </p>
                   <div class="mt-8 flex flex-col gap-3 sm:flex-row">
                     <button type="button" data-open-book class="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy shadow-md transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep hover:shadow-lg">Schedule a Pickup</button>
@@ -82,7 +82,7 @@
                     <div class="absolute right-4 top-4 rounded-full bg-gold px-4 py-2 font-display text-sm font-extrabold text-navy shadow-md">20% off first order</div>
                     <div class="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/95 p-4 shadow-lift backdrop-blur sm:right-auto sm:max-w-xs">
                       <p class="font-display text-lg font-extrabold text-navy">Free pickup &amp; delivery</p>
-                      <p class="mt-1 text-sm text-mute">Across Gurugram. Terms apply on the welcome offer.</p>
+                      <p class="mt-1 text-sm text-mute">Across Gurgaon. Terms apply on the welcome offer.</p>
                     </div>
                   </div>
                 </div>
@@ -144,7 +144,7 @@
               <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-navy" aria-hidden="true">
                 <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12.5l4.2 4.2L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
-              <span class="text-ink"><strong class="font-semibold">Doorstep pickup &amp; delivery</strong> across Gurugram, for the house and the workplace.</span>
+              <span class="text-ink"><strong class="font-semibold">Doorstep pickup &amp; delivery</strong> across Gurgaon, for the house and the workplace.</span>
             </li>
           </ul>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -161,7 +161,7 @@
         <div class="reveal mx-auto max-w-2xl text-center">
           <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">What we take in</p>
           <h2 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">Laundry, pressing and dry cleaning under one pickup.</h2>
-          <p class="mt-4 text-mute">From everyday wash &amp; fold to bridal dry cleaning, shoe care, drapes, and rugs in Gurugram.</p>
+          <p class="mt-4 text-mute">From everyday wash &amp; fold to bridal dry cleaning, shoe care, drapes, and rugs in Gurgaon.</p>
         </div>
 
         <div class="relative mt-12">
@@ -382,7 +382,7 @@
     <section id="reviews" class="scroll-mt-36 bg-cream py-16 md:py-24">
       <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
         <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Neighbourhood reviews</p>
-        <h2 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">From cupboards across Gurugram.</h2>
+        <h2 class="mt-3 font-display text-3xl font-extrabold text-navy sm:text-4xl">From cupboards across Gurgaon.</h2>
 
         @if($testimonials->count() > 0)
           @php $firstT = $testimonials->first(); @endphp
@@ -455,13 +455,13 @@
         <div class="mt-10 space-y-4">
           <details class="group rounded-2xl bg-white p-6 shadow-card transition duration-200 open:shadow-lift" open>
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-extrabold text-navy">
-              <span>Do you provide doorstep pickup and delivery across Gurugram?</span>
+              <span>Do you provide doorstep pickup and delivery across Gurgaon?</span>
               <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream text-navy transition duration-200 group-open:rotate-180 group-open:bg-gold">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
             </summary>
             <p class="mt-4 text-base leading-relaxed text-mute">
-              Yes! We provide free doorstep pickup and delivery across all major sectors, DLF phases, Golf Course Ext Rd, and New Gurugram societies.
+              Yes! We provide free doorstep pickup and delivery across all major sectors, DLF phases, Golf Course Ext Rd, and New Gurgaon societies.
             </p>
           </details>
 

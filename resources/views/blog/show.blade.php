@@ -74,7 +74,7 @@
       <div class="reveal mt-12 rounded-3xl bg-cream p-8 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6 border border-navy/10">
         <div>
           <h3 class="font-display text-xl font-extrabold text-navy">Need help caring for your clothes?</h3>
-          <p class="mt-1 text-sm text-mute">We pick up and deliver across Gurugram from Sector 49 & Sector 83.</p>
+          <p class="mt-1 text-sm text-mute">We pick up and deliver across Gurgaon from Sector 49 & Sector 83.</p>
         </div>
         <div class="flex flex-wrap gap-3">
           <button type="button" data-open-book class="rounded-full bg-gold px-6 py-3 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>

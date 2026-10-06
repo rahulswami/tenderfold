@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', $service->service_name . ' | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurugram')
-@section('meta_description', $service->summary . ' Doorstep collection across Gurugram. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.')
+@section('title', $service->service_name . ' | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurgaon')
+@section('meta_description', $service->summary . ' Doorstep collection across Gurgaon. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.')
 
 @section('content')
     @php
@@ -135,7 +135,7 @@
         <div class="reveal rounded-3xl bg-navy p-8 text-white shadow-lift" style="animation-delay:80ms">
           <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Before we collect</p>
           <h3 class="mt-2 font-display text-2xl font-extrabold">20% off your first pickup</h3>
-          <p class="mt-3 text-sm leading-relaxed text-white/80">Experience Tender Fold's premium care with 20% off your initial order and 100% free doorstep pickup and delivery across Gurugram.</p>
+          <p class="mt-3 text-sm leading-relaxed text-white/80">Experience Tender Fold's premium care with 20% off your initial order and 100% free doorstep pickup and delivery across Gurgaon.</p>
           <button type="button" data-open-book data-service="{{ $service->service_name }}" class="mt-6 inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep shadow-md">Book {{ $service->service_name }}</button>
         </div>
       </div>

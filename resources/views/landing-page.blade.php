@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $landingPage->title . ' - ' . ($site['site_name'] ?? 'Tenderfold'))
-@section('meta_description', $landingPage->meta_description ?? 'Book premium laundry and dry cleaning pickup across Gurugram with Tenderfold.')
+@section('meta_description', $landingPage->meta_description ?? 'Book premium laundry and dry cleaning pickup across Gurgaon with Tenderfold.')
 
 
 @section('schema')
@@ -193,7 +193,7 @@
                     <span class="pre-title">How We Help</span>
                     <h2>{{ $landingPage->content['about_title'] ?? 'Professional Fabric Care & Doorstep Delivery' }}</h2>
                     <p style="margin-top: 1rem; line-height: 1.7; color: var(--text-muted);">
-                        {!! nl2br(e($landingPage->content['about_text'] ?? (($site['site_name'] ?? 'Tenderfold') . " is your dedicated laundry and dry cleaning partner in Gurugram. We provide hygienic batch washing, expert stain removal, eco-friendly dry cleaning, and crisp vacuum steam pressing with free doorstep pickup across Gurugram."))) !!}
+                        {!! nl2br(e($landingPage->content['about_text'] ?? (($site['site_name'] ?? 'Tenderfold') . " is your dedicated laundry and dry cleaning partner in Gurgaon. We provide hygienic batch washing, expert stain removal, eco-friendly dry cleaning, and crisp vacuum steam pressing with free doorstep pickup across Gurgaon."))) !!}
                     </p>
                 </div>
 
@@ -491,7 +491,7 @@
     <div class="container">
         <h2>{{ $landingPage->content['cta_title'] ?? 'Experience Freshness in Every Single Fold' }}</h2>
         <p style="max-width: 600px; margin: 0 auto 1.5rem auto; color: var(--text-muted);">
-            {{ $landingPage->content['cta_text'] ?? 'Schedule your free doorstep collection in Gurugram today and enjoy 20% off your first order.' }}
+            {{ $landingPage->content['cta_text'] ?? 'Schedule your free doorstep collection in Gurgaon today and enjoy 20% off your first order.' }}
         </p>
         <a href="#lead-form-section" class="btn btn-primary">Book Doorstep Pickup Now</a>
     </div>

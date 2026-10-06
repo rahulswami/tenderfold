@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', ($testimonialPage->metatitle ?? 'Customer Reviews & Testimonials | Tenderfold Gurugram'))
-@section('meta_description', ($testimonialPage->metadescription ?? 'Read what residents in Sector 49, Sector 83, and across Gurugram say about Tenderfold laundry and dry cleaning services.'))
-@section('meta_keywords', ($testimonialPage->metakeywords ?? 'tenderfold reviews, laundry reviews gurugram, dry cleaning ratings gurgaon'))
+@section('title', ($testimonialPage->metatitle ?? 'Customer Reviews & Testimonials | Tenderfold Gurgaon'))
+@section('meta_description', ($testimonialPage->metadescription ?? 'Read what residents in Sector 49, Sector 83, and across Gurgaon say about Tenderfold laundry and dry cleaning services.'))
+@section('meta_keywords', ($testimonialPage->metakeywords ?? 'tenderfold reviews, laundry reviews gurgaon, dry cleaning ratings gurgaon'))
 
 @section('content')
 <main id="main">
@@ -16,8 +16,8 @@
           <span class="text-navy">Reviews</span>
         </p>
         <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Client Feedback</p>
-        <h1 class="mt-3 font-display text-4xl font-extrabold text-navy sm:text-5xl">What Gurugram says about Tenderfold.</h1>
-        <p class="mt-4 text-lg text-mute">Genuine experiences from families, professionals, and residents in Sector 49, Sector 83, Golf Course Ext., and New Gurugram.</p>
+        <h1 class="mt-3 font-display text-4xl font-extrabold text-navy sm:text-5xl">What Gurgaon says about Tenderfold.</h1>
+        <p class="mt-4 text-lg text-mute">Genuine experiences from families, professionals, and residents in Sector 49, Sector 83, Golf Course Ext., and New Gurgaon.</p>
         <div class="mt-8 flex flex-wrap gap-4">
           <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
           <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-full border border-navy/20 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition hover:bg-navy hover:text-white">Share Your Review</a>
@@ -46,7 +46,7 @@
               </div>
               <div>
                 <h3 class="font-display font-bold text-navy text-sm">{{ $test->name }}</h3>
-                <p class="text-xs text-mute">{{ $test->role ?? ($test->designation ?? 'Gurugram Resident') }}</p>
+                <p class="text-xs text-mute">{{ $test->role ?? ($test->designation ?? 'Gurgaon Resident') }}</p>
               </div>
             </div>
           </article>
@@ -65,7 +65,7 @@
       <div class="max-w-xl">
         <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold">Free pickup &amp; delivery</p>
         <h2 class="mt-2 font-display text-3xl font-extrabold text-white">Experience the difference in every fold.</h2>
-        <p class="mt-2 text-sm leading-relaxed text-white/75">Sector 49 (Orchid Petals) & Sector 83 (Sapphire 83 Mall). Doorstep collection across Gurugram.</p>
+        <p class="mt-2 text-sm leading-relaxed text-white/75">Sector 49 (Orchid Petals) & Sector 83 (Sapphire 83 Mall). Doorstep collection across Gurgaon.</p>
       </div>
       <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
         <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>

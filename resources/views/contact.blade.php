@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', ($contactPage->metatitle ?? 'Contact Tenderfold | Gurugram Laundry & Dry Cleaning Counters'))
-@section('meta_description', ($contactPage->metadescription ?? 'Call, WhatsApp, or visit Tenderfold in Sector 49 (Orchid Petals) and Sector 83 (Sapphire 83 Mall), Gurugram. Free doorstep laundry pickup & delivery across Gurugram.'))
-@section('meta_keywords', ($contactPage->metakeywords ?? 'tenderfold contact, dry cleaners gurugram contact, sector 49 laundry pickup, sector 83 dry cleaning'))
+@section('title', ($contactPage->metatitle ?? 'Contact Tenderfold | Gurgaon Laundry & Dry Cleaning Counters'))
+@section('meta_description', ($contactPage->metadescription ?? 'Call, WhatsApp, or visit Tenderfold in Sector 49 (Orchid Petals) and Sector 83 (Sapphire 83 Mall), Gurgaon. Free doorstep laundry pickup & delivery across Gurgaon.'))
+@section('meta_keywords', ($contactPage->metakeywords ?? 'tenderfold contact, dry cleaners gurgaon contact, sector 49 laundry pickup, sector 83 dry cleaning'))
 
 @section('content')
   <!-- Contact Hero & Stores -->
@@ -19,7 +19,7 @@
         <p class="mt-4 text-lg text-mute">Both stores use {{ $site['phone'] ?? '+91 95824 66445' }}. A pickup request opens WhatsApp so the team can confirm a window.</p>
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
           <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
-          <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}?text={{ urlencode('Hi Tenderfold, I have a query about laundry pickup & services in Gurugram.') }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">WhatsApp the desk</a>
+          <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}?text={{ urlencode('Hi Tenderfold, I have a query about laundry pickup & services in Gurgaon.') }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">WhatsApp the desk</a>
         </div>
       </div>
 
@@ -28,8 +28,8 @@
         <article class="reveal rounded-3xl bg-white p-7 shadow-card">
           <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 49</p>
           <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Orchid Petals</h2>
-          <p class="mt-3 text-sm leading-relaxed text-mute">Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram, Haryana 122018</p>
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018" target="_blank" rel="noopener" class="mt-5 inline-flex font-display text-sm font-extrabold text-navy">Get directions →</a>
+          <p class="mt-3 text-sm leading-relaxed text-mute">Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon, Haryana 122018</p>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018" target="_blank" rel="noopener" class="mt-5 inline-flex font-display text-sm font-extrabold text-navy">Get directions →</a>
         </article>
 
         <!-- Sector 83 Card -->
@@ -52,7 +52,7 @@
         </a>
         <div class="rounded-2xl bg-white/10 px-5 py-4">
           <span class="block text-xs font-bold uppercase tracking-wider text-gold">Pickup</span>
-          <span class="mt-1 block font-display text-xl font-extrabold">Free across Gurugram</span>
+          <span class="mt-1 block font-display text-xl font-extrabold">Free across Gurgaon</span>
         </div>
       </div>
     </div>
@@ -110,11 +110,11 @@
         <h2 id="mapTitle" class="mt-2 font-display text-3xl font-extrabold text-navy">Both counters</h2>
       </div>
       <div class="flex flex-wrap gap-2" role="tablist" aria-label="Choose a store map">
-        <button type="button" role="tab" id="mapOrchid" data-map-src="https://maps.google.com/maps?q=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018&amp;z=16&amp;output=embed" aria-selected="true" class="map-tab rounded-full bg-navy px-4 py-2.5 font-display text-sm font-extrabold text-white">Orchid Petals (Sec 49)</button>
+        <button type="button" role="tab" id="mapOrchid" data-map-src="https://maps.google.com/maps?q=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018&amp;z=16&amp;output=embed" aria-selected="true" class="map-tab rounded-full bg-navy px-4 py-2.5 font-display text-sm font-extrabold text-white">Orchid Petals (Sec 49)</button>
         <button type="button" role="tab" id="mapSapphire" data-map-src="https://maps.google.com/maps?q=F-193%2C%20First%20Floor%2C%20Sapphire%2083%20Mall%2C%20Sector%2083%2C%20Gurgaon%20122004&amp;z=16&amp;output=embed" aria-selected="false" class="map-tab rounded-full bg-white px-4 py-2.5 font-display text-sm font-extrabold text-navy shadow-card">Sapphire 83 Mall (Sec 83)</button>
       </div>
     </div>
-    <iframe id="storeMap" title="Orchid Petals, Sector 49, on Google Maps" class="block h-[420px] w-full border-0 sm:h-[520px] lg:h-[560px]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018&amp;z=16&amp;output=embed"></iframe>
+    <iframe id="storeMap" title="Orchid Petals, Sector 49, on Google Maps" class="block h-[420px] w-full border-0 sm:h-[520px] lg:h-[560px]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018&amp;z=16&amp;output=embed"></iframe>
   </section>
 
   <!-- CTA Banner -->

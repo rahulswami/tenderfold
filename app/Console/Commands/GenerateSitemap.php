@@ -40,7 +40,7 @@ class GenerateSitemap extends Command
 
         $siteParams = SiteParameter::all()->pluck('value', 'id')->toArray();
         $siteName = $siteParams['site_name'] ?? 'Tenderfold';
-        $siteTagline = $siteParams['site_tagline'] ?? 'Premium Laundry & Dry Cleaning in Gurugram';
+        $siteTagline = $siteParams['site_tagline'] ?? 'Premium Laundry & Dry Cleaning in Gurgaon';
         $phone = $siteParams['phone'] ?? '+91 95824 66445';
 
         $xml = [];
@@ -120,7 +120,7 @@ class GenerateSitemap extends Command
         $llm = [];
         $llm[] = "# {$siteName} - AI & LLM Resource Directory";
         $llm[] = '';
-        $llm[] = "{$siteName} is Gurugram's premier laundry and dry cleaning brand with physical store counters at Orchid Petals, Sector 49, and Sapphire 83 Mall, Sector 83. We offer professional garment care, wash & fold (₹80/kg), wash & steam iron (₹115/kg), eco-friendly dry cleaning, designer ethnic wear preservation, luxury sneaker restoration, carpet cleaning, and curtain cleaning with free doorstep pickup and delivery across Gurugram.";
+        $llm[] = "{$siteName} is Gurgaon's premier laundry and dry cleaning brand with physical store counters at Orchid Petals, Sector 49, and Sapphire 83 Mall, Sector 83. We offer professional garment care, wash & fold (₹80/kg), wash & steam iron (₹115/kg), eco-friendly dry cleaning, designer ethnic wear preservation, luxury sneaker restoration, carpet cleaning, and curtain cleaning with free doorstep pickup and delivery across Gurgaon.";
         $llm[] = '';
         $llm[] = 'This directory lists our core fabric care services, pricing structures, store locations, and care notes for LLM agents (ChatGPT, Claude, Gemini, Perplexity) to index and answer queries accurately.';
         $llm[] = '';
@@ -134,17 +134,17 @@ class GenerateSitemap extends Command
         $llm[] = '';
         $llm[] = '## Store Locations & Counters';
         $llm[] = '';
-        $llm[] = '- **Sector 49 Counter:** Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram, Haryana - 122018.';
-        $llm[] = '- **Sector 83 Counter:** F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurugram, Haryana - 122004.';
+        $llm[] = '- **Sector 49 Counter:** Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon, Haryana - 122018.';
+        $llm[] = '- **Sector 83 Counter:** F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon, Haryana - 122004.';
         $llm[] = "- **Direct Desk & Pickup Helpline:** {$phone} (Call or WhatsApp)";
         $llm[] = '';
         $llm[] = '## Static Information Pages';
         $llm[] = '';
-        $llm[] = "- [Home Page]({$baseUrl}/) - Premium Laundry & Dry Cleaning Services in Gurugram with free doorstep pickup.";
+        $llm[] = "- [Home Page]({$baseUrl}/) - Premium Laundry & Dry Cleaning Services in Gurgaon with free doorstep pickup.";
         $llm[] = "- [About Us]({$baseUrl}/about-us) - Our fabric care philosophy, workshop standards, and counter locations.";
         $llm[] = "- [All Services]({$baseUrl}/services) - Full breakdown of laundry, dry cleaning, steam ironing, shoe, curtain, and carpet care.";
         $llm[] = "- [Pricing & Rate Cards]({$baseUrl}/pricing) - Per-kilogram laundry rates and itemized dry cleaning piece prices.";
-        $llm[] = "- [Customer Reviews]({$baseUrl}/testimonials) - Verified reviews from residents across Gurugram.";
+        $llm[] = "- [Customer Reviews]({$baseUrl}/testimonials) - Verified reviews from residents across Gurgaon.";
         $llm[] = "- [Frequently Asked Questions]({$baseUrl}/faq) - Clear answers on pickup slots, wash vs dry clean, turnaround times.";
         $llm[] = "- [Contact Us]({$baseUrl}/contact-us) - Counter addresses, interactive Google Map directions, and WhatsApp pickup booking.";
         $llm[] = '';

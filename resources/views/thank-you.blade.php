@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pickup Scheduled Successfully | Tenderfold Gurugram')
+@section('title', 'Pickup Scheduled Successfully | Tenderfold Gurgaon')
 @section('meta_description', 'Thank you for choosing Tenderfold. Your pickup request has been received.')
 
 @section('content')

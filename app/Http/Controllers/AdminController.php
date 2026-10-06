@@ -1236,7 +1236,7 @@ class AdminController extends Controller
         $existingContent = $request->input('existing_content');
 
         $siteName = \App\Models\SiteParameter::where('id', 'site_name')->value('value') ?: 'Tenderfold';
-        $siteTagline = \App\Models\SiteParameter::where('id', 'site_tagline')->value('value') ?: 'Premium Laundry & Dry Cleaning in Gurugram';
+        $siteTagline = \App\Models\SiteParameter::where('id', 'site_tagline')->value('value') ?: 'Premium Laundry & Dry Cleaning in Gurgaon';
 
         if (!empty($existingContent)) {
             $systemPrompt = "You are an expert fabric care, laundry, dry cleaning, and lifestyle copywriter and SEO specialist. The user wants to EXTEND the content of an existing blog article for {$siteName} ({$siteTagline}).
@@ -2734,8 +2734,8 @@ Summary: \"{$summary}\"
 Page Link: \"{$url}\"
 
 Strict Instructions:
-1. Write a compelling summary of the article/service suitable for local audiences in Gurugram (under 800 characters).
-2. Incorporate 2-3 relevant hashtags (e.g. #LaundryGurugram, #DryCleaningGurgaon, #Tenderfold, etc.).
+1. Write a compelling summary of the article/service suitable for local audiences in Gurgaon (under 800 characters).
+2. Incorporate 2-3 relevant hashtags (e.g. #LaundryGurgaon, #DryCleaningGurgaon, #Tenderfold, etc.).
 3. End with a strong call-to-action phrase prompting users to click 'Learn More' to visit the link.
 4. Keep the draft strictly under 1400 characters (Google GBP limit is 1500).
 5. Output ONLY the drafted post text directly without markdown quotes, backticks, or introduction.";
@@ -2835,19 +2835,19 @@ Strict Instructions:
 
         $siteParams = SiteParameter::all()->pluck('value', 'id')->toArray();
         $siteName = $siteParams['site_name'] ?? 'Tenderfold';
-        $siteTagline = $siteParams['site_tagline'] ?? 'Premium Laundry & Dry Cleaning in Gurugram';
+        $siteTagline = $siteParams['site_tagline'] ?? 'Premium Laundry & Dry Cleaning in Gurgaon';
         $baseUrl = rtrim(config('app.url') ?? 'https://tenderfold.in', '/');
 
         if ($type === 'home') {
             $pageTitle = 'Home Page | ' . $siteName;
             $pageUrl = $baseUrl . '/';
-            $pageDescription = $siteName . ' — ' . $siteTagline . '. Premium laundry, wash & fold, steam ironing, and dry cleaning with doorstep pickup in Gurugram.';
+            $pageDescription = $siteName . ' — ' . $siteTagline . '. Premium laundry, wash & fold, steam ironing, and dry cleaning with doorstep pickup in Gurgaon.';
             
             $extraContext = "Business Name: " . $siteName . "\n" .
                             "Tagline: " . $siteTagline . "\n" .
                             "Phone: " . ($siteParams['phone'] ?? '+91 95824 66445') . "\n" .
                             "Email: " . ($siteParams['email'] ?? 'info@tenderfold.in') . "\n" .
-                            "Address: " . ($siteParams['address'] ?? 'Sector 49 & Sector 83, Gurugram');
+                            "Address: " . ($siteParams['address'] ?? 'Sector 49 & Sector 83, Gurgaon');
         } elseif ($type === 'service') {
             $service = \App\Models\Service::find($id);
             if (!$service) {

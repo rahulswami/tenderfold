@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', ($faqPage->metatitle ?? 'Frequently Asked Questions | Tenderfold Laundry Gurugram'))
-@section('meta_description', ($faqPage->metadescription ?? 'Common questions about laundry per kg rates, dry cleaning turnaround times, free pickup & delivery, and garment care at Tenderfold Gurugram.'))
-@section('meta_keywords', ($faqPage->metakeywords ?? 'laundry faq gurugram, dry cleaning pricing queries, tenderfold pickup questions'))
+@section('title', ($faqPage->metatitle ?? 'Frequently Asked Questions | Tenderfold Laundry Gurgaon'))
+@section('meta_description', ($faqPage->metadescription ?? 'Common questions about laundry per kg rates, dry cleaning turnaround times, free pickup & delivery, and garment care at Tenderfold Gurgaon.'))
+@section('meta_keywords', ($faqPage->metakeywords ?? 'laundry faq gurgaon, dry cleaning pricing queries, tenderfold pickup questions'))
 
 @section('content')
 <main id="main">
@@ -67,7 +67,7 @@
             </span>
           </summary>
           <div class="mt-4 text-sm leading-relaxed text-mute border-t border-navy/10 pt-4">
-            We have two physical counters in Gurugram: 
+            We have two physical counters in Gurgaon: 
             <br>1. <strong>Sector 49:</strong> Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II.
             <br>2. <strong>Sector 83:</strong> F-193, First Floor, Sapphire 83 Mall.
           </div>

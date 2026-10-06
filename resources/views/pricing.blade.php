@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Pricing & Rate Card | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurugram')
-@section('meta_description', 'Clear, transparent pricing for laundry by kilo, dry cleaning, steam ironing, shoe laundry, curtains and carpets in Gurugram.')
+@section('title', 'Pricing & Rate Card | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurgaon')
+@section('meta_description', 'Clear, transparent pricing for laundry by kilo, dry cleaning, steam ironing, shoe laundry, curtains and carpets in Gurgaon.')
 
 @section('content')
     <section class="bg-cream">

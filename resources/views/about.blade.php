@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'About Us | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurugram')
-@section('meta_description', 'Tender Fold is a premium laundry and dry cleaner with counters at Sector 49 and Sector 83, Gurugram. Free doorstep pickup and delivery.')
+@section('title', 'About Us | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurgaon')
+@section('meta_description', 'Tender Fold is a premium laundry and dry cleaner with counters at Sector 49 and Sector 83, Gurgaon. Free doorstep pickup and delivery.')
 
 @section('content')
     <section class="bg-cream">
       <div class="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
         <div class="reveal">
           <p class="text-sm font-semibold text-mute"><a href="{{ route('home') }}" class="transition hover:text-navy">Home</a> <span aria-hidden="true">/</span> <span class="text-navy">About</span></p>
-          <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Gurugram · two counters</p>
+          <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Gurgaon · two counters</p>
           <h1 class="mt-3 font-display text-4xl font-extrabold leading-tight text-navy sm:text-5xl">Clothes looked after, then folded as if they were staying.</h1>
-          <p class="mt-4 text-lg leading-relaxed text-mute">Tender Fold is a laundry and dry cleaner with counters at Orchid Petals, Sector 49, and Sapphire 83 Mall, Sector 83. Pickup and delivery cover Gurugram.</p>
+          <p class="mt-4 text-lg leading-relaxed text-mute">Tender Fold is a laundry and dry cleaner with counters at Orchid Petals, Sector 49, and Sapphire 83 Mall, Sector 83. Pickup and delivery cover Gurgaon.</p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep shadow-md">Schedule a Pickup</button>
             <a href="{{ route('contact') }}" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">Find the counters</a>
@@ -44,19 +44,19 @@
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-10">
           <p class="text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Our Locations</p>
-          <h2 class="mt-2 font-display text-3xl font-extrabold text-navy sm:text-4xl">Visit Our Gurugram Counters</h2>
+          <h2 class="mt-2 font-display text-3xl font-extrabold text-navy sm:text-4xl">Visit Our Gurgaon Counters</h2>
         </div>
         <div class="grid gap-6 lg:grid-cols-2">
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018" target="_blank" rel="noopener" class="reveal group rounded-3xl bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018" target="_blank" rel="noopener" class="reveal group rounded-3xl bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
             <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 49 Counter</p>
             <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Orchid Petals Plaza</h2>
-            <p class="mt-3 text-sm leading-relaxed text-mute">Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram, Haryana - 122018</p>
+            <p class="mt-3 text-sm leading-relaxed text-mute">Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon, Haryana - 122018</p>
             <p class="mt-4 font-display text-sm font-extrabold text-navy inline-flex items-center gap-1 group-hover:text-gold transition">Open in Google Maps →</p>
           </a>
           <a href="https://www.google.com/maps/search/?api=1&amp;query=F-193%20First%20Floor%20Sapphire%2083%20Mall%20Sector%2083%20Gurgaon%20122004" target="_blank" rel="noopener" class="reveal group rounded-3xl bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift" style="animation-delay:80ms">
             <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 83 Counter</p>
             <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Sapphire 83 Mall</h2>
-            <p class="mt-3 text-sm leading-relaxed text-mute">F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurugram, Haryana - 122004</p>
+            <p class="mt-3 text-sm leading-relaxed text-mute">F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon, Haryana - 122004</p>
             <p class="mt-4 font-display text-sm font-extrabold text-navy inline-flex items-center gap-1 group-hover:text-gold transition">Open in Google Maps →</p>
           </a>
         </div>

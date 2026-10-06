@@ -10,9 +10,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   @php
-    $defaultTitle = ($site['site_name'] ?? 'Tenderfold') . ' | ' . ($site['site_tagline'] ?? 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurugram');
-    $defaultDesc = $site['meta_description'] ?? 'Tenderfold is a premium laundry and dry cleaner in Gurugram. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.';
-    $defaultKeywords = $site['meta_keywords'] ?? 'laundry gurugram, dry cleaning gurugram, wash and fold, steam ironing, shoe cleaning, carpet cleaning, sector 49, sector 83, tenderfold';
+    $defaultTitle = ($site['site_name'] ?? 'Tenderfold') . ' | ' . ($site['site_tagline'] ?? 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurgaon');
+    $defaultDesc = $site['meta_description'] ?? 'Tenderfold is a premium laundry and dry cleaner in Gurgaon. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.';
+    $defaultKeywords = $site['meta_keywords'] ?? 'laundry gurgaon, dry cleaning gurgaon, wash and fold, steam ironing, shoe cleaning, carpet cleaning, sector 49, sector 83, tenderfold';
     $canonicalUrl = View::hasSection('canonical') ? View::getSection('canonical') : url()->current();
     $pageTitle = View::hasSection('title') ? View::getSection('title') : $defaultTitle;
     $pageDesc = View::hasSection('meta_description') ? View::getSection('meta_description') : $defaultDesc;
@@ -176,7 +176,7 @@
             <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold text-navy" aria-hidden="true">
               <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.2"/></svg>
             </span>
-            Sector 49 &amp; Sector 83, Gurugram
+            Sector 49 &amp; Sector 83, Gurgaon
           </a>
         </div>
       </div>
@@ -256,7 +256,7 @@
     <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
       <div>
         <img src="{{ asset('assets/logo-light.png') }}" alt="{{ $site['site_name'] ?? 'Tender Fold' }}" class="h-12 w-auto" width="685" height="193">
-        <p class="mt-4 max-w-xs text-sm leading-relaxed text-white/70">{{ $site['site_tagline'] ?? 'Premium laundry and dry cleaning in Gurugram. More than laundry — it is a care routine.' }}</p>
+        <p class="mt-4 max-w-xs text-sm leading-relaxed text-white/70">{{ $site['site_tagline'] ?? 'Premium laundry and dry cleaning in Gurgaon. More than laundry — it is a care routine.' }}</p>
       </div>
 
       <div>
@@ -282,18 +282,18 @@
             </a>
           </li>
           <li>
-            <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurugram%2C%20Haryana%20122018" target="_blank" rel="noopener" class="block leading-relaxed transition hover:text-gold">
+            <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018" target="_blank" rel="noopener" class="block leading-relaxed transition hover:text-gold">
               <span class="block font-semibold text-white">Orchid Petals</span>
-              Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram - 122018
+              Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon - 122018
             </a>
           </li>
           <li>
             <a href="https://www.google.com/maps/search/?api=1&amp;query=F-193%20First%20Floor%20Sapphire%2083%20Mall%20Sector%2083%20Gurgaon%20122004" target="_blank" rel="noopener" class="block leading-relaxed transition hover:text-gold">
               <span class="block font-semibold text-white">Sapphire 83 Mall</span>
-              F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurugram - 122004
+              F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon - 122004
             </a>
           </li>
-          <li>Free pickup &amp; delivery across Gurugram</li>
+          <li>Free pickup &amp; delivery across Gurgaon</li>
         </ul>
       </div>
 

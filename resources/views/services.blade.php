@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'All Services | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurugram')
-@section('meta_description', 'Explore Tender Fold services in Gurugram: Laundry Services, Dry Cleaning, Steam Ironing, Shoe Cleaning, Carpet Spa, and Curtain Care.')
+@section('title', 'All Services | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurgaon')
+@section('meta_description', 'Explore Tender Fold services in Gurgaon: Laundry Services, Dry Cleaning, Steam Ironing, Shoe Cleaning, Carpet Spa, and Curtain Care.')
 
 @section('content')
     <section class="bg-cream">

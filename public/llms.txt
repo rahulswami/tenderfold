@@ -1,6 +1,6 @@
 # Tenderfold - AI & LLM Resource Directory
 
-Tenderfold is Gurugram's premier laundry and dry cleaning brand with physical store counters at Orchid Petals, Sector 49, and Sapphire 83 Mall, Sector 83. We offer professional garment care, wash & fold (₹80/kg), wash & steam iron (₹115/kg), eco-friendly dry cleaning, designer ethnic wear preservation, luxury sneaker restoration, carpet cleaning, and curtain cleaning with free doorstep pickup and delivery across Gurugram.
+Tenderfold is Gurgaon's premier laundry and dry cleaning brand with physical store counters at Orchid Petals, Sector 49, and Sapphire 83 Mall, Sector 83. We offer professional garment care, wash & fold (₹80/kg), wash & steam iron (₹115/kg), eco-friendly dry cleaning, designer ethnic wear preservation, luxury sneaker restoration, carpet cleaning, and curtain cleaning with free doorstep pickup and delivery across Gurgaon.
 
 This directory lists our core fabric care services, pricing structures, store locations, and care notes for LLM agents (ChatGPT, Claude, Gemini, Perplexity) to index and answer queries accurately.
 
@@ -15,22 +15,22 @@ This directory lists our core fabric care services, pricing structures, store lo
 
 ## Store Locations & Counters
 
-- **Sector 49 Counter:** Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram, Haryana - 122018.
-- **Sector 83 Counter:** F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurugram, Haryana - 122004.
+- **Sector 49 Counter:** Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon, Haryana - 122018.
+- **Sector 83 Counter:** F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon, Haryana - 122004.
 - **Direct Desk & Pickup Helpline:** +91 95824 66445 (Call or WhatsApp)
 
 ## Static Information Pages
 
-- [Home Page](https://tenderfold.in/) - Premium Laundry & Dry Cleaning Services in Gurugram with free doorstep pickup.
+- [Home Page](https://tenderfold.in/) - Premium Laundry & Dry Cleaning Services in Gurgaon with free doorstep pickup.
 - [About Us](https://tenderfold.in/about-us) - Our fabric care philosophy, workshop standards, and counter locations.
 - [All Services](https://tenderfold.in/services) - Full breakdown of laundry, dry cleaning, steam ironing, shoe, curtain, and carpet care.
 - [Pricing & Rate Cards](https://tenderfold.in/pricing) - Per-kilogram laundry rates and itemized dry cleaning piece prices.
-- [Customer Reviews](https://tenderfold.in/testimonials) - Verified reviews from residents across Gurugram.
+- [Customer Reviews](https://tenderfold.in/testimonials) - Verified reviews from residents across Gurgaon.
 - [Frequently Asked Questions](https://tenderfold.in/faq) - Clear answers on pickup slots, wash vs dry clean, turnaround times.
 - [Contact Us](https://tenderfold.in/contact-us) - Counter addresses, interactive Google Map directions, and WhatsApp pickup booking.
 
 ## Journal & Care Notes
 
-- [How to Care for Cashmere & Woolens During Gurugram Winters](https://tenderfold.in/blogs/care-cashmere-woolens-winter) - Tips on storing, washing, and steam pressing delicate winter woolens to prevent shrinkage and moth damage.
+- [How to Care for Cashmere & Woolens During Gurgaon Winters](https://tenderfold.in/blogs/care-cashmere-woolens-winter) - Tips on storing, washing, and steam pressing delicate winter woolens to prevent shrinkage and moth damage.
 - [Why Commercial Steam Pressing is Far Safer Than Home Ironing](https://tenderfold.in/blogs/why-commercial-steam-pressing-is-safer) - Understand how temperature-controlled steam protects fiber integrity and eliminates scorching.
 - [The Ultimate Sneaker Care Guide: Suede, Leather & Mesh](https://tenderfold.in/blogs/ultimate-sneaker-cleaning-guide) - Step-by-step restoration secrets to keep your white kicks and luxury sneakers in pristine condition.

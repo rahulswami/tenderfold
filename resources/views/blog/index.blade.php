@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', ($blogsPage->metatitle ?? 'Journal & Care Notes | Tenderfold Gurugram'))
-@section('meta_description', ($blogsPage->metadescription ?? 'Care notes, fabric tips, and wardrobe advice from the Tenderfold laundry counter. Learn what to wash, dry clean, or steam press in Gurugram.'))
-@section('meta_keywords', ($blogsPage->metakeywords ?? 'laundry tips gurugram, dry cleaning advice, silk care guide, woolens dry clean gurgaon'))
+@section('title', ($blogsPage->metatitle ?? 'Journal & Care Notes | Tenderfold Gurgaon'))
+@section('meta_description', ($blogsPage->metadescription ?? 'Care notes, fabric tips, and wardrobe advice from the Tenderfold laundry counter. Learn what to wash, dry clean, or steam press in Gurgaon.'))
+@section('meta_keywords', ($blogsPage->metakeywords ?? 'laundry tips gurgaon, dry cleaning advice, silk care guide, woolens dry clean gurgaon'))
 
 @section('content')
 <main id="main">
@@ -17,7 +17,7 @@
         </p>
         <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Care notes</p>
         <h1 class="mt-3 font-display text-4xl font-extrabold text-navy sm:text-5xl">What to send, and what to keep out of the machine.</h1>
-        <p class="mt-4 text-lg text-mute">Practical fabric notes and wardrobe care advice from our counters in Sector 49 and Sector 83, Gurugram.</p>
+        <p class="mt-4 text-lg text-mute">Practical fabric notes and wardrobe care advice from our counters in Sector 49 and Sector 83, Gurgaon.</p>
         <button type="button" data-open-book class="mt-8 inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Ask us about a piece</button>
       </div>
 

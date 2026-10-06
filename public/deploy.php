@@ -422,7 +422,7 @@ if ($pdo) {
     try {
         $pdo->exec("UPDATE `services` SET `rate_value` = REPLACE(`rate_value`, 'â‚¹', '₹') WHERE `rate_value` LIKE '%â‚¹%'");
         $pdo->exec("UPDATE `services` SET `summary` = REPLACE(`summary`, 'â€™', '\''), `hero_subtitle` = REPLACE(`hero_subtitle`, 'â€™', '\'') WHERE `summary` LIKE '%â€™%' OR `hero_subtitle` LIKE '%â€™%'");
-        $pdo->exec("UPDATE `home_slides` SET `subtitle` = REPLACE(`subtitle`, 'Gurugramâ€™s', 'Gurugram\'s') WHERE `subtitle` LIKE '%Gurugramâ€™s%'");
+        $pdo->exec("UPDATE `home_slides` SET `subtitle` = REPLACE(`subtitle`, 'Gurgaonâ€™s', 'Gurgaon\'s') WHERE `subtitle` LIKE '%Gurgaonâ€™s%'");
         $pdo->exec("UPDATE `home_slides` SET `subtitle` = REPLACE(`subtitle`, 'â€™', '\'') WHERE `subtitle` LIKE '%â€™%'");
         $pdo->exec("UPDATE `home_slides` SET `title` = REPLACE(`title`, 'â€“', ' - ') WHERE `title` LIKE '%â€“%'");
         $pdo->exec("UPDATE `site_parameters` SET `value` = REPLACE(`value`, 'â€”', ' - ') WHERE `value` LIKE '%â€”%'");
@@ -448,13 +448,13 @@ if ($pdo) {
     // 7.13 Seed Core Parameters if missing
     $coreParams = [
         ['site_name', 'Tenderfold', 'Site Name', 'general'],
-        ['site_tagline', 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurugram', 'Site Tagline', 'general'],
-        ['meta_description', 'Tenderfold is a premium laundry and dry cleaner in Gurugram. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care. Call +91 95824 66445.', 'Default Meta Description', 'general'],
-        ['meta_keywords', 'laundry gurugram, dry cleaning gurugram, wash and fold, steam ironing, shoe cleaning, carpet cleaning, sector 49, sector 83, tenderfold', 'Default Meta Keywords', 'general'],
+        ['site_tagline', 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurgaon', 'Site Tagline', 'general'],
+        ['meta_description', 'Tenderfold is a premium laundry and dry cleaner in Gurgaon. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care. Call +91 95824 66445.', 'Default Meta Description', 'general'],
+        ['meta_keywords', 'laundry gurgaon, dry cleaning gurgaon, wash and fold, steam ironing, shoe cleaning, carpet cleaning, sector 49, sector 83, tenderfold', 'Default Meta Keywords', 'general'],
         ['phone', '+91 95824 66445', 'Contact Phone Number', 'contact'],
         ['phone_display', '+91 95824 66445', 'Display Phone Number', 'contact'],
         ['email', 'info@tenderfold.in', 'Contact Email Address', 'contact'],
-        ['address', 'Sector 49 & Sector 83, Gurugram, Haryana - 122018', 'Physical Address', 'contact'],
+        ['address', 'Sector 49 & Sector 83, Gurgaon, Haryana - 122018', 'Physical Address', 'contact'],
         ['whatsapp_number', '919582466445', 'WhatsApp Number', 'contact'],
         ['logo_path', 'assets/logo.png', 'Logo Image', 'branding'],
         ['favicon_path', 'assets/logo.png', 'Favicon Image', 'branding'],
@@ -586,7 +586,7 @@ if (function_exists('exec')) {
   </div>
 
   <footer class="text-center py-6 text-xs text-gray-500">
-    Tenderfold Clean & Care • Gurugram, Haryana • <a href="https://tenderfold.in" class="text-navy font-semibold">tenderfold.in</a>
+    Tenderfold Clean & Care • Gurgaon, Haryana • <a href="https://tenderfold.in" class="text-navy font-semibold">tenderfold.in</a>
   </footer>
 </body>
 </html>

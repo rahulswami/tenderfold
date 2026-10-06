@@ -1286,7 +1286,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="clinic_locations_short">Header Short Locations Text</label>
-                                <input type="text" id="clinic_locations_short" name="clinic_locations_short" class="form-control" value="{{ $site['clinic_locations_short'] ?? 'Sector 49 & Sector 83, Gurugram' }}">
+                                <input type="text" id="clinic_locations_short" name="clinic_locations_short" class="form-control" value="{{ $site['clinic_locations_short'] ?? 'Sector 49 & Sector 83, Gurgaon' }}">
                             </div>
                             <div class="form-group">
                                 <label for="phone_display">Display Helpline Number</label>
@@ -1305,16 +1305,16 @@
                         <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">Manage footer description, hub addresses, and copyright line.</p>
                         <div class="form-group" style="margin-bottom: 1.25rem;">
                             <label for="footer_description">Footer About Description</label>
-                            <textarea id="footer_description" name="footer_description" class="form-control" rows="3">{{ $site['footer_description'] ?? 'Tenderfold is Gurugram\'s trusted premium laundry, dry cleaning & specialized fabric care service. Doorstep pickup across all major sectors.' }}</textarea>
+                            <textarea id="footer_description" name="footer_description" class="form-control" rows="3">{{ $site['footer_description'] ?? 'Tenderfold is Gurgaon\'s trusted premium laundry, dry cleaning & specialized fabric care service. Doorstep pickup across all major sectors.' }}</textarea>
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="address_baner">Sector 49 Hub Address</label>
-                                <input type="text" id="address_baner" name="address_baner" class="form-control" value="{{ $site['address_baner'] ?? 'Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurugram - 122018' }}">
+                                <input type="text" id="address_baner" name="address_baner" class="form-control" value="{{ $site['address_baner'] ?? 'Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon - 122018' }}">
                             </div>
                             <div class="form-group">
                                 <label for="address_hinjewadi">Sector 83 Hub Address</label>
-                                <input type="text" id="address_hinjewadi" name="address_hinjewadi" class="form-control" value="{{ $site['address_hinjewadi'] ?? 'F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurugram - 122004' }}">
+                                <input type="text" id="address_hinjewadi" name="address_hinjewadi" class="form-control" value="{{ $site['address_hinjewadi'] ?? 'F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon - 122004' }}">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="copyright_text">Footer Copyright Line</label>
@@ -1798,7 +1798,7 @@
 
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="chat_ai_custom_prompt">Custom AI Receptionist System Prompt / Instructions</label>
-                                <textarea id="chat_ai_custom_prompt" name="chat_ai_custom_prompt" class="form-control" rows="4" placeholder="e.g. Tenderfold is open Mon-Sun 8am-9pm. Free pickup & delivery across Gurugram. Premium wash & fold, dry cleaning, steam ironing, shoe spa.">{{ $site['chat_ai_custom_prompt'] ?? '' }}</textarea>
+                                <textarea id="chat_ai_custom_prompt" name="chat_ai_custom_prompt" class="form-control" rows="4" placeholder="e.g. Tenderfold is open Mon-Sun 8am-9pm. Free pickup & delivery across Gurgaon. Premium wash & fold, dry cleaning, steam ironing, shoe spa.">{{ $site['chat_ai_custom_prompt'] ?? '' }}</textarea>
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Add specific laundry pricing, timings, or pickup guidelines to instruct Gemini AI.</span>
                             </div>
 
@@ -1948,7 +1948,7 @@
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="slide_eyebrow">Eyebrow Badge Text</label>
-                                <input type="text" id="slide_eyebrow" name="eyebrow" class="form-control" placeholder="e.g. Premium Laundry & Dry Cleaner in Gurugram">
+                                <input type="text" id="slide_eyebrow" name="eyebrow" class="form-control" placeholder="e.g. Premium Laundry & Dry Cleaner in Gurgaon">
                             </div>
                             <div class="form-group">
                                 <label for="slide_title">Slide Main Title <span style="color:#ef4444;">*</span> <small style="color:var(--admin-text-muted); font-weight:normal;">(supports &lt;span class="highlight-blue"&gt;)</small></label>
@@ -1956,7 +1956,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="slide_subtitle">Slide Subtitle / Description</label>
-                                <textarea id="slide_subtitle" name="subtitle" class="form-control" rows="2" placeholder="e.g. Gurugram's trusted premium laundry, dry cleaning & specialized fabric spa. Doorstep pickup across all major sectors."></textarea>
+                                <textarea id="slide_subtitle" name="subtitle" class="form-control" rows="2" placeholder="e.g. Gurgaon's trusted premium laundry, dry cleaning & specialized fabric spa. Doorstep pickup across all major sectors."></textarea>
                             </div>
                         </div>
 
@@ -2004,7 +2004,7 @@
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label>Stat 3 (Number / Label)</label>
                                     <input type="text" id="slide_trust_3_num" name="trust_3_num" class="form-control" placeholder="Sector 49 & 83" style="margin-bottom: 6px;">
-                                    <input type="text" id="slide_trust_3_label" name="trust_3_label" class="form-control" placeholder="Gurugram Hubs">
+                                    <input type="text" id="slide_trust_3_label" name="trust_3_label" class="form-control" placeholder="Gurgaon Hubs">
                                 </div>
                             </div>
                         </div>
@@ -2157,7 +2157,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="test_role">Client Subtitle/Role</label>
-                                <input type="text" id="test_role" name="role" class="form-control" placeholder="South City II, Gurugram">
+                                <input type="text" id="test_role" name="role" class="form-control" placeholder="South City II, Gurgaon">
                             </div>
                             <div class="form-group">
                                 <label for="test_rating">Rating (1 to 5 Stars)</label>
@@ -2310,7 +2310,7 @@
                         <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1.5rem;margin-top:-1rem;">Controls the large hero slider area headline, subtitle, eyebrow badge, and trust statistics.</p>
                         <div class="form-group">
                             <label>Eyebrow Badge Text (above H1)</label>
-                            <input type="text" name="contents[home][hero][eyebrow]" class="form-control" placeholder="Premium Laundry & Dry Cleaner in Gurugram" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','eyebrow')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][hero][eyebrow]" class="form-control" placeholder="Premium Laundry & Dry Cleaner in Gurgaon" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','eyebrow')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>Hero Main H1 Title</label>
@@ -2318,7 +2318,7 @@
                         </div>
                         <div class="form-group">
                             <label>Hero Subtitle / Description</label>
-                            <textarea name="contents[home][hero][subtitle]" class="form-control" rows="3" placeholder="Gurugram's trusted premium laundry, dry cleaning & specialized fabric spa. Doorstep pickup across all major sectors.">{{ $pageContents->where('page','home')->where('section','hero')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][hero][subtitle]" class="form-control" rows="3" placeholder="Gurgaon's trusted premium laundry, dry cleaning & specialized fabric spa. Doorstep pickup across all major sectors.">{{ $pageContents->where('page','home')->where('section','hero')->where('key','subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                         <hr style="border:0;border-top:1px solid var(--admin-border);margin:1.5rem 0;">
                         <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1rem;"><strong>Trust Statistics Row</strong> — Key numbers and value badges.</p>
@@ -2345,7 +2345,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Trust Stat 3 — Label</label>
-                                <input type="text" name="contents[home][hero][trust_3_label]" class="form-control" placeholder="Gurugram Hubs" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_label')->first()->value ?? '' }}">
+                                <input type="text" name="contents[home][hero][trust_3_label]" class="form-control" placeholder="Gurgaon Hubs" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_label')->first()->value ?? '' }}">
                             </div>
                         </div>
                     </div>
@@ -2380,7 +2380,7 @@
                         </div>
                         <div class="form-group">
                             <label>Services Intro Text</label>
-                            <textarea name="contents[home][services][subtitle]" class="form-control" rows="3" placeholder="From everyday wash & fold to bridal dry cleaning, shoe care, drapes, and rugs in Gurugram.">{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][services][subtitle]" class="form-control" rows="3" placeholder="From everyday wash & fold to bridal dry cleaning, shoe care, drapes, and rugs in Gurgaon.">{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
@@ -2402,11 +2402,11 @@
                         <h2>⭐ Homepage — Testimonials Section</h2>
                         <div class="form-group">
                             <label>Section Heading</label>
-                            <input type="text" name="contents[home][testimonials][heading]" class="form-control" placeholder="What Gurugram Says About Tenderfold" value="{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','heading')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][testimonials][heading]" class="form-control" placeholder="What Gurgaon Says About Tenderfold" value="{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','heading')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>Section Subtitle</label>
-                            <textarea name="contents[home][testimonials][subtitle]" class="form-control" rows="2" placeholder="Real reviews from households and professionals across Gurugram...">{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][testimonials][subtitle]" class="form-control" rows="2" placeholder="Real reviews from households and professionals across Gurgaon...">{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
@@ -2428,7 +2428,7 @@
                         </div>
                         <div class="form-group">
                             <label>CTA Subtitle</label>
-                            <textarea name="contents[home][cta][subtitle]" class="form-control" rows="2" placeholder="Schedule a free doorstep pickup in Gurugram today...">{{ $pageContents->where('page','home')->where('section','cta')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][cta][subtitle]" class="form-control" rows="2" placeholder="Schedule a free doorstep pickup in Gurgaon today...">{{ $pageContents->where('page','home')->where('section','cta')->where('key','subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
@@ -2637,7 +2637,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="ser_hero_title">Hero Main Title</label>
-                                <input type="text" id="ser_hero_title" name="hero_title" class="form-control" required placeholder="Everyday Laundry, Elevated Care in Gurugram">
+                                <input type="text" id="ser_hero_title" name="hero_title" class="form-control" required placeholder="Everyday Laundry, Elevated Care in Gurgaon">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_hero_subtitle">Hero Subtitle</label>
@@ -2669,7 +2669,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="ser_documents_required">Inclusions & Packaging Benefits (one per line)</label>
-                                <textarea id="ser_documents_required" name="documents_required" class="form-control" rows="4" placeholder="Free Doorstep Pickup across Gurugram&#10;Custom Starch & Softener options&#10;Neat Barcoded Packaging"></textarea>
+                                <textarea id="ser_documents_required" name="documents_required" class="form-control" rows="4" placeholder="Free Doorstep Pickup across Gurgaon&#10;Custom Starch & Softener options&#10;Neat Barcoded Packaging"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="ser_tips_title">Fabric Tips / Care Guidance Title (optional)</label>
@@ -2699,15 +2699,15 @@
                             </div>
                             <div class="form-group">
                                 <label for="ser_metatitle">Meta Title (SEO)</label>
-                                <input type="text" id="ser_metatitle" name="metatitle" class="form-control" placeholder="Laundry Services in Gurugram | Tenderfold">
+                                <input type="text" id="ser_metatitle" name="metatitle" class="form-control" placeholder="Laundry Services in Gurgaon | Tenderfold">
                             </div>
                             <div class="form-group">
                                 <label for="ser_metakeywords">Meta Keywords (Comma separated)</label>
-                                <input type="text" id="ser_metakeywords" name="metakeywords" class="form-control" placeholder="laundry gurugram, wash and fold sector 49, dry cleaning gurugram">
+                                <input type="text" id="ser_metakeywords" name="metakeywords" class="form-control" placeholder="laundry gurgaon, wash and fold sector 49, dry cleaning gurgaon">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_metadescription">Meta Description (SEO)</label>
-                                <textarea id="ser_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Doorstep wash and fold laundry services in Gurugram with individual batch hygiene."></textarea>
+                                <textarea id="ser_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Doorstep wash and fold laundry services in Gurgaon with individual batch hygiene."></textarea>
                             </div>
                             <div class="form-group">
 
@@ -3255,7 +3255,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="blog_metakeywords">Meta Keywords (Comma separated)</label>
-                                <input type="text" id="blog_metakeywords" name="metakeywords" class="form-control" placeholder="laundry, dry cleaning, gurugram">
+                                <input type="text" id="blog_metakeywords" name="metakeywords" class="form-control" placeholder="laundry, dry cleaning, gurgaon">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="blog_metadescription">Meta Description (SEO)</label>
@@ -3813,7 +3813,7 @@
                     </p>
                     <div class="form-group">
                         <label for="seo_keywords">Target Keywords (comma-separated or one per line)</label>
-                        <textarea id="seo_keywords" class="form-control" rows="3" placeholder="e.g. laundry gurugram, dry cleaning sector 49, bridal lehenga dry clean, vacuum steam pressing"></textarea>
+                        <textarea id="seo_keywords" class="form-control" rows="3" placeholder="e.g. laundry gurgaon, dry cleaning sector 49, bridal lehenga dry clean, vacuum steam pressing"></textarea>
                     </div>
                     <button type="button" class="btn-ai-sparkle" onclick="generateSeoRecommendations()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
                         <i data-lucide="sparkles"></i> Generate SEO Blueprint
@@ -4433,7 +4433,7 @@
                             <!-- Title, Message, URL -->
                             <div class="form-group" style="margin-bottom: 1rem;">
                                 <label for="broadcast_title">Notification Title</label>
-                                <input type="text" id="broadcast_title" name="title" class="form-control" required placeholder="e.g. Free Laundry Pickup in Gurugram!" oninput="updateLivePreview()">
+                                <input type="text" id="broadcast_title" name="title" class="form-control" required placeholder="e.g. Free Laundry Pickup in Gurgaon!" oninput="updateLivePreview()">
                             </div>
 
                             <div class="form-group" style="margin-bottom: 1rem;">
@@ -4539,7 +4539,7 @@
                 </div>
                 <div class="form-group">
                     <label for="ai_landing_prompt">Prompt / Describe the topic for this Landing Page</label>
-                    <textarea id="ai_landing_prompt" class="form-control" rows="4" placeholder="e.g. Dedicated landing page for bridal couture and silk saree dry cleaning in Gurugram with doorstep pickup and delicate hand finishing..."></textarea>
+                    <textarea id="ai_landing_prompt" class="form-control" rows="4" placeholder="e.g. Dedicated landing page for bridal couture and silk saree dry cleaning in Gurgaon with doorstep pickup and delicate hand finishing..."></textarea>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
                     <button type="button" class="btn-ai-sparkle" onclick="generateAiLandingPage()"><i data-lucide="sparkles"></i> Generate Content</button>
@@ -4780,7 +4780,7 @@
             <div id="ai-cms-form-wrapper">
                 <div class="form-group">
                     <label for="ai_cms_prompt">Describe the CMS Page topic/content:</label>
-                    <textarea id="ai_cms_prompt" class="form-control" rows="4" placeholder="e.g. Fabric Care Guidelines & Stain Removal Policy for Tenderfold Laundry Services, Gurugram..."></textarea>
+                    <textarea id="ai_cms_prompt" class="form-control" rows="4" placeholder="e.g. Fabric Care Guidelines & Stain Removal Policy for Tenderfold Laundry Services, Gurgaon..."></textarea>
                 </div>
                 
                 <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 10px;">
