@@ -980,8 +980,6 @@
             @if($hasAccess('testimonials'))<li class="menu-item"><a href="{{ route('admin.tab', 'testimonials') }}" class="tab-btn {{ $activeTab === 'testimonials' ? 'active' : '' }}" id="btn-testimonials"><i data-lucide="users"></i> Testimonials</a></li>@endif
             @if($hasAccess('landing'))<li class="menu-item"><a href="{{ route('admin.tab', 'landing') }}" class="tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="btn-landing"><i data-lucide="sparkles"></i> AI Landing Pages</a></li>@endif
             @if($hasAccess('services'))<li class="menu-item"><a href="{{ route('admin.tab', 'services') }}" class="tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="btn-services"><i data-lucide="layers"></i> Services Manager</a></li>@endif
-            @if($hasAccess('treatments'))<li class="menu-item"><a href="{{ route('admin.tab', 'treatments') }}" class="tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="btn-treatments"><i data-lucide="activity"></i> Treatments Manager</a></li>@endif
-            @if($hasAccess('specialists'))<li class="menu-item"><a href="{{ route('admin.tab', 'specialists') }}" class="tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="btn-specialists"><i data-lucide="user-check"></i> Specialists Manager</a></li>@endif
             @if($hasAccess('cms_pages'))<li class="menu-item"><a href="{{ route('admin.tab', 'cms_pages') }}" class="tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="btn-cms_pages"><i data-lucide="files"></i> CMS Pages Manager</a></li>@endif
             @if($hasAccess('blogs'))<li class="menu-item"><a href="{{ route('admin.tab', 'blogs') }}" class="tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="btn-blogs"><i data-lucide="book-open"></i> Blog Manager</a></li>@endif
             @if($hasAccess('media'))<li class="menu-item"><a href="{{ route('admin.tab', 'media') }}" class="tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="btn-media"><i data-lucide="hard-drive"></i> Media Manager</a></li>@endif
@@ -1059,8 +1057,6 @@
             @if($hasAccess('pagecontents'))<a href="{{ route('admin.tab', 'pagecontents') }}" class="mobile-tab-btn {{ $activeTab === 'pagecontents' ? 'active' : '' }}" id="m-btn-pagecontents"><i data-lucide="file-text" style="width: 14px; height: 14px;"></i> Pages</a>@endif
             @if($hasAccess('landing'))<a href="{{ route('admin.tab', 'landing') }}" class="mobile-tab-btn {{ $activeTab === 'landing' ? 'active' : '' }}" id="m-btn-landing"><i data-lucide="layout" style="width: 14px; height: 14px;"></i> AI Pages</a>@endif
             @if($hasAccess('services'))<a href="{{ route('admin.tab', 'services') }}" class="mobile-tab-btn {{ $activeTab === 'services' ? 'active' : '' }}" id="m-btn-services"><i data-lucide="layers" style="width: 14px; height: 14px;"></i> Services</a>@endif
-            @if($hasAccess('treatments'))<a href="{{ route('admin.tab', 'treatments') }}" class="mobile-tab-btn {{ $activeTab === 'treatments' ? 'active' : '' }}" id="m-btn-treatments"><i data-lucide="activity" style="width: 14px; height: 14px;"></i> Treatments</a>@endif
-            @if($hasAccess('specialists'))<a href="{{ route('admin.tab', 'specialists') }}" class="mobile-tab-btn {{ $activeTab === 'specialists' ? 'active' : '' }}" id="m-btn-specialists"><i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Specialists</a>@endif
             @if($hasAccess('cms_pages'))<a href="{{ route('admin.tab', 'cms_pages') }}" class="mobile-tab-btn {{ $activeTab === 'cms_pages' ? 'active' : '' }}" id="m-btn-cms_pages"><i data-lucide="files" style="width: 14px; height: 14px;"></i> CMS Pages</a>@endif
             @if($hasAccess('blogs'))<a href="{{ route('admin.tab', 'blogs') }}" class="mobile-tab-btn {{ $activeTab === 'blogs' ? 'active' : '' }}" id="m-btn-blogs"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Blogs</a>@endif
             @if($hasAccess('media'))<a href="{{ route('admin.tab', 'media') }}" class="mobile-tab-btn {{ $activeTab === 'media' ? 'active' : '' }}" id="m-btn-media"><i data-lucide="hard-drive" style="width: 14px; height: 14px;"></i> Media</a>@endif
@@ -2161,7 +2157,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="test_role">Client Subtitle/Role</label>
-                                <input type="text" id="test_role" name="role" class="form-control" placeholder="Government Teacher, Jaipur">
+                                <input type="text" id="test_role" name="role" class="form-control" placeholder="South City II, Gurugram">
                             </div>
                             <div class="form-group">
                                 <label for="test_rating">Rating (1 to 5 Stars)</label>
@@ -2311,126 +2307,93 @@
                     {{-- ── HOMEPAGE HERO ────────────────────────────────── --}}
                     <div class="admin-card">
                         <h2>🏠 Homepage — Hero Section</h2>
-                        <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1.5rem;margin-top:-1rem;">Controls the large hero slider area: headline, description, eyebrow badge, and trust statistics.</p>
+                        <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1.5rem;margin-top:-1rem;">Controls the large hero slider area headline, subtitle, eyebrow badge, and trust statistics.</p>
                         <div class="form-group">
                             <label>Eyebrow Badge Text (above H1)</label>
-                            <input type="text" name="contents[home][hero][eyebrow]" class="form-control" placeholder="Best Orthopedic Doctor in Baner, Balewadi & Pune" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','eyebrow')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][hero][eyebrow]" class="form-control" placeholder="Premium Laundry & Dry Cleaner in Gurugram" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','eyebrow')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
-                            <label>Hero Main H1 Title <small style="color:var(--admin-text-muted);">(supports <code>&lt;span class="highlight-blue"&gt;</code> HTML)</small></label>
-                            <input type="text" name="contents[home][hero][title]" class="form-control" placeholder="Pune's Most Trusted Orthopedic Surgeon" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','title')->first()->value ?? '' }}">
+                            <label>Hero Main H1 Title</label>
+                            <input type="text" name="contents[home][hero][title]" class="form-control" placeholder="Freshness in Every Single Fold." value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','title')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>Hero Subtitle / Description</label>
-                            <textarea name="contents[home][hero][subtitle]" class="form-control" rows="3" placeholder="Dr. Sumit offers world-class joint replacement, spine care and physiotherapy...">{{ $pageContents->where('page','home')->where('section','hero')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][hero][subtitle]" class="form-control" rows="3" placeholder="Gurugram's trusted premium laundry, dry cleaning & specialized fabric spa. Doorstep pickup across all major sectors.">{{ $pageContents->where('page','home')->where('section','hero')->where('key','subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                         <hr style="border:0;border-top:1px solid var(--admin-border);margin:1.5rem 0;">
-                        <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1rem;"><strong>Trust Statistics Row</strong> — The 3 numbers displayed below the CTA buttons.</p>
+                        <p style="font-size:0.85rem;color:var(--admin-text-muted);margin-bottom:1rem;"><strong>Trust Statistics Row</strong> — Key numbers and value badges.</p>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>Trust Stat 1 — Number</label>
-                                <input type="text" name="contents[home][hero][trust_1_num]" class="form-control" placeholder="20,000+" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_1_num')->first()->value ?? '' }}">
+                                <input type="text" name="contents[home][hero][trust_1_num]" class="form-control" placeholder="50,000+" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_1_num')->first()->value ?? '' }}">
                             </div>
                             <div class="form-group">
                                 <label>Trust Stat 1 — Label</label>
-                                <input type="text" name="contents[home][hero][trust_1_label]" class="form-control" placeholder="Patients Recovered" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_1_label')->first()->value ?? '' }}">
+                                <input type="text" name="contents[home][hero][trust_1_label]" class="form-control" placeholder="Garments Delivered" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_1_label')->first()->value ?? '' }}">
                             </div>
                             <div class="form-group">
                                 <label>Trust Stat 2 — Number</label>
-                                <input type="text" name="contents[home][hero][trust_2_num]" class="form-control" placeholder="15+ Yrs" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_2_num')->first()->value ?? '' }}">
+                                <input type="text" name="contents[home][hero][trust_2_num]" class="form-control" placeholder="100%" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_2_num')->first()->value ?? '' }}">
                             </div>
                             <div class="form-group">
                                 <label>Trust Stat 2 — Label</label>
-                                <input type="text" name="contents[home][hero][trust_2_label]" class="form-control" placeholder="Clinical Experience" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_2_label')->first()->value ?? '' }}">
+                                <input type="text" name="contents[home][hero][trust_2_label]" class="form-control" placeholder="Eco-Friendly Solvents" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_2_label')->first()->value ?? '' }}">
                             </div>
                             <div class="form-group">
                                 <label>Trust Stat 3 — Number</label>
-                                <input type="text" name="contents[home][hero][trust_3_num]" class="form-control" placeholder="3 Locations" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_num')->first()->value ?? '' }}">
+                                <input type="text" name="contents[home][hero][trust_3_num]" class="form-control" placeholder="Sector 49 & 83" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_num')->first()->value ?? '' }}">
                             </div>
                             <div class="form-group">
                                 <label>Trust Stat 3 — Label</label>
-                                <input type="text" name="contents[home][hero][trust_3_label]" class="form-control" placeholder="Baner · Balewadi · Hinjewadi" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_label')->first()->value ?? '' }}">
+                                <input type="text" name="contents[home][hero][trust_3_label]" class="form-control" placeholder="Gurugram Hubs" value="{{ $pageContents->where('page','home')->where('section','hero')->where('key','trust_3_label')->first()->value ?? '' }}">
                             </div>
                         </div>
                     </div>
 
-                    {{-- ── QUICK CARE FINDER ───────────────────────────── --}}
+                    {{-- ── ABOUT / FABRIC CARE ROUTINE SECTION ─────────── --}}
                     <div class="admin-card">
-                        <h2>🔍 Homepage — Quick Care Finder Strip</h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Finder Badge Text</label>
-                                <input type="text" name="contents[home][finder][badge]" class="form-control" placeholder="Quick Care Finder" value="{{ $pageContents->where('page','home')->where('section','finder')->where('key','badge')->first()->value ?? '' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Finder Heading Text</label>
-                                <input type="text" name="contents[home][finder][heading]" class="form-control" placeholder="Which condition can we help you with?" value="{{ $pageContents->where('page','home')->where('section','finder')->where('key','heading')->first()->value ?? '' }}">
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- ── APPOINTMENT BOOKING SECTION ────────────────── --}}
-                    <div class="admin-card">
-                        <h2>📅 Homepage — Appointment Booking Section</h2>
+                        <h2>ℹ️ Homepage — About & Fabric Care Section</h2>
                         <div class="form-group">
-                            <label>Section Heading</label>
-                            <input type="text" name="contents[home][appointment][heading]" class="form-control" placeholder="Book Your Priority Consultation with Dr. Sumit" value="{{ $pageContents->where('page','home')->where('section','appointment')->where('key','heading')->first()->value ?? '' }}">
+                            <label>Pre-Heading / Category Tag</label>
+                            <input type="text" name="contents[home][about][pre_title]" class="form-control" placeholder="Home & Office" value="{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'pre_title')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
-                            <label>Section Subtitle / Description</label>
-                            <textarea name="contents[home][appointment][subtitle]" class="form-control" rows="2" placeholder="Our clinical coordinators will help schedule your visit...">{{ $pageContents->where('page','home')->where('section','appointment')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                            <label>About Section Heading</label>
+                            <input type="text" name="contents[home][about][title]" class="form-control" placeholder="Care for every fabric, from Monday shirts to wedding silks." value="{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'title')->first()->value ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>About Paragraph 1</label>
+                            <textarea name="contents[home][about][body_p1]" class="form-control" rows="3" placeholder="Tenderfold is built around one habit: the cloth decides the process...">{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'body_p1')->first()->value ?? '' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>About Paragraph 2</label>
+                            <textarea name="contents[home][about][body_p2]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'body_p2')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
                     {{-- ── SERVICES SECTION ────────────────────────────── --}}
                     <div class="admin-card">
-                        <h2>🏥 Homepage — Services Grid Section</h2>
+                        <h2>🧺 Homepage — Services Grid Section</h2>
                         <div class="form-group">
                             <label>Services Heading</label>
-                            <input type="text" name="contents[home][services][title]" class="form-control" value="{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'title')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][services][title]" class="form-control" placeholder="Laundry, pressing and dry cleaning under one pickup." value="{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'title')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>Services Intro Text</label>
-                            <textarea name="contents[home][services][subtitle]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][services][subtitle]" class="form-control" rows="3" placeholder="From everyday wash & fold to bridal dry cleaning, shoe care, drapes, and rugs in Gurugram.">{{ $pageContents->where('page', 'home')->where('section', 'services')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
-                    {{-- ── PROCESS JOURNEY ─────────────────────────────── --}}
+                    {{-- ── PROCESS / HOW IT WORKS ──────────────────────── --}}
                     <div class="admin-card">
-                        <h2>🛤️ Homepage — Patient Journey (4-Step Process)</h2>
+                        <h2>🔄 Homepage — How It Works (4 Steps)</h2>
                         <div class="form-group">
                             <label>Section Heading</label>
-                            <input type="text" name="contents[home][process][heading]" class="form-control" placeholder="Your Journey to Pain-Free Living" value="{{ $pageContents->where('page','home')->where('section','process')->where('key','heading')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][process][heading]" class="form-control" placeholder="How It Works" value="{{ $pageContents->where('page','home')->where('section','process')->where('key','heading')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>Section Subtitle</label>
-                            <textarea name="contents[home][process][subtitle]" class="form-control" rows="2" placeholder="We follow a systematic, compassionate four-step protocol...">{{ $pageContents->where('page','home')->where('section','process')->where('key','subtitle')->first()->value ?? '' }}</textarea>
-                        </div>
-                    </div>
-
-                    {{-- ── FACILITIES ───────────────────────────────────── --}}
-                    <div class="admin-card">
-                        <h2>🔬 Homepage — Clinical Facilities Showcase</h2>
-                        <div class="form-group">
-                            <label>Section Heading</label>
-                            <input type="text" name="contents[home][facilities][heading]" class="form-control" placeholder="State-of-the-Art Clinical Facilities in Baner" value="{{ $pageContents->where('page','home')->where('section','facilities')->where('key','heading')->first()->value ?? '' }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Section Subtitle</label>
-                            <textarea name="contents[home][facilities][subtitle]" class="form-control" rows="2" placeholder="Modern diagnostic equipment ensuring accurate answers...">{{ $pageContents->where('page','home')->where('section','facilities')->where('key','subtitle')->first()->value ?? '' }}</textarea>
-                        </div>
-                    </div>
-
-                    {{-- ── TREATMENTS SECTION ───────────────────────────── --}}
-                    <div class="admin-card">
-                        <h2>💊 Homepage — Treatments Grid Section</h2>
-                        <div class="form-group">
-                            <label>Section Heading</label>
-                            <input type="text" name="contents[home][treatments][heading]" class="form-control" placeholder="Specialized Orthopedic Treatments in Pune" value="{{ $pageContents->where('page','home')->where('section','treatments')->where('key','heading')->first()->value ?? '' }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Section Subtitle</label>
-                            <textarea name="contents[home][treatments][subtitle]" class="form-control" rows="2" placeholder="Targeted interventions for joint, bone, muscle, and ligament disorders...">{{ $pageContents->where('page','home')->where('section','treatments')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][process][subtitle]" class="form-control" rows="2" placeholder="Four simple steps from doorstep pickup to fresh delivery...">{{ $pageContents->where('page','home')->where('section','process')->where('key','subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
@@ -2439,24 +2402,11 @@
                         <h2>⭐ Homepage — Testimonials Section</h2>
                         <div class="form-group">
                             <label>Section Heading</label>
-                            <input type="text" name="contents[home][testimonials][heading]" class="form-control" placeholder="Stories of Recovery & Renewed Hope" value="{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','heading')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][testimonials][heading]" class="form-control" placeholder="What Gurugram Says About Tenderfold" value="{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','heading')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>Section Subtitle</label>
-                            <textarea name="contents[home][testimonials][subtitle]" class="form-control" rows="2" placeholder="Read how Dr. Sumit's patient-first approach helped...">{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','subtitle')->first()->value ?? '' }}</textarea>
-                        </div>
-                    </div>
-
-                    {{-- ── CLINIC LOCATIONS SECTION ─────────────────────── --}}
-                    <div class="admin-card">
-                        <h2>📍 Homepage — Clinic Locations Section</h2>
-                        <div class="form-group">
-                            <label>Section Heading</label>
-                            <input type="text" name="contents[home][locations][heading]" class="form-control" placeholder="Visit SumitZ Clinic — Baner, Balewadi & Hinjewadi" value="{{ $pageContents->where('page','home')->where('section','locations')->where('key','heading')->first()->value ?? '' }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Section Subtitle</label>
-                            <textarea name="contents[home][locations][subtitle]" class="form-control" rows="2" placeholder="Three conveniently located clinics serving patients across Pune...">{{ $pageContents->where('page','home')->where('section','locations')->where('key','subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][testimonials][subtitle]" class="form-control" rows="2" placeholder="Real reviews from households and professionals across Gurugram...">{{ $pageContents->where('page','home')->where('section','testimonials')->where('key','subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
@@ -2465,7 +2415,7 @@
                         <h2>❓ Homepage — FAQ Section</h2>
                         <div class="form-group">
                             <label>FAQ Section Heading</label>
-                            <input type="text" name="contents[home][faq][heading]" class="form-control" placeholder="Common Questions About Orthopedic Treatment in Pune" value="{{ $pageContents->where('page','home')->where('section','faq')->where('key','heading')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][faq][heading]" class="form-control" placeholder="Frequently Asked Questions" value="{{ $pageContents->where('page','home')->where('section','faq')->where('key','heading')->first()->value ?? '' }}">
                         </div>
                     </div>
 
@@ -2474,44 +2424,11 @@
                         <h2>🚀 Homepage — Final CTA Banner</h2>
                         <div class="form-group">
                             <label>CTA Heading</label>
-                            <input type="text" name="contents[home][cta][heading]" class="form-control" placeholder="Ready to Live Pain-Free? Consult Pune's Best Orthopedic Doctor Today" value="{{ $pageContents->where('page','home')->where('section','cta')->where('key','heading')->first()->value ?? '' }}">
+                            <input type="text" name="contents[home][cta][heading]" class="form-control" placeholder="20% Off Your First Order" value="{{ $pageContents->where('page','home')->where('section','cta')->where('key','heading')->first()->value ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label>CTA Subtitle</label>
-                            <textarea name="contents[home][cta][subtitle]" class="form-control" rows="2" placeholder="Book an appointment at SumitZ Clinic Baner, Balewadi, or Hinjewadi...">{{ $pageContents->where('page','home')->where('section','cta')->where('key','subtitle')->first()->value ?? '' }}</textarea>
-                        </div>
-                    </div>
-
-                    {{-- ── HOMEPAGE ABOUT SECTION (legacy) ─────────────── --}}
-                    <div class="admin-card">
-                        <h2>ℹ️ Homepage — About / Why Choose Us (Legacy)</h2>
-                        <div class="form-group">
-                            <label>Pre-Heading / Category Tag</label>
-                            <input type="text" name="contents[home][about][pre_title]" class="form-control" value="{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'pre_title')->first()->value ?? '' }}">
-                        </div>
-                        <div class="form-group">
-                            <label>About Section Heading</label>
-                            <input type="text" name="contents[home][about][title]" class="form-control" value="{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'title')->first()->value ?? '' }}">
-                        </div>
-                        <div class="form-group">
-                            <label>About Paragraph 1</label>
-                            <textarea name="contents[home][about][body_p1]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'body_p1')->first()->value ?? '' }}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>About Paragraph 2</label>
-                            <textarea name="contents[home][about][body_p2]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'about')->where('key', 'body_p2')->first()->value ?? '' }}</textarea>
-                        </div>
-                    </div>
-
-                    <div class="admin-card">
-                        <h2>Homepage - Why Choose Us Overview</h2>
-                        <div class="form-group">
-                            <label>Why Choose Us Heading</label>
-                            <input type="text" name="contents[home][why_choose_us][title]" class="form-control" value="{{ $pageContents->where('page', 'home')->where('section', 'why_choose_us')->where('key', 'title')->first()->value ?? '' }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Why Choose Us Intro Subtitle</label>
-                            <textarea name="contents[home][why_choose_us][subtitle]" class="form-control" rows="3">{{ $pageContents->where('page', 'home')->where('section', 'why_choose_us')->where('key', 'subtitle')->first()->value ?? '' }}</textarea>
+                            <textarea name="contents[home][cta][subtitle]" class="form-control" rows="2" placeholder="Schedule a free doorstep pickup in Gurugram today...">{{ $pageContents->where('page','home')->where('section','cta')->where('key','subtitle')->first()->value ?? '' }}</textarea>
                         </div>
                     </div>
 
@@ -2519,7 +2436,7 @@
                     <div class="admin-card">
                         <h2>Website Header & Navigation</h2>
                         <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.5rem; margin-top: -1rem;">
-                            Edit the navigation menu link labels and the header action button text.
+                            Edit navigation menu link labels and header action button text.
                         </p>
                         <div class="form-grid">
                             <div class="form-group">
@@ -2528,30 +2445,36 @@
                             </div>
                             <div class="form-group">
                                 <label>About Us Menu Label</label>
-                                <input type="text" name="contents[header][menu][about]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'about')->first()->value ?? 'About Us' }}">
+                                <input type="text" name="contents[header][menu][about]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'about')->first()->value ?? 'About' }}">
                             </div>
                             <div class="form-group">
                                 <label>Services Menu Label</label>
                                 <input type="text" name="contents[header][menu][services]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'services')->first()->value ?? 'Services' }}">
                             </div>
                             <div class="form-group">
-                                <label>Treatments Menu Label</label>
-                                <input type="text" name="contents[header][menu][compare]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'compare')->first()->value ?? 'Treatments' }}">
+                                <label>Pricing Menu Label</label>
+                                <input type="text" name="contents[header][menu][pricing]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'pricing')->first()->value ?? 'Pricing' }}">
                             </div>
                             <div class="form-group">
-                                <label>Testimonials Menu Label</label>
-                                <input type="text" name="contents[header][menu][testimonials]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'testimonials')->first()->value ?? 'Testimonials' }}">
-                            </div>
-                            <div class="form-group">
-                                <label>Blog Menu Label</label>
-                                <input type="text" name="contents[header][menu][blog]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'blog')->first()->value ?? 'Blog' }}">
+                                <label>Journal / Blog Menu Label</label>
+                                <input type="text" name="contents[header][menu][blog]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'blog')->first()->value ?? 'Journal' }}">
                             </div>
                             <div class="form-group">
                                 <label>Contact Us Menu Label</label>
-                                <input type="text" name="contents[header][menu][contact]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'contact')->first()->value ?? 'Contact Us' }}">
+                                <input type="text" name="contents[header][menu][contact]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'contact')->first()->value ?? 'Contact' }}">
                             </div>
                             <div class="form-group">
                                 <label>Header Call to Action Button</label>
+                                <input type="text" name="contents[header][cta][button_text]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'cta')->where('key', 'button_text')->first()->value ?? 'Schedule a Pickup' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 1.5rem;">
+                        <button type="submit" class="btn-submit">Save Page Contents</button>
+                    </div>
+                </form>
+            </div>
                                 <input type="text" name="contents[header][menu][cta]" class="form-control" value="{{ $pageContents->where('page', 'header')->where('section', 'menu')->where('key', 'cta')->first()->value ?? 'Call Now' }}">
                             </div>
                         </div>
@@ -2724,43 +2647,43 @@
                             </div>
                             <div class="form-group">
                                 <label for="ser_hero_title">Hero Main Title</label>
-                                <input type="text" id="ser_hero_title" name="hero_title" class="form-control" required placeholder="Advanced Joint Replacement Surgery in Baner, Pune">
+                                <input type="text" id="ser_hero_title" name="hero_title" class="form-control" required placeholder="Everyday Laundry, Elevated Care in Gurugram">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_hero_subtitle">Hero Subtitle</label>
-                                <textarea id="ser_hero_subtitle" name="hero_subtitle" class="form-control" rows="2" placeholder="Dr. Sumit performs minimally invasive knee replacement surgery with rapid recovery protocols."></textarea>
+                                <textarea id="ser_hero_subtitle" name="hero_subtitle" class="form-control" rows="2" placeholder="Hygienic individual wash batches, skin-safe detergents, and crisp fold for your daily wear."></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="ser_rate_value">Key Rate Value (e.g. 10.49% p.a.)</label>
-                                <input type="text" id="ser_rate_value" name="rate_value" class="form-control" placeholder="10.49% p.a.">
+                                <label for="ser_rate_value">Key Rate Value (e.g. From ₹80 / kg or From ₹130 / pc)</label>
+                                <input type="text" id="ser_rate_value" name="rate_value" class="form-control" placeholder="From ₹80 / kg">
                             </div>
                             <div class="form-group">
-                                <label for="ser_max_loan">Key Highlight Value (e.g. 5000+ Cases)</label>
-                                <input type="text" id="ser_max_loan" name="max_loan" class="form-control" placeholder="5000+ Successful Surgeries">
+                                <label for="ser_max_loan">Key Highlight / Pricing Unit</label>
+                                <input type="text" id="ser_max_loan" name="max_loan" class="form-control" placeholder="Weight or Garment">
                             </div>
                             <div class="form-group">
-                                <label for="ser_tenure">Recovery Timeline (e.g. 4–6 Weeks)</label>
-                                <input type="text" id="ser_tenure" name="tenure" class="form-control" placeholder="4–6 Weeks Recovery">
+                                <label for="ser_tenure">Turnaround Time (e.g. 24 - 48 Hours)</label>
+                                <input type="text" id="ser_tenure" name="tenure" class="form-control" placeholder="24 - 48 Hours">
                             </div>
                             <div class="form-group">
                                 <label for="ser_intro_title">Intro Title</label>
-                                <input type="text" id="ser_intro_title" name="intro_title" class="form-control" placeholder="Why Choose SumitZ Clinic for Joint Replacement?">
+                                <input type="text" id="ser_intro_title" name="intro_title" class="form-control" placeholder="Hygienic Washing with Fabric-Safe Care">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_intro_content">Intro Content (HTML Editor)</label>
                                 <textarea id="ser_intro_content" name="intro_content" class="form-control"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="ser_eligibility_criteria">Eligibility Criteria (one per line)</label>
-                                <textarea id="ser_eligibility_criteria" name="eligibility_criteria" class="form-control" rows="4" placeholder="Minimum Income: ₹25,000 net/month&#10;Age Range: 21 to 60 Years"></textarea>
+                                <label for="ser_eligibility_criteria">Key Process Steps / Care Highlights (one per line)</label>
+                                <textarea id="ser_eligibility_criteria" name="eligibility_criteria" class="form-control" rows="4" placeholder="Individual Batch Washing&#10;Zero Cross-Contamination&#10;Skin-Safe Hypoallergenic Detergents"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="ser_documents_required">Documents Required (one per line)</label>
-                                <textarea id="ser_documents_required" name="documents_required" class="form-control" rows="4" placeholder="PAN Card & Aadhaar Card&#10;Last 3 Months Salary Slips"></textarea>
+                                <label for="ser_documents_required">Inclusions & Packaging Benefits (one per line)</label>
+                                <textarea id="ser_documents_required" name="documents_required" class="form-control" rows="4" placeholder="Free Doorstep Pickup across Gurugram&#10;Custom Starch & Softener options&#10;Neat Barcoded Packaging"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="ser_tips_title">Tips / Patient Guidance Section Title (optional)</label>
-                                <input type="text" id="ser_tips_title" name="tips_title" class="form-control" placeholder="What to expect before your orthopedic surgery?">
+                                <label for="ser_tips_title">Fabric Tips / Care Guidance Title (optional)</label>
+                                <input type="text" id="ser_tips_title" name="tips_title" class="form-control" placeholder="Tips for Daily Laundry & Fabric Longevity">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_tips_content">Tips Section Content (HTML Editor)</label>
@@ -2768,11 +2691,11 @@
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_summary">Short Summary (shown in lists & footer)</label>
-                                <textarea id="ser_summary" name="summary" class="form-control" rows="2" placeholder="Brief summary of the service..."></textarea>
+                                <textarea id="ser_summary" name="summary" class="form-control" rows="2" placeholder="Wash, gentle dry & crisp fold for your daily wear, bedsheets, towels, and activewear."></textarea>
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_faqs">Service Frequently Asked Questions (FAQs)</label>
-                                <textarea id="ser_faqs" name="faqs" class="form-control" rows="5" placeholder="What is the recovery time? | Most patients walk with assistance within 24-48 hours and recover fully in 4-6 weeks.&#10;Is physiotherapy mandatory? | Yes, physical therapy is crucial for regaining full joint strength and mobility."></textarea>
+                                <textarea id="ser_faqs" name="faqs" class="form-control" rows="5" placeholder="Do you wash my clothes with other customers? | Never. Every order is processed in its own dedicated wash drum to maintain absolute hygiene.&#10;What is the standard turnaround time? | Standard wash & fold is delivered within 24 to 48 hours."></textarea>
                                 <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Format: Enter one question and answer per line in <code>Question | Answer</code> format.</span>
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
@@ -2786,15 +2709,15 @@
                             </div>
                             <div class="form-group">
                                 <label for="ser_metatitle">Meta Title (SEO)</label>
-                                <input type="text" id="ser_metatitle" name="metatitle" class="form-control" placeholder="Service Meta Title">
+                                <input type="text" id="ser_metatitle" name="metatitle" class="form-control" placeholder="Laundry Services in Gurugram | Tenderfold">
                             </div>
                             <div class="form-group">
                                 <label for="ser_metakeywords">Meta Keywords (Comma separated)</label>
-                                <input type="text" id="ser_metakeywords" name="metakeywords" class="form-control" placeholder="physiotherapy, pune, doctor">
+                                <input type="text" id="ser_metakeywords" name="metakeywords" class="form-control" placeholder="laundry gurugram, wash and fold sector 49, dry cleaning gurugram">
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="ser_metadescription">Meta Description (SEO)</label>
-                                <textarea id="ser_metadescription" name="metadescription" class="form-control" rows="2" placeholder="SEO optimized description for search engines"></textarea>
+                                <textarea id="ser_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Doorstep wash and fold laundry services in Gurugram with individual batch hygiene."></textarea>
                             </div>
                             <div class="form-group">
 
@@ -3514,11 +3437,11 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="landing_title">Page Title</label>
-                                <input type="text" id="landing_title" name="title" class="form-control" required placeholder="e.g. Doctors Loan Scheme" oninput="generateLandingSlug(this.value)">
+                                <input type="text" id="landing_title" name="title" class="form-control" required placeholder="e.g. Express Dry Cleaning in Sector 83" oninput="generateLandingSlug(this.value)">
                             </div>
                             <div class="form-group">
                                 <label for="landing_slug">URL Slug</label>
-                                <input type="text" id="landing_slug" name="slug" class="form-control" required placeholder="e.g. doctors-loan-scheme">
+                                <input type="text" id="landing_slug" name="slug" class="form-control" required placeholder="e.g. express-dry-cleaning-sector-83">
                             </div>
                             <div class="form-group">
                                 <label for="landing_layout">Layout Structure Type</label>
@@ -3900,7 +3823,7 @@
                     </p>
                     <div class="form-group">
                         <label for="seo_keywords">Target Keywords (comma-separated or one per line)</label>
-                        <textarea id="seo_keywords" class="form-control" rows="3" placeholder="e.g. low interest home loan, best financial adviser jaipur, secure business loans for startups"></textarea>
+                        <textarea id="seo_keywords" class="form-control" rows="3" placeholder="e.g. laundry gurugram, dry cleaning sector 49, bridal lehenga dry clean, vacuum steam pressing"></textarea>
                     </div>
                     <button type="button" class="btn-ai-sparkle" onclick="generateSeoRecommendations()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
                         <i data-lucide="sparkles"></i> Generate SEO Blueprint
@@ -4641,7 +4564,7 @@
                 </div>
                 <div class="form-group">
                     <label for="ai_landing_prompt">Prompt / Describe the topic for this Landing Page</label>
-                    <textarea id="ai_landing_prompt" class="form-control" rows="4" placeholder="e.g. Special home loan advisory page for Doctors and medical professionals in Jaipur with special pre-approved limit and minimal paperwork..."></textarea>
+                    <textarea id="ai_landing_prompt" class="form-control" rows="4" placeholder="e.g. Dedicated landing page for bridal couture and silk saree dry cleaning in Gurugram with doorstep pickup and delicate hand finishing..."></textarea>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
                     <button type="button" class="btn-ai-sparkle" onclick="generateAiLandingPage()"><i data-lucide="sparkles"></i> Generate Content</button>
@@ -5776,8 +5699,8 @@
             printEl.style.lineHeight = '1.5';
             
             let html = `
-                <div style="border-bottom: 2px solid #5ccbb3; padding-bottom: 15px; margin-bottom: 25px;">
-                    <h1 style="color: #0a1112; margin: 0 0 5px 0; font-size: 26px;">MLG Finedge - AI SEO Recommendation Blueprint</h1>
+                <div style="border-bottom: 2px solid #F5B400; padding-bottom: 15px; margin-bottom: 25px;">
+                    <h1 style="color: #143572; margin: 0 0 5px 0; font-size: 26px;">Tenderfold - AI SEO Recommendation Blueprint</h1>
                     <p style="color: #555; margin: 0; font-size: 13px;"><strong>Generated Date:</strong> ${dateStr} | <strong>Target Keywords:</strong> ${keywords}</p>
                 </div>
                 
@@ -6011,7 +5934,7 @@
             
             const opt = {
                 margin:       [15, 15, 15, 15],
-                filename:     'MLG_Finedge_SEO_Blueprint_' + keywords.replace(/[^a-z0-9]+/gi, '_') + '.pdf',
+                filename:     'Tenderfold_SEO_Blueprint_' + keywords.replace(/[^a-z0-9]+/gi, '_') + '.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },

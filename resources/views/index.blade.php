@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', ($site['site_name'] ?? 'Tender Fold') . ' | ' . ($site['site_tagline'] ?? 'Premium Laundry & Dry Cleaner in Gurugram'))
+@section('title', ($site['site_name'] ?? 'Tenderfold') . ' | ' . ($site['site_tagline'] ?? 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurugram'))
 
 @section('content')
     @php
@@ -20,9 +20,15 @@
                     <span class="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true"></span>
                     Premium laundry &amp; dry cleaner
                   </p>
-                  <h1 class="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
-                    {{ $slide->title }}
-                  </h1>
+                  @if($loop->first)
+                    <h1 class="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
+                      {{ $slide->title }}
+                    </h1>
+                  @else
+                    <h2 class="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-navy sm:text-5xl lg:text-6xl">
+                      {{ $slide->title }}
+                    </h2>
+                  @endif
                   <p class="mt-5 max-w-xl text-base leading-relaxed text-mute sm:text-lg">
                     {{ $slide->subtitle }}
                   </p>

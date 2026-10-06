@@ -5,7 +5,6 @@
 @section('meta_keywords', ($contactPage->metakeywords ?? 'tenderfold contact, dry cleaners gurugram contact, sector 49 laundry pickup, sector 83 dry cleaning'))
 
 @section('content')
-<main id="main">
   <!-- Contact Hero & Stores -->
   <section class="bg-cream">
     <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">

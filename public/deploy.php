@@ -1,7 +1,7 @@
 <?php
 /**
  * Tenderfold Live Deployment, Diagnostic & Self-Healing Script
- * Works seamlessly on Hostinger, cPanel, VPS, and Cloud servers.
+ * Universal script for Hostinger, cPanel, Apache, Nginx, VPS, and Cloud servers.
  */
 
 // 1. Detect base project path
@@ -68,13 +68,15 @@ if (is_dir($basePath . '/.git')) {
 
 // 2.3 Clear any cached bootstrap config files & cache
 $bootstrapCacheFiles = glob($basePath . '/bootstrap/cache/*.php');
-foreach ($bootstrapCacheFiles as $bFile) {
-    if (basename($bFile) !== 'packages.php' && basename($bFile) !== 'services.php') {
-        @unlink($bFile);
+if ($bootstrapCacheFiles) {
+    foreach ($bootstrapCacheFiles as $bFile) {
+        if (basename($bFile) !== 'packages.php' && basename($bFile) !== 'services.php') {
+            @unlink($bFile);
+        }
     }
 }
 
-// 3. Ensure Storage & Cache Directories Exist with Proper Permissions
+// 3. Ensure Storage & Cache Directories Exist with Proper Permissions (0775)
 $storageDirs = [
     $basePath . '/storage',
     $basePath . '/storage/app',
@@ -125,7 +127,7 @@ HTACCESS;
 
 if (!file_exists($rootHtaccess) || filesize($rootHtaccess) < 20) {
     @file_put_contents($rootHtaccess, $rootHtaccessContent);
-    $actions[] = "Created / Updated Root <code>.htaccess</code> to redirect traffic into <code>/public</code> ✅";
+    $actions[] = "Created / Updated Root <code>.htaccess</code> to route traffic into <code>/public</code> ✅";
 }
 $checks['Root .htaccess (Hostinger 403 Fix)'] = ['status' => true, 'msg' => 'Configured & Active'];
 
@@ -149,6 +151,7 @@ HTACCESS;
     @file_put_contents($publicHtaccess, $pubContent);
     $actions[] = "Created <code>public/.htaccess</code> for Laravel URL routing ✅";
 }
+
 // 5.1 Ensure SQLite database file exists as fallback
 $sqlitePath = $basePath . '/database/database.sqlite';
 if (!file_exists($sqlitePath)) {
@@ -205,7 +208,8 @@ if ($pdo) {
         `email` VARCHAR(255) NOT NULL UNIQUE,
         `email_verified_at` TIMESTAMP NULL DEFAULT NULL,
         `password` VARCHAR(255) NOT NULL,
-        `role` VARCHAR(50) NOT NULL DEFAULT 'admin',
+        `role` VARCHAR(50) NOT NULL DEFAULT 'superadmin',
+        `permissions` LONGTEXT NULL,
         `remember_token` VARCHAR(100) NULL,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL
@@ -216,9 +220,9 @@ if ($pdo) {
     $adminStmt->execute(['admin@tenderfold.in']);
     if ($adminStmt->fetchColumn() == 0) {
         $passHash = password_hash('admin123', PASSWORD_BCRYPT);
-        $insertAdmin = $pdo->prepare("INSERT INTO `users` (`name`, `email`, `password`, `role`, `created_at`, `updated_at`) VALUES (?, ?, ?, 'admin', NOW(), NOW())");
+        $insertAdmin = $pdo->prepare("INSERT INTO `users` (`name`, `email`, `password`, `role`, `permissions`, `created_at`, `updated_at`) VALUES (?, ?, ?, 'superadmin', '[\"all\"]', NOW(), NOW())");
         $insertAdmin->execute(['Tenderfold Admin', 'admin@tenderfold.in', $passHash]);
-        $actions[] = "Admin account created: <code>admin@tenderfold.in</code> / <code>admin123</code> ✅";
+        $actions[] = "Admin account verified: <code>admin@tenderfold.in</code> / <code>admin123</code> ✅";
     }
 
     // 7.2 Services table
@@ -233,10 +237,22 @@ if ($pdo) {
         `hero_subtitle` TEXT NULL,
         `hero_category` VARCHAR(100) NULL,
         `intro_content` LONGTEXT NULL,
+        `intro_title` VARCHAR(255) NULL,
+        `eligibility_criteria` TEXT NULL,
+        `documents_required` TEXT NULL,
+        `tips_title` VARCHAR(255) NULL,
+        `tips_content` LONGTEXT NULL,
+        `max_loan` VARCHAR(255) NULL,
+        `tenure` VARCHAR(255) NULL,
+        `badge` VARCHAR(100) NULL,
         `care_steps` JSON NULL,
         `inclusions` JSON NULL,
         `price_list` JSON NULL,
         `faqs` JSON NULL,
+        `metatitle` VARCHAR(255) NULL,
+        `metadescription` TEXT NULL,
+        `metakeywords` VARCHAR(255) NULL,
+        `schema_markup` TEXT NULL,
         `sort_order` INT NOT NULL DEFAULT 0,
         `is_active` TINYINT(1) NOT NULL DEFAULT 1,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -249,8 +265,9 @@ if ($pdo) {
         `title` VARCHAR(255) NOT NULL,
         `subtitle` TEXT NULL,
         `button_text` VARCHAR(100) NULL DEFAULT 'Schedule a Pickup',
-        `button_link` VARCHAR(255) NULL DEFAULT '#book',
-        `image` VARCHAR(255) NULL,
+        `button_link` VARCHAR(255) NULL DEFAULT '#bookModal',
+        `image_path` VARCHAR(255) NULL,
+        `mobile_image_path` VARCHAR(255) NULL,
         `sort_order` INT NOT NULL DEFAULT 0,
         `is_active` TINYINT(1) NOT NULL DEFAULT 1,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -261,10 +278,12 @@ if ($pdo) {
     $pdo->exec("CREATE TABLE IF NOT EXISTS `testimonials` (
         `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         `name` VARCHAR(255) NOT NULL,
+        `role` VARCHAR(255) NULL,
         `designation` VARCHAR(255) NULL,
         `content` TEXT NOT NULL,
         `rating` INT NOT NULL DEFAULT 5,
-        `avatar` VARCHAR(255) NULL,
+        `avatar_path` VARCHAR(255) NULL,
+        `sort_order` INT NOT NULL DEFAULT 0,
         `is_active` TINYINT(1) NOT NULL DEFAULT 1,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL
@@ -278,9 +297,10 @@ if ($pdo) {
         `summary` TEXT NULL,
         `content` LONGTEXT NOT NULL,
         `category` VARCHAR(100) NULL DEFAULT 'Care Notes',
-        `image` VARCHAR(255) NULL,
+        `image_path` VARCHAR(255) NULL,
         `metatitle` VARCHAR(255) NULL,
         `metadescription` TEXT NULL,
+        `metakeywords` VARCHAR(255) NULL,
         `tags` VARCHAR(255) NULL,
         `schema_markup` TEXT NULL,
         `is_published` TINYINT(1) NOT NULL DEFAULT 1,
@@ -293,6 +313,8 @@ if ($pdo) {
     $pdo->exec("CREATE TABLE IF NOT EXISTS `site_parameters` (
         `id` VARCHAR(191) PRIMARY KEY,
         `value` LONGTEXT NULL,
+        `label` VARCHAR(255) NULL,
+        `category` VARCHAR(100) NULL DEFAULT 'general',
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
@@ -370,7 +392,7 @@ if ($pdo) {
         `updated_at` TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
-    // 7.10 Sessions table (prevent SQLiteDatabaseDoesNotExistException / session table missing errors)
+    // 7.10 Sessions & Cache
     try {
         $pdo->exec("CREATE TABLE IF NOT EXISTS `sessions` (
             `id` VARCHAR(255) PRIMARY KEY,
@@ -396,23 +418,78 @@ if ($pdo) {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
     } catch (\Throwable $e) {}
 
-    // Universal replacement for any leftover â‚¹
+    // 7.11 Self-Healing: Automated UTF-8 Character Repairs
     try {
         $pdo->exec("UPDATE `services` SET `rate_value` = REPLACE(`rate_value`, 'â‚¹', '₹') WHERE `rate_value` LIKE '%â‚¹%'");
+        $pdo->exec("UPDATE `services` SET `summary` = REPLACE(`summary`, 'â€™', '\''), `hero_subtitle` = REPLACE(`hero_subtitle`, 'â€™', '\'') WHERE `summary` LIKE '%â€™%' OR `hero_subtitle` LIKE '%â€™%'");
+        $pdo->exec("UPDATE `home_slides` SET `subtitle` = REPLACE(`subtitle`, 'Gurugramâ€™s', 'Gurugram\'s') WHERE `subtitle` LIKE '%Gurugramâ€™s%'");
+        $pdo->exec("UPDATE `home_slides` SET `subtitle` = REPLACE(`subtitle`, 'â€™', '\'') WHERE `subtitle` LIKE '%â€™%'");
+        $pdo->exec("UPDATE `home_slides` SET `title` = REPLACE(`title`, 'â€“', ' - ') WHERE `title` LIKE '%â€“%'");
+        $pdo->exec("UPDATE `site_parameters` SET `value` = REPLACE(`value`, 'â€”', ' - ') WHERE `value` LIKE '%â€”%'");
+        $pdo->exec("UPDATE `site_parameters` SET `value` = REPLACE(`value`, 'â€“', ' - ') WHERE `value` LIKE '%â€“%'");
+        $pdo->exec("UPDATE `site_parameters` SET `value` = REPLACE(`value`, 'â€™', '\'') WHERE `value` LIKE '%â€™%'");
+        $pdo->exec("UPDATE `blogs` SET `title` = REPLACE(`title`, 'â€™', '\''), `content` = REPLACE(`content`, 'â€™', '\'') WHERE `title` LIKE '%â€™%' OR `content` LIKE '%â€™%'");
+        $pdo->exec("UPDATE `cms_pages` SET `metatitle` = REPLACE(`metatitle`, 'â€“', ' - ') WHERE `metatitle` LIKE '%â€“%'");
+        $pdo->exec("UPDATE `cms_pages` SET `metatitle` = REPLACE(`metatitle`, 'â€™', '\'') WHERE `metatitle` LIKE '%â€™%'");
+        $pdo->exec("UPDATE `testimonials` SET `content` = REPLACE(`content`, 'â€™', '\'') WHERE `content` LIKE '%â€™%'");
+        $actions[] = "Repaired character encoding and replaced UTF-8 mojibake across all tables ✅";
     } catch (\Throwable $e) {}
 
-    $checks['Database Tables & Schema'] = ['status' => true, 'msg' => 'All core tables verified & up-to-date'];
+    // 7.12 Purge legacy dummy parameters from older projects
+    try {
+        $pdo->exec("DELETE FROM `site_parameters` WHERE `id` IN (
+            'address_baner', 'address_hinjewadi', 'clinic_locations_short', 'clinic_timings', 
+            'footer_helplines', 'helpline_baner', 'helpline_hinjewadi', 'home_loan_rate', 
+            'personal_loan_rate', 'business_loan_rate', 'car_loan_rate', 'lap_rate'
+        )");
+        $actions[] = "Purged dummy and legacy parameters from database ✅";
+    } catch (\Throwable $e) {}
+
+    // 7.13 Seed Core Parameters if missing
+    $coreParams = [
+        ['site_name', 'Tenderfold', 'Site Name', 'general'],
+        ['site_tagline', 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurugram', 'Site Tagline', 'general'],
+        ['meta_description', 'Tenderfold is a premium laundry and dry cleaner in Gurugram. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care. Call +91 95824 66445.', 'Default Meta Description', 'general'],
+        ['meta_keywords', 'laundry gurugram, dry cleaning gurugram, wash and fold, steam ironing, shoe cleaning, carpet cleaning, sector 49, sector 83, tenderfold', 'Default Meta Keywords', 'general'],
+        ['phone', '+91 95824 66445', 'Contact Phone Number', 'contact'],
+        ['phone_display', '+91 95824 66445', 'Display Phone Number', 'contact'],
+        ['email', 'info@tenderfold.in', 'Contact Email Address', 'contact'],
+        ['address', 'Sector 49 & Sector 83, Gurugram, Haryana - 122018', 'Physical Address', 'contact'],
+        ['whatsapp_number', '919582466445', 'WhatsApp Number', 'contact'],
+        ['logo_path', 'assets/logo.png', 'Logo Image', 'branding'],
+        ['favicon_path', 'assets/logo.png', 'Favicon Image', 'branding'],
+        ['live_site_url', 'https://tenderfold.in', 'Live Site URL', 'general'],
+    ];
+
+    foreach ($coreParams as $cp) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM `site_parameters` WHERE `id` = ?");
+        $stmt->execute([$cp[0]]);
+        if ($stmt->fetchColumn() == 0) {
+            $ins = $pdo->prepare("INSERT INTO `site_parameters` (`id`, `value`, `label`, `category`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, NOW(), NOW())");
+            $ins->execute([$cp[0], $cp[1], $cp[2], $cp[3]]);
+        }
+    }
+
+    $checks['Database Tables & Schema'] = ['status' => true, 'msg' => 'All Tenderfold core tables verified & up-to-date'];
 }
 
-// 8. Clear Compiled Laravel Views & Cache Files directly
+// 8. Clear Compiled Laravel Views & Cache Files
 $viewCacheDir = $basePath . '/storage/framework/views';
 if (is_dir($viewCacheDir)) {
     $files = glob($viewCacheDir . '/*.php');
-    foreach ($files as $file) {
-        @unlink($file);
+    if ($files) {
+        foreach ($files as $file) {
+            @unlink($file);
+        }
     }
 }
 $actions[] = "Cleared compiled blade view cache files ✅";
+
+// 9. Run artisan commands via CLI if available
+if (function_exists('exec')) {
+    @exec("cd " . escapeshellarg($basePath) . " && php artisan view:clear 2>&1");
+    @exec("cd " . escapeshellarg($basePath) . " && php artisan cache:clear 2>&1");
+}
 
 ?>
 <!DOCTYPE html>

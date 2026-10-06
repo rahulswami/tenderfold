@@ -6,13 +6,62 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>@yield('title', ($site['site_name'] ?? 'Tender Fold') . ' | ' . ($site['site_tagline'] ?? 'Premium Laundry & Dry Cleaner in Gurugram'))</title>
-  <meta name="description" content="@yield('meta_description', 'Tender Fold is a premium laundry and dry cleaner in Gurugram. Doorstep pickup for wash & fold, steam ironing, dry cleaning and special fabric care. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.')">
-  <meta name="keywords" content="@yield('meta_keywords', 'laundry gurugram, dry cleaning gurugram, wash and fold, steam ironing, shoe cleaning, carpet cleaning, sector 49, sector 83')">
+  
+  @php
+    $defaultTitle = ($site['site_name'] ?? 'Tenderfold') . ' | ' . ($site['site_tagline'] ?? 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurugram');
+    $defaultDesc = $site['meta_description'] ?? 'Tenderfold is a premium laundry and dry cleaner in Gurugram. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.';
+    $defaultKeywords = $site['meta_keywords'] ?? 'laundry gurugram, dry cleaning gurugram, wash and fold, steam ironing, shoe cleaning, carpet cleaning, sector 49, sector 83, tenderfold';
+    $canonicalUrl = View::hasSection('canonical') ? View::getSection('canonical') : url()->current();
+    $pageTitle = View::hasSection('title') ? View::getSection('title') : $defaultTitle;
+    $pageDesc = View::hasSection('meta_description') ? View::getSection('meta_description') : $defaultDesc;
+    $ogImage = View::hasSection('og_image') ? View::getSection('og_image') : asset($site['og_image_path'] ?? $site['logo_path'] ?? 'assets/logo.png');
+    $gtagId = $site['google_tag_id'] ?? $site['google_analytics_id'] ?? $site['ga_tracking_id'] ?? env('GOOGLE_TAG_ID') ?? 'G-TENDERFOLD';
+  @endphp
+
+  <title>@yield('title', $defaultTitle)</title>
+  <meta name="description" content="@yield('meta_description', $defaultDesc)">
+  <meta name="keywords" content="@yield('meta_keywords', $defaultKeywords)">
   <meta name="theme-color" content="#143572">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  
+  <meta name="robots" content="index, follow">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="{{ $canonicalUrl }}">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="@yield('og_type', 'website')">
+  <meta property="og:url" content="{{ $canonicalUrl }}">
+  <meta property="og:title" content="{{ $pageTitle }}">
+  <meta property="og:description" content="{{ $pageDesc }}">
+  <meta property="og:image" content="{{ $ogImage }}">
+  <meta property="og:site_name" content="{{ $site['site_name'] ?? 'Tenderfold' }}">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="{{ $canonicalUrl }}">
+  <meta name="twitter:title" content="{{ $pageTitle }}">
+  <meta name="twitter:description" content="{{ $pageDesc }}">
+  <meta name="twitter:image" content="{{ $ogImage }}">
+  <meta name="twitter:site" content="{{ $site['twitter_handle'] ?? '@tenderfold' }}">
+
+  <!-- Google Analytics / Google Tag (gtag.js) -->
+  @if(!empty($gtagId))
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gtagId }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ $gtagId }}');
+  </script>
+  @endif
+
+  @if(!empty($site['header_scripts']))
+    {!! $site['header_scripts'] !!}
+  @endif
+
   <script>document.documentElement.classList.add("js");</script>
   <link rel="icon" href="{{ asset($site['favicon_path'] ?? 'assets/logo.png') }}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', $landingPage->title . ' - ' . ($site['site_name'] ?? 'SumitZ Clinic'))
-@section('meta_description', $landingPage->meta_description ?? 'Book a consultation at SumitZ Orthopaedic & Physiotherapy Clinic in Baner, Pune.')
+@section('title', $landingPage->title . ' - ' . ($site['site_name'] ?? 'Tenderfold'))
+@section('meta_description', $landingPage->meta_description ?? 'Book premium laundry and dry cleaning pickup across Gurugram with Tenderfold.')
 
 
 @section('schema')
@@ -191,9 +191,9 @@
                 <!-- About section -->
                 <div style="margin-bottom: 3rem;">
                     <span class="pre-title">How We Help</span>
-                    <h2>{{ $landingPage->content['about_title'] ?? 'Strategic Loan Selection & Support' }}</h2>
+                    <h2>{{ $landingPage->content['about_title'] ?? 'Professional Fabric Care & Doorstep Delivery' }}</h2>
                     <p style="margin-top: 1rem; line-height: 1.7; color: var(--text-muted);">
-                        {!! nl2br(e($landingPage->content['about_text'] ?? (($site['site_name'] ?? 'MLG Finedge') . " is a dedicated credit brokerage partner in Jaipur. We assist with preparing credit files, clearing bank flags, and securing faster loan processing payouts directly with underwriting officers."))) !!}
+                        {!! nl2br(e($landingPage->content['about_text'] ?? (($site['site_name'] ?? 'Tenderfold') . " is your dedicated laundry and dry cleaning partner in Gurugram. We provide hygienic batch washing, expert stain removal, eco-friendly dry cleaning, and crisp vacuum steam pressing with free doorstep pickup across Gurugram."))) !!}
                     </p>
                 </div>
 
@@ -218,11 +218,11 @@
                         @else
                             <div class="faq-item-lp">
                                 <div class="faq-q-lp" onclick="toggleFaqLp(0)">
-                                    <span>What documents are required to start?</span>
+                                    <span>How does doorstep pickup work?</span>
                                     <i data-lucide="plus" id="faq-icon-lp-0"></i>
                                 </div>
                                 <div class="faq-a-lp" id="faq-a-lp-0">
-                                    Basic KYC, income statements (salary slips or business ITR files), and current bank statements for the past 6 months are sufficient to run an eligibility assessment.
+                                    Schedule a pickup online or via WhatsApp. Our executive collects your garments, tags them with barcodes, processes them according to fabric type, and delivers them back fresh and ready to wear.
                                 </div>
                             </div>
                         @endif
@@ -455,14 +455,15 @@
                     </div>
                     
                     <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label for="lp-loan" style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--primary-teal-dark);">Select Required Credit Type</label>
-                        <select id="lp-loan" name="loan_type" class="form-control" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-light); border-radius: 6px; background-color: #fff;">
-                            <option value="">-- Choose Option --</option>
-                            <option value="personal">Personal Loan</option>
-                            <option value="home">Home Loan</option>
-                            <option value="business">Business Loan</option>
-                            <option value="lap">Loan Against Property (LAP)</option>
-                            <option value="other">Other Loans</option>
+                        <label for="lp-service" style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--primary-teal-dark);">Select Service Needed</label>
+                        <select id="lp-service" name="service" class="form-control" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-light); border-radius: 6px; background-color: #fff;">
+                            <option value="">-- Choose Service --</option>
+                            <option value="laundry-services">Everyday Laundry (Wash & Fold)</option>
+                            <option value="dry-cleaning">Eco-Friendly Dry Cleaning</option>
+                            <option value="ironing">Steam Pressing</option>
+                            <option value="shoe-cleaning">Shoe Laundry & Spa</option>
+                            <option value="carpet-cleaning">Carpet & Rug Cleaning</option>
+                            <option value="curtain-cleaning">Curtain & Drape Cleaning</option>
                         </select>
                     </div>
 
@@ -472,12 +473,12 @@
                         </div>
                     @endif
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 700; border-radius: 6px;">Request Callback</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 700; border-radius: 6px;">Schedule Doorstep Pickup</button>
                 </form>
 
                 <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-light); padding-top: 1rem; display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 0.8rem;">
                     <i data-lucide="shield-check" style="color: var(--mint-green); width: 20px; height: 20px; flex-shrink: 0;"></i>
-                    <span>We protect your records. Financial data is never shared with third-party telecallers.</span>
+                    <span>We protect your privacy. Customer details are only used for pickup & delivery coordination.</span>
                 </div>
             </div>
         </div>
@@ -488,11 +489,11 @@
 <!-- CTA Footer Block -->
 <section class="final-cta-section" style="background-color: var(--primary-teal-light); text-align: center; padding: 4rem 0;">
     <div class="container">
-        <h2>{{ $landingPage->content['cta_title'] ?? 'Secure Better Borrowing Matches' }}</h2>
+        <h2>{{ $landingPage->content['cta_title'] ?? 'Experience Freshness in Every Single Fold' }}</h2>
         <p style="max-width: 600px; margin: 0 auto 1.5rem auto; color: var(--text-muted);">
-            {{ $landingPage->content['cta_text'] ?? 'Consult our specialists in Jaipur today and receive prime rate quotes within 24 hours.' }}
+            {{ $landingPage->content['cta_text'] ?? 'Schedule your free doorstep collection in Gurugram today and enjoy 20% off your first order.' }}
         </p>
-        <a href="#lead-form-section" class="btn btn-primary">Check Your Loan Eligibility Now</a>
+        <a href="#lead-form-section" class="btn btn-primary">Book Doorstep Pickup Now</a>
     </div>
 </section>
 
