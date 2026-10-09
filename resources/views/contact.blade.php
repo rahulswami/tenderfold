@@ -14,9 +14,9 @@
           <span aria-hidden="true">/</span> 
           <span class="text-navy">Contact</span>
         </p>
-        <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Two counters · one number</p>
+        <p class="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-gold-deep">Two Gurgaon counters · Dedicated Support</p>
         <h1 class="mt-3 font-display text-4xl font-extrabold text-navy sm:text-5xl">Call, WhatsApp, or ask for a pickup.</h1>
-        <p class="mt-4 text-lg text-mute">Both stores use {{ $site['phone'] ?? '+91 95824 66445' }}. A pickup request opens WhatsApp so the team can confirm a window.</p>
+        <p class="mt-4 text-lg text-mute">Reach our Orchid Petals (Sec 49) store at <a href="tel:+919582466445" class="font-semibold text-navy hover:text-gold-deep transition">095824 66445</a> or Sapphire 83 Mall (Sec 83) at <a href="tel:+919899622294" class="font-semibold text-navy hover:text-gold-deep transition">098996 22294</a>. A pickup request opens WhatsApp so the team can confirm a window.</p>
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
           <button type="button" data-open-book class="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Schedule a Pickup</button>
           <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}?text={{ urlencode('Hi Tenderfold, I have a query about laundry pickup & services in Gurgaon.') }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-full border-2 border-navy/15 bg-white px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:border-navy hover:bg-navy hover:text-white">WhatsApp the desk</a>
@@ -26,33 +26,49 @@
       <div class="mt-12 grid gap-6 lg:grid-cols-2">
         <!-- Sector 49 Card -->
         <article class="reveal rounded-3xl bg-white p-7 shadow-card">
-          <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 49</p>
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 49 Counter</p>
           <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Orchid Petals</h2>
           <p class="mt-3 text-sm leading-relaxed text-mute">Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon, Haryana 122018</p>
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018" target="_blank" rel="noopener" class="mt-5 inline-flex font-display text-sm font-extrabold text-navy">Get directions →</a>
+          <div class="mt-4 flex flex-wrap items-center gap-4 text-sm font-semibold">
+            <a href="tel:+919582466445" class="inline-flex items-center gap-1.5 text-navy transition hover:text-gold-deep">
+              <svg class="h-4 w-4 text-gold-deep" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              <span>095824 66445</span>
+            </a>
+            <a href="https://share.google/SXSjDFUalRginesFu" target="_blank" rel="noopener noreferrer" class="inline-flex font-display text-sm font-extrabold text-navy transition hover:text-gold-deep">Get directions →</a>
+          </div>
         </article>
 
         <!-- Sector 83 Card -->
         <article class="reveal rounded-3xl bg-white p-7 shadow-card" style="animation-delay:80ms">
-          <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 83</p>
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 83 Counter</p>
           <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Sapphire 83 Mall</h2>
-          <p class="mt-3 text-sm leading-relaxed text-mute">F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon 122004</p>
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=F-193%20First%20Floor%20Sapphire%2083%20Mall%20Sector%2083%20Gurgaon%20122004" target="_blank" rel="noopener" class="mt-5 inline-flex font-display text-sm font-extrabold text-navy">Get directions →</a>
+          <p class="mt-3 text-sm leading-relaxed text-mute">F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon, Haryana 122004</p>
+          <div class="mt-4 flex flex-wrap items-center gap-4 text-sm font-semibold">
+            <a href="tel:+919899622294" class="inline-flex items-center gap-1.5 text-navy transition hover:text-gold-deep">
+              <svg class="h-4 w-4 text-gold-deep" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              <span>098996 22294</span>
+            </a>
+            <a href="https://share.google/UZlhkLsEqN9ICLwTa" target="_blank" rel="noopener noreferrer" class="inline-flex font-display text-sm font-extrabold text-navy transition hover:text-gold-deep">Get directions →</a>
+          </div>
         </article>
       </div>
 
-      <div class="reveal mt-6 grid gap-4 rounded-3xl bg-navy p-6 text-white sm:grid-cols-3 sm:p-8">
-        <a href="tel:{{ preg_replace('/[^0-9\+]/', '', $site['phone'] ?? '+919582466445') }}" class="rounded-2xl bg-white/10 px-5 py-4 transition hover:bg-white/15">
-          <p class="text-xs font-bold uppercase tracking-wider text-gold">Phone</p>
-          <p class="mt-1 font-display text-xl font-extrabold">{{ $site['phone'] ?? '+91 95824 66445' }}</p>
+      <div class="reveal mt-6 grid gap-4 rounded-3xl bg-navy p-6 text-white sm:grid-cols-2 lg:grid-cols-4 sm:p-8">
+        <a href="tel:+919582466445" class="rounded-2xl bg-white/10 px-5 py-4 transition hover:bg-white/15">
+          <p class="text-xs font-bold uppercase tracking-wider text-gold">Orchid Petals (Sec 49)</p>
+          <p class="mt-1 font-display text-lg font-extrabold">095824 66445</p>
+        </a>
+        <a href="tel:+919899622294" class="rounded-2xl bg-white/10 px-5 py-4 transition hover:bg-white/15">
+          <p class="text-xs font-bold uppercase tracking-wider text-gold">Sapphire 83 (Sec 83)</p>
+          <p class="mt-1 font-display text-lg font-extrabold">098996 22294</p>
         </a>
         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}" target="_blank" rel="noopener" class="rounded-2xl bg-white/10 px-5 py-4 transition hover:bg-white/15">
-          <p class="text-xs font-bold uppercase tracking-wider text-gold">WhatsApp</p>
-          <p class="mt-1 font-display text-xl font-extrabold">Message the desk</p>
+          <p class="text-xs font-bold uppercase tracking-wider text-gold">WhatsApp Desk</p>
+          <p class="mt-1 font-display text-lg font-extrabold">Message the desk</p>
         </a>
         <div class="rounded-2xl bg-white/10 px-5 py-4">
-          <span class="block text-xs font-bold uppercase tracking-wider text-gold">Pickup</span>
-          <span class="mt-1 block font-display text-xl font-extrabold">Free across Gurgaon</span>
+          <span class="block text-xs font-bold uppercase tracking-wider text-gold">Pickup &amp; Delivery</span>
+          <span class="mt-1 block font-display text-lg font-extrabold">Free across Gurgaon</span>
         </div>
       </div>
 

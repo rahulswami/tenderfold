@@ -407,31 +407,56 @@
       </div>
 
       <div>
-        <h2 class="font-display text-sm font-extrabold uppercase tracking-[0.16em] text-gold">Contact</h2>
-        <ul class="mt-4 space-y-3 text-sm text-white/75">
-          <li>
-            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $site['phone'] ?? '+919582466445') }}" class="font-semibold text-white transition hover:text-gold">{{ $site['phone_display'] ?? $site['phone'] ?? '+91 95824 66445' }}</a>
-          </li>
-          <li>
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}" target="_blank" rel="noopener" class="transition hover:text-gold inline-flex items-center gap-1.5">
+        <h2 class="font-display text-sm font-extrabold uppercase tracking-[0.16em] text-gold">Store Locations &amp; Contact</h2>
+        <div class="mt-4 space-y-4 text-sm text-white/75">
+          <!-- WhatsApp Pickup -->
+          <div>
+            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $site['whatsapp_number'] ?? '919582466445') }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 font-semibold text-white transition hover:text-gold">
+              <svg class="h-4 w-4 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.15 6.4 2.15 11.83c0 1.74.46 3.44 1.34 4.94L2 22l5.39-1.4a10.1 10.1 0 0 0 4.65 1.12h.01c5.46 0 9.89-4.4 9.89-9.84C21.94 6.4 17.5 2 12.04 2Z"/></svg>
               <span>WhatsApp a pickup</span>
-              <svg class="h-3.5 w-3.5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.15 6.4 2.15 11.83c0 1.74.46 3.44 1.34 4.94L2 22l5.39-1.4a10.1 10.1 0 0 0 4.65 1.12h.01c5.46 0 9.89-4.4 9.89-9.84C21.94 6.4 17.5 2 12.04 2Z"/></svg>
             </a>
-          </li>
-          <li>
-            <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018" target="_blank" rel="noopener" class="block leading-relaxed transition hover:text-gold">
-              <span class="block font-semibold text-white">Orchid Petals</span>
+          </div>
+
+          <!-- Store 1: Sector 49 - Orchid Petals -->
+          <div class="border-t border-white/10 pt-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-white">Sector 49 (Orchid Petals)</span>
+              <a href="https://share.google/SXSjDFUalRginesFu" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-gold transition hover:text-gold-deep inline-flex items-center gap-0.5" title="View Orchid Petals location on Google Maps">
+                <span>Map</span>
+                <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+            <a href="https://share.google/SXSjDFUalRginesFu" target="_blank" rel="noopener noreferrer" class="mt-1 block text-xs leading-relaxed text-white/70 transition hover:text-gold">
               Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon - 122018
             </a>
-          </li>
-          <li>
-            <a href="https://www.google.com/maps/search/?api=1&amp;query=F-193%20First%20Floor%20Sapphire%2083%20Mall%20Sector%2083%20Gurgaon%20122004" target="_blank" rel="noopener" class="block leading-relaxed transition hover:text-gold">
-              <span class="block font-semibold text-white">Sapphire 83 Mall</span>
+            <div class="mt-1.5 flex items-center gap-1.5 text-xs">
+              <svg class="h-3.5 w-3.5 text-gold shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              <a href="tel:+919582466445" class="font-medium text-white transition hover:text-gold">095824 66445</a>
+            </div>
+          </div>
+
+          <!-- Store 2: Sector 83 - Sapphire 83 Mall -->
+          <div class="border-t border-white/10 pt-3">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-white">Sector 83 (Sapphire 83 Mall)</span>
+              <a href="https://share.google/UZlhkLsEqN9ICLwTa" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-gold transition hover:text-gold-deep inline-flex items-center gap-0.5" title="View Sapphire 83 Mall location on Google Maps">
+                <span>Map</span>
+                <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+            <a href="https://share.google/UZlhkLsEqN9ICLwTa" target="_blank" rel="noopener noreferrer" class="mt-1 block text-xs leading-relaxed text-white/70 transition hover:text-gold">
               F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon - 122004
             </a>
-          </li>
-          <li>Free pickup &amp; delivery across Gurgaon</li>
-        </ul>
+            <div class="mt-1.5 flex items-center gap-1.5 text-xs">
+              <svg class="h-3.5 w-3.5 text-gold shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              <a href="tel:+919899622294" class="font-medium text-white transition hover:text-gold">098996 22294</a>
+            </div>
+          </div>
+
+          <div class="border-t border-white/10 pt-2 text-xs text-white/60">
+            🚚 Free pickup &amp; delivery across Gurgaon
+          </div>
+        </div>
       </div>
 
       <div>

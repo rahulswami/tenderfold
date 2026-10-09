@@ -47,13 +47,13 @@
           <h2 class="mt-2 font-display text-3xl font-extrabold text-navy sm:text-4xl">Visit Our Gurgaon Counters</h2>
         </div>
         <div class="grid gap-6 lg:grid-cols-2">
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Shop%20No.%2019%2C%201st%20Floor%2C%20B%20Block%20Shopping%20Plaza%2C%20Orchid%20Petals%2C%20South%20City%20II%2C%20Sector%2049%2C%20Gurgaon%2C%20Haryana%20122018" target="_blank" rel="noopener" class="reveal group rounded-3xl bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+          <a href="https://share.google/SXSjDFUalRginesFu" target="_blank" rel="noopener noreferrer" class="reveal group rounded-3xl bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
             <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 49 Counter</p>
             <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Orchid Petals Plaza</h2>
             <p class="mt-3 text-sm leading-relaxed text-mute">Shop No. 19, 1st Floor, B Block Shopping Plaza, Orchid Petals, South City II, Sector 49, Gurgaon, Haryana - 122018</p>
             <p class="mt-4 font-display text-sm font-extrabold text-navy inline-flex items-center gap-1 group-hover:text-gold transition">Open in Google Maps →</p>
           </a>
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=F-193%20First%20Floor%20Sapphire%2083%20Mall%20Sector%2083%20Gurgaon%20122004" target="_blank" rel="noopener" class="reveal group rounded-3xl bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift" style="animation-delay:80ms">
+          <a href="https://share.google/UZlhkLsEqN9ICLwTa" target="_blank" rel="noopener noreferrer" class="reveal group rounded-3xl bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift" style="animation-delay:80ms">
             <p class="text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Sector 83 Counter</p>
             <h2 class="mt-2 font-display text-2xl font-extrabold text-navy">Sapphire 83 Mall</h2>
             <p class="mt-3 text-sm leading-relaxed text-mute">F-193, First Floor, Sapphire 83 Mall, Sector 83, Gurgaon, Haryana - 122004</p>
