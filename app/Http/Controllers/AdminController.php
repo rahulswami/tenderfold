@@ -152,6 +152,11 @@ class AdminController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'notifications_page');
 
+        // Self-heal and normalize blog slugs (strip any trailing slashes)
+        try {
+            \Illuminate\Support\Facades\DB::statement("UPDATE blogs SET slug = TRIM(TRAILING '/' FROM slug) WHERE slug LIKE '%/'");
+        } catch (\Throwable $e) {}
+
         // Fetch Blog Categories (auto-provision table if missing on live server)
         $this->ensureBlogCategoriesTable();
         $blogCategories = collect([]);
@@ -524,6 +529,11 @@ class AdminController extends Controller
     public function storeBlog(Request $request)
     {
         $this->checkPermission('blogs');
+
+        if ($request->filled('slug')) {
+            $request->merge(['slug' => trim($request->slug, " /\t\n\r\0\x0B")]);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string|max:255',
@@ -538,7 +548,8 @@ class AdminController extends Controller
             'metakeywords' => 'nullable|string',
         ]);
 
-        $slug = $request->slug ?: \Illuminate\Support\Str::slug($request->title);
+        $rawSlug = $request->filled('slug') ? trim($request->slug, " /\t\n\r\0\x0B") : \Illuminate\Support\Str::slug($request->title);
+        $slug = trim($rawSlug, " /\t\n\r\0\x0B") ?: \Illuminate\Support\Str::slug($request->title);
         $count = \App\Models\Blog::where('slug', $slug)->count();
         if ($count > 0) {
             $slug = $slug . '-' . time();
@@ -582,6 +593,11 @@ class AdminController extends Controller
     public function updateBlog(Request $request, $id)
     {
         $this->checkPermission('blogs');
+
+        if ($request->filled('slug')) {
+            $request->merge(['slug' => trim($request->slug, " /\t\n\r\0\x0B")]);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string|max:255',
@@ -619,9 +635,14 @@ class AdminController extends Controller
             }
         }
 
+        $slug = trim($request->slug, " /\t\n\r\0\x0B");
+        if (empty($slug)) {
+            $slug = \Illuminate\Support\Str::slug($request->title);
+        }
+
         $blog->update([
             'title' => $request->title,
-            'slug' => $request->slug,
+            'slug' => $slug,
             'category' => $request->category,
             'summary' => $request->summary,
             'content' => $request->content,
@@ -2389,7 +2410,15 @@ User prompt: {$prompt}";
             $results['blog_categories'] = 'exists ✔';
         }
 
-        // ── 11. Verify leads insert/select works ───────────────────────
+        // ── 11. Normalize existing blog slugs ──────────────────────────
+        try {
+            \Illuminate\Support\Facades\DB::statement("UPDATE blogs SET slug = TRIM(TRAILING '/' FROM slug) WHERE slug LIKE '%/'");
+            $results['blog_slugs_normalized'] = 'CLEANED ✅';
+        } catch (\Exception $e) {
+            $results['blog_slugs_normalized'] = 'SKIPPED: ' . $e->getMessage();
+        }
+
+        // ── 12. Verify leads insert/select works ───────────────────────
         try {
             $count = \App\Models\Lead::count();
             $results['leads_read_test'] = "PASS ✅ ({$count} existing records)";

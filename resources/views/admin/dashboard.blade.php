@@ -3242,7 +3242,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="blog_slug">URL Slug (leave empty to auto-generate)</label>
-                                <input type="text" id="blog_slug" name="slug" class="form-control" placeholder="preventing-back-pain-desk-workers">
+                                <input type="text" id="blog_slug" name="slug" class="form-control" placeholder="preventing-back-pain-desk-workers" onblur="this.value = this.value.trim().replace(/^\/+|\/+$/g, '')">
                             </div>
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">

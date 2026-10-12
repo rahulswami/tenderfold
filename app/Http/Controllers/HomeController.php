@@ -82,34 +82,56 @@ class HomeController extends Controller
 
     public function blogShow($slug)
     {
-        // 1. Direct slug match
-        $blog = \App\Models\Blog::where('slug', $slug)->first();
+        $cleanSlug = trim($slug, " /\t\n\r\0\x0B");
+
+        // Canonical 301 redirect if requested URL contains trailing slashes or spaces
+        if ($slug !== $cleanSlug && !empty($cleanSlug)) {
+            return redirect()->route('blog.show', $cleanSlug, 301);
+        }
+
+        // 1. Direct or trimmed slug match (handles records with or without trailing slash in DB)
+        $blog = \App\Models\Blog::where('slug', $cleanSlug)
+            ->orWhere('slug', $cleanSlug . '/')
+            ->orWhere('slug', $slug)
+            ->first();
 
         // 2. Normalized slug match (handle punctuation like "dr.", dashes, etc.)
         if (!$blog) {
-            $normalized = strtolower($slug);
+            $normalized = strtolower($cleanSlug);
             $normalized = str_replace(['dr.', 'dr-'], ['doctor', 'doctor-'], $normalized);
-            $cleanSlug = preg_replace('/[^a-z0-9\-]/', '', $normalized);
-            $blog = \App\Models\Blog::where('slug', $cleanSlug)->first();
+            $strippedSlug = preg_replace('/[^a-z0-9\-]/', '', $normalized);
+            $blog = \App\Models\Blog::where('slug', $strippedSlug)
+                ->orWhere('slug', $strippedSlug . '/')
+                ->first();
         }
 
         // 3. Match by keyword or tag
         if (!$blog) {
-            $term = str_replace(['-', '.'], ' ', $slug);
+            $term = str_replace(['-', '.'], ' ', $cleanSlug);
             $blog = \App\Models\Blog::where('tags', 'LIKE', '%' . $term . '%')
                 ->orWhere('metakeywords', 'LIKE', '%' . $term . '%')
                 ->first();
         }
 
+        // Auto-heal DB record if stored slug had trailing slashes
+        if ($blog) {
+            try {
+                \DB::table('blogs')
+                    ->where('id', $blog->id)
+                    ->where('slug', 'LIKE', '%/')
+                    ->update(['slug' => $cleanSlug]);
+            } catch (\Throwable $e) {}
+        }
+
         // 4. Redirect if slug corresponds to a clinic Service or Treatment
         if (!$blog) {
-            $service = \App\Models\Service::where('slug', $slug)->first();
+            $service = \App\Models\Service::where('slug', $cleanSlug)->first();
             if ($service) {
-                return redirect()->route('services.show', $slug, 301);
+                return redirect()->route('services.show', $cleanSlug, 301);
             }
-            $treatment = \App\Models\Treatment::where('slug', $slug)->first();
+            $treatment = \App\Models\Treatment::where('slug', $cleanSlug)->first();
             if ($treatment) {
-                return redirect()->route('treatments.show', $slug, 301);
+                return redirect()->route('treatments.show', $cleanSlug, 301);
             }
         }
 

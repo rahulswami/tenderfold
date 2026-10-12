@@ -15,7 +15,7 @@ Route::get('/testimonials', [HomeController::class, 'testimonials'])->name('test
 Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/blogs', [HomeController::class, 'blog'])->name('blog');
-Route::get('/blogs/{slug}', [HomeController::class, 'blogShow'])->name('blog.show');
+Route::get('/blogs/{slug}', [HomeController::class, 'blogShow'])->name('blog.show')->where('slug', '.*');
 Route::get('/contact-us', [HomeController::class, 'contact'])->name('contact');
 Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
 Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
