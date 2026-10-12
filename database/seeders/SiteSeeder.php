@@ -625,5 +625,27 @@ class SiteSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        // 11. Seed Blog Categories
+        if (Schema::hasTable('blog_categories')) {
+            $categories = [
+                ['name' => 'Laundry Services', 'slug' => 'laundry-services', 'description' => 'Everyday wash & fold, fabric softness, and daily garment hygiene.'],
+                ['name' => 'Dry Cleaning', 'slug' => 'dry-cleaning', 'description' => 'Specialized chemical solvent cleaning for silks, woolens, and suits.'],
+                ['name' => 'Steam Pressing', 'slug' => 'steam-pressing', 'description' => 'Vacuum table heated steam pressing for crisp, crease-free garment finishing.'],
+                ['name' => 'Shoe Cleaning', 'slug' => 'shoe-cleaning', 'description' => 'Deep cleaning, stain removal, and care for sneakers, leather, and suede shoes.'],
+                ['name' => 'Carpet Cleaning', 'slug' => 'carpet-cleaning', 'description' => 'Industrial dust extraction, deep sanitization, and wash for rugs and carpets.'],
+                ['name' => 'Curtain Cleaning', 'slug' => 'curtain-cleaning', 'description' => 'Heavy drapery, blackout curtain washing, and dust allergen elimination.'],
+            ];
+
+            foreach ($categories as $cat) {
+                DB::table('blog_categories')->insertOrIgnore([
+                    'name' => $cat['name'],
+                    'slug' => $cat['slug'],
+                    'description' => $cat['description'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
     }
 }

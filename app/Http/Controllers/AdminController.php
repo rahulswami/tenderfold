@@ -152,8 +152,16 @@ class AdminController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'notifications_page');
 
-        // Fetch Blog Categories
-        $blogCategories = \App\Models\BlogCategory::withCount('blogs')->orderBy('name')->get();
+        // Fetch Blog Categories (auto-provision table if missing on live server)
+        $this->ensureBlogCategoriesTable();
+        $blogCategories = collect([]);
+        if (\Illuminate\Support\Facades\Schema::hasTable('blog_categories')) {
+            try {
+                $blogCategories = \App\Models\BlogCategory::withCount('blogs')->orderBy('name')->get();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed fetching blog_categories: ' . $e->getMessage());
+            }
+        }
 
         return response()
             ->view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'blogCategories', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages', 'users', 'notificationsLog'))
@@ -543,10 +551,16 @@ class AdminController extends Controller
             $imagePath = $request->input('image_url');
         }
 
-        \App\Models\BlogCategory::firstOrCreate(
-            ['name' => trim($request->category)],
-            ['slug' => \Illuminate\Support\Str::slug($request->category)]
-        );
+        if (\Illuminate\Support\Facades\Schema::hasTable('blog_categories')) {
+            try {
+                \App\Models\BlogCategory::firstOrCreate(
+                    ['name' => trim($request->category)],
+                    ['slug' => \Illuminate\Support\Str::slug($request->category)]
+                );
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed firstOrCreate blog category: ' . $e->getMessage());
+            }
+        }
 
         \App\Models\Blog::create([
             'title' => $request->title,
@@ -594,10 +608,16 @@ class AdminController extends Controller
             $imagePath = $request->input('image_url');
         }
 
-        \App\Models\BlogCategory::firstOrCreate(
-            ['name' => trim($request->category)],
-            ['slug' => \Illuminate\Support\Str::slug($request->category)]
-        );
+        if (\Illuminate\Support\Facades\Schema::hasTable('blog_categories')) {
+            try {
+                \App\Models\BlogCategory::firstOrCreate(
+                    ['name' => trim($request->category)],
+                    ['slug' => \Illuminate\Support\Str::slug($request->category)]
+                );
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed firstOrCreate blog category: ' . $e->getMessage());
+            }
+        }
 
         $blog->update([
             'title' => $request->title,
@@ -633,15 +653,63 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Blog post deleted successfully!');
     }
 
+    /**
+     * Ensure the blog_categories table exists, automatically creating and populating it if missing.
+     */
+    protected function ensureBlogCategoriesTable(): void
+    {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('blog_categories')) {
+            try {
+                \Illuminate\Support\Facades\Schema::create('blog_categories', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->id();
+                    $table->string('name')->unique();
+                    $table->string('slug')->unique();
+                    $table->text('description')->nullable();
+                    $table->timestamps();
+                });
+
+                $categories = [
+                    ['name' => 'Laundry Services', 'slug' => 'laundry-services', 'description' => 'Everyday wash & fold, fabric softness, and daily garment hygiene.'],
+                    ['name' => 'Dry Cleaning', 'slug' => 'dry-cleaning', 'description' => 'Specialized chemical solvent cleaning for silks, woolens, and suits.'],
+                    ['name' => 'Steam Pressing', 'slug' => 'steam-pressing', 'description' => 'Vacuum table heated steam pressing for crisp, crease-free garment finishing.'],
+                    ['name' => 'Shoe Cleaning', 'slug' => 'shoe-cleaning', 'description' => 'Deep cleaning, stain removal, and care for sneakers, leather, and suede shoes.'],
+                    ['name' => 'Carpet Cleaning', 'slug' => 'carpet-cleaning', 'description' => 'Industrial dust extraction, deep sanitization, and wash for rugs and carpets.'],
+                    ['name' => 'Curtain Cleaning', 'slug' => 'curtain-cleaning', 'description' => 'Heavy drapery, blackout curtain washing, and dust allergen elimination.'],
+                ];
+
+                foreach ($categories as $cat) {
+                    \Illuminate\Support\Facades\DB::table('blog_categories')->insertOrIgnore([
+                        'name' => $cat['name'],
+                        'slug' => $cat['slug'],
+                        'description' => $cat['description'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Auto-creating blog_categories table failed: ' . $e->getMessage());
+            }
+        }
+    }
+
     public function getBlogCategories()
     {
-        $categories = \App\Models\BlogCategory::withCount('blogs')->orderBy('name')->get();
+        $this->ensureBlogCategoriesTable();
+        $categories = collect([]);
+        if (\Illuminate\Support\Facades\Schema::hasTable('blog_categories')) {
+            try {
+                $categories = \App\Models\BlogCategory::withCount('blogs')->orderBy('name')->get();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed fetching blog categories: ' . $e->getMessage());
+            }
+        }
         return response()->json($categories);
     }
 
     public function storeBlogCategory(Request $request)
     {
         $this->checkPermission('blogs');
+        $this->ensureBlogCategoriesTable();
         $request->validate([
             'name' => 'required|string|max:255|unique:blog_categories,name',
             'slug' => 'nullable|string|max:255|unique:blog_categories,slug',
@@ -671,6 +739,7 @@ class AdminController extends Controller
     public function deleteBlogCategory(Request $request, $id)
     {
         $this->checkPermission('blogs');
+        $this->ensureBlogCategoriesTable();
         $category = \App\Models\BlogCategory::findOrFail($id);
         $name = $category->name;
         $category->delete();
@@ -2287,7 +2356,40 @@ User prompt: {$prompt}";
             }
         }
 
-        // ── 10. Verify leads insert/select works ───────────────────────
+        // ── 10. blog_categories ──────────────────────────────────────────
+        if (!\Illuminate\Support\Facades\Schema::hasTable('blog_categories')) {
+            \Illuminate\Support\Facades\Schema::create('blog_categories', function (\Illuminate\Database\Schema\Blueprint $t) {
+                $t->id();
+                $t->string('name')->unique();
+                $t->string('slug')->unique();
+                $t->text('description')->nullable();
+                $t->timestamps();
+            });
+
+            $defaultCategories = [
+                ['name' => 'Laundry Services', 'slug' => 'laundry-services', 'description' => 'Everyday wash & fold, fabric softness, and daily garment hygiene.'],
+                ['name' => 'Dry Cleaning', 'slug' => 'dry-cleaning', 'description' => 'Specialized chemical solvent cleaning for silks, woolens, and suits.'],
+                ['name' => 'Steam Pressing', 'slug' => 'steam-pressing', 'description' => 'Vacuum table heated steam pressing for crisp, crease-free garment finishing.'],
+                ['name' => 'Shoe Cleaning', 'slug' => 'shoe-cleaning', 'description' => 'Deep cleaning, stain removal, and care for sneakers, leather, and suede shoes.'],
+                ['name' => 'Carpet Cleaning', 'slug' => 'carpet-cleaning', 'description' => 'Industrial dust extraction, deep sanitization, and wash for rugs and carpets.'],
+                ['name' => 'Curtain Cleaning', 'slug' => 'curtain-cleaning', 'description' => 'Heavy drapery, blackout curtain washing, and dust allergen elimination.'],
+            ];
+
+            foreach ($defaultCategories as $cat) {
+                \Illuminate\Support\Facades\DB::table('blog_categories')->insertOrIgnore([
+                    'name' => $cat['name'],
+                    'slug' => $cat['slug'],
+                    'description' => $cat['description'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            $results['blog_categories'] = 'CREATED ✅';
+        } else {
+            $results['blog_categories'] = 'exists ✔';
+        }
+
+        // ── 11. Verify leads insert/select works ───────────────────────
         try {
             $count = \App\Models\Lead::count();
             $results['leads_read_test'] = "PASS ✅ ({$count} existing records)";
