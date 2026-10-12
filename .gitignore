@@ -36,3 +36,4 @@ test_home.html
 _static_backup/
 *.zip
 tender-fold/
+composer.phar

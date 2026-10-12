@@ -21,7 +21,7 @@
         <button type="button" data-open-book class="mt-8 inline-flex items-center justify-center rounded-full bg-gold px-6 py-3.5 font-display text-sm font-extrabold text-navy transition duration-300 hover:-translate-y-0.5 hover:bg-gold-deep">Ask us about a piece</button>
       </div>
 
-      <!-- Journal Articles Listing -->
+      <!-- Journal Articles Listing (Previous Unified Grid) -->
       <div class="mt-12">
         @if($blogs->count() > 0)
           <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

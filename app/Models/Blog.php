@@ -25,4 +25,9 @@ class Blog extends Model
     protected $casts = [
         'published_at' => 'datetime',
     ];
+
+    public function blogCategory()
+    {
+        return $this->belongsTo(BlogCategory::class, 'category', 'name');
+    }
 }

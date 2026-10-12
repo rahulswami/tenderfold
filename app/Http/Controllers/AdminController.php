@@ -152,9 +152,11 @@ class AdminController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'notifications_page');
 
+        // Fetch Blog Categories
+        $blogCategories = \App\Models\BlogCategory::withCount('blogs')->orderBy('name')->get();
 
         return response()
-            ->view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages', 'users', 'notificationsLog'))
+            ->view('admin.dashboard', compact('activeTab', 'parameters', 'slides', 'testimonials', 'blogs', 'blogCategories', 'mediaFiles', 'pageContents', 'services', 'banks', 'leads', 'landingPages', 'treatments', 'specialists', 'cmsPages', 'users', 'notificationsLog'))
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
             ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
@@ -541,6 +543,11 @@ class AdminController extends Controller
             $imagePath = $request->input('image_url');
         }
 
+        \App\Models\BlogCategory::firstOrCreate(
+            ['name' => trim($request->category)],
+            ['slug' => \Illuminate\Support\Str::slug($request->category)]
+        );
+
         \App\Models\Blog::create([
             'title' => $request->title,
             'slug' => $slug,
@@ -587,6 +594,11 @@ class AdminController extends Controller
             $imagePath = $request->input('image_url');
         }
 
+        \App\Models\BlogCategory::firstOrCreate(
+            ['name' => trim($request->category)],
+            ['slug' => \Illuminate\Support\Str::slug($request->category)]
+        );
+
         $blog->update([
             'title' => $request->title,
             'slug' => $request->slug,
@@ -619,6 +631,58 @@ class AdminController extends Controller
         $blog->delete();
 
         return redirect()->back()->with('success', 'Blog post deleted successfully!');
+    }
+
+    public function getBlogCategories()
+    {
+        $categories = \App\Models\BlogCategory::withCount('blogs')->orderBy('name')->get();
+        return response()->json($categories);
+    }
+
+    public function storeBlogCategory(Request $request)
+    {
+        $this->checkPermission('blogs');
+        $request->validate([
+            'name' => 'required|string|max:255|unique:blog_categories,name',
+            'slug' => 'nullable|string|max:255|unique:blog_categories,slug',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        $name = trim($request->name);
+        $slug = $request->slug ? \Illuminate\Support\Str::slug($request->slug) : \Illuminate\Support\Str::slug($name);
+
+        $category = \App\Models\BlogCategory::create([
+            'name' => $name,
+            'slug' => $slug,
+            'description' => $request->description,
+        ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Blog category created successfully!',
+                'category' => $category,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Blog category "' . $name . '" created successfully!');
+    }
+
+    public function deleteBlogCategory(Request $request, $id)
+    {
+        $this->checkPermission('blogs');
+        $category = \App\Models\BlogCategory::findOrFail($id);
+        $name = $category->name;
+        $category->delete();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Category deleted successfully!',
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Blog category "' . $name . '" deleted successfully!');
     }
 
     /* Page Content Updates */

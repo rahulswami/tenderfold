@@ -114,7 +114,22 @@ class HomeController extends Controller
         }
 
         if ($blog) {
-            return view('blog.show', compact('blog'));
+            $relatedBlogs = \App\Models\Blog::where('id', '!=', $blog->id)
+                ->where('category', $blog->category)
+                ->orderBy('published_at', 'desc')
+                ->take(2)
+                ->get();
+
+            if ($relatedBlogs->count() < 2) {
+                $extraBlogs = \App\Models\Blog::where('id', '!=', $blog->id)
+                    ->whereNotIn('id', $relatedBlogs->pluck('id'))
+                    ->orderBy('published_at', 'desc')
+                    ->take(2 - $relatedBlogs->count())
+                    ->get();
+                $relatedBlogs = $relatedBlogs->concat($extraBlogs);
+            }
+
+            return view('blog.show', compact('blog', 'relatedBlogs'));
         }
 
         abort(404);

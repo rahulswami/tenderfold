@@ -18,6 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            color-scheme: dark;
             --admin-sidebar-w: 260px;
             --admin-dark-bg: #0b1e36;
             --admin-dark-sidebar: #071526;
@@ -266,6 +267,26 @@
             outline: none;
             border-color: var(--mint-green);
             background-color: rgba(255,255,255,0.06);
+        }
+
+        select.form-control {
+            color-scheme: dark;
+            background-color: #0b1e36;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        select.form-control option,
+        .form-control option,
+        option {
+            background-color: #0b1e36 !important;
+            color: #ffffff !important;
+            padding: 8px 12px;
+        }
+
+        select.form-control optgroup {
+            background-color: #071526 !important;
+            color: var(--mint-green) !important;
         }
 
         textarea.form-control {
@@ -3224,14 +3245,17 @@
                                 <input type="text" id="blog_slug" name="slug" class="form-control" placeholder="preventing-back-pain-desk-workers">
                             </div>
                             <div class="form-group">
-                                <label for="blog_category">Category</label>
-                                <select id="blog_category" name="category" class="form-control" required>
-                                    <option value="Orthopaedics">Orthopaedics</option>
-                                    <option value="Physiotherapy">Physiotherapy</option>
-                                    <option value="Spine & Disc Care">Spine & Disc Care</option>
-                                    <option value="Sports Injuries">Sports Injuries</option>
-                                    <option value="Joint Recovery">Joint Recovery</option>
-                                    <option value="Healthy Tips">Healthy Tips</option>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                    <label for="blog_category" style="margin-bottom: 0;">Category</label>
+                                    <button type="button" class="btn-action" style="padding: 2px 8px; font-size: 0.75rem; background: rgba(32, 201, 151, 0.15); color: #20c997; border: 1px solid rgba(32, 201, 151, 0.3); border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="openCategoryModal()">
+                                        <i data-lucide="plus" style="width: 12px; height: 12px;"></i> Create Category
+                                    </button>
+                                </div>
+                                <select id="blog_category" name="category" class="form-control" style="background-color: #0b1e36; color: #ffffff;" required>
+                                    <option value="" style="background-color: #0b1e36; color: #ffffff;">-- Choose Category --</option>
+                                    @foreach($blogCategories ?? [] as $bCat)
+                                        <option value="{{ $bCat->name }}" style="background-color: #0b1e36; color: #ffffff;">{{ $bCat->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
@@ -3281,6 +3305,76 @@
                             <button type="button" class="btn-submit" id="blog-cancel-btn" style="background-color: var(--admin-input-bg); color: #fff; display: none;" onclick="cancelBlogEdit()">Cancel Edit</button>
                         </div>
                     </form>
+                </div>
+
+                <!-- Blog Categories Management Card -->
+                <div class="admin-card" id="blog-categories-manager-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h2 style="margin-bottom: 0.25rem;">
+                                <span><i data-lucide="folders" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 6px; color: var(--accent-teal);"></i> Blog Categories</span>
+                            </h2>
+                            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 0;">Manage article categories. Articles on the frontend are grouped and filtered by these categories.</p>
+                        </div>
+                        <button type="button" class="btn-submit" style="padding: 0.45rem 1rem; font-size: 0.85rem;" onclick="openCategoryModal()">
+                            <i data-lucide="plus"></i> Add New Category
+                        </button>
+                    </div>
+
+                    <!-- Quick Inline Add Form -->
+                    <form action="{{ route('admin.blog_categories.store') }}" method="POST" style="margin-bottom: 1.5rem; padding: 1.25rem; background: var(--admin-input-bg); border: 1px solid var(--admin-border); border-radius: var(--radius-md);">
+                        @csrf
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+                            <div style="flex: 2; min-width: 200px;">
+                                <label style="font-size: 0.8rem; color: var(--admin-text-muted); display: block; margin-bottom: 4px;">Category Name *</label>
+                                <input type="text" name="name" class="form-control" placeholder="e.g. Wedding Wear Care" required style="height: 38px;">
+                            </div>
+                            <div style="flex: 3; min-width: 250px;">
+                                <label style="font-size: 0.8rem; color: var(--admin-text-muted); display: block; margin-bottom: 4px;">Description (Optional)</label>
+                                <input type="text" name="description" class="form-control" placeholder="Short description for frontend category header" style="height: 38px;">
+                            </div>
+                            <div>
+                                <button type="submit" class="btn-submit" style="height: 38px; padding: 0 1.25rem; font-size: 0.85rem;">Save Category</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Categories List Table -->
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>URL Slug</th>
+                                    <th>Description</th>
+                                    <th>Articles Count</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blog-categories-table-body">
+                                @forelse($blogCategories ?? [] as $bCat)
+                                    <tr id="category-row-{{ $bCat->id }}">
+                                        <td><strong>{{ $bCat->name }}</strong></td>
+                                        <td><code>{{ $bCat->slug }}</code></td>
+                                        <td style="color: var(--admin-text-muted); font-size: 0.85rem;">{{ $bCat->description ?? '-' }}</td>
+                                        <td>
+                                            <span class="badge-webp" style="background-color: var(--primary-teal);">{{ $bCat->blogs_count ?? 0 }} Posts</span>
+                                        </td>
+                                        <td>
+                                            <form action="{{ route('admin.blog_categories.delete', $bCat->id) }}" method="POST" onsubmit="return confirm('Delete category \'{{ addslashes($bCat->name) }}\'? (Existing blog posts will keep their category text)')">
+                                                @csrf
+                                                <button type="submit" class="btn-action delete" title="Delete Category"><i data-lucide="trash-2"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: var(--admin-text-muted);">No categories added yet.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Existing Blogs List -->
@@ -4597,6 +4691,31 @@
                 <p class="ai-loader-text">Gemini is writing your article...</p>
                 <p class="ai-loader-subtext">This can take up to 20-30 seconds depending on image generation.</p>
             </div>
+        </div>
+    </div>
+
+    <!-- Create Blog Category Modal (Popup) -->
+    <div class="ai-modal-overlay" id="blog-category-modal" style="display: none;">
+        <div class="ai-modal-card" style="max-width: 520px;">
+            <button type="button" class="ai-modal-close" onclick="closeCategoryModal()">&times;</button>
+            <h3><i data-lucide="folder-plus" style="color: var(--accent-teal); display: inline-block; vertical-align: middle;"></i> Create Blog Category</h3>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">
+                Add a new category for blog articles. It will appear immediately in the Category dropdown and on the frontend filters.
+            </p>
+            <form id="ajax-category-form" onsubmit="submitCategoryAjax(event)">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="ajax_cat_name">Category Name *</label>
+                    <input type="text" id="ajax_cat_name" class="form-control" required placeholder="e.g. Wedding Wear Care">
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="ajax_cat_description">Description (Optional)</label>
+                    <textarea id="ajax_cat_description" class="form-control" rows="2" placeholder="Brief summary of what this category covers..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
+                    <button type="button" class="btn-action" style="padding: 0.6rem 1.2rem; background: var(--admin-input-bg); color: #fff; border-radius: var(--radius-md);" onclick="closeCategoryModal()">Cancel</button>
+                    <button type="submit" class="btn-submit" id="ajax-cat-submit-btn" style="padding: 0.6rem 1.4rem;">Create Category</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -6471,7 +6590,17 @@
                     document.getElementById('blog-form-method').value = 'POST';
                     document.getElementById('blog_title').value = data.title;
                     document.getElementById('blog_slug').value = data.slug;
-                    document.getElementById('blog_category').value = data.category;
+                    const catSelect = document.getElementById('blog_category');
+                    if (catSelect) {
+                        catSelect.value = data.category;
+                        if (data.category && catSelect.value !== data.category) {
+                            const newOpt = new Option(data.category, data.category, true, true);
+                            newOpt.style.backgroundColor = '#0b1e36';
+                            newOpt.style.color = '#ffffff';
+                            catSelect.add(newOpt);
+                            catSelect.value = data.category;
+                        }
+                    }
                     document.getElementById('blog_published_at').value = data.published_at;
                     document.getElementById('blog_summary').value = data.summary;
                     document.getElementById('blog_schema_markup').value = data.schema_markup || '';
@@ -6520,6 +6649,111 @@
             }
             document.getElementById('blog-submit-btn').innerText = 'Publish Blog Article';
             document.getElementById('blog-cancel-btn').style.display = 'none';
+        }
+
+        // Blog Category Modal and AJAX handlers
+        function openCategoryModal() {
+            const modal = document.getElementById('blog-category-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    const input = document.getElementById('ajax_cat_name');
+                    if (input) input.focus();
+                }, 100);
+            }
+        }
+
+        function closeCategoryModal() {
+            const modal = document.getElementById('blog-category-modal');
+            if (modal) modal.style.display = 'none';
+            const form = document.getElementById('ajax-category-form');
+            if (form) form.reset();
+        }
+
+        function submitCategoryAjax(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('ajax_cat_name');
+            const descInput = document.getElementById('ajax_cat_description');
+            const submitBtn = document.getElementById('ajax-cat-submit-btn');
+            const name = nameInput.value.trim();
+            const desc = descInput.value.trim();
+
+            if (!name) return;
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Creating...';
+
+            fetch('{{ route("admin.blog_categories.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ name: name, description: desc })
+            })
+            .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, body: data })))
+            .then(result => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Create Category';
+
+                if (!result.ok) {
+                    const errorMsg = result.body.message || (result.body.errors ? Object.values(result.body.errors).flat().join('\n') : 'Failed to create category.');
+                    alert(errorMsg);
+                    return;
+                }
+
+                const cat = result.body.category;
+                
+                // Add to #blog_category select
+                const catSelect = document.getElementById('blog_category');
+                if (catSelect) {
+                    let exists = false;
+                    for (let opt of catSelect.options) {
+                        if (opt.value === cat.name) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        const opt = new Option(cat.name, cat.name, true, true);
+                        opt.style.backgroundColor = '#0b1e36';
+                        opt.style.color = '#ffffff';
+                        catSelect.add(opt);
+                    }
+                    catSelect.value = cat.name;
+                }
+
+                // Add to categories table if present
+                const tbody = document.getElementById('blog-categories-table-body');
+                if (tbody) {
+                    const tr = document.createElement('tr');
+                    tr.id = 'category-row-' + cat.id;
+                    tr.innerHTML = `
+                        <td><strong>${escapeJsString(cat.name)}</strong></td>
+                        <td><code>${escapeJsString(cat.slug)}</code></td>
+                        <td style="color: var(--admin-text-muted); font-size: 0.85rem;">${escapeJsString(cat.description || '-')}</td>
+                        <td><span class="badge-webp" style="background-color: var(--primary-teal);">0 Posts</span></td>
+                        <td>
+                            <form action="/admin/blog-categories/${cat.id}/delete" method="POST" onsubmit="return confirm('Delete this category?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn-action delete" title="Delete Category"><i data-lucide="trash-2"></i></button>
+                            </form>
+                        </td>
+                    `;
+                    tbody.prepend(tr);
+                    if (window.lucide) window.lucide.createIcons();
+                }
+
+                closeCategoryModal();
+                alert('Blog category "' + cat.name + '" created and selected!');
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Create Category';
+                console.error('Category creation error:', err);
+                alert('An error occurred while creating the category.');
+            });
         }
 
 

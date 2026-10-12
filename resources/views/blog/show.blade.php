@@ -39,6 +39,10 @@
           <a href="{{ route('home') }}" class="transition hover:text-navy">Home</a> 
           <span aria-hidden="true">/</span> 
           <a href="{{ route('blog') }}" class="transition hover:text-navy">Journal</a> 
+          @if($blog->category)
+            <span aria-hidden="true">/</span> 
+            <span>{{ $blog->category }}</span> 
+          @endif
           <span aria-hidden="true">/</span> 
           <span class="text-navy truncate">{{ Str::limit($blog->title, 30) }}</span>
         </p>
@@ -85,7 +89,13 @@
       <!-- Related Posts -->
       @if(isset($relatedBlogs) && $relatedBlogs->count() > 0)
         <div class="mt-16 pt-12 border-t border-navy/10">
-          <h2 class="font-display text-2xl font-extrabold text-navy mb-8">More Care Notes</h2>
+          <h2 class="font-display text-2xl font-extrabold text-navy mb-8">
+            @if($blog->category)
+              More in {{ $blog->category }}
+            @else
+              More Care Notes
+            @endif
+          </h2>
           <div class="grid gap-6 sm:grid-cols-2">
             @foreach($relatedBlogs as $rBlog)
               @include('blog.partials.card', ['blog' => $rBlog])

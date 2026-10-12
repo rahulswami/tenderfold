@@ -83,6 +83,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/blogs/{id}/update', [AdminController::class, 'updateBlog'])->name('admin.blogs.update');
     Route::post('/admin/blogs/{id}/delete', [AdminController::class, 'deleteBlog'])->name('admin.blogs.delete');
 
+    // Blog Categories CRUD
+    Route::get('/admin/blog-categories', [AdminController::class, 'getBlogCategories'])->name('admin.blog_categories.list');
+    Route::post('/admin/blog-categories', [AdminController::class, 'storeBlogCategory'])->name('admin.blog_categories.store');
+    Route::post('/admin/blog-categories/{id}/delete', [AdminController::class, 'deleteBlogCategory'])->name('admin.blog_categories.delete');
+
     // Services CRUD
     Route::post('/admin/services', [AdminController::class, 'storeService'])->name('admin.services.store');
     Route::post('/admin/services/{id}/update', [AdminController::class, 'updateService'])->name('admin.services.update');
