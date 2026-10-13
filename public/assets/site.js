@@ -120,13 +120,25 @@
   } else {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting || entry.intersectionRatio > 0) {
           entry.target.classList.add("is-in");
           io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.16, rootMargin: "0px 0px -40px 0px" });
-    reveals.forEach(function (el) { io.observe(el); });
+    }, { threshold: [0, 0.05], rootMargin: "0px 0px 40px 0px" });
+    reveals.forEach(function (el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add("is-in");
+      } else {
+        io.observe(el);
+      }
+    });
+
+    // Safety fallback: reveal all remaining elements after 1.5s
+    setTimeout(function () {
+      reveals.forEach(function (el) { el.classList.add("is-in"); });
+    }, 1500);
   }
 
   var tabs = document.querySelectorAll(".quote-tab");

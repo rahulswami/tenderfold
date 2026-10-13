@@ -70,7 +70,7 @@
       </div>
 
       <!-- Content Container -->
-      <div class="reveal prose prose-lg max-w-none text-ink text-base sm:text-lg leading-relaxed space-y-6">
+      <div class="prose prose-lg max-w-none text-ink text-base sm:text-lg leading-relaxed space-y-6">
         {!! $blog->content !!}
       </div>
 

@@ -6509,6 +6509,15 @@
                 });
         }
 
+        const blogFormEl = document.getElementById('blog-form');
+        if (blogFormEl) {
+            blogFormEl.addEventListener('submit', function() {
+                if (blogEditor) {
+                    document.getElementById('blog_content').value = blogEditor.getData();
+                }
+            });
+        }
+
         let serviceIntroEditor;
         let serviceTipsEditor;
         if (typeof ClassicEditor !== 'undefined' && document.querySelector('#ser_intro_content')) {

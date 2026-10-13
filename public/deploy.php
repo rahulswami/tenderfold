@@ -469,6 +469,63 @@ if ($pdo) {
         $actions[] = "Normalized all city references to 'Gurgaon' and repaired UTF-8 characters ✅";
     } catch (\Throwable $e) {}
 
+    // 7.14.1 Self-Heal Blog Posts with Base64 Images or Hidden Reveal Tags
+    try {
+        $blogStmt = $pdo->query("SELECT `id`, `content` FROM `blogs` WHERE `content` LIKE '%data:image/%' OR `content` LIKE '%reveal%'");
+        $healedCount = 0;
+        while ($bRow = $blogStmt->fetch(PDO::FETCH_ASSOC)) {
+            $bId = $bRow['id'];
+            $bContent = $bRow['content'];
+
+            // Clean accidental reveal wrapper
+            $bContent = preg_replace('/<!--\s*Content Container\s*-->/i', '', $bContent);
+            $bContent = preg_replace('/^\s*<div[^>]*class=["\'][^"\']*prose[^"\']*["\'][^>]*>/i', '', $bContent);
+            $bContent = preg_replace('/<\/div>\s*$/i', '', $bContent);
+            $bContent = preg_replace_callback('/<([a-z0-9]+)([^>]*class=["\'])([^"\']*)(["\'][^>]*)>/i', function ($m) {
+                $classes = trim(preg_replace('/\s+/', ' ', preg_replace('/\breveal\b/i', '', $m[3])));
+                return '<' . $m[1] . $m[2] . $classes . $m[4] . '>';
+            }, $bContent);
+
+            // Extract and save base64 images
+            if (stripos($bContent, 'data:image/') !== false) {
+                $bContent = preg_replace_callback('/src=["\'](data:image\/([a-zA-Z0-9\+\-]+);base64,([^"\']+))["\']/i', function ($m) use ($basePath) {
+                    $rawMime = strtolower($m[2]);
+                    $binaryData = base64_decode($m[3]);
+                    if (!$binaryData) return $m[0];
+
+                    $blogDir = $basePath . '/storage/app/public/blog';
+                    if (!is_dir($blogDir)) @mkdir($blogDir, 0775, true);
+
+                    $filename = uniqid('img_') . '.webp';
+                    $savedPath = $blogDir . '/' . $filename;
+                    $image = @imagecreatefromstring($binaryData);
+                    $success = false;
+                    if ($image) {
+                        imagepalettetotruecolor($image);
+                        imagealphablending($image, true);
+                        imagesavealpha($image, true);
+                        $success = imagewebp($image, $savedPath, 85);
+                        imagedestroy($image);
+                    }
+                    if (!$success) {
+                        $ext = ($rawMime === 'jpeg' || $rawMime === 'jpg') ? 'jpg' : (($rawMime === 'png') ? 'png' : 'webp');
+                        $filename = uniqid('img_') . '.' . $ext;
+                        $savedPath = $blogDir . '/' . $filename;
+                        @file_put_contents($savedPath, $binaryData);
+                    }
+                    return 'src="/storage/blog/' . $filename . '"';
+                }, $bContent);
+            }
+
+            $upd = $pdo->prepare("UPDATE `blogs` SET `content` = ? WHERE `id` = ?");
+            $upd->execute([$bContent, $bId]);
+            $healedCount++;
+        }
+        if ($healedCount > 0) {
+            $actions[] = "Self-healed {$healedCount} blog posts (converted base64 images and cleaned reveal tags) ✅";
+        }
+    } catch (\Throwable $e) {}
+
     // 7.15 Synchronize Core Site Parameters (Upsert)
     $coreParams = [
         ['site_name', 'Tenderfold', 'Site Name', 'general'],

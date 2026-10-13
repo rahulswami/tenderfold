@@ -573,12 +573,14 @@ class AdminController extends Controller
             }
         }
 
+        $processedContent = $this->processContentImages($request->content, 'blog');
+
         \App\Models\Blog::create([
             'title' => $request->title,
             'slug' => $slug,
             'category' => $request->category,
             'summary' => $request->summary,
-            'content' => $request->content,
+            'content' => $processedContent,
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : now(),
             'schema_markup' => $request->schema_markup,
@@ -640,12 +642,14 @@ class AdminController extends Controller
             $slug = \Illuminate\Support\Str::slug($request->title);
         }
 
+        $processedContent = $this->processContentImages($request->content, 'blog');
+
         $blog->update([
             'title' => $request->title,
             'slug' => $slug,
             'category' => $request->category,
             'summary' => $request->summary,
-            'content' => $request->content,
+            'content' => $processedContent,
             'image_path' => $imagePath,
             'published_at' => $request->published_at ? \Carbon\Carbon::parse($request->published_at) : $blog->published_at,
             'schema_markup' => $request->schema_markup,
@@ -998,6 +1002,81 @@ class AdminController extends Controller
         }
         
         return $folder . '/' . $filename;
+    }
+
+    /**
+     * Automatically extracts inline Base64 images from HTML content,
+     * converts them to WebP files in storage, and replaces src with clean URLs.
+     * Prevents database payload overflows (MySQL max_allowed_packet) and massive HTML download sizes.
+     */
+    private function processContentImages($content, $folder = 'blog')
+    {
+        if (empty($content) || !is_string($content)) {
+            return $content;
+        }
+
+        // Clean accidental pasted page wrappers or reveal classes that cause opacity: 0
+        $content = preg_replace('/<!--\s*Content Container\s*-->/i', '', $content);
+        $content = preg_replace('/^\s*<div[^>]*class=["\'][^"\']*prose[^"\']*["\'][^>]*>/i', '', $content);
+        $content = preg_replace('/<\/div>\s*$/i', '', $content);
+        $content = preg_replace_callback('/<([a-z0-9]+)([^>]*class=["\'])([^"\']*)(["\'][^>]*)>/i', function ($m) {
+            $classes = trim(preg_replace('/\s+/', ' ', preg_replace('/\breveal\b/i', '', $m[3])));
+            return '<' . $m[1] . $m[2] . $classes . $m[4] . '>';
+        }, $content);
+
+        if (stripos($content, 'data:image/') === false) {
+            return $content;
+        }
+
+        $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
+        if (empty($r2PublicUrl)) {
+            $r2PublicUrl = 'https://images.tenderfold.in';
+        }
+        $r2PublicUrl = rtrim($r2PublicUrl, '/');
+
+        return preg_replace_callback('/src=["\'](data:image\/([a-zA-Z0-9\+\-]+);base64,([^"\']+))["\']/i', function ($matches) use ($folder, $r2PublicUrl) {
+            $rawMime = strtolower($matches[2]);
+            $base64Data = $matches[3];
+            $binaryData = base64_decode($base64Data);
+
+            if (!$binaryData) {
+                return $matches[0];
+            }
+
+            $filename = uniqid('img_') . '.webp';
+            $savedUrl = null;
+
+            // Try GD conversion to WebP
+            $image = @imagecreatefromstring($binaryData);
+            if ($image) {
+                imagepalettetotruecolor($image);
+                imagealphablending($image, true);
+                imagesavealpha($image, true);
+
+                ob_start();
+                imagewebp($image, null, 85);
+                $webpData = ob_get_clean();
+                imagedestroy($image);
+
+                if ($webpData) {
+                    Storage::disk('public')->put($folder . '/' . $filename, $webpData);
+                    if ($this->uploadToR2($webpData, $filename, 'image/webp')) {
+                        $savedUrl = $r2PublicUrl . '/' . $filename;
+                    } else {
+                        $savedUrl = site_image($folder . '/' . $filename);
+                    }
+                }
+            }
+
+            if (!$savedUrl) {
+                $ext = ($rawMime === 'jpeg' || $rawMime === 'jpg') ? 'jpg' : (($rawMime === 'png') ? 'png' : 'webp');
+                $filename = uniqid('img_') . '.' . $ext;
+                Storage::disk('public')->put($folder . '/' . $filename, $binaryData);
+                $savedUrl = site_image($folder . '/' . $filename);
+            }
+
+            return 'src="' . $savedUrl . '"';
+        }, $content);
     }
 
     /* Services CRUD */
