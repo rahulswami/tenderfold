@@ -3297,8 +3297,14 @@
                             <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Paste the complete <code>&lt;script type="application/ld+json"&gt;...&lt;/script&gt;</code> block to override the default blog posting schema.</span>
                         </div>
                         <div class="form-group" style="margin-top: 1.25rem;">
-                            <label for="blog_content">Article Content (HTML Editor)</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
+                                <label for="blog_content" style="margin-bottom: 0; font-weight: 700;">Article Content (WYSIWYG &amp; HTML Editor)</label>
+                                <button type="button" onclick="openBlogHtmlSource()" style="background: rgba(245, 180, 0, 0.15); color: #F5B400; border: 1px solid rgba(245, 180, 0, 0.5); padding: 5px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                    <span style="font-family: monospace; font-weight: 800;">&lt; / &gt;</span> Edit Raw HTML Source
+                                </button>
+                            </div>
                             <textarea id="blog_content" name="content" class="form-control" placeholder="Write article content here..."></textarea>
+                            <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Use the toolbar above to choose <strong>Paragraph, H2, H3, H4</strong>, add <strong>Bullet Points</strong>, or click <strong>&lt; / &gt; Edit Raw HTML Source</strong> to edit HTML directly.</span>
                         </div>
                         <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
                             <button type="submit" class="btn-submit" id="blog-submit-btn">Publish Blog Article</button>
@@ -4951,9 +4957,9 @@
         }
     </style>
 
-    <!-- Lucide CDN & CKEditor CDN -->
+    <!-- Lucide CDN & TinyMCE CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- html2pdf.js CDN for PDF Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -6495,90 +6501,75 @@
             }, 2000);
         });
 
-        // Initialize CKEditor defensively
-        // Initialize CKEditor defensively
-        let blogEditor;
-        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#blog_content')) {
-            ClassicEditor
-                .create(document.querySelector('#blog_content'))
-                .then(editor => {
-                    blogEditor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+        // TinyMCE Editor Helper & Initialization with HTML Code View, H1/H2/H3 Headings, and Bullet Lists
+        function createEditorWrapper(elementId) {
+            return {
+                getData: function() {
+                    const ed = (typeof tinymce !== 'undefined') ? tinymce.get(elementId) : null;
+                    if (ed) return ed.getContent();
+                    const el = document.getElementById(elementId);
+                    return el ? el.value : '';
+                },
+                setData: function(html) {
+                    const ed = (typeof tinymce !== 'undefined') ? tinymce.get(elementId) : null;
+                    if (ed) ed.setContent(html || '');
+                    const el = document.getElementById(elementId);
+                    if (el) el.value = html || '';
+                }
+            };
+        }
+
+        const blogEditor = createEditorWrapper('blog_content');
+        const serviceIntroEditor = createEditorWrapper('ser_intro_content');
+        const serviceTipsEditor = createEditorWrapper('ser_tips_content');
+        const treatmentEditor = createEditorWrapper('treat_description');
+        const specialistEditor = createEditorWrapper('spec_description');
+        const cmsEditor = createEditorWrapper('cms_description');
+        window.blogEditor = blogEditor;
+        window.treatmentEditor = treatmentEditor;
+        window.specialistEditor = specialistEditor;
+        window.cmsEditor = cmsEditor;
+
+        function openBlogHtmlSource() {
+            if (typeof tinymce !== 'undefined' && tinymce.get('blog_content')) {
+                tinymce.get('blog_content').execCommand('mceCodeEditor');
+            } else {
+                alert('Editor is loading, please try in a moment.');
+            }
+        }
+
+        if (typeof tinymce !== 'undefined') {
+            tinymce.init({
+                selector: '#blog_content, #ser_intro_content, #ser_tips_content, #treat_description, #spec_description, #cms_description',
+                plugins: 'code anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image table media | code removeformat',
+                block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Blockquote=blockquote; Preformatted=pre',
+                menubar: 'file edit view insert format tools table',
+                height: 480,
+                branding: false,
+                promotion: false,
+                skin: 'oxide-dark',
+                content_css: 'dark',
+                content_style: 'body { font-family: "Manrope", sans-serif; font-size: 16px; line-height: 1.7; color: #1A2744; background: #ffffff; padding: 14px; } h1,h2,h3,h4,h5,h6 { font-family: "Nunito", sans-serif; font-weight: 800; color: #143572; margin-top: 1.25rem; margin-bottom: 0.5rem; } p { margin-bottom: 1rem; } ul, ol { padding-left: 24px; margin-bottom: 1rem; } ul li { list-style-type: disc; margin-bottom: 4px; } ol li { list-style-type: decimal; margin-bottom: 4px; }',
+                setup: function (editor) {
+                    editor.on('change keyup input paste', function () {
+                        editor.save();
+                    });
+                }
+            });
         }
 
         const blogFormEl = document.getElementById('blog-form');
         if (blogFormEl) {
             blogFormEl.addEventListener('submit', function() {
-                if (blogEditor) {
-                    document.getElementById('blog_content').value = blogEditor.getData();
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.triggerSave();
+                }
+                const bEl = document.getElementById('blog_content');
+                if (bEl && blogEditor) {
+                    bEl.value = blogEditor.getData();
                 }
             });
-        }
-
-        let serviceIntroEditor;
-        let serviceTipsEditor;
-        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#ser_intro_content')) {
-            ClassicEditor
-                .create(document.querySelector('#ser_intro_content'))
-                .then(editor => {
-                    serviceIntroEditor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
-        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#ser_tips_content')) {
-            ClassicEditor
-                .create(document.querySelector('#ser_tips_content'))
-                .then(editor => {
-                    serviceTipsEditor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
-        let treatmentEditor;
-        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#treat_description')) {
-            ClassicEditor
-                .create(document.querySelector('#treat_description'))
-                .then(editor => {
-                    treatmentEditor = editor;
-                    window.treatmentEditor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
-        let specialistEditor;
-        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#spec_description')) {
-            ClassicEditor
-                .create(document.querySelector('#spec_description'))
-                .then(editor => {
-                    specialistEditor = editor;
-                    window.specialistEditor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
-        let cmsEditor;
-        if (typeof ClassicEditor !== 'undefined' && document.querySelector('#cms_description')) {
-            ClassicEditor
-                .create(document.querySelector('#cms_description'))
-                .then(editor => {
-                    cmsEditor = editor;
-                    window.cmsEditor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
         }
 
         function escapeJsString(str) {
