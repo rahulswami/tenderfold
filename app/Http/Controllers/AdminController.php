@@ -808,19 +808,31 @@ class AdminController extends Controller
     /* Media Upload Manager */
     public function uploadMedia(Request $request)
     {
-        $this->checkPermission('media');
+        $user = Auth::user();
+        if ($user && $user->role !== 'superadmin') {
+            $permissions = is_array($user->permissions) ? $user->permissions : (json_decode($user->permissions ?? '[]', true) ?: []);
+            if (!in_array('all', $permissions) && !in_array('media', $permissions) && !in_array('blogs', $permissions)) {
+                abort(403, 'Unauthorized action. You do not have permission for media upload.');
+            }
+        }
+
         $request->validate([
             'file' => 'required|file|image|max:10000',
         ]);
 
+        $folder = $request->input('folder', 'uploads');
+        $folder = in_array($folder, ['blog', 'uploads', 'page', 'service']) ? $folder : 'uploads';
+
         if ($request->hasFile('file')) {
-            $path = $this->uploadAndConvertToWebP($request->file('file'), 'uploads');
+            $path = $this->uploadAndConvertToWebP($request->file('file'), $folder);
             if ($path) {
                 $url = site_image($path);
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => true,
+                        'location' => $url, // Required by TinyMCE 6 image uploader
                         'url' => $url,
+                        'path' => $path,
                         'name' => basename($path),
                     ]);
                 }
@@ -832,6 +844,35 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'message' => 'Upload failed.'], 400);
         }
         return redirect()->back()->with('error', 'Upload failed.');
+    }
+
+    public function listMedia(Request $request)
+    {
+        $mediaFiles = [];
+        try {
+            $files = Storage::disk('public')->allFiles();
+            foreach ($files as $file) {
+                if (!str_starts_with(basename($file), '.')) {
+                    $mediaFiles[] = [
+                        'name' => basename($file),
+                        'path' => $file,
+                        'url' => site_image($file),
+                        'size' => Storage::disk('public')->size($file),
+                        'time' => Storage::disk('public')->lastModified($file),
+                    ];
+                }
+            }
+            usort($mediaFiles, function($a, $b) {
+                return $b['time'] <=> $a['time'];
+            });
+        } catch (\Exception $e) {
+            // Silently fail
+        }
+
+        return response()->json([
+            'success' => true,
+            'files' => $mediaFiles,
+        ]);
     }
 
     /* Helper function for uploading to Cloudflare R2 Storage using pure S3 REST API & Signature V4 */
@@ -1024,17 +1065,35 @@ class AdminController extends Controller
             return '<' . $m[1] . $m[2] . $classes . $m[4] . '>';
         }, $content);
 
+        // Normalize existing local storage URLs with ports or missing leading slashes to portable root-relative /storage/ paths
+        $content = preg_replace('#src=["\']https?://(?:127\.0\.0\.1|localhost)(?::\d+)?/storage/([^"\']+)["\']#i', 'src="/storage/$1"', $content);
+        $content = preg_replace('#src=["\']storage/([^"\']+)["\']#i', 'src="/storage/$1"', $content);
+        $content = preg_replace('#src=["\'](blog|uploads)/([^"\']+)["\']#i', 'src="/storage/$1/$2"', $content);
+
+        // Resolve unresolvable images.tenderfold.in domain if files exist locally
+        $content = preg_replace_callback('#src=["\']https?://images\.tenderfold\.in/([^"\']+)["\']#i', function($matches) {
+            $filename = $matches[1];
+            if (file_exists(public_path('storage/blog/' . $filename))) {
+                return 'src="/storage/blog/' . $filename . '"';
+            }
+            if (file_exists(public_path('storage/uploads/' . $filename))) {
+                return 'src="/storage/uploads/' . $filename . '"';
+            }
+            if (file_exists(public_path('storage/' . $filename))) {
+                return 'src="/storage/' . $filename . '"';
+            }
+            return $matches[0];
+        }, $content);
+
         if (stripos($content, 'data:image/') === false) {
             return $content;
         }
 
         $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
-        if (empty($r2PublicUrl)) {
-            $r2PublicUrl = 'https://images.tenderfold.in';
-        }
+        $r2Configured = !empty($r2PublicUrl) && !empty(trim(SiteParameter::where('id', 'cloudflare_r2_account_id')->value('value') ?? ''));
         $r2PublicUrl = rtrim($r2PublicUrl, '/');
 
-        return preg_replace_callback('/src=["\'](data:image\/([a-zA-Z0-9\+\-]+);base64,([^"\']+))["\']/i', function ($matches) use ($folder, $r2PublicUrl) {
+        return preg_replace_callback('/src=["\'](data:image\/([a-zA-Z0-9\+\-]+);base64,([^"\']+))["\']/i', function ($matches) use ($folder, $r2Configured, $r2PublicUrl) {
             $rawMime = strtolower($matches[2]);
             $base64Data = $matches[3];
             $binaryData = base64_decode($base64Data);
@@ -1060,10 +1119,10 @@ class AdminController extends Controller
 
                 if ($webpData) {
                     Storage::disk('public')->put($folder . '/' . $filename, $webpData);
-                    if ($this->uploadToR2($webpData, $filename, 'image/webp')) {
+                    if ($r2Configured && $this->uploadToR2($webpData, $filename, 'image/webp')) {
                         $savedUrl = $r2PublicUrl . '/' . $filename;
                     } else {
-                        $savedUrl = site_image($folder . '/' . $filename);
+                        $savedUrl = '/storage/' . $folder . '/' . $filename;
                     }
                 }
             }
@@ -1072,7 +1131,7 @@ class AdminController extends Controller
                 $ext = ($rawMime === 'jpeg' || $rawMime === 'jpg') ? 'jpg' : (($rawMime === 'png') ? 'png' : 'webp');
                 $filename = uniqid('img_') . '.' . $ext;
                 Storage::disk('public')->put($folder . '/' . $filename, $binaryData);
-                $savedUrl = site_image($folder . '/' . $filename);
+                $savedUrl = '/storage/' . $folder . '/' . $filename;
             }
 
             return 'src="' . $savedUrl . '"';

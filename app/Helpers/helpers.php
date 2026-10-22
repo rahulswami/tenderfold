@@ -6,6 +6,20 @@ if (!function_exists('site_image')) {
             return default_fallback_image($fallbackType);
         }
 
+        // Normalize local storage URLs with ports or hostname changes
+        if (preg_match('#^https?://(?:127\.0\.0\.1|localhost)(?::\d+)?/storage/(.*)$#i', $path, $m)) {
+            $path = 'storage/' . $m[1];
+        } elseif (preg_match('#^https?://images\.tenderfold\.in/(.*)$#i', $path, $m)) {
+            $filename = $m[1];
+            if (file_exists(public_path('storage/blog/' . $filename))) {
+                $path = 'storage/blog/' . $filename;
+            } elseif (file_exists(public_path('storage/uploads/' . $filename))) {
+                $path = 'storage/uploads/' . $filename;
+            } elseif (file_exists(public_path('storage/' . $filename))) {
+                $path = 'storage/' . $filename;
+            }
+        }
+
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//')) {
             return $path;
         }
@@ -122,5 +136,54 @@ if (!function_exists('parse_faqs')) {
         }
 
         return $faqs;
+    }
+}
+
+if (!function_exists('clean_blog_content')) {
+    /**
+     * Normalizes image URLs and ensures proper responsive rendering for blog HTML content.
+     */
+    function clean_blog_content($content) {
+        if (empty($content) || !is_string($content)) {
+            return $content;
+        }
+
+        // 1. Normalize local server storage URLs (e.g. localhost:8000, 127.0.0.1:8000, 127.0.0.1:8002) to root-relative /storage/
+        $content = preg_replace(
+            '#src=["\']https?://(?:127\.0\.0\.1|localhost)(?::\d+)?/storage/([^"\']+)["\']#i',
+            'src="/storage/$1"',
+            $content
+        );
+
+        // 2. Normalize relative storage paths missing leading slash (src="storage/...")
+        $content = preg_replace(
+            '#src=["\']storage/([^"\']+)["\']#i',
+            'src="/storage/$1"',
+            $content
+        );
+
+        // 3. Normalize relative blog/ or uploads/ paths (src="blog/..." or src="uploads/...")
+        $content = preg_replace(
+            '#src=["\'](blog|uploads)/([^"\']+)["\']#i',
+            'src="/storage/$1/$2"',
+            $content
+        );
+
+        // 4. Resolve unresolvable images.tenderfold.in domain if files exist locally
+        $content = preg_replace_callback('#src=["\']https?://images\.tenderfold\.in/([^"\']+)["\']#i', function($matches) {
+            $filename = $matches[1];
+            if (file_exists(public_path('storage/blog/' . $filename))) {
+                return 'src="/storage/blog/' . $filename . '"';
+            }
+            if (file_exists(public_path('storage/uploads/' . $filename))) {
+                return 'src="/storage/uploads/' . $filename . '"';
+            }
+            if (file_exists(public_path('storage/' . $filename))) {
+                return 'src="/storage/' . $filename . '"';
+            }
+            return $matches[0];
+        }, $content);
+
+        return $content;
     }
 }

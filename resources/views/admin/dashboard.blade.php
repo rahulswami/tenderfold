@@ -3299,12 +3299,17 @@
                         <div class="form-group" style="margin-top: 1.25rem;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
                                 <label for="blog_content" style="margin-bottom: 0; font-weight: 700;">Article Content (WYSIWYG &amp; HTML Editor)</label>
-                                <button type="button" onclick="openBlogHtmlSource()" style="background: rgba(245, 180, 0, 0.15); color: #F5B400; border: 1px solid rgba(245, 180, 0, 0.5); padding: 5px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                                    <span style="font-family: monospace; font-weight: 800;">&lt; / &gt;</span> Edit Raw HTML Source
-                                </button>
+                                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                    <button type="button" onclick="openMediaLibraryModalForEditor('blog_content')" style="background: rgba(32, 201, 151, 0.15); color: #20c997; border: 1px solid rgba(32, 201, 151, 0.5); padding: 5px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i data-lucide="image" style="width: 14px; height: 14px;"></i> Insert from Media Library
+                                    </button>
+                                    <button type="button" onclick="openBlogHtmlSource()" style="background: rgba(245, 180, 0, 0.15); color: #F5B400; border: 1px solid rgba(245, 180, 0, 0.5); padding: 5px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                        <span style="font-family: monospace; font-weight: 800;">&lt; / &gt;</span> Edit Raw HTML Source
+                                    </button>
+                                </div>
                             </div>
                             <textarea id="blog_content" name="content" class="form-control" placeholder="Write article content here..."></textarea>
-                            <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">Use the toolbar above to choose <strong>Paragraph, H2, H3, H4</strong>, add <strong>Bullet Points</strong>, or click <strong>&lt; / &gt; Edit Raw HTML Source</strong> to edit HTML directly.</span>
+                            <span style="font-size: 0.75rem; color: var(--admin-text-muted); display: block; margin-top: 4px;">To insert an image between paragraphs: click the <strong>Image icon</strong> in the toolbar (supports upload &amp; drag-and-drop), paste directly from clipboard, or click <strong>Insert from Media Library</strong>.</span>
                         </div>
                         <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
                             <button type="submit" class="btn-submit" id="blog-submit-btn">Publish Blog Article</button>
@@ -4722,6 +4727,40 @@
                     <button type="submit" class="btn-submit" id="ajax-cat-submit-btn" style="padding: 0.6rem 1.4rem;">Create Category</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Media Library Selector Modal for Editor -->
+    <div class="ai-modal-overlay" id="editor-media-modal" style="display: none;">
+        <div class="ai-modal-card" style="max-width: 820px; width: 95%;">
+            <button type="button" class="ai-modal-close" onclick="closeMediaLibraryModal()">&times;</button>
+            <h3><i data-lucide="images" style="color: var(--accent-teal); display: inline-block; vertical-align: middle;"></i> Insert Image from Media Library</h3>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1rem;">
+                Select an image below to insert it between paragraphs in your article, or upload a new file.
+            </p>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                <input type="text" id="editor-media-search" class="form-control" placeholder="Search images by name..." style="max-width: 280px; height: 38px;" oninput="filterEditorMedia(this.value)">
+                <div>
+                    <label class="btn-submit" style="padding: 7px 16px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin: 0;">
+                        <i data-lucide="upload-cloud" style="width: 15px; height: 15px;"></i> Upload New Image
+                        <input type="file" id="editor-modal-upload-input" accept="image/*" style="display: none;" onchange="uploadFromEditorModal(this)">
+                    </label>
+                </div>
+            </div>
+
+            <div id="editor-media-loading" style="text-align: center; padding: 2.5rem; color: var(--admin-text-muted); display: none;">
+                <i data-lucide="loader-2" class="spin" style="width: 28px; height: 28px; margin: 0 auto 8px auto; display: block; color: var(--mint-green);"></i>
+                Loading media library...
+            </div>
+
+            <div id="editor-media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; max-height: 420px; overflow-y: auto; padding: 4px;">
+                <!-- Rendered dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.25rem;">
+                <button type="button" class="btn-action" style="padding: 0.6rem 1.2rem; background: var(--admin-input-bg); color: #fff; border-radius: var(--radius-md);" onclick="closeMediaLibraryModal()">Close</button>
+            </div>
         </div>
     </div>
 
@@ -6538,6 +6577,136 @@
             }
         }
 
+        let currentTargetEditor = 'blog_content';
+        let cachedMediaFiles = [];
+
+        function openMediaLibraryModalForEditor(editorId) {
+            currentTargetEditor = editorId || 'blog_content';
+            const modal = document.getElementById('editor-media-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                loadMediaFilesForEditor();
+            }
+        }
+
+        function closeMediaLibraryModal() {
+            const modal = document.getElementById('editor-media-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function loadMediaFilesForEditor() {
+            const loading = document.getElementById('editor-media-loading');
+            const grid = document.getElementById('editor-media-grid');
+            if (loading) loading.style.display = 'block';
+            if (grid) grid.style.display = 'none';
+
+            fetch("{{ route('admin.media.list') }}")
+                .then(res => res.json())
+                .then(data => {
+                    if (loading) loading.style.display = 'none';
+                    if (grid) grid.style.display = 'grid';
+                    cachedMediaFiles = (data && data.files) ? data.files : [];
+                    renderEditorMediaGrid(cachedMediaFiles);
+                })
+                .catch(err => {
+                    if (loading) loading.style.display = 'none';
+                    if (grid) {
+                        grid.style.display = 'block';
+                        grid.innerHTML = '<p style="text-align: center; color: #ff6b6b; padding: 20px;">Failed to load media files.</p>';
+                    }
+                });
+        }
+
+        function renderEditorMediaGrid(files) {
+            const grid = document.getElementById('editor-media-grid');
+            if (!grid) return;
+            if (!files || files.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--admin-text-muted); padding: 30px;">No images found in media library.</p>';
+                return;
+            }
+            grid.innerHTML = files.map(file => `
+                <div onclick="insertSelectedMediaIntoEditor('${file.url}', '${escapeJsString(file.name)}')" 
+                     style="cursor: pointer; border: 1px solid var(--admin-border); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.02); transition: all 0.2s ease; display: flex; flex-direction: column;"
+                     onmouseover="this.style.borderColor='var(--mint-green)'; this.style.transform='translateY(-2px)'"
+                     onmouseout="this.style.borderColor='var(--admin-border)'; this.style.transform='none'">
+                    <div style="height: 100px; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="${file.url}" alt="${file.name}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+                    </div>
+                    <div style="padding: 6px 8px; flex: 1;">
+                        <p style="margin: 0; font-size: 0.72rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${file.name}">${file.name}</p>
+                        <span style="font-size: 0.65rem; color: var(--mint-green);">Click to Insert</span>
+                    </div>
+                </div>
+            `).join('');
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        function filterEditorMedia(query) {
+            if (!query) {
+                renderEditorMediaGrid(cachedMediaFiles);
+                return;
+            }
+            const q = query.toLowerCase();
+            const filtered = cachedMediaFiles.filter(f => f.name.toLowerCase().includes(q));
+            renderEditorMediaGrid(filtered);
+        }
+
+        function uploadFromEditorModal(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'blog');
+
+            const loading = document.getElementById('editor-media-loading');
+            if (loading) {
+                loading.style.display = 'block';
+                loading.innerHTML = '<i data-lucide="loader-2" class="spin" style="width: 28px; height: 28px; margin: 0 auto 8px auto; display: block; color: var(--mint-green);"></i> Uploading and optimizing image...';
+                if (window.lucide) window.lucide.createIcons();
+            }
+
+            fetch("{{ route('admin.media.upload') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                input.value = '';
+                if (data.success && (data.location || data.url)) {
+                    const url = data.location || data.url;
+                    insertSelectedMediaIntoEditor(url, file.name);
+                } else {
+                    alert('Upload failed: ' + (data.message || 'Unknown error'));
+                    loadMediaFilesForEditor();
+                }
+            })
+            .catch(err => {
+                input.value = '';
+                alert('Upload error: ' + err.message);
+                loadMediaFilesForEditor();
+            });
+        }
+
+        function insertSelectedMediaIntoEditor(url, altText) {
+            if (typeof tinymce !== 'undefined' && tinymce.get(currentTargetEditor)) {
+                const ed = tinymce.get(currentTargetEditor);
+                const alt = altText ? altText.replace(/"/g, '&quot;') : 'Article image';
+                const imgHtml = `<p><img src="${url}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 12px; margin: 1.5rem auto; display: block;" /></p>`;
+                ed.insertContent(imgHtml);
+                ed.focus();
+            } else {
+                const textarea = document.getElementById(currentTargetEditor);
+                if (textarea) {
+                    textarea.value += `\n<p><img src="${url}" alt="${altText || 'Article image'}" style="max-width: 100%; height: auto; border-radius: 12px; margin: 1.5rem auto; display: block;" /></p>\n`;
+                }
+            }
+            closeMediaLibraryModal();
+        }
+
         if (typeof tinymce !== 'undefined') {
             tinymce.init({
                 selector: '#blog_content, #ser_intro_content, #ser_tips_content, #treat_description, #spec_description, #cms_description',
@@ -6550,7 +6719,98 @@
                 promotion: false,
                 skin: 'oxide-dark',
                 content_css: 'dark',
-                content_style: 'body { font-family: "Manrope", sans-serif; font-size: 16px; line-height: 1.7; color: #1A2744; background: #ffffff; padding: 14px; } h1,h2,h3,h4,h5,h6 { font-family: "Nunito", sans-serif; font-weight: 800; color: #143572; margin-top: 1.25rem; margin-bottom: 0.5rem; } p { margin-bottom: 1rem; } ul, ol { padding-left: 24px; margin-bottom: 1rem; } ul li { list-style-type: disc; margin-bottom: 4px; } ol li { list-style-type: decimal; margin-bottom: 4px; }',
+                images_upload_url: "{{ route('admin.media.upload') }}",
+                automatic_uploads: true,
+                paste_data_images: true,
+                image_advtab: true,
+                image_caption: true,
+                image_title: true,
+                image_dimensions: true,
+                images_upload_handler: function (blobInfo, progress) {
+                    return new Promise(function (resolve, reject) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.withCredentials = false;
+                        xhr.open('POST', "{{ route('admin.media.upload') }}");
+                        xhr.setRequestHeader('X-CSRF-TOKEN', "{{ csrf_token() }}");
+                        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+                        xhr.upload.onprogress = function (e) {
+                            progress(e.loaded / e.total * 100);
+                        };
+
+                        xhr.onload = function () {
+                            if (xhr.status === 403 || xhr.status === 419) {
+                                reject({ message: 'Authentication or CSRF token expired. Please refresh the page.', remove: true });
+                                return;
+                            }
+                            if (xhr.status < 200 || xhr.status >= 300) {
+                                reject('HTTP Error: ' + xhr.status);
+                                return;
+                            }
+                            try {
+                                var json = JSON.parse(xhr.responseText);
+                                var url = json.location || json.url;
+                                if (!url) {
+                                    reject('Invalid JSON response from server: ' + xhr.responseText);
+                                    return;
+                                }
+                                resolve(url);
+                            } catch (err) {
+                                reject('Failed to parse upload response: ' + err.message);
+                            }
+                        };
+
+                        xhr.onerror = function () {
+                            reject('Image upload failed due to network error.');
+                        };
+
+                        var formData = new FormData();
+                        formData.append('file', blobInfo.blob(), blobInfo.filename());
+                        formData.append('folder', 'blog');
+                        xhr.send(formData);
+                    });
+                },
+                file_picker_types: 'image',
+                file_picker_callback: function (cb, value, meta) {
+                    if (meta.filetype === 'image') {
+                        var input = document.createElement('input');
+                        input.setAttribute('type', 'file');
+                        input.setAttribute('accept', 'image/*');
+                        input.onchange = function () {
+                            var file = this.files[0];
+                            if (!file) return;
+
+                            var formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('folder', 'blog');
+
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('POST', "{{ route('admin.media.upload') }}");
+                            xhr.setRequestHeader('X-CSRF-TOKEN', "{{ csrf_token() }}");
+                            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+                            xhr.onload = function () {
+                                if (xhr.status === 200) {
+                                    try {
+                                        var json = JSON.parse(xhr.responseText);
+                                        var url = json.location || json.url;
+                                        if (url) {
+                                            cb(url, { alt: file.name, title: file.name });
+                                            return;
+                                        }
+                                    } catch (e) {}
+                                }
+                                alert('Image upload failed.');
+                            };
+                            xhr.onerror = function () {
+                                alert('Network error while uploading image.');
+                            };
+                            xhr.send(formData);
+                        };
+                        input.click();
+                    }
+                },
+                content_style: 'body { font-family: "Manrope", sans-serif; font-size: 16px; line-height: 1.7; color: #1A2744; background: #ffffff; padding: 14px; } h1,h2,h3,h4,h5,h6 { font-family: "Nunito", sans-serif; font-weight: 800; color: #143572; margin-top: 1.25rem; margin-bottom: 0.5rem; } p { margin-bottom: 1rem; } ul, ol { padding-left: 24px; margin-bottom: 1rem; } ul li { list-style-type: disc; margin-bottom: 4px; } ol li { list-style-type: decimal; margin-bottom: 4px; } img { max-width: 100% !important; height: auto !important; border-radius: 8px; margin: 16px auto; display: block; } figure.image { margin: 16px auto; text-align: center; } figure.image img { margin: 0 auto; } figcaption { font-size: 13px; color: #5C6A82; margin-top: 6px; font-style: italic; }',
                 setup: function (editor) {
                     editor.on('change keyup input paste', function () {
                         editor.save();

@@ -116,8 +116,9 @@ Route::middleware(['auth'])->group(function () {
     // Page Content Update
     Route::post('/admin/page-contents', [AdminController::class, 'updatePageContents'])->name('admin.page-contents.update');
 
-    // Media Manager Upload
+    // Media Manager Upload & List
     Route::post('/admin/media-upload', [AdminController::class, 'uploadMedia'])->name('admin.media.upload');
+    Route::get('/admin/media/list', [AdminController::class, 'listMedia'])->name('admin.media.list');
     Route::post('/admin/media/sync-r2', [AdminController::class, 'syncLocalImagesToR2'])->name('admin.media.sync');
     Route::post('/admin/database/push-to-live', [AdminController::class, 'pushLocalDatabaseToLive'])->name('admin.database.push-to-live');
 

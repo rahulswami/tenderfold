@@ -70,8 +70,94 @@
       </div>
 
       <!-- Content Container -->
-      <div class="prose prose-lg max-w-none text-ink text-base sm:text-lg leading-relaxed space-y-6">
-        {!! $blog->content !!}
+      <style>
+        /* Blog article typography and inline images between paragraphs */
+        .article-prose {
+          color: #1A2744;
+        }
+        .article-prose h1, .article-prose h2, .article-prose h3, .article-prose h4, .article-prose h5, .article-prose h6 {
+          font-family: 'Nunito', sans-serif;
+          font-weight: 800;
+          color: #143572;
+          line-height: 1.35;
+          margin-top: 2rem;
+          margin-bottom: 0.85rem;
+        }
+        .article-prose h1 { font-size: 2.25rem; }
+        .article-prose h2 { font-size: 1.75rem; }
+        .article-prose h3 { font-size: 1.35rem; }
+        .article-prose h4 { font-size: 1.15rem; }
+        .article-prose p {
+          margin-bottom: 1.25rem;
+          line-height: 1.8;
+        }
+        .article-prose ul {
+          list-style-type: disc !important;
+          padding-left: 1.75rem !important;
+          margin-top: 0.75rem;
+          margin-bottom: 1.25rem;
+        }
+        .article-prose ol {
+          list-style-type: decimal !important;
+          padding-left: 1.75rem !important;
+          margin-top: 0.75rem;
+          margin-bottom: 1.25rem;
+        }
+        .article-prose li {
+          margin-bottom: 0.5rem;
+          line-height: 1.7;
+          display: list-item !important;
+        }
+        .article-prose a {
+          color: #143572;
+          font-weight: 600;
+          text-decoration: underline;
+          text-underline-offset: 3px;
+          transition: color 0.2s ease;
+        }
+        .article-prose a:hover {
+          color: #F5B400;
+        }
+        .article-prose blockquote {
+          border-left: 4px solid #F5B400;
+          padding: 0.75rem 1.25rem;
+          margin: 1.75rem 0;
+          background: #F4F7FB;
+          border-radius: 0 12px 12px 0;
+          font-style: italic;
+          color: #5C6A82;
+        }
+        /* Inline Images placed between paragraphs */
+        .article-prose img {
+          max-width: 100% !important;
+          height: auto !important;
+          border-radius: 1rem;
+          box-shadow: 0 10px 30px rgba(20, 53, 114, 0.08);
+          margin: 2rem auto !important;
+          display: block !important;
+          object-fit: cover;
+        }
+        .article-prose p > img {
+          margin: 1.5rem auto !important;
+          display: block !important;
+        }
+        .article-prose figure {
+          margin: 2rem auto !important;
+          text-align: center;
+        }
+        .article-prose figure img {
+          margin: 0 auto !important;
+        }
+        .article-prose figcaption {
+          font-size: 0.875rem;
+          color: #5C6A82;
+          margin-top: 0.75rem;
+          text-align: center;
+          font-style: italic;
+        }
+      </style>
+      <div class="prose prose-lg article-prose max-w-none text-ink text-base sm:text-lg leading-relaxed space-y-6">
+        {!! clean_blog_content($blog->content) !!}
       </div>
 
       <!-- Action Card in Article -->
