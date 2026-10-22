@@ -198,14 +198,6 @@
               @endforeach
             </div>
           </div>
-          <div class="mt-8 flex justify-center gap-3">
-            <button type="button" class="services-prev inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy shadow-lift transition hover:bg-gold" aria-label="Previous services">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button type="button" class="services-next inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy shadow-lift transition hover:bg-gold" aria-label="Next services">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
         </div>
       </div>
     </section>
