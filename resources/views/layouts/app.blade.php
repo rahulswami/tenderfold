@@ -402,7 +402,11 @@
           @foreach($navServices as $nService)
             <li><a href="{{ route('services.show', $nService->slug) }}" class="transition hover:text-gold">{{ $nService->service_name }}</a></li>
           @endforeach
-          <li><a href="{{ route('pricing') }}" class="transition hover:text-gold font-semibold text-gold/90">Rate Card &amp; Pricing</a></li>
+        </ul>
+
+        <h2 class="mt-6 font-display text-sm font-extrabold uppercase tracking-[0.16em] text-gold">Pricing</h2>
+        <ul class="mt-4 space-y-2 text-sm text-white/75">
+          <li><a href="{{ route('pricing') }}" class="transition hover:text-gold font-semibold text-[#c2c8d4]">Rate Card &amp; Pricing</a></li>
         </ul>
       </div>
 
@@ -453,7 +457,7 @@
             </div>
           </div>
 
-          <div class="border-t border-white/10 pt-2 text-xs text-white/60">
+          <div class="border-t border-white/10 pt-2 text-sm font-semibold text-[#f5b400]">
             🚚 Free pickup &amp; delivery across Gurgaon
           </div>
         </div>
@@ -473,23 +477,6 @@
     <div class="border-t border-white/10">
       <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 pb-20 pt-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:pb-5 lg:px-8">
         <p>© <span id="year">{{ date('Y') }}</span> {{ $site['site_name'] ?? 'Tender Fold' }}. Freshness in every fold.</p>
-        @if(!empty($site['social_instagram']) || !empty($site['social_facebook']) || !empty($site['social_twitter']) || !empty($site['social_linkedin']) || !empty($site['social_youtube']) || !empty($site['social_practo']))
-          <div class="flex items-center gap-3">
-            <span class="text-white/40">Connect:</span>
-            @if(!empty($site['social_instagram']))
-              <a href="{{ $site['social_instagram'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Instagram">Instagram</a>
-            @endif
-            @if(!empty($site['social_facebook']))
-              <a href="{{ $site['social_facebook'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Facebook">Facebook</a>
-            @endif
-            @if(!empty($site['social_twitter']))
-              <a href="{{ $site['social_twitter'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Twitter">Twitter</a>
-            @endif
-            @if(!empty($site['social_practo']))
-              <a href="{{ $site['social_practo'] }}" target="_blank" rel="noopener noreferrer" class="text-white/70 transition hover:text-gold" aria-label="Google Maps">Google Maps</a>
-            @endif
-          </div>
-        @endif
         <p>Cleaner · Fresher · Happier you</p>
       </div>
     </div>
