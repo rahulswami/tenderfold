@@ -1,33 +1,34 @@
+DirectoryIndex index.php public/index.php
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Prevent direct access to .env, vendor, storage/logs, git
+    # Prevent direct access to sensitive files
     RewriteRule ^\.env - [F,L,NC]
     RewriteRule ^composer\.(json|lock) - [F,L,NC]
     RewriteRule ^package(-lock)?\.json - [F,L,NC]
     RewriteRule ^storage/logs/ - [F,L,NC]
 
-    # If the request is already pointing to /public, don't loop
-    RewriteCond %{REQUEST_URI} ^/public/ [NC]
-    RewriteRule ^ - [L]
-
-    # Allow direct access to deploy.php if present in root
+    # Allow direct access to deploy.php
     RewriteCond %{REQUEST_URI} ^/deploy\.php$ [NC]
     RewriteRule ^ - [L]
 
-    # Forward static files / folders to /public directory if they exist there
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/public/
+    # Handle Root URL directly
+    RewriteRule ^$ public/index.php [L]
+
+    # Don't loop if already pointing to /public
+    RewriteCond %{REQUEST_URI} ^/public/ [NC]
+    RewriteRule ^ - [L]
+
+    # Forward existing static files/directories in /public
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -d
     RewriteRule ^(.*)$ public/$1 [L]
 
-    # Route all other URLs directly to public/index.php
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ public/index.php [L]
+    # Route all other URLs to public/index.php
+    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
 
 <IfModule !mod_rewrite.c>
-    # Fallback if mod_rewrite is unavailable
     RedirectMatch 302 ^/$ /public/
 </IfModule>

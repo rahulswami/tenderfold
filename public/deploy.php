@@ -107,8 +107,11 @@ $checks['Storage & Cache Permissions'] = [
 ];
 
 // 4. Ensure Root .htaccess exists to fix 403 Forbidden on Hostinger
+// 4. Ensure Root .htaccess exists to fix 403 Forbidden on Hostinger
 $rootHtaccess = $basePath . '/.htaccess';
 $rootHtaccessContent = <<<HTACCESS
+DirectoryIndex index.php public/index.php
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule ^\.env - [F,L,NC]
@@ -117,15 +120,13 @@ $rootHtaccessContent = <<<HTACCESS
     RewriteRule ^storage/logs/ - [F,L,NC]
     RewriteCond %{REQUEST_URI} ^/deploy\.php$ [NC]
     RewriteRule ^ - [L]
+    RewriteRule ^$ public/index.php [L]
     RewriteCond %{REQUEST_URI} ^/public/ [NC]
     RewriteRule ^ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -d
     RewriteRule ^(.*)$ public/$1 [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ public/index.php [L]
+    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
 <IfModule !mod_rewrite.c>
     RedirectMatch 302 ^/$ /public/
@@ -135,6 +136,27 @@ HTACCESS;
 @file_put_contents($rootHtaccess, $rootHtaccessContent);
 $actions[] = "Created / Updated Root <code>.htaccess</code> for universal Laravel routing ✅";
 $checks['Root .htaccess (Hostinger 403 Fix)'] = ['status' => true, 'msg' => 'Configured & Active'];
+
+// 4.1 Ensure Root index.php exists as fallback
+$rootIndex = $basePath . '/index.php';
+$rootIndexContent = <<<PHP
+<?php
+/**
+ * Tenderfold - Root Entry Proxy to Public Front Controller
+ */
+\$publicIndex = __DIR__ . '/public/index.php';
+if (file_exists(\$publicIndex)) {
+    require_once \$publicIndex;
+} else {
+    http_response_code(500);
+    echo "Application front controller not found in /public.";
+}
+PHP;
+
+if (!file_exists($rootIndex) || filesize($rootIndex) < 20) {
+    @file_put_contents($rootIndex, $rootIndexContent);
+    $actions[] = "Created Root <code>index.php</code> proxy ✅";
+}
 
 // 5. Ensure Public .htaccess exists
 $publicHtaccess = $publicPath . '/.htaccess';
