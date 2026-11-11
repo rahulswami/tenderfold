@@ -29,6 +29,11 @@ class Service extends Model
         'is_active',
         'sort_order',
         'schema_markup',
+        'metatitle',
+        'metadescription',
+        'metakeywords',
+        'meta_title',
+        'meta_description',
     ];
 
     protected $casts = [
@@ -36,4 +41,34 @@ class Service extends Model
         'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];
+
+    public function getMetaTitleAttribute()
+    {
+        return $this->attributes['metatitle'] ?? $this->attributes['meta_title'] ?? null;
+    }
+
+    public function setMetaTitleAttribute($value)
+    {
+        $this->attributes['metatitle'] = $value;
+    }
+
+    public function getMetaDescriptionAttribute()
+    {
+        return $this->attributes['metadescription'] ?? $this->attributes['meta_description'] ?? null;
+    }
+
+    public function setMetaDescriptionAttribute($value)
+    {
+        $this->attributes['metadescription'] = $value;
+    }
+
+    public function getMetaKeywordsAttribute()
+    {
+        return $this->attributes['metakeywords'] ?? $this->attributes['meta_keywords'] ?? null;
+    }
+
+    public function setMetaKeywordsAttribute($value)
+    {
+        $this->attributes['metakeywords'] = $value;
+    }
 }

@@ -1168,8 +1168,16 @@ class AdminController extends Controller
             'metatitle' => 'nullable|string|max:255',
             'metadescription' => 'nullable|string',
             'metakeywords' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
         ]);
 
+        if (empty($validated['metatitle']) && !empty($validated['meta_title'])) {
+            $validated['metatitle'] = $validated['meta_title'];
+        }
+        if (empty($validated['metadescription']) && !empty($validated['meta_description'])) {
+            $validated['metadescription'] = $validated['meta_description'];
+        }
 
         if (empty($validated['slug'])) {
             $validated['slug'] = \Illuminate\Support\Str::slug($validated['service_name']);
@@ -1247,8 +1255,16 @@ class AdminController extends Controller
             'metatitle' => 'nullable|string|max:255',
             'metadescription' => 'nullable|string',
             'metakeywords' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
         ]);
 
+        if (empty($validated['metatitle']) && !empty($validated['meta_title'])) {
+            $validated['metatitle'] = $validated['meta_title'];
+        }
+        if (empty($validated['metadescription']) && !empty($validated['meta_description'])) {
+            $validated['metadescription'] = $validated['meta_description'];
+        }
 
         $imagePath = $service->image_path;
         if ($request->hasFile('image')) {

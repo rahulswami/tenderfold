@@ -115,21 +115,25 @@ $rootHtaccessContent = <<<HTACCESS
     RewriteRule ^composer\.(json|lock) - [F,L,NC]
     RewriteRule ^package(-lock)?\.json - [F,L,NC]
     RewriteRule ^storage/logs/ - [F,L,NC]
-    RewriteCond %{REQUEST_URI} ^/public/ [NC]
-    RewriteRule ^ - [L]
     RewriteCond %{REQUEST_URI} ^/deploy\.php$ [NC]
     RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/public/ [NC]
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ public/index.php [L]
 </IfModule>
 <IfModule !mod_rewrite.c>
     RedirectMatch 302 ^/$ /public/
 </IfModule>
 HTACCESS;
 
-if (!file_exists($rootHtaccess) || filesize($rootHtaccess) < 20) {
-    @file_put_contents($rootHtaccess, $rootHtaccessContent);
-    $actions[] = "Created / Updated Root <code>.htaccess</code> to route traffic into <code>/public</code> ✅";
-}
+@file_put_contents($rootHtaccess, $rootHtaccessContent);
+$actions[] = "Created / Updated Root <code>.htaccess</code> for universal Laravel routing ✅";
 $checks['Root .htaccess (Hostinger 403 Fix)'] = ['status' => true, 'msg' => 'Configured & Active'];
 
 // 5. Ensure Public .htaccess exists
@@ -352,13 +356,20 @@ if ($pdo) {
         `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         `title` VARCHAR(255) NOT NULL,
         `slug` VARCHAR(255) NOT NULL UNIQUE,
-        `description` LONGTEXT NULL,
-        `content` LONGTEXT NULL,
         `metatitle` VARCHAR(255) NULL,
         `metadescription` TEXT NULL,
+        `metakeywords` TEXT NULL,
+        `image` VARCHAR(255) NULL,
+        `description` LONGTEXT NULL,
+        `status` TINYINT(1) NOT NULL DEFAULT 1,
+        `schema_markup` TEXT NULL,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    try {
+        $pdo->exec("ALTER TABLE `cms_pages` ADD COLUMN `status` TINYINT(1) NOT NULL DEFAULT 1");
+    } catch (Exception $e) {}
 
     // 7.9 Landing Pages table
     $pdo->exec("CREATE TABLE IF NOT EXISTS `landing_pages` (
@@ -629,6 +640,90 @@ if ($pdo) {
         $stmt->execute([$lp['title'], $lp['slug'], $lp['layout_type'], $lp['meta_description'], $lp['content']]);
     }
     $actions[] = "Synchronized Tenderfold Gurgaon Landing Pages in database ✅";
+
+    // 7.16b Synchronize CMS Pages (Privacy Policy, Terms & Conditions, etc.)
+    $cmsPagesList = [
+        [
+            'title' => 'Tenderfold - Premium Laundry & Dry Cleaner in Gurgaon',
+            'slug' => 'home',
+            'metatitle' => 'Tenderfold | Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurgaon',
+            'metadescription' => 'Tenderfold is a premium laundry and dry cleaner in Gurgaon. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care.',
+            'description' => '<h1>Freshness in Every Single Fold</h1><p>Doorstep laundry, dry cleaning, steam pressing, shoe spa, and carpet care in Gurgaon.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'About Tenderfold Gurgaon',
+            'slug' => 'about-us',
+            'metatitle' => 'About Us | Tenderfold Gurgaon Fabric Care',
+            'metadescription' => 'Learn about Tenderfold laundry and dry cleaning philosophy, our plant facilities in Gurgaon, and our commitment to garment longevity.',
+            'description' => '<h1>About Tenderfold</h1><p>We are a specialized fabric care service built around modern Italian machinery, skin-safe detergents, and prompt doorstep delivery across Gurgaon.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'All Laundry & Dry Cleaning Services',
+            'slug' => 'services',
+            'metatitle' => 'All Services | Tenderfold Gurgaon',
+            'metadescription' => 'Explore laundry, dry cleaning, steam pressing, shoe cleaning, curtain care, and carpet spa services in Gurgaon.',
+            'description' => '<h1>Our Services</h1><p>From daily wash and fold to luxury couture dry cleaning, discover our full suite of fabric spa solutions.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'Pricing & Rate Card',
+            'slug' => 'pricing',
+            'metatitle' => 'Pricing & Rate Card | Tenderfold Gurgaon',
+            'metadescription' => 'View our complete transparent price list for wash & fold, steam pressing, dry cleaning, shoe cleaning, and carpet care.',
+            'description' => '<h1>Transparent Laundry & Dry Cleaning Pricing</h1><p>Affordable per kg laundry and per piece dry cleaning rates with no hidden charges.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'Customer Reviews & Feedback',
+            'slug' => 'testimonials',
+            'metatitle' => 'Customer Reviews & Testimonials | Tenderfold Gurgaon',
+            'metadescription' => 'Read reviews and ratings from our customers in Sector 49, Sector 83, DLF, and across Gurgaon.',
+            'description' => '<h1>What Our Gurgaon Customers Say</h1><p>Read genuine testimonials from satisfied households, professionals, and businesses across Gurgaon.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'Frequently Asked Questions',
+            'slug' => 'faqs',
+            'metatitle' => 'Frequently Asked Questions | Tenderfold Laundry Gurgaon',
+            'metadescription' => 'Find answers to common questions about Tenderfold doorstep pickup, dry cleaning turnaround, and specialized fabric care.',
+            'description' => '<h1>Frequently Asked Questions</h1><p>Everything you need to know about pickup timings, turnaround, fabric safety, and order tracking.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'Contact Tenderfold Gurgaon',
+            'slug' => 'contact-us',
+            'metatitle' => 'Contact Tenderfold | Gurgaon Laundry & Dry Cleaning Counters',
+            'metadescription' => 'Call +91 95824 66445 or WhatsApp us for instant doorstep laundry collection in Gurgaon.',
+            'description' => '<h1>Contact Us</h1><p>Visit our stores in Sector 49 & Sector 83 or call us for free doorstep collection.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'Privacy Policy',
+            'slug' => 'privacy-policy',
+            'metatitle' => 'Privacy Policy | Tenderfold Gurgaon',
+            'metadescription' => 'Tenderfold privacy policy regarding customer personal data and communication.',
+            'description' => '<h1>Privacy Policy</h1><p>Tenderfold respects your personal privacy. We only use customer contact and address details for scheduling pickups, delivering orders, and sending service updates.</p>',
+            'status' => 1
+        ],
+        [
+            'title' => 'Terms & Conditions',
+            'slug' => 'terms-and-conditions',
+            'metatitle' => 'Terms & Conditions | Tenderfold Gurgaon',
+            'metadescription' => 'Tenderfold terms and conditions of fabric care and doorstep delivery services.',
+            'description' => '<h1>Terms & Conditions</h1><p>Standard service terms for garment inspection, pickup schedules, care instructions, and delivery turnaround.</p>',
+            'status' => 1
+        ]
+    ];
+
+    foreach ($cmsPagesList as $cp) {
+        $stmt = $pdo->prepare("INSERT INTO `cms_pages` (`title`, `slug`, `metatitle`, `metadescription`, `description`, `status`, `created_at`, `updated_at`) 
+                               VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW()) 
+                               ON DUPLICATE KEY UPDATE `title` = VALUES(`title`), `metatitle` = VALUES(`metatitle`), `metadescription` = VALUES(`metadescription`), `description` = VALUES(`description`), `status` = VALUES(`status`), `updated_at` = NOW()");
+        $stmt->execute([$cp['title'], $cp['slug'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['status']]);
+    }
+    $actions[] = "Synchronized Tenderfold CMS Pages (Privacy Policy, Terms & Conditions, etc.) in database ✅";
 
     // 7.17 Synchronize Page Contents (Homepage, About Us, Header, Footer)
     $pageContents = [

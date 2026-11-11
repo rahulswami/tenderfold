@@ -38,6 +38,9 @@ Route::redirect('/blog/{slug}', '/blogs/{slug}', 301);
 Route::redirect('/about', '/about-us', 301);
 Route::redirect('/contact', '/contact-us', 301);
 Route::redirect('/faqs', '/faq', 301);
+Route::redirect('/privacy', '/privacy-policy', 301);
+Route::redirect('/terms', '/terms-and-conditions', 301);
+Route::redirect('/terms-of-service', '/terms-and-conditions', 301);
 
 Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);
 

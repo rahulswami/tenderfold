@@ -2716,19 +2716,22 @@
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <hr style="border-color: var(--admin-border); margin: 1rem 0;">
-                                <h4 style="margin-top: 0.5rem; margin-bottom: 0.5rem; color: var(--accent-teal);">SEO Metadata (Optional)</h4>
+                                <h4 style="margin-top: 0.5rem; margin-bottom: 0.5rem; color: var(--accent-teal);">SEO Metadata</h4>
                             </div>
                             <div class="form-group">
-                                <label for="ser_metatitle">Meta Title (SEO)</label>
-                                <input type="text" id="ser_metatitle" name="metatitle" class="form-control" placeholder="Laundry Services in Gurgaon | Tenderfold">
+                                <label for="ser_metatitle">Meta Title</label>
+                                <input type="text" id="ser_metatitle" name="metatitle" class="form-control" placeholder="Custom SEO Meta Title (e.g. Laundry Services in Gurgaon | Tenderfold)">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Custom &lt;title&gt; tag for this service page. If empty, defaults to Service Name | Tenderfold Gurgaon.</span>
                             </div>
                             <div class="form-group">
-                                <label for="ser_metakeywords">Meta Keywords (Comma separated)</label>
+                                <label for="ser_metakeywords">Meta Keywords (Optional)</label>
                                 <input type="text" id="ser_metakeywords" name="metakeywords" class="form-control" placeholder="laundry gurgaon, wash and fold sector 49, dry cleaning gurgaon">
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Comma-separated keywords for search indexing.</span>
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
-                                <label for="ser_metadescription">Meta Description (SEO)</label>
-                                <textarea id="ser_metadescription" name="metadescription" class="form-control" rows="2" placeholder="Doorstep wash and fold laundry services in Gurgaon with individual batch hygiene."></textarea>
+                                <label for="ser_metadescription">Meta Description</label>
+                                <textarea id="ser_metadescription" name="metadescription" class="form-control" rows="3" placeholder="Custom SEO Meta Description for search results and social previews..."></textarea>
+                                <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Custom &lt;meta name="description"&gt; tag. If empty, defaults to service summary and contact info.</span>
                             </div>
                             <div class="form-group">
 
@@ -7207,9 +7210,9 @@
             
             document.getElementById('ser_summary').value = data.summary || '';
             document.getElementById('ser_schema_markup').value = data.schema_markup || '';
-            document.getElementById('ser_metatitle').value = data.metatitle || '';
-            document.getElementById('ser_metadescription').value = data.metadescription || '';
-            document.getElementById('ser_metakeywords').value = data.metakeywords || '';
+            document.getElementById('ser_metatitle').value = data.metatitle || data.meta_title || '';
+            document.getElementById('ser_metadescription').value = data.metadescription || data.meta_description || '';
+            document.getElementById('ser_metakeywords').value = data.metakeywords || data.meta_keywords || '';
             document.getElementById('ser_is_active').checked = !!data.is_active;
             document.getElementById('ser_image_url').value = (data.image_path && (data.image_path.startsWith('http') || data.image_path.startsWith('//'))) ? data.image_path : '';
             document.getElementById('ser_icon_url').value = (data.icon_path && (data.icon_path.startsWith('http') || data.icon_path.startsWith('//'))) ? data.icon_path : '';
@@ -7968,6 +7971,8 @@
                     }
                     
                     document.getElementById('ser_summary').value = data.summary || '';
+                    if (data.metatitle) document.getElementById('ser_metatitle').value = data.metatitle;
+                    if (data.metadescription) document.getElementById('ser_metadescription').value = data.metadescription;
 
                     // Clear existing FAQs
                     const faqContainer = document.getElementById('faq-repeater-container');

@@ -26,4 +26,17 @@ class CmsPage extends Model
     protected $casts = [
         'status' => 'boolean',
     ];
+
+    public function getContentAttribute()
+    {
+        return $this->attributes['content'] ?? $this->attributes['description'] ?? '';
+    }
+
+    public function setContentAttribute($value)
+    {
+        $this->attributes['description'] = $value;
+        if (array_key_exists('content', $this->attributes)) {
+            $this->attributes['content'] = $value;
+        }
+    }
 }

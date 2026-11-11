@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', ($page->metatitle ?? ($page->title . ' | ' . ($site['site_name'] ?? 'Tenderfold'))))
-@section('meta_description', $page->metadescription ?? Str::limit(strip_tags($page->content), 150))
+@section('meta_description', $page->metadescription ?? Str::limit(strip_tags($page->content ?? $page->description), 150))
 @section('meta_keywords', $page->metakeywords ?? '')
 
 @section('schema')
@@ -10,7 +10,7 @@
   @else
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "WebPage",
       "name": "{{ $page->title }}"
     }
@@ -41,7 +41,7 @@
   <section class="bg-white py-12 sm:py-16">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
       <div class="reveal prose prose-lg max-w-none text-ink leading-relaxed">
-        {!! $page->content !!}
+        {!! $page->content ?: $page->description !!}
       </div>
     </div>
   </section>

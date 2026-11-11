@@ -1,7 +1,15 @@
 @extends('layouts.app')
 
-@section('title', $service->service_name . ' | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurgaon')
-@section('meta_description', $service->summary . ' Doorstep collection across Gurgaon. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.')
+@php
+    $pageMetaTitle = !empty($service->metatitle) ? $service->metatitle : (!empty($service->meta_title) ? $service->meta_title : ($service->service_name . ' | ' . ($site['site_name'] ?? 'Tender Fold') . ' Gurgaon'));
+    $pageMetaDescription = !empty($service->metadescription) ? $service->metadescription : (!empty($service->meta_description) ? $service->meta_description : (($service->summary ? $service->summary . ' ' : '') . 'Doorstep collection across Gurgaon. Call ' . ($site['phone'] ?? '+91 95824 66445') . '.'));
+@endphp
+
+@section('title', $pageMetaTitle)
+@section('meta_description', $pageMetaDescription)
+@if(!empty($service->metakeywords))
+@section('meta_keywords', $service->metakeywords)
+@endif
 
 @section('content')
     @php
