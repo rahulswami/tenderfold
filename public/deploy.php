@@ -736,6 +736,14 @@ if ($pdo) {
             'metadescription' => 'Tenderfold terms and conditions of fabric care and doorstep delivery services.',
             'description' => '<h1>Terms & Conditions</h1><p>Standard service terms for garment inspection, pickup schedules, care instructions, and delivery turnaround.</p>',
             'status' => 1
+        ],
+        [
+            'title' => 'Teams',
+            'slug' => 'teams',
+            'metatitle' => 'Our Team | Tenderfold Premium Laundry & Dry Cleaning Gurgaon',
+            'metadescription' => 'Meet the team behind Tenderfold, your trusted laundry and dry cleaning service in Gurgaon. Experience professional fabric care, quality service and convenient doorstep pickup and delivery.',
+            'description' => '<section class="teams-content"><h1>Meet the Team Behind Tenderfold</h1><p>At Tenderfold, our team is dedicated to delivering exceptional laundry and dry cleaning services in Gurgaon. We believe that every garment deserves expert care, attention to detail, and the right cleaning approach.</p><p>Our team combines professional expertise, modern Italian machinery, and skin-safe detergents to ensure quality fabric care. From everyday laundry to delicate garment cleaning, we focus on maintaining the freshness, cleanliness, and quality of your clothes.</p><p>With a commitment to customer satisfaction, timely service, and convenient doorstep pickup and delivery, our team works hard to make laundry care simple and hassle-free.</p><h2>Our Commitment</h2><ul><li>Professional laundry and dry cleaning services.</li><li>Expert care for different types of fabrics.</li><li>Modern Italian machinery and skin-safe detergents.</li><li>Quality-focused cleaning and attention to detail.</li><li>Convenient doorstep pickup and delivery across Gurgaon.</li></ul><p>At Tenderfold, our people are at the heart of everything we do. We strive to make professional fabric care reliable, convenient, and effortless for every customer.</p></section>',
+            'status' => 1
         ]
     ];
 

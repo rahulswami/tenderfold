@@ -12,3 +12,4 @@ if (file_exists($publicIndex)) {
     http_response_code(500);
     echo "Application front controller not found in /public.";
 }
+

@@ -399,9 +399,22 @@ class HomeController extends Controller
     {
         $page = \App\Models\CmsPage::where('slug', $slug)->where('status', true)->first();
         if ($page) {
+            if (view()->exists('pages.' . $slug)) {
+                return view('pages.' . $slug, compact('page'));
+            }
+            if (view()->exists($slug)) {
+                return view($slug, compact('page'));
+            }
             return view('cms-page', compact('page'));
         }
         abort(404);
+    }
+
+    /* Dedicated Teams Page */
+    public function teams()
+    {
+        $page = \App\Models\CmsPage::where('slug', 'teams')->where('status', true)->first();
+        return view('teams', compact('page'));
     }
 
     /* Top Navigation Live Autocomplete Search */

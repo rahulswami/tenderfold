@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminController;
 // Public Pages
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about-us', [HomeController::class, 'about'])->name('about');
+Route::get('/teams', [HomeController::class, 'teams'])->name('teams');
 Route::get('/services', [HomeController::class, 'services'])->name('services');
 Route::get('/services/{slug}', [HomeController::class, 'servicesShow'])->name('services.show');
 Route::get('/testimonials', [HomeController::class, 'testimonials'])->name('testimonials');
@@ -41,6 +42,8 @@ Route::redirect('/faqs', '/faq', 301);
 Route::redirect('/privacy', '/privacy-policy', 301);
 Route::redirect('/terms', '/terms-and-conditions', 301);
 Route::redirect('/terms-of-service', '/terms-and-conditions', 301);
+Route::redirect('/team', '/teams', 301);
+Route::redirect('/our-team', '/teams', 301);
 
 Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase']);
 
