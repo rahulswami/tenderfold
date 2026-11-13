@@ -748,10 +748,13 @@ if ($pdo) {
     ];
 
     foreach ($cmsPagesList as $cp) {
-        $stmt = $pdo->prepare("INSERT INTO `cms_pages` (`title`, `slug`, `metatitle`, `metadescription`, `description`, `status`, `created_at`, `updated_at`) 
-                               VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW()) 
-                               ON DUPLICATE KEY UPDATE `title` = VALUES(`title`), `metatitle` = VALUES(`metatitle`), `metadescription` = VALUES(`metadescription`), `description` = VALUES(`description`), `status` = VALUES(`status`), `updated_at` = NOW()");
-        $stmt->execute([$cp['title'], $cp['slug'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['status']]);
+        $check = $pdo->prepare("SELECT id FROM `cms_pages` WHERE `slug` = ? LIMIT 1");
+        $check->execute([$cp['slug']]);
+        if (!$check->fetch()) {
+            $stmt = $pdo->prepare("INSERT INTO `cms_pages` (`title`, `slug`, `metatitle`, `metadescription`, `description`, `status`, `created_at`, `updated_at`) 
+                                   VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->execute([$cp['title'], $cp['slug'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['status']]);
+        }
     }
     $actions[] = "Synchronized Tenderfold CMS Pages (Privacy Policy, Terms & Conditions, etc.) in database ✅";
 

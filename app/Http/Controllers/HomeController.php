@@ -398,6 +398,9 @@ class HomeController extends Controller
     public function cmsPageShow($slug)
     {
         $page = \App\Models\CmsPage::where('slug', $slug)->where('status', true)->first();
+        if (!$page) {
+            $page = \App\Models\CmsPage::where('slug', $slug)->first();
+        }
         if ($page) {
             if (view()->exists('pages.' . $slug)) {
                 return view('pages.' . $slug, compact('page'));
@@ -414,6 +417,9 @@ class HomeController extends Controller
     public function teams()
     {
         $page = \App\Models\CmsPage::where('slug', 'teams')->where('status', true)->first();
+        if (!$page) {
+            $page = \App\Models\CmsPage::where('slug', 'teams')->first();
+        }
         return view('teams', compact('page'));
     }
 
