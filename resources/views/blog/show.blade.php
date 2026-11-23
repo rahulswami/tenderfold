@@ -217,29 +217,45 @@
           width: auto !important;
         }
 
-        /* Table Headers (thead th, thead td, th, and fallback first-row header) */
+        /* Optional Table Caption */
+        .article-prose table caption {
+          caption-side: top;
+          font-family: 'Nunito', sans-serif;
+          font-weight: 800;
+          font-size: 1.15rem;
+          color: #143572;
+          padding: 0.85rem 1rem;
+          text-align: center;
+          background: #F4F7FB;
+          border-bottom: 2px solid rgba(20, 53, 114, 0.1);
+        }
+
+        /* Table Title / Header Row (Visually Distinct Gold Header with Centered Deep Navy Text) */
         .article-prose table thead th,
         .article-prose table thead td,
         .article-prose table th,
+        .article-prose table thead tr.table-header-row th,
         .article-prose table tbody tr.table-header-row td,
+        .article-prose table thead tr th,
         .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td {
-          background: #143572 !important;
-          color: #ffffff !important;
+          background: #F5B400 !important;
+          background-image: linear-gradient(180deg, #F9BE1A 0%, #F5B400 100%) !important;
+          color: #0C2454 !important;
           font-family: 'Nunito', sans-serif !important;
           font-weight: 800 !important;
-          font-size: 0.95rem !important;
-          letter-spacing: 0.025em;
-          padding: 1.1rem 1.25rem !important;
-          text-align: left;
-          vertical-align: middle;
-          border-bottom: 3px solid #F5B400 !important;
-          border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+          font-size: 0.975rem !important;
+          letter-spacing: 0.03em;
+          padding: 1.15rem 1.25rem !important;
+          text-align: center !important;
+          vertical-align: middle !important;
+          border-bottom: 3px solid #0C2454 !important;
+          border-right: 1px solid rgba(12, 36, 84, 0.16) !important;
           border-top: none !important;
           border-left: none !important;
           white-space: nowrap;
         }
 
-        /* Header Inner Typography Reset */
+        /* Header Inner Typography Reset - Centered Horizontally & Vertically */
         .article-prose table thead th p,
         .article-prose table thead td p,
         .article-prose table th p,
@@ -250,12 +266,16 @@
         .article-prose table tbody tr.table-header-row td strong,
         .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td p,
         .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td strong {
-          color: #ffffff !important;
+          color: #0C2454 !important;
           font-family: 'Nunito', sans-serif !important;
           font-weight: 800 !important;
-          margin: 0 !important;
+          font-size: inherit !important;
+          letter-spacing: inherit !important;
+          margin: 0 auto !important;
           padding: 0 !important;
-          display: inline;
+          text-align: center !important;
+          display: block !important;
+          line-height: 1.35 !important;
         }
 
         /* Header Corner Radius */
@@ -358,9 +378,13 @@
           .article-prose table thead th,
           .article-prose table thead td,
           .article-prose table th,
-          .article-prose table tbody tr.table-header-row td {
-            padding: 0.85rem 1rem !important;
+          .article-prose table thead tr.table-header-row th,
+          .article-prose table tbody tr.table-header-row td,
+          .article-prose table thead tr th {
+            padding: 0.85rem 0.95rem !important;
             font-size: 0.875rem !important;
+            text-align: center !important;
+            vertical-align: middle !important;
           }
           .article-prose table tbody td {
             padding: 0.8rem 1rem !important;
