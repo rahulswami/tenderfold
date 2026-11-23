@@ -205,13 +205,33 @@ if (!function_exists('clean_blog_content')) {
                                 }
                             }
                             if ($allStrong && count($cellMatches[2]) > 0) {
-                                $thCells = preg_replace('#<td\b([^>]*)>#i', '<th$1>', $cells);
-                                $thCells = preg_replace('#</td>#i', '</th>', $thCells);
-                                return '<thead><tr' . $trAttrs . ' class="table-header-row">' . $thCells . '</tr></thead><tbody>';
+                                $thCells = preg_replace_callback('#<td\b([^>]*)>(.*?)</td>#is', function($tdM) {
+                                    $cInner = $tdM[2];
+                                    $cInner = preg_replace('#<p\b([^>]*)>#i', '<p$1 style="margin: 0 auto !important; padding: 0 !important; color: #ffffff !important; font-weight: 800 !important; text-align: center !important; line-height: 1.35 !important;">', $cInner);
+                                    $cInner = preg_replace('#<strong\b([^>]*)>#i', '<strong$1 style="color: #ffffff !important; font-weight: 800 !important; text-align: center !important;">', $cInner);
+                                    return '<th class="blog-table-th" style="background-color: #143572 !important; color: #ffffff !important; text-align: center !important; vertical-align: middle !important; font-weight: 800 !important; font-family: \'Nunito\', sans-serif !important; padding: 14px 18px !important; border-bottom: 3.5px solid #F5B400 !important; border-right: 1px solid rgba(255, 255, 255, 0.15) !important;">' . $cInner . '</th>';
+                                }, $cells);
+                                return '<thead style="background-color: #143572 !important;"><tr' . $trAttrs . ' class="table-header-row" style="background-color: #143572 !important;">' . $thCells . '</tr></thead><tbody>';
                             }
                         }
                         return $trMatches[0];
                     }, $tableInner, 1);
+                } else {
+                    // Table already has <thead>: normalize <tr> and <th> inside it
+                    $tableInner = preg_replace_callback('#<thead\b([^>]*)>(.*?)</thead>#is', function ($theadM) {
+                        $thAttrs = $theadM[1];
+                        $thInner = $theadM[2];
+                        if (stripos($thInner, 'class="table-header-row"') === false) {
+                            $thInner = preg_replace('#<tr\b([^>]*)>#i', '<tr$1 class="table-header-row" style="background-color: #143572 !important;">', $thInner);
+                        }
+                        $thInner = preg_replace_callback('#<(th|td)\b([^>]*)>(.*?)</\1>#is', function ($cellM) {
+                            $cInner = $cellM[3];
+                            $cInner = preg_replace('#<p\b([^>]*)>#i', '<p$1 style="margin: 0 auto !important; padding: 0 !important; color: #ffffff !important; font-weight: 800 !important; text-align: center !important; line-height: 1.35 !important;">', $cInner);
+                            $cInner = preg_replace('#<strong\b([^>]*)>#i', '<strong$1 style="color: #ffffff !important; font-weight: 800 !important; text-align: center !important;">', $cInner);
+                            return '<th class="blog-table-th" style="background-color: #143572 !important; color: #ffffff !important; text-align: center !important; vertical-align: middle !important; font-weight: 800 !important; font-family: \'Nunito\', sans-serif !important; padding: 14px 18px !important; border-bottom: 3.5px solid #F5B400 !important; border-right: 1px solid rgba(255, 255, 255, 0.15) !important;">' . $cInner . '</th>';
+                        }, $thInner);
+                        return '<thead' . $thAttrs . ' style="background-color: #143572 !important;">' . $thInner . '</thead>';
+                    }, $tableInner);
                 }
 
                 return '<table' . $tableAttrs . '>' . $tableInner . '</table>';

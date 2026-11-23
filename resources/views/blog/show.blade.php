@@ -230,43 +230,44 @@
           border-bottom: 2px solid rgba(20, 53, 114, 0.1);
         }
 
-        /* Table Title / Header Row (Visually Distinct Gold Header with Centered Deep Navy Text) */
+        /* Table Title / Header Row (Distinct Navy Header with Centered White Text) */
+        .article-prose table thead,
+        .article-prose table thead tr,
+        .article-prose table tr.table-header-row {
+          background-color: #143572 !important;
+          background: #143572 !important;
+        }
+
         .article-prose table thead th,
         .article-prose table thead td,
         .article-prose table th,
-        .article-prose table thead tr.table-header-row th,
-        .article-prose table tbody tr.table-header-row td,
-        .article-prose table thead tr th,
-        .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td {
-          background: #F5B400 !important;
-          background-image: linear-gradient(180deg, #F9BE1A 0%, #F5B400 100%) !important;
-          color: #0C2454 !important;
-          font-family: 'Nunito', sans-serif !important;
+        .article-prose table tr.table-header-row th,
+        .article-prose table tr.table-header-row td,
+        .article-prose table .blog-table-th {
+          background-color: #143572 !important;
+          background: #143572 !important;
+          color: #ffffff !important;
+          font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif !important;
           font-weight: 800 !important;
           font-size: 0.975rem !important;
-          letter-spacing: 0.03em;
+          letter-spacing: 0.025em;
           padding: 1.15rem 1.25rem !important;
           text-align: center !important;
           vertical-align: middle !important;
-          border-bottom: 3px solid #0C2454 !important;
-          border-right: 1px solid rgba(12, 36, 84, 0.16) !important;
+          border-bottom: 3.5px solid #F5B400 !important;
+          border-right: 1px solid rgba(255, 255, 255, 0.16) !important;
           border-top: none !important;
           border-left: none !important;
           white-space: nowrap;
         }
 
-        /* Header Inner Typography Reset - Centered Horizontally & Vertically */
-        .article-prose table thead th p,
-        .article-prose table thead td p,
-        .article-prose table th p,
-        .article-prose table thead th strong,
-        .article-prose table thead td strong,
-        .article-prose table th strong,
-        .article-prose table tbody tr.table-header-row td p,
-        .article-prose table tbody tr.table-header-row td strong,
-        .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td p,
-        .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td strong {
-          color: #0C2454 !important;
+        /* Table Header Typography Reset - Centered Horizontally & Vertically */
+        .article-prose table thead th *,
+        .article-prose table thead td *,
+        .article-prose table th *,
+        .article-prose table tr.table-header-row *,
+        .article-prose table .blog-table-th * {
+          color: #ffffff !important;
           font-family: 'Nunito', sans-serif !important;
           font-weight: 800 !important;
           font-size: inherit !important;
@@ -281,14 +282,14 @@
         /* Header Corner Radius */
         .article-prose table thead tr:first-child th:first-child,
         .article-prose table thead tr:first-child td:first-child,
-        .article-prose table tbody tr:first-child td:first-child,
-        .article-prose table tbody tr:first-child th:first-child {
+        .article-prose table tr.table-header-row th:first-child,
+        .article-prose table tr.table-header-row td:first-child {
           border-top-left-radius: 0.95rem;
         }
         .article-prose table thead tr:first-child th:last-child,
         .article-prose table thead tr:first-child td:last-child,
-        .article-prose table tbody tr:first-child td:last-child,
-        .article-prose table tbody tr:first-child th:last-child {
+        .article-prose table tr.table-header-row th:last-child,
+        .article-prose table tr.table-header-row td:last-child {
           border-top-right-radius: 0.95rem;
           border-right: none !important;
         }
@@ -445,16 +446,61 @@
 </main>
 
 <script>
-  // Ensure every table inside blog content has a responsive scroll wrapper
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.article-prose table').forEach(function(table) {
-      if (!table.closest('.blog-table-wrapper, .table-responsive')) {
-        var wrapper = document.createElement('div');
-        wrapper.className = 'blog-table-wrapper table-responsive';
-        table.parentNode.insertBefore(wrapper, table);
-        wrapper.appendChild(table);
-      }
-    });
-  });
+  // Ensure every table inside blog content has responsive wrapper and styled header
+  (function() {
+    function formatBlogTables() {
+      document.querySelectorAll('.article-prose table').forEach(function(table) {
+        // 1. Ensure responsive scroll wrapper
+        if (!table.closest('.blog-table-wrapper, .table-responsive')) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'blog-table-wrapper table-responsive';
+          table.parentNode.insertBefore(wrapper, table);
+          wrapper.appendChild(table);
+        }
+
+        // 2. Locate header row: thead tr OR first tr
+        var headerRow = table.querySelector('thead tr') || table.querySelector('tr.table-header-row') || table.querySelector('tr');
+        if (headerRow) {
+          headerRow.classList.add('table-header-row');
+          headerRow.style.setProperty('background-color', '#143572', 'important');
+          
+          var cells = headerRow.querySelectorAll('th, td');
+          cells.forEach(function(cell, idx) {
+            cell.classList.add('blog-table-th');
+            cell.style.setProperty('background-color', '#143572', 'important');
+            cell.style.setProperty('color', '#ffffff', 'important');
+            cell.style.setProperty('text-align', 'center', 'important');
+            cell.style.setProperty('vertical-align', 'middle', 'important');
+            cell.style.setProperty('font-weight', '800', 'important');
+            cell.style.setProperty('font-family', "'Nunito', sans-serif", 'important');
+            cell.style.setProperty('padding', '16px 20px', 'important');
+            cell.style.setProperty('border-bottom', '3.5px solid #F5B400', 'important');
+            cell.style.setProperty('border-top', 'none', 'important');
+            cell.style.setProperty('border-left', 'none', 'important');
+            if (idx < cells.length - 1) {
+              cell.style.setProperty('border-right', '1px solid rgba(255, 255, 255, 0.15)', 'important');
+            } else {
+              cell.style.setProperty('border-right', 'none', 'important');
+            }
+
+            cell.querySelectorAll('p, strong, span, b').forEach(function(el) {
+              el.style.setProperty('color', '#ffffff', 'important');
+              el.style.setProperty('font-weight', '800', 'important');
+              el.style.setProperty('text-align', 'center', 'important');
+              el.style.setProperty('margin', '0 auto', 'important');
+              el.style.setProperty('display', 'block', 'important');
+              el.style.setProperty('line-height', '1.35', 'important');
+            });
+          });
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', formatBlogTables);
+    } else {
+      formatBlogTables();
+    }
+  })();
 </script>
 @endsection
