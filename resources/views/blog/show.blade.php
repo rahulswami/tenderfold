@@ -155,6 +155,218 @@
           text-align: center;
           font-style: italic;
         }
+
+        /* ==========================================================================
+           TenderFold Blog Article Table Formatting (Global Responsive Tables)
+           ========================================================================== */
+        
+        /* Table Container / Wrapper */
+        .article-prose .blog-table-wrapper,
+        .article-prose .table-responsive,
+        .blog-table-wrapper,
+        .table-responsive {
+          width: 100%;
+          margin: 2rem 0 !important;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          background: #ffffff;
+          border-radius: 1rem;
+          border: 1px solid rgba(20, 53, 114, 0.12);
+          box-shadow: 0 4px 20px -2px rgba(20, 53, 114, 0.06), 0 2px 6px -1px rgba(20, 53, 114, 0.03);
+          position: relative;
+        }
+
+        /* Custom Scrollbar for Smooth Mobile/Desktop Experience */
+        .article-prose .blog-table-wrapper::-webkit-scrollbar,
+        .article-prose .table-responsive::-webkit-scrollbar {
+          height: 6px;
+        }
+        .article-prose .blog-table-wrapper::-webkit-scrollbar-track,
+        .article-prose .table-responsive::-webkit-scrollbar-track {
+          background: #F4F7FB;
+          border-radius: 4px;
+        }
+        .article-prose .blog-table-wrapper::-webkit-scrollbar-thumb,
+        .article-prose .table-responsive::-webkit-scrollbar-thumb {
+          background: rgba(20, 53, 114, 0.22);
+          border-radius: 4px;
+        }
+        .article-prose .blog-table-wrapper::-webkit-scrollbar-thumb:hover,
+        .article-prose .table-responsive::-webkit-scrollbar-thumb:hover {
+          background: #F5B400;
+        }
+
+        /* Table Root Element */
+        .article-prose table {
+          width: 100% !important;
+          min-width: 540px; /* Prevents column squashing on small viewports */
+          border-collapse: separate !important;
+          border-spacing: 0 !important;
+          margin: 0 !important;
+          font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 0.95rem;
+          line-height: 1.6;
+          color: #1A2744;
+          text-align: left;
+          background-color: #ffffff;
+        }
+
+        /* Reset arbitrary fixed widths from TinyMCE colgroup */
+        .article-prose table colgroup,
+        .article-prose table col {
+          width: auto !important;
+        }
+
+        /* Table Headers (thead th, thead td, th, and fallback first-row header) */
+        .article-prose table thead th,
+        .article-prose table thead td,
+        .article-prose table th,
+        .article-prose table tbody tr.table-header-row td,
+        .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td {
+          background: #143572 !important;
+          color: #ffffff !important;
+          font-family: 'Nunito', sans-serif !important;
+          font-weight: 800 !important;
+          font-size: 0.95rem !important;
+          letter-spacing: 0.025em;
+          padding: 1.1rem 1.25rem !important;
+          text-align: left;
+          vertical-align: middle;
+          border-bottom: 3px solid #F5B400 !important;
+          border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+          border-top: none !important;
+          border-left: none !important;
+          white-space: nowrap;
+        }
+
+        /* Header Inner Typography Reset */
+        .article-prose table thead th p,
+        .article-prose table thead td p,
+        .article-prose table th p,
+        .article-prose table thead th strong,
+        .article-prose table thead td strong,
+        .article-prose table th strong,
+        .article-prose table tbody tr.table-header-row td p,
+        .article-prose table tbody tr.table-header-row td strong,
+        .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td p,
+        .article-prose table tbody tr:first-child:has(strong):not(:has(td:not(:has(strong)))) td strong {
+          color: #ffffff !important;
+          font-family: 'Nunito', sans-serif !important;
+          font-weight: 800 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          display: inline;
+        }
+
+        /* Header Corner Radius */
+        .article-prose table thead tr:first-child th:first-child,
+        .article-prose table thead tr:first-child td:first-child,
+        .article-prose table tbody tr:first-child td:first-child,
+        .article-prose table tbody tr:first-child th:first-child {
+          border-top-left-radius: 0.95rem;
+        }
+        .article-prose table thead tr:first-child th:last-child,
+        .article-prose table thead tr:first-child td:last-child,
+        .article-prose table tbody tr:first-child td:last-child,
+        .article-prose table tbody tr:first-child th:last-child {
+          border-top-right-radius: 0.95rem;
+          border-right: none !important;
+        }
+
+        /* Table Data Cells */
+        .article-prose table tbody td {
+          padding: 0.95rem 1.25rem !important;
+          vertical-align: middle;
+          border-bottom: 1px solid rgba(20, 53, 114, 0.08) !important;
+          border-right: 1px solid rgba(20, 53, 114, 0.06) !important;
+          border-top: none !important;
+          border-left: none !important;
+          color: #1A2744;
+          font-size: 0.935rem;
+          line-height: 1.6;
+        }
+
+        /* Remove borders on outer edges */
+        .article-prose table tr td:last-child,
+        .article-prose table tr th:last-child {
+          border-right: none !important;
+        }
+        .article-prose table tbody tr:last-child td {
+          border-bottom: none !important;
+        }
+
+        /* Bottom Corner Radius */
+        .article-prose table tbody tr:last-child td:first-child {
+          border-bottom-left-radius: 0.95rem;
+        }
+        .article-prose table tbody tr:last-child td:last-child {
+          border-bottom-right-radius: 0.95rem;
+        }
+
+        /* Alternating Row Striping */
+        .article-prose table tbody tr:nth-child(even) {
+          background-color: #F8FAFD;
+        }
+        .article-prose table tbody tr:nth-child(odd) {
+          background-color: #ffffff;
+        }
+
+        /* Hover Interaction on Rows */
+        .article-prose table tbody tr:hover {
+          background-color: #F0F4FA !important;
+          transition: background-color 0.15s ease-in-out;
+        }
+
+        /* Distinct Emphasis for First Column (Labels/Features) */
+        .article-prose table tbody tr td:first-child {
+          font-weight: 600;
+          color: #143572;
+        }
+
+        /* Reset paragraph margins and line heights inside table cells */
+        .article-prose table td p,
+        .article-prose table th p {
+          margin: 0 !important;
+          padding: 0 !important;
+          line-height: 1.55 !important;
+          color: inherit !important;
+          font-size: inherit !important;
+        }
+
+        .article-prose table td ul,
+        .article-prose table td ol {
+          margin: 0.35rem 0 !important;
+          padding-left: 1.25rem !important;
+        }
+
+        .article-prose table td li {
+          margin-bottom: 0.25rem !important;
+          line-height: 1.5 !important;
+        }
+
+        /* Responsive Mobile Adjustments */
+        @media (max-width: 768px) {
+          .article-prose .blog-table-wrapper,
+          .article-prose .table-responsive {
+            margin: 1.5rem 0 !important;
+            border-radius: 0.75rem;
+          }
+          .article-prose table {
+            min-width: 480px;
+            font-size: 0.875rem;
+          }
+          .article-prose table thead th,
+          .article-prose table thead td,
+          .article-prose table th,
+          .article-prose table tbody tr.table-header-row td {
+            padding: 0.85rem 1rem !important;
+            font-size: 0.875rem !important;
+          }
+          .article-prose table tbody td {
+            padding: 0.8rem 1rem !important;
+            font-size: 0.875rem !important;
+          }
+        }
       </style>
       <div class="prose prose-lg article-prose max-w-none text-ink text-base sm:text-lg leading-relaxed space-y-6">
         {!! clean_blog_content($blog->content) !!}
@@ -207,4 +419,18 @@
     </div>
   </section>
 </main>
+
+<script>
+  // Ensure every table inside blog content has a responsive scroll wrapper
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.article-prose table').forEach(function(table) {
+      if (!table.closest('.blog-table-wrapper, .table-responsive')) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'blog-table-wrapper table-responsive';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      }
+    });
+  });
+</script>
 @endsection

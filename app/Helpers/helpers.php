@@ -184,6 +184,47 @@ if (!function_exists('clean_blog_content')) {
             return $matches[0];
         }, $content);
 
+        // 5. Ensure all HTML tables are wrapped in a responsive, scrollable container
+        // and normalize any first-row headers (e.g. TinyMCE tables without <thead>)
+        if (stripos($content, '<table') !== false) {
+            $content = preg_replace_callback('#<table\b([^>]*)>(.*?)</table>#is', function ($tblMatches) {
+                $tableAttrs = $tblMatches[1];
+                $tableInner = $tblMatches[2];
+
+                // If table doesn't already have <thead>, inspect the first <tr>
+                if (stripos($tableInner, '<thead') === false) {
+                    $tableInner = preg_replace_callback('#<tbody\b[^>]*>\s*<tr\b([^>]*)>(.*?)</tr>#is', function ($trMatches) {
+                        $trAttrs = $trMatches[1];
+                        $cells = $trMatches[2];
+                        if (preg_match_all('#<td\b([^>]*)>(.*?)</td>#is', $cells, $cellMatches)) {
+                            $allStrong = true;
+                            foreach ($cellMatches[2] as $cellHtml) {
+                                if (!preg_match('#<(?:strong|b)\b#i', $cellHtml)) {
+                                    $allStrong = false;
+                                    break;
+                                }
+                            }
+                            if ($allStrong && count($cellMatches[2]) > 0) {
+                                $thCells = preg_replace('#<td\b([^>]*)>#i', '<th$1>', $cells);
+                                $thCells = preg_replace('#</td>#i', '</th>', $thCells);
+                                return '<thead><tr' . $trAttrs . ' class="table-header-row">' . $thCells . '</tr></thead><tbody>';
+                            }
+                        }
+                        return $trMatches[0];
+                    }, $tableInner, 1);
+                }
+
+                return '<table' . $tableAttrs . '>' . $tableInner . '</table>';
+            }, $content);
+
+            // Wrap tables in responsive container if not already wrapped
+            $content = preg_replace_callback('#(<div[^>]*class="[^"]*(?:blog-table-wrapper|table-responsive)[^"]*"[^>]*>\s*)?<table\b([^>]*)>(.*?)</table>(\s*</div>)?#is', function ($matches) {
+                $attrs = $matches[2];
+                $inner = $matches[3];
+                return '<div class="blog-table-wrapper table-responsive"><table' . $attrs . '>' . $inner . '</table></div>';
+            }, $content);
+        }
+
         return $content;
     }
 }
