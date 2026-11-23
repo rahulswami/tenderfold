@@ -209,9 +209,9 @@ if (!function_exists('clean_blog_content')) {
                                     $cInner = $tdM[2];
                                     $cInner = preg_replace('#<p\b([^>]*)>#i', '<p$1 style="margin: 0 auto !important; padding: 0 !important; color: #ffffff !important; font-weight: 800 !important; text-align: center !important; line-height: 1.35 !important;">', $cInner);
                                     $cInner = preg_replace('#<strong\b([^>]*)>#i', '<strong$1 style="color: #ffffff !important; font-weight: 800 !important; text-align: center !important;">', $cInner);
-                                    return '<th class="blog-table-th" style="background-color: #143572 !important; color: #ffffff !important; text-align: center !important; vertical-align: middle !important; font-weight: 800 !important; font-family: \'Nunito\', sans-serif !important; padding: 14px 18px !important; border-bottom: 3.5px solid #F5B400 !important; border-right: 1px solid rgba(255, 255, 255, 0.15) !important;">' . $cInner . '</th>';
+                                    return '<th class="blog-table-th" style="display: table-cell !important; background-color: #143572 !important; color: #ffffff !important; text-align: center !important; vertical-align: middle !important; font-weight: 800 !important; font-family: \'Nunito\', sans-serif !important; padding: 14px 18px !important; border-bottom: 3.5px solid #F5B400 !important; border-right: 1px solid rgba(255, 255, 255, 0.15) !important;">' . $cInner . '</th>';
                                 }, $cells);
-                                return '<thead style="background-color: #143572 !important;"><tr' . $trAttrs . ' class="table-header-row" style="background-color: #143572 !important;">' . $thCells . '</tr></thead><tbody>';
+                                return '<thead style="display: table-header-group !important; background-color: #143572 !important;"><tr' . $trAttrs . ' class="table-header-row" style="display: table-row !important; background-color: #143572 !important;">' . $thCells . '</tr></thead><tbody>';
                             }
                         }
                         return $trMatches[0];
@@ -222,15 +222,15 @@ if (!function_exists('clean_blog_content')) {
                         $thAttrs = $theadM[1];
                         $thInner = $theadM[2];
                         if (stripos($thInner, 'class="table-header-row"') === false) {
-                            $thInner = preg_replace('#<tr\b([^>]*)>#i', '<tr$1 class="table-header-row" style="background-color: #143572 !important;">', $thInner);
+                            $thInner = preg_replace('#<tr\b([^>]*)>#i', '<tr$1 class="table-header-row" style="display: table-row !important; background-color: #143572 !important;">', $thInner);
                         }
                         $thInner = preg_replace_callback('#<(th|td)\b([^>]*)>(.*?)</\1>#is', function ($cellM) {
                             $cInner = $cellM[3];
                             $cInner = preg_replace('#<p\b([^>]*)>#i', '<p$1 style="margin: 0 auto !important; padding: 0 !important; color: #ffffff !important; font-weight: 800 !important; text-align: center !important; line-height: 1.35 !important;">', $cInner);
                             $cInner = preg_replace('#<strong\b([^>]*)>#i', '<strong$1 style="color: #ffffff !important; font-weight: 800 !important; text-align: center !important;">', $cInner);
-                            return '<th class="blog-table-th" style="background-color: #143572 !important; color: #ffffff !important; text-align: center !important; vertical-align: middle !important; font-weight: 800 !important; font-family: \'Nunito\', sans-serif !important; padding: 14px 18px !important; border-bottom: 3.5px solid #F5B400 !important; border-right: 1px solid rgba(255, 255, 255, 0.15) !important;">' . $cInner . '</th>';
+                            return '<th class="blog-table-th" style="display: table-cell !important; background-color: #143572 !important; color: #ffffff !important; text-align: center !important; vertical-align: middle !important; font-weight: 800 !important; font-family: \'Nunito\', sans-serif !important; padding: 14px 18px !important; border-bottom: 3.5px solid #F5B400 !important; border-right: 1px solid rgba(255, 255, 255, 0.15) !important;">' . $cInner . '</th>';
                         }, $thInner);
-                        return '<thead' . $thAttrs . ' style="background-color: #143572 !important;">' . $thInner . '</thead>';
+                        return '<thead' . $thAttrs . ' style="display: table-header-group !important; background-color: #143572 !important;">' . $thInner . '</thead>';
                     }, $tableInner);
                 }
 

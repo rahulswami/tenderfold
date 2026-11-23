@@ -198,8 +198,10 @@
 
         /* Table Root Element */
         .article-prose table {
+          display: table !important;
           width: 100% !important;
           min-width: 540px; /* Prevents column squashing on small viewports */
+          table-layout: auto !important;
           border-collapse: separate !important;
           border-spacing: 0 !important;
           margin: 0 !important;
@@ -209,6 +211,20 @@
           color: #1A2744;
           text-align: left;
           background-color: #ffffff;
+        }
+
+        .article-prose table thead {
+          display: table-header-group !important;
+          background-color: #143572 !important;
+          background: #143572 !important;
+        }
+
+        .article-prose table tbody {
+          display: table-row-group !important;
+        }
+
+        .article-prose table tr {
+          display: table-row !important;
         }
 
         /* Reset arbitrary fixed widths from TinyMCE colgroup */
@@ -231,9 +247,9 @@
         }
 
         /* Table Title / Header Row (Distinct Navy Header with Centered White Text) */
-        .article-prose table thead,
         .article-prose table thead tr,
         .article-prose table tr.table-header-row {
+          display: table-row !important;
           background-color: #143572 !important;
           background: #143572 !important;
         }
@@ -244,6 +260,7 @@
         .article-prose table tr.table-header-row th,
         .article-prose table tr.table-header-row td,
         .article-prose table .blog-table-th {
+          display: table-cell !important;
           background-color: #143572 !important;
           background: #143572 !important;
           color: #ffffff !important;
@@ -258,15 +275,30 @@
           border-right: 1px solid rgba(255, 255, 255, 0.16) !important;
           border-top: none !important;
           border-left: none !important;
-          white-space: nowrap;
+          white-space: normal !important;
         }
 
         /* Table Header Typography Reset - Centered Horizontally & Vertically */
-        .article-prose table thead th *,
-        .article-prose table thead td *,
-        .article-prose table th *,
-        .article-prose table tr.table-header-row *,
-        .article-prose table .blog-table-th * {
+        .article-prose table thead th p,
+        .article-prose table thead th strong,
+        .article-prose table thead th span,
+        .article-prose table thead th b,
+        .article-prose table thead td p,
+        .article-prose table thead td strong,
+        .article-prose table thead td span,
+        .article-prose table thead td b,
+        .article-prose table tr.table-header-row th p,
+        .article-prose table tr.table-header-row th strong,
+        .article-prose table tr.table-header-row th span,
+        .article-prose table tr.table-header-row th b,
+        .article-prose table tr.table-header-row td p,
+        .article-prose table tr.table-header-row td strong,
+        .article-prose table tr.table-header-row td span,
+        .article-prose table tr.table-header-row td b,
+        .article-prose table .blog-table-th p,
+        .article-prose table .blog-table-th strong,
+        .article-prose table .blog-table-th span,
+        .article-prose table .blog-table-th b {
           color: #ffffff !important;
           font-family: 'Nunito', sans-serif !important;
           font-weight: 800 !important;
@@ -275,7 +307,6 @@
           margin: 0 auto !important;
           padding: 0 !important;
           text-align: center !important;
-          display: block !important;
           line-height: 1.35 !important;
         }
 
@@ -459,14 +490,17 @@
         }
 
         // 2. Locate header row: thead tr OR first tr
+        table.style.setProperty('display', 'table', 'important');
         var headerRow = table.querySelector('thead tr') || table.querySelector('tr.table-header-row') || table.querySelector('tr');
         if (headerRow) {
           headerRow.classList.add('table-header-row');
+          headerRow.style.setProperty('display', 'table-row', 'important');
           headerRow.style.setProperty('background-color', '#143572', 'important');
           
           var cells = headerRow.querySelectorAll('th, td');
           cells.forEach(function(cell, idx) {
             cell.classList.add('blog-table-th');
+            cell.style.setProperty('display', 'table-cell', 'important');
             cell.style.setProperty('background-color', '#143572', 'important');
             cell.style.setProperty('color', '#ffffff', 'important');
             cell.style.setProperty('text-align', 'center', 'important');
@@ -488,7 +522,6 @@
               el.style.setProperty('font-weight', '800', 'important');
               el.style.setProperty('text-align', 'center', 'important');
               el.style.setProperty('margin', '0 auto', 'important');
-              el.style.setProperty('display', 'block', 'important');
               el.style.setProperty('line-height', '1.35', 'important');
             });
           });
