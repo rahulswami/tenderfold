@@ -402,6 +402,7 @@
           @foreach($navServices as $nService)
             <li><a href="{{ route('services.show', $nService->slug) }}" class="transition hover:text-gold">{{ $nService->service_name }}</a></li>
           @endforeach
+          <li><a href="{{ url('/privacy-policy') }}" class="transition hover:text-gold">Privacy Policy</a></li>
         </ul>
 
         <h2 class="mt-6 font-display text-sm font-extrabold uppercase tracking-[0.16em] text-gold">Pricing</h2>

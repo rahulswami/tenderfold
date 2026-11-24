@@ -135,6 +135,50 @@
     font-weight: 800;
     font-size: 0.75rem;
   }
+  .cms-prose strong {
+    color: #143572;
+    font-weight: 700;
+  }
+  .cms-prose a {
+    color: #143572;
+    font-weight: 600;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+  }
+  .cms-prose a:hover {
+    color: #F5B400;
+  }
+  .cms-prose .address-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .cms-prose .address-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .cms-prose .address-card {
+    background: #ffffff;
+    border: 1px solid rgba(20, 53, 114, 0.1);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 15px rgba(20, 53, 114, 0.04);
+  }
+  .cms-prose .address-title {
+    font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    color: #143572;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+  .cms-prose .address-text {
+    font-size: 0.875rem;
+    color: #5C6A82;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
   .cms-prose ol {
     margin-top: 1rem;
     margin-bottom: 1.5rem;
