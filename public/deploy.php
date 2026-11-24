@@ -747,18 +747,37 @@ if ($pdo) {
         ]
     ];
 
+    $cmsCols = [];
+    try {
+        $colStmt = $pdo->query("SHOW COLUMNS FROM `cms_pages`");
+        while ($r = $colStmt->fetch()) {
+            $cmsCols[] = $r['Field'] ?? $r['name'] ?? '';
+        }
+    } catch (Exception $e) {}
+
     foreach ($cmsPagesList as $cp) {
         $check = $pdo->prepare("SELECT id FROM `cms_pages` WHERE `slug` = ? LIMIT 1");
         $check->execute([$cp['slug']]);
         $existing = $check->fetch();
         if (!$existing) {
-            $stmt = $pdo->prepare("INSERT INTO `cms_pages` (`title`, `slug`, `metatitle`, `metadescription`, `description`, `status`, `created_at`, `updated_at`) 
-                                   VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->execute([$cp['title'], $cp['slug'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['status']]);
+            if (in_array('content', $cmsCols)) {
+                $stmt = $pdo->prepare("INSERT INTO `cms_pages` (`title`, `slug`, `metatitle`, `metadescription`, `description`, `content`, `status`, `created_at`, `updated_at`) 
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt->execute([$cp['title'], $cp['slug'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['description'], $cp['status']]);
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO `cms_pages` (`title`, `slug`, `metatitle`, `metadescription`, `description`, `status`, `created_at`, `updated_at`) 
+                                       VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt->execute([$cp['title'], $cp['slug'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['status']]);
+            }
         } else {
             if ($cp['slug'] === 'privacy-policy') {
-                $stmt = $pdo->prepare("UPDATE `cms_pages` SET `title` = ?, `metatitle` = ?, `metadescription` = ?, `description` = ?, `status` = ?, `updated_at` = NOW() WHERE `slug` = ?");
-                $stmt->execute([$cp['title'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['status'], $cp['slug']]);
+                if (in_array('content', $cmsCols)) {
+                    $stmt = $pdo->prepare("UPDATE `cms_pages` SET `title` = ?, `metatitle` = ?, `metadescription` = ?, `description` = ?, `content` = ?, `status` = ?, `updated_at` = NOW() WHERE `slug` = ?");
+                    $stmt->execute([$cp['title'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['description'], $cp['status'], $cp['slug']]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE `cms_pages` SET `title` = ?, `metatitle` = ?, `metadescription` = ?, `description` = ?, `status` = ?, `updated_at` = NOW() WHERE `slug` = ?");
+                    $stmt->execute([$cp['title'], $cp['metatitle'], $cp['metadescription'], $cp['description'], $cp['status'], $cp['slug']]);
+                }
             }
         }
     }

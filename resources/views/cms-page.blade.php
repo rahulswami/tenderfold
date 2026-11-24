@@ -43,7 +43,7 @@
     <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
       <div class="reveal rounded-3xl bg-cream/30 p-6 sm:p-10 border border-navy/5 shadow-card">
         <div class="cms-prose text-ink leading-relaxed">
-          {!! $page->content ?: $page->description !!}
+          {!! (strlen($page->description ?? '') > strlen($page->content ?? '')) ? $page->description : ($page->content ?: $page->description) !!}
         </div>
       </div>
     </div>
