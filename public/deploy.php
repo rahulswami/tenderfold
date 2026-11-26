@@ -25,14 +25,42 @@ if (!file_exists($envPath)) {
 $env = [];
 if (file_exists($envPath)) {
     $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $dbLines = [];
     foreach ($lines as $line) {
+        if (stripos($line, 'DB_') !== false) {
+            $dbLines[] = htmlspecialchars($line);
+        }
         if (strpos(trim($line), '#') === 0) continue;
         $parts = explode('=', $line, 2);
         if (count($parts) === 2) {
             $env[trim($parts[0])] = trim($parts[1], '"\' ');
         }
     }
-    $checks['.env File'] = ['status' => true, 'msg' => 'Found & Loaded'];
+    
+    // Check other .env* files
+    $otherEnv = glob($basePath . '/.env*');
+    $otherEnvList = [];
+    if ($otherEnv) {
+        foreach ($otherEnv as $oef) {
+            $otherEnvList[] = basename($oef) . ' (' . filesize($oef) . 'b, mtime: ' . date('Y-m-d H:i:s', filemtime($oef)) . ')';
+        }
+    }
+
+    $checks['.env File'] = [
+        'status' => true,
+        'msg' => 'Found & Loaded. Files: ' . implode(', ', $otherEnvList) . '. DB lines: [' . implode(' | ', $dbLines) . ']. Keys: ' . implode(', ', array_keys($env))
+    ];
+
+    // Read last lines of storage/logs/laravel.log
+    $logFile = $basePath . '/storage/logs/laravel.log';
+    if (file_exists($logFile)) {
+        $logContent = file($logFile);
+        $lastLines = array_slice($logContent, -30);
+        $checks['Recent Laravel Log (Error Inspection)'] = [
+            'status' => false,
+            'msg' => '<pre style="max-height: 200px; overflow-y: auto; font-size: 11px; white-space: pre-wrap;">' . htmlspecialchars(implode('', $lastLines)) . '</pre>'
+        ];
+    }
 
     // 2.1 Auto-generate APP_KEY if missing or empty
     if (empty($env['APP_KEY']) || strlen($env['APP_KEY']) < 20) {
