@@ -36,7 +36,6 @@ if ($bootstrapCacheFiles) {
 // 2. Locate or Auto-Restore .env file
 $envPath = $basePath . '/.env';
 $backupSources = [
-    '/home/u709314437/.env.backup',
     $basePath . '/.env.backup',
     dirname($basePath) . '/.env.backup',
     $basePath . '/.env.example'
@@ -47,7 +46,7 @@ if (!file_exists($envPath) || filesize($envPath) < 50) {
     $needsRestoration = true;
 } else {
     $currContent = @file_get_contents($envPath);
-    if ($currContent === false || stripos($currContent, 'DB_DATABASE=') === false || stripos($currContent, 'DB_DATABASE=laravel') !== false) {
+    if ($currContent === false || (stripos($currContent, 'DB_DATABASE=') === false && stripos($currContent, 'DB_CONNECTION=') === false)) {
         $needsRestoration = true;
     }
 }
@@ -56,7 +55,7 @@ if ($needsRestoration) {
     foreach ($backupSources as $bSrc) {
         if (file_exists($bSrc) && filesize($bSrc) > 100) {
             $srcContent = file_get_contents($bSrc);
-            if ($srcContent !== false && stripos($srcContent, 'DB_DATABASE=') !== false && stripos($srcContent, 'DB_DATABASE=laravel') === false) {
+            if ($srcContent !== false && (stripos($srcContent, 'DB_DATABASE=') !== false || stripos($srcContent, 'DB_CONNECTION=') !== false)) {
                 file_put_contents($envPath, $srcContent);
                 @chmod($envPath, 0644);
                 $actions[] = "Restored <code>.env</code> from backup: <code>{$bSrc}</code> (" . strlen($srcContent) . " bytes) ✅";
@@ -66,12 +65,6 @@ if ($needsRestoration) {
                 break;
             }
         }
-    }
-    // Direct copy fallback if /home/u709314437/.env.backup exists
-    if (!file_exists($envPath) && file_exists('/home/u709314437/.env.backup')) {
-        @copy('/home/u709314437/.env.backup', $envPath);
-        @chmod($envPath, 0644);
-        $actions[] = "Copied <code>/home/u709314437/.env.backup</code> to <code>.env</code> ✅";
     }
 }
 
@@ -288,7 +281,7 @@ $checks['Database Connection'] = [
 ];
 
 // 7. Auto-Create / Migrate Database Tables & Sync Content
-if ($pdo) {
+if ($pdo && $dbConn === 'mysql') {
     // 7.1 Users table
     $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
         `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -937,11 +930,12 @@ if (is_dir($viewCacheDir)) {
 $actions[] = "Cleared compiled blade view cache files ✅";
 
 // 9. Run artisan commands via CLI if available
+$phpCli = file_exists('/opt/alt/php84/usr/bin/php') ? '/opt/alt/php84/usr/bin/php' : 'php';
 if (function_exists('exec')) {
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan view:clear 2>&1");
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan cache:clear 2>&1");
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan config:clear 2>&1");
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan route:clear 2>&1");
+    @exec("cd " . escapeshellarg($basePath) . " && $phpCli artisan view:clear 2>&1");
+    @exec("cd " . escapeshellarg($basePath) . " && $phpCli artisan cache:clear 2>&1");
+    @exec("cd " . escapeshellarg($basePath) . " && $phpCli artisan config:clear 2>&1");
+    @exec("cd " . escapeshellarg($basePath) . " && $phpCli artisan route:clear 2>&1");
 }
 
 // 10. Test Laravel Application Boot
