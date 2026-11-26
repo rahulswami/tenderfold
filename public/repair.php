@@ -26,10 +26,12 @@ foreach ($rows as $r) {
     echo "  {$r['id']} => {$r['value']}\n";
 }
 
-// Update site_name, site_tagline, meta_description, copyright_text, footer_description
+// Update site_name, site_tagline, meta_description, copyright_text, footer_description, emails, and meta_title
 $pdo->exec("UPDATE site_parameters SET value = 'Tenderfold' WHERE id = 'site_name'");
 $pdo->exec("UPDATE site_parameters SET value = 'Freshness in Every Single Fold - Premium Laundry & Dry Cleaner in Gurgaon' WHERE id = 'site_tagline'");
 $pdo->exec("UPDATE site_parameters SET value = 'Tenderfold is a premium laundry and dry cleaner in Gurgaon. Doorstep pickup for wash & fold, steam ironing, dry cleaning and specialized fabric care. Call +91 95824 66445.' WHERE id = 'meta_description'");
+$pdo->exec("UPDATE site_parameters SET value = 'TenderFold — Premium Laundry, Dry Cleaning & Steam Pressing in Gurgaon' WHERE id = 'meta_title'");
+$pdo->exec("UPDATE site_parameters SET value = 'info@tenderfold.in' WHERE id IN ('contact_email', 'email', 'support_email')");
 $pdo->exec("UPDATE site_parameters SET value = '© 2026 Tenderfold. Freshness in Every Single Fold. All Rights Reserved.' WHERE id = 'copyright_text'");
 $pdo->exec("UPDATE site_parameters SET value = 'Tenderfold is Gurgaon\'s trusted premium laundry, dry cleaning & specialized fabric care service. Doorstep pickup across all major sectors.' WHERE id = 'footer_description'");
 
