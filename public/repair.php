@@ -12,61 +12,57 @@ header('Content-Type: text/plain; charset=utf-8');
 $gitOutput = [];
 @exec("cd " . escapeshellarg($basePath) . " && git pull origin main 2>&1", $gitOutput);
 
-echo "Web PHP Version: " . phpversion() . "\n\n";
+echo "=== TENDERFOLD MIGRATIONS & SEEDS VIA PHP 8.4 ===\n\n";
 
-// 2. Find PHP 8.4 CLI
-$phpCandidates = [
-    '/usr/bin/php84',
-    '/usr/bin/php8.4',
-    '/opt/alt/php84/usr/bin/php',
-    '/opt/alt/php83/usr/bin/php',
-    '/usr/local/bin/php',
-    '/usr/local/php84/bin/php',
-];
+$php84 = '/opt/alt/php84/usr/bin/php';
+if (!file_exists($php84)) {
+    die("PHP 8.4 binary not found at $php84\n");
+}
 
-$workingPhpCli = null;
-foreach ($phpCandidates as $pc) {
-    if (file_exists($pc)) {
-        $out = [];
-        @exec("$pc -v 2>&1", $out);
-        echo "Found: $pc => " . ($out[0] ?? 'no output') . "\n";
-        if (stripos($out[0] ?? '', '8.4') !== false || stripos($out[0] ?? '', '8.3') !== false) {
-            $workingPhpCli = $pc;
+$sqlitePath = $basePath . '/database/database.sqlite';
+if (!file_exists($sqlitePath)) {
+    @touch($sqlitePath);
+}
+@chmod($sqlitePath, 0666);
+
+// 2. Run migrate
+$mig = [];
+@exec("cd " . escapeshellarg($basePath) . " && $php84 artisan migrate --force 2>&1", $mig);
+echo "Migrate Output:\n" . implode("\n", $mig) . "\n\n";
+
+// 3. Run SiteSeeder
+$seed = [];
+@exec("cd " . escapeshellarg($basePath) . " && $php84 artisan db:seed --class=SiteSeeder --force 2>&1", $seed);
+echo "Seed Output:\n" . implode("\n", $seed) . "\n\n";
+
+// 4. Verify SQLite contents
+echo "SQLite DB size: " . filesize($sqlitePath) . " bytes\n";
+try {
+    $pdo = new PDO("sqlite:" . $sqlitePath);
+    $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll(PDO::FETCH_COLUMN);
+    echo "Tables created in SQLite (" . count($tables) . "): " . implode(', ', $tables) . "\n\n";
+    
+    if (in_array('services', $tables)) {
+        $services = $pdo->query("SELECT service_name, slug, rate_value FROM services")->fetchAll(PDO::FETCH_ASSOC);
+        echo "Services seeded (" . count($services) . "):\n";
+        foreach ($services as $s) {
+            echo "  - {$s['service_name']} ({$s['slug']}): {$s['rate_value']}\n";
         }
+        echo "\n";
     }
+} catch (\Throwable $e) {
+    echo "Query Error: " . $e->getMessage() . "\n";
 }
 
-// Also check which php
-@exec("which php 2>&1", $whichPhp);
-echo "Default 'php': " . implode('', $whichPhp) . "\n";
-@exec("whereis php 2>&1", $whereis);
-echo "whereis php: " . implode('', $whereis) . "\n\n";
+// 5. Clear caches
+@exec("cd " . escapeshellarg($basePath) . " && $php84 artisan view:clear 2>&1");
+@exec("cd " . escapeshellarg($basePath) . " && $php84 artisan cache:clear 2>&1");
+@exec("cd " . escapeshellarg($basePath) . " && $php84 artisan config:clear 2>&1");
+@exec("cd " . escapeshellarg($basePath) . " && $php84 artisan route:clear 2>&1");
 
-// 3. If PHP CLI found, run migrations and seeds
-if ($workingPhpCli) {
-    echo "Running with $workingPhpCli:\n";
-    $mig = [];
-    @exec("cd " . escapeshellarg($basePath) . " && $workingPhpCli artisan migrate --force 2>&1", $mig);
-    echo implode("\n", $mig) . "\n\n";
-
-    $seed = [];
-    @exec("cd " . escapeshellarg($basePath) . " && $workingPhpCli artisan db:seed --class=SiteSeeder --force 2>&1", $seed);
-    echo implode("\n", $seed) . "\n\n";
-} else {
-    echo "No 8.4 CLI found directly in standard paths. Probing /opt/alt/:\n";
-    $alt = glob('/opt/alt/*');
-    if ($alt) echo implode("\n", $alt) . "\n";
-}
-
-// Clear views and cache
 $viewFiles = glob($basePath . '/storage/framework/views/*.php');
 foreach ($viewFiles as $vf) @unlink($vf);
 
-if ($workingPhpCli) {
-    @exec("cd " . escapeshellarg($basePath) . " && $workingPhpCli artisan view:clear 2>&1");
-    @exec("cd " . escapeshellarg($basePath) . " && $workingPhpCli artisan config:clear 2>&1");
-}
-
 if (function_exists('opcache_reset')) @opcache_reset();
 
-echo "\nDone!\n";
+echo "=== Setup Complete ===\n";
