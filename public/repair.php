@@ -1,6 +1,7 @@
 <?php
 $isInsidePublic = basename(__DIR__) === 'public';
 $basePath = $isInsidePublic ? dirname(__DIR__) : __DIR__;
+$homeDir = '/home/u709314437';
 
 header('Content-Type: text/plain; charset=utf-8');
 
@@ -8,21 +9,25 @@ header('Content-Type: text/plain; charset=utf-8');
 $gitOutput = [];
 @exec("cd " . escapeshellarg($basePath) . " && git pull origin main 2>&1", $gitOutput);
 
-$logFile = $basePath . '/storage/logs/laravel.log';
-if (file_exists($logFile)) {
-    $content = file_get_contents($logFile);
-    // Find all occurrences of "[2026-"
-    preg_match_all('/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] [^\n]+/i', $content, $matches);
-    echo "Total log entries found: " . count($matches[0]) . "\n\n";
-    $recentHeaders = array_slice($matches[0], -20);
-    foreach ($recentHeaders as $rh) {
-        echo "$rh\n";
+echo "=== CHECKING ONBOARDING & SETUP FILES ===\n\n";
+
+// Check .pk_auth
+$pkAuth = $basePath . '/.pk_auth';
+if (file_exists($pkAuth)) {
+    echo ".pk_auth content:\n" . file_get_contents($pkAuth) . "\n\n";
+}
+
+// Check website_onboarding_sop.html
+$sop = $basePath . '/website_onboarding_sop.html';
+if (file_exists($sop)) {
+    echo "website_onboarding_sop.html (first 1000 chars):\n" . substr(file_get_contents($sop), 0, 1000) . "\n\n";
+}
+
+// Check .builds/logs
+$buildLogs = glob($homeDir . '/domains/tenderfold.in/.builds/*');
+foreach ($buildLogs as $bl) {
+    echo "$bl:\n";
+    if (is_file($bl)) {
+        echo substr(file_get_contents($bl), 0, 1000) . "\n\n";
     }
-    
-    // Also print the last 200 lines of laravel.log
-    echo "\n=== Last 200 lines of laravel.log ===\n";
-    $lines = file($logFile);
-    echo implode('', array_slice($lines, -200));
-} else {
-    echo "No log file\n";
 }
