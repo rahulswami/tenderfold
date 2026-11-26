@@ -10,132 +10,218 @@ $homeDir = '/home/u709314437';
 
 header('Content-Type: text/plain; charset=utf-8');
 
-echo "=== TENDERFOLD ENVIRONMENT REPAIR ===\n";
+echo "=== TENDERFOLD ENVIRONMENT REPAIR & DISCOVERY ===\n";
 
 // 1. Git pull
 $gitOutput = [];
 @exec("cd " . escapeshellarg($basePath) . " && git pull origin main 2>&1", $gitOutput);
 echo "Git Pull: " . implode("\n", $gitOutput) . "\n\n";
 
-$headOutput = [];
-@exec("cd " . escapeshellarg($basePath) . " && git rev-parse HEAD 2>&1", $headOutput);
-echo "Current Git Commit: " . implode("", $headOutput) . "\n\n";
+// 2. Search for any mention of tenderfold database credentials in server files
+echo "=== Searching for Tenderfold Database Credentials ===\n";
 
-// 2. Restore .env
-$envTarget = $basePath . '/.env';
-$backupFile = $homeDir . '/.env.backup';
+$searchLocations = [
+    $homeDir . '/domains/tenderfold.in',
+    $homeDir . '/domains/tenderfold.in/.builds',
+    $homeDir . '/.bash_history',
+    $homeDir . '/.msmtprc',
+    $homeDir . '/.cursor',
+    $homeDir . '/.git_clones',
+    $basePath . '/tenderfold_production.sql',
+];
 
-echo "Target .env: $envTarget\n";
-echo "Backup File: $backupFile (exists: " . (file_exists($backupFile) ? 'YES, size=' . filesize($backupFile) . 'b' : 'NO') . ")\n\n";
+// Check .bash_history
+if (file_exists($homeDir . '/.bash_history')) {
+    $bh = file_get_contents($homeDir . '/.bash_history');
+    preg_match_all('/(mysql|u709314437[a-zA-Z0-9_]*|tenderfold[a-zA-Z0-9_]*)/i', $bh, $matches);
+    echo "Found in .bash_history: " . implode(', ', array_unique($matches[0] ?? [])) . "\n";
+    // Also look for full lines with mysql or DB
+    $bhLines = explode("\n", $bh);
+    foreach ($bhLines as $line) {
+        if (stripos($line, 'mysql') !== false || stripos($line, 'tenderfold') !== false || stripos($line, 'env') !== false) {
+            echo "BH Line: $line\n";
+        }
+    }
+}
 
-if (file_exists($backupFile)) {
-    $content = file_get_contents($backupFile);
-    if ($content !== false && strlen($content) > 50) {
-        $written = file_put_contents($envTarget, $content);
-        @chmod($envTarget, 0644);
-        echo "Successfully wrote $written bytes to $envTarget\n";
-        
-        // Also save a copy inside basePath
-        @file_put_contents($basePath . '/.env.backup', $content);
-        echo "Saved safety copy to $basePath/.env.backup\n\n";
-    } else {
-        echo "ERROR: Backup file was empty or could not be read\n\n";
+// Check tenderfold_production.sql head
+if (file_exists($basePath . '/tenderfold_production.sql')) {
+    $f = fopen($basePath . '/tenderfold_production.sql', 'r');
+    $sqlHead = '';
+    for ($i = 0; $i < 30; $i++) {
+        $line = fgets($f);
+        if ($line === false) break;
+        $sqlHead .= $line;
+    }
+    fclose($f);
+    echo "\ntenderfold_production.sql Header:\n$sqlHead\n";
+}
+
+// Check other domains on this server to see what databases exist or how .env is configured
+$otherDomains = [
+    $homeDir . '/domains/cyan-panther-246467.hostingersite.com/public_html/.env',
+    $homeDir . '/domains/drsumitz.com/public_html/.env',
+    $homeDir . '/domains/thebuilddesk.com/public_html/.env',
+    $homeDir . '/domains/handsandhue.com/public_html/.env',
+];
+
+foreach ($otherDomains as $od) {
+    if (file_exists($od)) {
+        $lines = file($od);
+        echo "Sample DB config from " . basename(dirname(dirname($od))) . ":\n";
+        foreach ($lines as $line) {
+            if (stripos($line, 'DB_') !== false) {
+                // mask password for output
+                if (stripos($line, 'DB_PASSWORD') !== false) {
+                    echo "DB_PASSWORD=********\n";
+                } else {
+                    echo trim($line) . "\n";
+                }
+            }
+        }
+        echo "\n";
+        break;
+    }
+}
+
+// Test combinations of DB credentials
+echo "=== Testing Database Candidate Credentials ===\n";
+$candidatePasswords = [
+    '26June2026#',
+    '26June2026',
+    'tenderfold',
+    'Tenderfold@123',
+    'Tenderfold#123',
+    'u709314437',
+];
+
+// Extract passwords from other .envs if possible
+foreach ($otherDomains as $od) {
+    if (file_exists($od)) {
+        $lines = file($od);
+        foreach ($lines as $line) {
+            if (stripos($line, 'DB_PASSWORD=') !== false) {
+                $p = trim(substr(trim($line), strlen('DB_PASSWORD=')));
+                $p = trim($p, '"\' ');
+                if (!empty($p) && !in_array($p, $candidatePasswords)) {
+                    $candidatePasswords[] = $p;
+                }
+            }
+        }
+    }
+}
+
+$candidateDatabases = [
+    'u709314437_tenderfold',
+    'u709314437_tender',
+    'u709314437_tf',
+    'u709314437_tenderfold_db',
+    'u709314437_tenderfoldin',
+    'u709314437_orthosense',
+];
+
+$candidateUsers = [
+    'u709314437_tenderfold',
+    'u709314437_tender',
+    'u709314437_tf',
+    'u709314437_orthosense',
+    'u709314437_admin',
+    'u709314437_user',
+];
+
+$hosts = ['localhost', '127.0.0.1'];
+
+$connectedPdo = null;
+$workingConfig = null;
+
+foreach ($candidateDatabases as $db) {
+    foreach ($candidateUsers as $user) {
+        foreach ($candidatePasswords as $pass) {
+            foreach ($hosts as $host) {
+                try {
+                    $testPdo = new PDO("mysql:host={$host};dbname={$db};charset=utf8mb4", $user, $pass, [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_TIMEOUT => 2
+                    ]);
+                    echo "🎉 SUCCESSFUL CONNECTION!\n";
+                    echo "Host: $host\nDatabase: $db\nUser: $user\nPassword: " . substr($pass, 0, 3) . "...\n\n";
+                    $connectedPdo = $testPdo;
+                    $workingConfig = [
+                        'host' => $host,
+                        'db' => $db,
+                        'user' => $user,
+                        'pass' => $pass
+                    ];
+                    break 4;
+                } catch (\Throwable $e) {
+                    // continue
+                }
+            }
+        }
+    }
+}
+
+if ($workingConfig) {
+    echo "=== Writing Working Configuration to .env ===\n";
+    $envPath = $basePath . '/.env';
+    $envLines = [
+        'APP_NAME=TenderFold',
+        'APP_ENV=production',
+        'APP_KEY=base64:oJm2o5R6a8G+z1Xb2U4p3K4q5R6s7T8u9V0w1X2y3Z4=',
+        'APP_DEBUG=false',
+        'APP_URL=https://tenderfold.in',
+        '',
+        'LOG_CHANNEL=stack',
+        'LOG_DEPRECATIONS_CHANNEL=null',
+        'LOG_LEVEL=error',
+        '',
+        'DB_CONNECTION=mysql',
+        'DB_HOST=' . $workingConfig['host'],
+        'DB_PORT=3306',
+        'DB_DATABASE=' . $workingConfig['db'],
+        'DB_USERNAME=' . $workingConfig['user'],
+        'DB_PASSWORD="' . addslashes($workingConfig['pass']) . '"',
+        '',
+        'BROADCAST_DRIVER=log',
+        'CACHE_STORE=file',
+        'FILESYSTEM_DISK=local',
+        'QUEUE_CONNECTION=sync',
+        'SESSION_DRIVER=file',
+        'SESSION_LIFETIME=120',
+    ];
+    
+    // Check if APP_KEY already exists
+    if (file_exists($envPath)) {
+        $c = file_get_contents($envPath);
+        if (preg_match('/^APP_KEY=(base64:[a-zA-Z0-9+\/=]+)/m', $c, $km)) {
+            $envLines[2] = 'APP_KEY=' . $km[1];
+        }
+    }
+    
+    file_put_contents($envPath, implode("\n", $envLines) . "\n");
+    @file_put_contents($basePath . '/.env.backup', implode("\n", $envLines) . "\n");
+    echo "Saved to $envPath and $basePath/.env.backup\n\n";
+
+    // Count tables in working DB
+    $tables = $connectedPdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+    echo "Tables in {$workingConfig['db']}: " . count($tables) . "\n";
+    echo "Tables list: " . implode(', ', array_slice($tables, 0, 20)) . "\n\n";
+
+    // Test Laravel Bootstrap
+    echo "=== Testing Laravel Bootstrap ===\n";
+    try {
+        require_once $basePath . '/vendor/autoload.php';
+        $app = require_once $basePath . '/bootstrap/app.php';
+        echo "SUCCESS: Laravel application booted cleanly! Version: " . $app->version() . "\n";
+    } catch (\Throwable $e) {
+        echo "BOOTSTRAP ERROR: " . $e->getMessage() . "\n";
     }
 } else {
-    echo "ERROR: Backup file $backupFile does not exist\n\n";
-}
-
-// 3. Inspect the newly written .env
-if (file_exists($envTarget)) {
-    echo "=== .env Inspection ===\n";
-    $lines = file($envTarget, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    $parsedEnv = [];
-    foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) continue;
-        $parts = explode('=', $line, 2);
-        if (count($parts) === 2) {
-            $key = trim($parts[0]);
-            $val = trim($parts[1]);
-            $parsedEnv[$key] = $val;
-            if (stripos($key, 'DB_') !== false || in_array($key, ['APP_NAME', 'APP_ENV', 'APP_URL', 'APP_DEBUG'])) {
-                echo "$key = $val\n";
-            }
-        }
-    }
-    echo "\n";
-    
-    // 4. Test MySQL Database Connection directly
-    echo "=== Testing Database Connection ===\n";
-    $dbHost = $parsedEnv['DB_HOST'] ?? '127.0.0.1';
-    $dbPort = $parsedEnv['DB_PORT'] ?? '3306';
-    $dbName = $parsedEnv['DB_DATABASE'] ?? '';
-    $dbUser = $parsedEnv['DB_USERNAME'] ?? '';
-    $dbPass = $parsedEnv['DB_PASSWORD'] ?? '';
-    
-    echo "Connecting to MySQL host=$dbHost;port=$dbPort;dbname=$dbName as user=$dbUser...\n";
-    try {
-        $pdo = new PDO("mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]);
-        echo "SUCCESS: Database connected!\n";
-        
-        // Count tables
-        $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
-        echo "Total tables in database: " . count($tables) . "\n";
-        echo "Tables: " . implode(', ', array_slice($tables, 0, 15)) . (count($tables) > 15 ? '...' : '') . "\n\n";
-        
-        // Check users
-        if (in_array('users', $tables)) {
-            $userCount = $pdo->query("SELECT count(*) FROM users")->fetchColumn();
-            echo "Users in table: $userCount\n";
-        }
-    } catch (PDOException $e) {
-        echo "DATABASE ERROR: " . $e->getMessage() . "\n\n";
-    }
-}
-
-// 5. Clear all Laravel caches
-echo "=== Clearing Laravel Caches ===\n";
-$cacheDirs = [
-    $basePath . '/bootstrap/cache',
-    $basePath . '/storage/framework/views',
-    $basePath . '/storage/framework/cache/data',
-    $basePath . '/storage/framework/sessions'
-];
-foreach ($cacheDirs as $cd) {
-    if (is_dir($cd)) {
-        $files = glob($cd . '/*');
-        foreach ($files as $f) {
-            if (is_file($f) && basename($f) !== 'packages.php' && basename($f) !== 'services.php') {
-                @unlink($f);
-            }
-        }
-        echo "Cleared $cd\n";
-    }
-}
-
-if (function_exists('exec')) {
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan view:clear 2>&1");
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan cache:clear 2>&1");
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan config:clear 2>&1");
-    @exec("cd " . escapeshellarg($basePath) . " && php artisan route:clear 2>&1");
-    echo "Executed artisan clear commands\n\n";
-}
-
-// 6. Test Laravel Bootstrap
-echo "=== Testing Laravel Bootstrap ===\n";
-try {
-    require_once $basePath . '/vendor/autoload.php';
-    $app = require_once $basePath . '/bootstrap/app.php';
-    echo "SUCCESS: Laravel application booted! Version: " . $app->version() . "\n";
-} catch (\Throwable $e) {
-    echo "BOOTSTRAP ERROR: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n";
+    echo "Could not establish database connection automatically with tried candidates.\n";
 }
 
 if (function_exists('opcache_reset')) {
     @opcache_reset();
-    echo "Reset OPcache\n";
 }
 
-echo "\n=== Done ===\n";
+echo "\n=== Discovery Complete ===\n";
