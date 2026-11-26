@@ -13,6 +13,17 @@ $publicPath = $isInsidePublic ? __DIR__ : $basePath . '/public';
 $checks = [];
 $actions = [];
 
+$baseFiles = is_dir($basePath) ? scandir($basePath) : [];
+$parentFiles = is_dir(dirname($basePath)) ? scandir(dirname($basePath)) : [];
+
+$checks['Path & Environment Diagnostics'] = [
+    'status' => true,
+    'msg' => '<strong>__DIR__:</strong> ' . __DIR__ . '<br>' .
+             '<strong>basePath:</strong> ' . $basePath . '<br>' .
+             '<strong>basePath files:</strong> ' . implode(', ', array_diff($baseFiles, ['.', '..'])) . '<br>' .
+             '<strong>parent files:</strong> ' . implode(', ', array_diff($parentFiles, ['.', '..']))
+];
+
 // 2. Load .env file
 $envPath = $basePath . '/.env';
 if (!file_exists($envPath)) {
