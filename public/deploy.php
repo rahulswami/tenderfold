@@ -13,94 +13,82 @@ $publicPath = $isInsidePublic ? __DIR__ : $basePath . '/public';
 $checks = [];
 $actions = [];
 
-$baseFiles = is_dir($basePath) ? scandir($basePath) : [];
-$parentFiles = is_dir(dirname($basePath)) ? scandir(dirname($basePath)) : [];
-$grandParent = dirname(dirname($basePath));
-$grandParentFiles = is_dir($grandParent) ? scandir($grandParent) : [];
-$homeDir = '/home/u709314437';
-$homeFiles = is_dir($homeDir) ? scandir($homeDir) : [];
-
-// Check auth.php in basePath
-$authPhpContent = '';
-if (file_exists($basePath . '/auth.php')) {
-    $authPhpContent = substr(file_get_contents($basePath . '/auth.php'), 0, 500);
+// 1.1 Auto Git Pull first so newest script and repository updates are in place
+if (is_dir($basePath . '/.git')) {
+    $gitOutput = [];
+    $gitStatus = 0;
+    @exec("cd " . escapeshellarg($basePath) . " && git pull origin main 2>&1", $gitOutput, $gitStatus);
+    if (!empty($gitOutput)) {
+        $actions[] = "Git Pull: <code>" . htmlspecialchars(implode(' ', $gitOutput)) . "</code> ✅";
+    }
 }
 
-// Search for any .env files in home directory tree
-$foundEnvFiles = [];
-$searchDirs = [$basePath, dirname($basePath), $grandParent, $homeDir];
-foreach ($searchDirs as $sDir) {
-    if (is_dir($sDir)) {
-        $matches = glob($sDir . '/.*env*');
-        if ($matches) {
-            foreach ($matches as $m) $foundEnvFiles[] = $m . ' (' . filesize($m) . 'b)';
-        }
-        $matches2 = glob($sDir . '/*env*');
-        if ($matches2) {
-            foreach ($matches2 as $m) $foundEnvFiles[] = $m . ' (' . filesize($m) . 'b)';
+// 1.2 Clear bootstrap config/routes cache so new .env settings take immediate effect
+$bootstrapCacheFiles = glob($basePath . '/bootstrap/cache/*.php');
+if ($bootstrapCacheFiles) {
+    foreach ($bootstrapCacheFiles as $bFile) {
+        if (basename($bFile) !== 'packages.php' && basename($bFile) !== 'services.php') {
+            @unlink($bFile);
         }
     }
 }
 
-$checks['Path & Environment Diagnostics'] = [
-    'status' => true,
-    'msg' => '<strong>__DIR__:</strong> ' . __DIR__ . '<br>' .
-             '<strong>basePath:</strong> ' . $basePath . '<br>' .
-             '<strong>basePath files:</strong> ' . implode(', ', array_diff($baseFiles, ['.', '..'])) . '<br>' .
-             '<strong>parent (' . dirname($basePath) . '):</strong> ' . implode(', ', array_diff($parentFiles, ['.', '..'])) . '<br>' .
-             '<strong>grandParent (' . $grandParent . '):</strong> ' . implode(', ', array_diff($grandParentFiles, ['.', '..'])) . '<br>' .
-             '<strong>homeDir (' . $homeDir . '):</strong> ' . implode(', ', array_diff($homeFiles, ['.', '..'])) . '<br>' .
-             '<strong>foundEnvFiles:</strong> ' . implode(', ', $foundEnvFiles) . '<br>' .
-             '<strong>auth.php snippet:</strong> <pre>' . htmlspecialchars($authPhpContent) . '</pre>'
+// 2. Locate or Auto-Restore .env file
+$envPath = $basePath . '/.env';
+$backupSources = [
+    '/home/u709314437/.env.backup',
+    $basePath . '/.env.backup',
+    dirname($basePath) . '/.env.backup',
+    $basePath . '/.env.example'
 ];
 
-// 2. Load .env file
-$envPath = $basePath . '/.env';
-if (!file_exists($envPath)) {
-    if (file_exists($basePath . '/.env.example')) {
-        copy($basePath . '/.env.example', $envPath);
-        $actions[] = "Created <code>.env</code> from <code>.env.example</code> ✅";
+$needsRestoration = false;
+if (!file_exists($envPath) || filesize($envPath) < 50) {
+    $needsRestoration = true;
+} else {
+    $currContent = @file_get_contents($envPath);
+    if ($currContent === false || stripos($currContent, 'DB_DATABASE=') === false || stripos($currContent, 'DB_DATABASE=laravel') !== false) {
+        $needsRestoration = true;
     }
+}
+
+if ($needsRestoration) {
+    foreach ($backupSources as $bSrc) {
+        if (file_exists($bSrc) && filesize($bSrc) > 100) {
+            $srcContent = file_get_contents($bSrc);
+            if ($srcContent !== false && stripos($srcContent, 'DB_DATABASE=') !== false && stripos($srcContent, 'DB_DATABASE=laravel') === false) {
+                file_put_contents($envPath, $srcContent);
+                @chmod($envPath, 0644);
+                $actions[] = "Restored <code>.env</code> from backup: <code>{$bSrc}</code> (" . strlen($srcContent) . " bytes) ✅";
+                if (!file_exists($basePath . '/.env.backup')) {
+                    @file_put_contents($basePath . '/.env.backup', $srcContent);
+                }
+                break;
+            }
+        }
+    }
+    // Direct copy fallback if /home/u709314437/.env.backup exists
+    if (!file_exists($envPath) && file_exists('/home/u709314437/.env.backup')) {
+        @copy('/home/u709314437/.env.backup', $envPath);
+        @chmod($envPath, 0644);
+        $actions[] = "Copied <code>/home/u709314437/.env.backup</code> to <code>.env</code> ✅";
+    }
+}
+
+// Also keep backup in project root
+if (file_exists($envPath) && filesize($envPath) > 100 && !file_exists($basePath . '/.env.backup')) {
+    @copy($envPath, $basePath . '/.env.backup');
 }
 
 $env = [];
 if (file_exists($envPath)) {
     $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    $dbLines = [];
     foreach ($lines as $line) {
-        if (stripos($line, 'DB_') !== false) {
-            $dbLines[] = htmlspecialchars($line);
-        }
         if (strpos(trim($line), '#') === 0) continue;
         $parts = explode('=', $line, 2);
         if (count($parts) === 2) {
             $env[trim($parts[0])] = trim($parts[1], '"\' ');
         }
-    }
-    
-    // Check other .env* files
-    $otherEnv = glob($basePath . '/.env*');
-    $otherEnvList = [];
-    if ($otherEnv) {
-        foreach ($otherEnv as $oef) {
-            $otherEnvList[] = basename($oef) . ' (' . filesize($oef) . 'b, mtime: ' . date('Y-m-d H:i:s', filemtime($oef)) . ')';
-        }
-    }
-
-    $checks['.env File'] = [
-        'status' => true,
-        'msg' => 'Found & Loaded. Files: ' . implode(', ', $otherEnvList) . '. DB lines: [' . implode(' | ', $dbLines) . ']. Keys: ' . implode(', ', array_keys($env))
-    ];
-
-    // Read last lines of storage/logs/laravel.log
-    $logFile = $basePath . '/storage/logs/laravel.log';
-    if (file_exists($logFile)) {
-        $logContent = file($logFile);
-        $lastLines = array_slice($logContent, -30);
-        $checks['Recent Laravel Log (Error Inspection)'] = [
-            'status' => false,
-            'msg' => '<pre style="max-height: 200px; overflow-y: auto; font-size: 11px; white-space: pre-wrap;">' . htmlspecialchars(implode('', $lastLines)) . '</pre>'
-        ];
     }
 
     // 2.1 Auto-generate APP_KEY if missing or empty
@@ -117,6 +105,19 @@ if (file_exists($envPath)) {
         $actions[] = "Generated and saved fresh <code>APP_KEY</code> in <code>.env</code> ✅";
     }
 
+    // Ensure APP_URL is production domain
+    if (!isset($env['APP_URL']) || empty($env['APP_URL']) || strpos($env['APP_URL'], 'localhost') !== false) {
+        $rawEnv = file_get_contents($envPath);
+        $rawEnv = preg_replace('/^APP_URL=.*$/m', 'APP_URL=https://tenderfold.in', $rawEnv);
+        @file_put_contents($envPath, $rawEnv);
+        $env['APP_URL'] = 'https://tenderfold.in';
+    }
+
+    $checks['.env File'] = [
+        'status' => true,
+        'msg' => 'Found & Loaded. Database: <strong>' . htmlspecialchars($env['DB_DATABASE'] ?? 'not set') . '</strong>, User: ' . htmlspecialchars($env['DB_USERNAME'] ?? 'not set')
+    ];
+
     $checks['Application Key (APP_KEY)'] = [
         'status' => !empty($env['APP_KEY']),
         'msg' => !empty($env['APP_KEY']) ? 'Configured (' . substr($env['APP_KEY'], 0, 15) . '...)' : 'Missing APP_KEY'
@@ -126,24 +127,15 @@ if (file_exists($envPath)) {
     $checks['Application Key (APP_KEY)'] = ['status' => false, 'msg' => 'Missing .env'];
 }
 
-// 2.2 Auto Git Pull if repository exists
-if (is_dir($basePath . '/.git')) {
-    $gitOutput = [];
-    $gitStatus = 0;
-    @exec("cd " . escapeshellarg($basePath) . " && git pull origin main 2>&1", $gitOutput, $gitStatus);
-    if (!empty($gitOutput)) {
-        $actions[] = "Git Pull: <code>" . htmlspecialchars(implode(' ', $gitOutput)) . "</code> ✅";
-    }
-}
-
-// 2.3 Clear any cached bootstrap config files & cache
-$bootstrapCacheFiles = glob($basePath . '/bootstrap/cache/*.php');
-if ($bootstrapCacheFiles) {
-    foreach ($bootstrapCacheFiles as $bFile) {
-        if (basename($bFile) !== 'packages.php' && basename($bFile) !== 'services.php') {
-            @unlink($bFile);
-        }
-    }
+// 2.2 Inspect recent Laravel logs if available
+$logFile = $basePath . '/storage/logs/laravel.log';
+if (file_exists($logFile)) {
+    $logContent = file($logFile);
+    $lastLines = array_slice($logContent, -25);
+    $checks['Recent Laravel Log'] = [
+        'status' => true,
+        'msg' => '<pre style="max-height: 180px; overflow-y: auto; font-size: 11px; white-space: pre-wrap;">' . htmlspecialchars(implode('', $lastLines)) . '</pre>'
+    ];
 }
 
 // 3. Ensure Storage & Cache Directories Exist with Proper Permissions (0775)
@@ -950,6 +942,23 @@ if (function_exists('exec')) {
     @exec("cd " . escapeshellarg($basePath) . " && php artisan cache:clear 2>&1");
     @exec("cd " . escapeshellarg($basePath) . " && php artisan config:clear 2>&1");
     @exec("cd " . escapeshellarg($basePath) . " && php artisan route:clear 2>&1");
+}
+
+// 10. Test Laravel Application Boot
+try {
+    if (file_exists($basePath . '/vendor/autoload.php') && file_exists($basePath . '/bootstrap/app.php')) {
+        require_once $basePath . '/vendor/autoload.php';
+        $testApp = require_once $basePath . '/bootstrap/app.php';
+        $checks['Laravel Application Bootstrap'] = [
+            'status' => true,
+            'msg' => 'Application booted cleanly without fatal errors! Laravel version ' . $testApp->version()
+        ];
+    }
+} catch (\Throwable $e) {
+    $checks['Laravel Application Bootstrap'] = [
+        'status' => false,
+        'msg' => 'Bootstrap Exception: ' . htmlspecialchars($e->getMessage()) . ' in ' . htmlspecialchars($e->getFile()) . ':' . $e->getLine()
+    ];
 }
 
 ?>
