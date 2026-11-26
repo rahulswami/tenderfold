@@ -15,13 +15,43 @@ $actions = [];
 
 $baseFiles = is_dir($basePath) ? scandir($basePath) : [];
 $parentFiles = is_dir(dirname($basePath)) ? scandir(dirname($basePath)) : [];
+$grandParent = dirname(dirname($basePath));
+$grandParentFiles = is_dir($grandParent) ? scandir($grandParent) : [];
+$homeDir = '/home/u709314437';
+$homeFiles = is_dir($homeDir) ? scandir($homeDir) : [];
+
+// Check auth.php in basePath
+$authPhpContent = '';
+if (file_exists($basePath . '/auth.php')) {
+    $authPhpContent = substr(file_get_contents($basePath . '/auth.php'), 0, 500);
+}
+
+// Search for any .env files in home directory tree
+$foundEnvFiles = [];
+$searchDirs = [$basePath, dirname($basePath), $grandParent, $homeDir];
+foreach ($searchDirs as $sDir) {
+    if (is_dir($sDir)) {
+        $matches = glob($sDir . '/.*env*');
+        if ($matches) {
+            foreach ($matches as $m) $foundEnvFiles[] = $m . ' (' . filesize($m) . 'b)';
+        }
+        $matches2 = glob($sDir . '/*env*');
+        if ($matches2) {
+            foreach ($matches2 as $m) $foundEnvFiles[] = $m . ' (' . filesize($m) . 'b)';
+        }
+    }
+}
 
 $checks['Path & Environment Diagnostics'] = [
     'status' => true,
     'msg' => '<strong>__DIR__:</strong> ' . __DIR__ . '<br>' .
              '<strong>basePath:</strong> ' . $basePath . '<br>' .
              '<strong>basePath files:</strong> ' . implode(', ', array_diff($baseFiles, ['.', '..'])) . '<br>' .
-             '<strong>parent files:</strong> ' . implode(', ', array_diff($parentFiles, ['.', '..']))
+             '<strong>parent (' . dirname($basePath) . '):</strong> ' . implode(', ', array_diff($parentFiles, ['.', '..'])) . '<br>' .
+             '<strong>grandParent (' . $grandParent . '):</strong> ' . implode(', ', array_diff($grandParentFiles, ['.', '..'])) . '<br>' .
+             '<strong>homeDir (' . $homeDir . '):</strong> ' . implode(', ', array_diff($homeFiles, ['.', '..'])) . '<br>' .
+             '<strong>foundEnvFiles:</strong> ' . implode(', ', $foundEnvFiles) . '<br>' .
+             '<strong>auth.php snippet:</strong> <pre>' . htmlspecialchars($authPhpContent) . '</pre>'
 ];
 
 // 2. Load .env file
