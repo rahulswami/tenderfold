@@ -248,3 +248,39 @@ if (!function_exists('clean_blog_content')) {
         return $content;
     }
 }
+
+if (!function_exists('escape_like')) {
+    /**
+     * Escape SQL LIKE wildcard characters (%, _, \) in user search terms.
+     */
+    function escape_like(string $value): string {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
+    }
+}
+
+if (!function_exists('sanitize_svg')) {
+    /**
+     * Strip dangerous executable tags, event handlers, and scriptable URIs from uploaded SVGs.
+     */
+    function sanitize_svg(string $svg): string {
+        $svg = preg_replace('/<\?(?:php|=).*?\?>/is', '', $svg);
+        $svg = preg_replace('/<(script|foreignObject|iframe|object|embed|applet|meta|link)\b[^>]*>.*?<\/\1>/is', '', $svg);
+        $svg = preg_replace('/<(script|foreignObject|iframe|object|embed|applet|meta|link)\b[^>]*\/?>/is', '', $svg);
+        $svg = preg_replace('/\s+on[a-z]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/is', '', $svg);
+        $svg = preg_replace('/(href|xlink:href|src|action|formaction)\s*=\s*(["\'])\s*(?:javascript|vbscript|data\s*:\s*text\/html)[^"\']*\2/is', '$1=$2#$2', $svg);
+        return $svg;
+    }
+}
+
+if (!function_exists('csv_safe_cell')) {
+    /**
+     * Neutralize spreadsheet formula injection in CSV export cells.
+     */
+    function csv_safe_cell($value): string {
+        $str = (string) ($value ?? '');
+        if ($str !== '' && preg_match('/^[=+\-@\t\r]/', $str)) {
+            return "'" . $str;
+        }
+        return $str;
+    }
+}

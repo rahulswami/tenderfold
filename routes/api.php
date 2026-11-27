@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MobileApiController;
 
-Route::prefix('mobile')->group(function () {
+Route::middleware(['auth'])->prefix('mobile')->group(function () {
     Route::get('/dashboard', [MobileApiController::class, 'dashboard']);
     Route::get('/blogs', [MobileApiController::class, 'getBlogs']);
     Route::post('/blogs/store', [MobileApiController::class, 'storeBlog']);

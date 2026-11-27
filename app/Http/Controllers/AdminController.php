@@ -28,10 +28,21 @@ class AdminController extends Controller
             'password' => 'required',
         ]);
 
+        $throttleKey = 'admin-login:' . strtolower((string) $request->input('email')) . '|' . $request->ip();
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            return back()->withErrors([
+                'email' => "Too many login attempts. Please try again in {$seconds} seconds.",
+            ])->onlyInput('email');
+        }
+
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
+
+        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 60);
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
@@ -152,9 +163,14 @@ class AdminController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'notifications_page');
 
-        // Self-heal and normalize blog slugs (strip any trailing slashes)
+        // Self-heal and normalize blog slugs (strip any trailing slashes safely across MySQL & SQLite)
         try {
-            \Illuminate\Support\Facades\DB::statement("UPDATE blogs SET slug = TRIM(TRAILING '/' FROM slug) WHERE slug LIKE '%/'");
+            \App\Models\Blog::where('slug', 'like', '%/')->get(['id', 'slug'])->each(function ($b) {
+                $clean = rtrim($b->slug, '/');
+                if ($clean !== '' && !\App\Models\Blog::where('slug', $clean)->where('id', '!=', $b->id)->exists()) {
+                    $b->update(['slug' => $clean]);
+                }
+            });
         } catch (\Throwable $e) {}
 
         // Fetch Blog Categories (auto-provision table if missing on live server)
@@ -952,20 +968,38 @@ class AdminController extends Controller
     /* Helper function for uploading and optimizing images to WebP format */
     private function uploadAndConvertToWebP($file, $folder)
     {
-        if (!$file) return null;
-        
-        $extension = $file->getClientOriginalExtension();
+        if (!$file || !$file->isValid()) return null;
+
+        $folder = preg_replace('/[^a-z0-9_-]/i', '', (string) $folder) ?: 'uploads';
+        $extension = strtolower((string) $file->getClientOriginalExtension());
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+        if (!in_array($extension, $allowedExtensions, true)) {
+            return null;
+        }
+
+        $detectedMime = strtolower((string) $file->getMimeType());
+        $allowedMimes = [
+            'image/jpeg', 'image/pjpeg', 'image/png', 'image/gif',
+            'image/webp', 'image/svg+xml', 'text/plain', 'text/xml', 'application/xml'
+        ];
+        if ($detectedMime !== '' && !in_array($detectedMime, $allowedMimes, true)) {
+            return null;
+        }
+
         $r2PublicUrl = trim(SiteParameter::where('id', 'cloudflare_r2_public_url')->value('value') ?? '');
         if (empty($r2PublicUrl)) {
             $r2PublicUrl = 'https://images.tenderfold.in';
         }
         $r2PublicUrl = rtrim($r2PublicUrl, '/');
         
-        // If SVG, save directly to preserve vector paths
-        if (strtolower($extension) === 'svg') {
-            $filename = uniqid() . '.svg';
-            $fileData = file_get_contents($file->getRealPath());
-            // Always save local backup
+        // If SVG, sanitize executable tags/attributes before storing
+        if ($extension === 'svg') {
+            $fileData = @file_get_contents($file->getRealPath());
+            if ($fileData === false || stripos($fileData, '<svg') === false) {
+                return null;
+            }
+            $fileData = sanitize_svg($fileData);
+            $filename = uniqid('img_', true) . '.svg';
             @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
             
             if ($this->uploadToR2($fileData, $filename, 'image/svg+xml')) {
@@ -975,18 +1009,18 @@ class AdminController extends Controller
         }
         
         $filePath = $file->getRealPath();
+        if (@getimagesize($filePath) === false) {
+            return null;
+        }
+
         $image = null;
-        $mime = 'image/webp';
-        
-        switch (strtolower($extension)) {
+        switch ($extension) {
             case 'jpeg':
             case 'jpg':
-                $image = imagecreatefromjpeg($filePath);
-                $mime = 'image/jpeg';
+                $image = @imagecreatefromjpeg($filePath);
                 break;
             case 'png':
-                $image = imagecreatefrompng($filePath);
-                $mime = 'image/png';
+                $image = @imagecreatefrompng($filePath);
                 if ($image) {
                     imagepalettetotruecolor($image);
                     imagealphablending($image, true);
@@ -994,46 +1028,30 @@ class AdminController extends Controller
                 }
                 break;
             case 'gif':
-                $image = imagecreatefromgif($filePath);
-                $mime = 'image/gif';
+                $image = @imagecreatefromgif($filePath);
                 if ($image) imagepalettetotruecolor($image);
                 break;
             case 'webp':
-                $image = imagecreatefromwebp($filePath);
-                $mime = 'image/webp';
+                $image = @imagecreatefromwebp($filePath);
                 break;
-            default:
-                $filename = uniqid() . '.' . $extension;
-                $fileData = file_get_contents($filePath);
-                // Always save local backup
-                @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
-                
-                if ($this->uploadToR2($fileData, $filename, 'application/octet-stream')) {
-                    return $r2PublicUrl . '/' . $filename;
-                }
-                return $folder . '/' . $filename;
         }
         
         if (!$image) {
-            $filename = uniqid() . '.' . $extension;
-            $fileData = file_get_contents($filePath);
-            // Always save local backup
-            @Storage::disk('public')->put($folder . '/' . $filename, $fileData);
-            
-            if ($this->uploadToR2($fileData, $filename, $mime)) {
-                return $r2PublicUrl . '/' . $filename;
-            }
-            return $folder . '/' . $filename;
+            return null;
         }
         
         // Generate WebP filename
-        $filename = uniqid() . '.webp';
+        $filename = uniqid('img_', true) . '.webp';
         
         // Save using Laravel Storage with webp compression quality (80%)
         ob_start();
         imagewebp($image, null, 80);
         $webpData = ob_get_clean();
         imagedestroy($image);
+
+        if (!$webpData) {
+            return null;
+        }
         
         // Always save local backup
         Storage::disk('public')->put($folder . '/' . $filename, $webpData);
@@ -1127,14 +1145,19 @@ class AdminController extends Controller
                 }
             }
 
-            if (!$savedUrl) {
-                $ext = ($rawMime === 'jpeg' || $rawMime === 'jpg') ? 'jpg' : (($rawMime === 'png') ? 'png' : 'webp');
+            if (!$savedUrl && @getimagesizefromstring($binaryData) !== false) {
+                $ext = match ($rawMime) {
+                    'jpeg', 'jpg' => 'jpg',
+                    'png' => 'png',
+                    'gif' => 'gif',
+                    default => 'webp',
+                };
                 $filename = uniqid('img_') . '.' . $ext;
                 Storage::disk('public')->put($folder . '/' . $filename, $binaryData);
                 $savedUrl = '/storage/' . $folder . '/' . $filename;
             }
 
-            return 'src="' . $savedUrl . '"';
+            return $savedUrl ? 'src="' . $savedUrl . '"' : $matches[0];
         }, $content);
     }
 
@@ -1480,13 +1503,13 @@ class AdminController extends Controller
                 foreach ($leads as $lead) {
                     fputcsv($file, [
                         $lead->id,
-                        $lead->name,
-                        $lead->phone,
-                        $lead->email,
-                        $lead->source,
-                        $lead->status,
-                        $lead->message,
-                        $lead->notes,
+                        csv_safe_cell($lead->name),
+                        csv_safe_cell($lead->phone),
+                        csv_safe_cell($lead->email),
+                        csv_safe_cell($lead->source),
+                        csv_safe_cell($lead->status),
+                        csv_safe_cell($lead->message),
+                        csv_safe_cell($lead->notes),
                         $lead->created_at ? $lead->created_at->toDateTimeString() : '',
                     ]);
                 }
@@ -2216,11 +2239,22 @@ User prompt: {$prompt}";
 
     public function pushLocalDatabaseToLive(Request $request)
     {
+        $this->checkPermission('general');
         $request->validate([
             'live_site_url' => 'required|url',
         ]);
 
         $liveSiteUrl = rtrim($request->input('live_site_url'), '/');
+        $parsedUrl = parse_url($liveSiteUrl);
+        $scheme = strtolower((string) ($parsedUrl['scheme'] ?? ''));
+        $host = strtolower((string) ($parsedUrl['host'] ?? ''));
+        if (!in_array($scheme, ['http', 'https'], true) || empty($host)) {
+            return response()->json(['success' => false, 'message' => 'Invalid target URL.'], 422);
+        }
+        $resolvedIp = gethostbyname($host);
+        if (filter_var($resolvedIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            return response()->json(['success' => false, 'message' => 'Target host cannot be a private or loopback IP address.'], 422);
+        }
         
         $secretKey = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
         
@@ -2269,10 +2303,10 @@ User prompt: {$prompt}";
 
     public function importLiveDatabase(Request $request)
     {
-        $syncToken = $request->header('X-Sync-Token');
+        $syncToken = (string) $request->header('X-Sync-Token', '');
         $localSecret = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
 
-        if (empty($localSecret) || $syncToken !== $localSecret) {
+        if (empty($localSecret) || !hash_equals($localSecret, $syncToken)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized: Invalid sync token.'
@@ -2287,70 +2321,59 @@ User prompt: {$prompt}";
             ], 400);
         }
 
+        $protectedKeys = [
+            'cloudflare_r2_secret_access_key',
+            'cloudflare_r2_access_key_id',
+            'cloudflare_r2_account_id',
+            'cloudflare_api_token',
+            'gemini_api_key',
+            'google_api_key',
+            'smtp_password',
+            'whatsapp_api_token',
+            'google_client_secret',
+            'google_refresh_token',
+            'recaptcha_secret_key',
+        ];
+
         try {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($tables) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($tables, $protectedKeys) {
                 // 1. site_parameters
-                if (isset($tables['site_parameters'])) {
+                if (isset($tables['site_parameters']) && is_array($tables['site_parameters'])) {
                     foreach ($tables['site_parameters'] as $row) {
-                        // Skip updating credentials on import to avoid overwriting database connection details
+                        if (!is_array($row) || empty($row['id']) || in_array($row['id'], $protectedKeys, true)) {
+                            continue;
+                        }
                         \App\Models\SiteParameter::updateOrCreate(
                             ['id' => $row['id']],
                             [
-                                'value' => $row['value'],
-                                'label' => $row['label'],
-                                'category' => $row['category']
+                                'value' => $row['value'] ?? null,
+                                'label' => $row['label'] ?? null,
+                                'category' => $row['category'] ?? 'general',
                             ]
                         );
                     }
                 }
 
-                // 2. home_slides
-                if (isset($tables['home_slides'])) {
-                    \App\Models\HomeSlide::truncate();
-                    foreach ($tables['home_slides'] as $row) {
-                        \App\Models\HomeSlide::create($row);
+                $syncModelTable = function (string $key, string $modelClass) use ($tables) {
+                    if (!isset($tables[$key]) || !is_array($tables[$key])) {
+                        return;
                     }
-                }
+                    $fillable = (new $modelClass())->getFillable();
+                    $modelClass::truncate();
+                    foreach ($tables[$key] as $row) {
+                        if (!is_array($row)) {
+                            continue;
+                        }
+                        $modelClass::create(\Illuminate\Support\Arr::only($row, $fillable));
+                    }
+                };
 
-                // 3. testimonials
-                if (isset($tables['testimonials'])) {
-                    \App\Models\Testimonial::truncate();
-                    foreach ($tables['testimonials'] as $row) {
-                        \App\Models\Testimonial::create($row);
-                    }
-                }
-
-                // 4. blogs
-                if (isset($tables['blogs'])) {
-                    \App\Models\Blog::truncate();
-                    foreach ($tables['blogs'] as $row) {
-                        \App\Models\Blog::create($row);
-                    }
-                }
-
-                // 5. services
-                if (isset($tables['services'])) {
-                    \App\Models\Service::truncate();
-                    foreach ($tables['services'] as $row) {
-                        \App\Models\Service::create($row);
-                    }
-                }
-
-                // 6. comparison_banks
-                if (isset($tables['comparison_banks'])) {
-                    \App\Models\ComparisonBank::truncate();
-                    foreach ($tables['comparison_banks'] as $row) {
-                        \App\Models\ComparisonBank::create($row);
-                    }
-                }
-
-                // 7. page_contents
-                if (isset($tables['page_contents'])) {
-                    \App\Models\PageContent::truncate();
-                    foreach ($tables['page_contents'] as $row) {
-                        \App\Models\PageContent::create($row);
-                    }
-                }
+                $syncModelTable('home_slides', \App\Models\HomeSlide::class);
+                $syncModelTable('testimonials', \App\Models\Testimonial::class);
+                $syncModelTable('blogs', \App\Models\Blog::class);
+                $syncModelTable('services', \App\Models\Service::class);
+                $syncModelTable('comparison_banks', \App\Models\ComparisonBank::class);
+                $syncModelTable('page_contents', \App\Models\PageContent::class);
             });
 
             return response()->json([
@@ -2368,14 +2391,14 @@ User prompt: {$prompt}";
 
     public function setupLiveDatabase(Request $request)
     {
-        // Simple security: only allow if admin is logged in OR a setup key is passed
+        // Simple security: only allow if admin is logged in OR a valid setup key is passed
         $setupKey = trim(SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
-        $providedKey = $request->query('key', '');
+        $providedKey = (string) ($request->header('X-Setup-Key') ?: $request->header('X-Sync-Token') ?: $request->query('key', ''));
 
-        if (!auth()->check() && (empty($setupKey) || $providedKey !== $setupKey)) {
+        if (!auth()->check() && (empty($setupKey) || !hash_equals($setupKey, $providedKey))) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Unauthorized. Pass ?key=YOUR_R2_SECRET_KEY or log in as admin first.'
+                'message' => 'Unauthorized. Log in as admin or pass valid setup token.'
             ], 401);
         }
 
@@ -2566,7 +2589,12 @@ User prompt: {$prompt}";
 
         // ── 11. Normalize existing blog slugs ──────────────────────────
         try {
-            \Illuminate\Support\Facades\DB::statement("UPDATE blogs SET slug = TRIM(TRAILING '/' FROM slug) WHERE slug LIKE '%/'");
+            \App\Models\Blog::where('slug', 'like', '%/')->get(['id', 'slug'])->each(function ($b) {
+                $clean = rtrim($b->slug, '/');
+                if ($clean !== '' && !\App\Models\Blog::where('slug', $clean)->where('id', '!=', $b->id)->exists()) {
+                    $b->update(['slug' => $clean]);
+                }
+            });
             $results['blog_slugs_normalized'] = 'CLEANED ✅';
         } catch (\Exception $e) {
             $results['blog_slugs_normalized'] = 'SKIPPED: ' . $e->getMessage();

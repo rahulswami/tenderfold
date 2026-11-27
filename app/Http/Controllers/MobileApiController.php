@@ -58,8 +58,10 @@ class MobileApiController extends Controller
     {
         $query = Blog::query();
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('title', 'like', "%{$search}%")->orWhere('category', 'like', "%{$search}%");
+            $like = '%' . escape_like(mb_substr((string) $request->search, 0, 100)) . '%';
+            $query->where(function ($q) use ($like) {
+                $q->where('title', 'like', $like)->orWhere('category', 'like', $like);
+            });
         }
         $blogs = $query->orderBy('published_at', 'desc')->paginate(15);
 
@@ -118,6 +120,10 @@ class MobileApiController extends Controller
         ]);
 
         $targetUrl = $request->input('target_url');
+        $scheme = strtolower((string) parse_url($targetUrl, PHP_URL_SCHEME));
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return response()->json(['success' => false, 'message' => 'Only http/https URLs are allowed.'], 422);
+        }
         $platform = strtolower($request->input('platform'));
         $medium = $request->input('utm_medium', 'social_post');
         $campaign = $request->input('utm_campaign', 'mobile_share_' . date('Ym'));
@@ -222,6 +228,9 @@ class MobileApiController extends Controller
      */
     public function getLeads(Request $request)
     {
+        $request->validate([
+            'status' => 'nullable|string|max:50',
+        ]);
         $query = Lead::query();
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
@@ -236,6 +245,9 @@ class MobileApiController extends Controller
 
     public function updateLeadStatus(Request $request, $id)
     {
+        $request->validate([
+            'status' => 'nullable|string|in:New,Contacted,In Progress,Closed,new,contacted',
+        ]);
         $lead = Lead::findOrFail($id);
         $lead->status = $request->input('status', 'contacted');
         $lead->save();
@@ -253,6 +265,10 @@ class MobileApiController extends Controller
     public function redirectShortLink($code)
     {
         $link = SocialLink::where('code', $code)->firstOrFail();
+        $scheme = strtolower((string) parse_url((string) $link->full_url, PHP_URL_SCHEME));
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            abort(404);
+        }
         $link->increment('clicks');
 
         return redirect()->away($link->full_url);

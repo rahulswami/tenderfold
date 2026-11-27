@@ -108,8 +108,9 @@ class HomeController extends Controller
         // 3. Match by keyword or tag
         if (!$blog) {
             $term = str_replace(['-', '.'], ' ', $cleanSlug);
-            $blog = \App\Models\Blog::where('tags', 'LIKE', '%' . $term . '%')
-                ->orWhere('metakeywords', 'LIKE', '%' . $term . '%')
+            $escapedTerm = '%' . escape_like($term) . '%';
+            $blog = \App\Models\Blog::where('tags', 'LIKE', $escapedTerm)
+                ->orWhere('metakeywords', 'LIKE', $escapedTerm)
                 ->first();
         }
 
@@ -129,9 +130,11 @@ class HomeController extends Controller
             if ($service) {
                 return redirect()->route('services.show', $cleanSlug, 301);
             }
-            $treatment = \App\Models\Treatment::where('slug', $cleanSlug)->first();
-            if ($treatment) {
-                return redirect()->route('treatments.show', $cleanSlug, 301);
+            if (\Illuminate\Support\Facades\Route::has('treatments.show')) {
+                $treatment = \App\Models\Treatment::where('slug', $cleanSlug)->first();
+                if ($treatment) {
+                    return redirect()->route('treatments.show', $cleanSlug, 301);
+                }
             }
         }
 
@@ -426,42 +429,45 @@ class HomeController extends Controller
     /* Top Navigation Live Autocomplete Search */
     public function liveSearch(Request $request)
     {
-        $query = trim($request->input('q', ''));
-        if (strlen($query) < 2) {
+        $query = mb_substr(trim((string) $request->input('q', '')), 0, 100);
+        if (mb_strlen($query) < 2) {
             return response()->json(['results' => [], 'count' => 0]);
         }
 
+        $like = '%' . escape_like($query) . '%';
         $results = [];
 
-        // 1. Search Treatments
-        $treatments = \App\Models\Treatment::where('status', true)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'LIKE', "%{$query}%")
-                  ->orWhere('description', 'LIKE', "%{$query}%")
-                  ->orWhere('tags', 'LIKE', "%{$query}%");
-            })
-            ->take(6)
-            ->get();
+        // 1. Search Treatments (only if route exists)
+        if (\Illuminate\Support\Facades\Route::has('treatments.show')) {
+            $treatments = \App\Models\Treatment::where('status', true)
+                ->where(function($q) use ($like) {
+                    $q->where('name', 'LIKE', $like)
+                      ->orWhere('description', 'LIKE', $like)
+                      ->orWhere('tags', 'LIKE', $like);
+                })
+                ->take(6)
+                ->get();
 
-        foreach ($treatments as $t) {
-            $results[] = [
-                'type' => 'Treatment',
-                'badge_bg' => '#e0f2fe',
-                'badge_color' => '#0369a1',
-                'title' => $t->name,
-                'subtitle' => \Illuminate\Support\Str::limit(strip_tags($t->description), 80),
-                'url' => route('treatments.show', $t->slug),
-                'image' => site_image($t->image, 'treatment'),
-            ];
+            foreach ($treatments as $t) {
+                $results[] = [
+                    'type' => 'Treatment',
+                    'badge_bg' => '#e0f2fe',
+                    'badge_color' => '#0369a1',
+                    'title' => $t->name,
+                    'subtitle' => \Illuminate\Support\Str::limit(strip_tags($t->description), 80),
+                    'url' => route('treatments.show', $t->slug),
+                    'image' => site_image($t->image, 'treatment'),
+                ];
+            }
         }
 
         // 2. Search Services
         $services = \App\Models\Service::where('is_active', true)
-            ->where(function($q) use ($query) {
-                $q->where('service_name', 'LIKE', "%{$query}%")
-                  ->orWhere('hero_title', 'LIKE', "%{$query}%")
-                  ->orWhere('summary', 'LIKE', "%{$query}%")
-                  ->orWhere('intro_content', 'LIKE', "%{$query}%");
+            ->where(function($q) use ($like) {
+                $q->where('service_name', 'LIKE', $like)
+                  ->orWhere('hero_title', 'LIKE', $like)
+                  ->orWhere('summary', 'LIKE', $like)
+                  ->orWhere('intro_content', 'LIKE', $like);
             })
             ->take(5)
             ->get();
@@ -478,35 +484,37 @@ class HomeController extends Controller
             ];
         }
 
-        // 3. Search Specialists
-        $specialists = \App\Models\TeamMember::where('status', true)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'LIKE', "%{$query}%")
-                  ->orWhere('designation', 'LIKE', "%{$query}%")
-                  ->orWhere('tags', 'LIKE', "%{$query}%")
-                  ->orWhere('description', 'LIKE', "%{$query}%");
-            })
-            ->take(4)
-            ->get();
+        // 3. Search Specialists (only if route exists)
+        if (\Illuminate\Support\Facades\Route::has('specialists.show')) {
+            $specialists = \App\Models\TeamMember::where('status', true)
+                ->where(function($q) use ($like) {
+                    $q->where('name', 'LIKE', $like)
+                      ->orWhere('designation', 'LIKE', $like)
+                      ->orWhere('tags', 'LIKE', $like)
+                      ->orWhere('description', 'LIKE', $like);
+                })
+                ->take(4)
+                ->get();
 
-        foreach ($specialists as $sp) {
-            $results[] = [
-                'type' => 'Specialist',
-                'badge_bg' => '#f3e8ff',
-                'badge_color' => '#6b21a8',
-                'title' => $sp->name,
-                'subtitle' => $sp->designation ?? 'Orthopaedic Specialist',
-                'url' => route('specialists.show', $sp->slug),
-                'image' => site_image($sp->image, 'specialist'),
-            ];
+            foreach ($specialists as $sp) {
+                $results[] = [
+                    'type' => 'Specialist',
+                    'badge_bg' => '#f3e8ff',
+                    'badge_color' => '#6b21a8',
+                    'title' => $sp->name,
+                    'subtitle' => $sp->designation ?? 'Garment Care Specialist',
+                    'url' => route('specialists.show', $sp->slug),
+                    'image' => site_image($sp->image, 'specialist'),
+                ];
+            }
         }
 
-        // 4. Search Blogs / Health Hub
-        $blogs = \App\Models\Blog::where(function($q) use ($query) {
-                $q->where('title', 'LIKE', "%{$query}%")
-                  ->orWhere('summary', 'LIKE', "%{$query}%")
-                  ->orWhere('content', 'LIKE', "%{$query}%")
-                  ->orWhere('tags', 'LIKE', "%{$query}%");
+        // 4. Search Blogs / Care Journal
+        $blogs = \App\Models\Blog::where(function($q) use ($like) {
+                $q->where('title', 'LIKE', $like)
+                  ->orWhere('summary', 'LIKE', $like)
+                  ->orWhere('content', 'LIKE', $like)
+                  ->orWhere('tags', 'LIKE', $like);
             })
             ->orderBy('id', 'desc')
             ->take(5)

@@ -1,8 +1,4 @@
-# <FilesMatch ".(php4|php5|php3|php2|php|phtml)$">
-# SetHandler application/x-lsphp84
-# </FilesMatch>
-
-# Security Headers
+# PHP Limits
 <IfModule mod_php.c>
     php_value upload_max_filesize 64M
     php_value post_max_size 64M
@@ -19,18 +15,31 @@
     php_value memory_limit 256M
 </IfModule>
 
+# Disable directory listing
+Options -Indexes
+
+# Security Headers
 <IfModule mod_headers.c>
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-XSS-Protection "1; mode=block"
-    Header set Referrer-Policy "no-referrer-when-downgrade"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
 </IfModule>
 
-# Protect system and configuration files
-RedirectMatch 404 /\.(git|env|config)
-<FilesMatch "^(composer\.json|composer\.lock|package\.json|package-lock\.json|vite\.config\.js)$">
-    Order allow,deny
-    Deny from all
+# Protect system, config, backup, and diagnostic files
+<FilesMatch "(^\.|^(composer\.(json|lock)|package(-lock)?\.json|vite\.config\.(js|ts)|deploy\.php|diagnose\.php|repair\.php)$|\.(env|sql|sqlite|sqlite3|db|log|bak|old|orig|zip|tar|gz|ini|sh|bat)$)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
 
 <IfModule mod_rewrite.c>
@@ -39,6 +48,28 @@ RedirectMatch 404 /\.(git|env|config)
     </IfModule>
 
     RewriteEngine On
+
+    # Block unsafe HTTP methods
+    RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK) [NC]
+    RewriteRule .* - [F,L]
+
+    # Block hidden files/directories except .well-known
+    RewriteRule (^|/)\.(?!well-known) - [F,L,NC]
+
+    # Block removed/diagnostic scripts & backup files
+    RewriteRule ^(deploy|diagnose|repair)\.php$ - [F,L,NC]
+    RewriteRule \.(sql|sqlite|sqlite3|log|bak|old|zip|tar|gz|env|ini|sh|bat)$ - [F,L,NC]
+
+    # Prevent script execution inside upload/static directories
+    RewriteRule ^(uploads|images|assets|storage)/.*\.(php[0-9]?|phtml|phar|cgi|pl|py|sh|shtml|asp|aspx|jsp)$ - [F,L,NC]
+
+    # Block common path-traversal, null-byte, stream-wrapper, and globals injection attempts in query strings
+    RewriteCond %{QUERY_STRING} (\.\./|\.\.\\|%2e%2e%2f|%2e%2e/) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\x00|%00) [NC,OR]
+    RewriteCond %{QUERY_STRING} (php://|phar://|expect://|zip://) [NC,OR]
+    RewriteCond %{QUERY_STRING} (GLOBALS|_(REQUEST|SERVER|ENV|FILES|COOKIE))(=|\[|%5B) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC]
+    RewriteRule .* - [F,L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

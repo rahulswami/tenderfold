@@ -19,7 +19,7 @@ Route::get('/blogs', [HomeController::class, 'blog'])->name('blog');
 Route::get('/blogs/{slug}', [HomeController::class, 'blogShow'])->name('blog.show')->where('slug', '.*');
 Route::get('/contact-us', [HomeController::class, 'contact'])->name('contact');
 Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
-Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
+Route::post('/contact/submit', [HomeController::class, 'contactSubmit'])->middleware('throttle:20,1')->name('contact.submit');
 Route::get('/l/{slug}', [HomeController::class, 'landingShow'])->name('landing.show');
 
 // Unique Social Link Redirector (/s/{code})
@@ -51,21 +51,21 @@ Route::post('/api/database/import', [AdminController::class, 'importLiveDatabase
 Route::get('/setup-database', [AdminController::class, 'setupLiveDatabase']);
 
 // Instant Live Chat Routes (Public)
-Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
-Route::get('/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->name('chat.history');
-Route::post('/chat/auto-trigger', [App\Http\Controllers\ChatController::class, 'autoTrigger'])->name('chat.auto-trigger');
+Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->middleware('throttle:30,1')->name('chat.send');
+Route::get('/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->middleware('throttle:60,1')->name('chat.history');
+Route::post('/chat/auto-trigger', [App\Http\Controllers\ChatController::class, 'autoTrigger'])->middleware('throttle:20,1')->name('chat.auto-trigger');
 
 // Live Autocomplete Search Route (Public)
-Route::get('/api/search', [HomeController::class, 'liveSearch'])->name('api.search');
+Route::get('/api/search', [HomeController::class, 'liveSearch'])->middleware('throttle:60,1')->name('api.search');
 
 // Web Notification Routes (Public)
-Route::post('/api/push-subscribe', [App\Http\Controllers\NotificationController::class, 'subscribe']);
-Route::get('/api/notifications/poll', [App\Http\Controllers\NotificationController::class, 'poll']);
+Route::post('/api/push-subscribe', [App\Http\Controllers\NotificationController::class, 'subscribe'])->middleware('throttle:30,1');
+Route::get('/api/notifications/poll', [App\Http\Controllers\NotificationController::class, 'poll'])->middleware('throttle:60,1');
 
 
 // Admin CMS Auth
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('login');
-Route::post('/admin/login', [AdminController::class, 'login']);
+Route::post('/admin/login', [AdminController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 // Admin CMS Dashboard (Protected)
@@ -203,8 +203,8 @@ Route::get('/{slug}', [HomeController::class, 'cmsPageShow'])->name('cms.show');
 // Dynamic Cache Clear Endpoint (Secure via Cloudflare R2 Secret Access Key)
 Route::get('/api/clear-cache', function(\Illuminate\Http\Request $request) {
     $setupKey = trim(\App\Models\SiteParameter::where('id', 'cloudflare_r2_secret_access_key')->value('value') ?? '');
-    $providedKey = $request->query('key', '');
-    if (empty($setupKey) || $providedKey !== $setupKey) {
+    $providedKey = (string) ($request->header('X-Sync-Token') ?: $request->query('key', ''));
+    if (empty($setupKey) || !hash_equals($setupKey, $providedKey)) {
         return response()->json(['status' => 'error', 'message' => 'Unauthorized key.'], 401);
     }
     \Illuminate\Support\Facades\Artisan::call('view:clear');
