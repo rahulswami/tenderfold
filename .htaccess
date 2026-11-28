@@ -19,7 +19,7 @@ DirectoryIndex public/index.php index.php
     RewriteRule ^(app|bootstrap|config|database|mobile_app|node_modules|resources|routes|scratch|storage|tests|vendor|tender-fold)(/|$) - [F,L,NC]
 
     # Block direct access to sensitive root files, backups, dumps, and diagnostic scripts
-    RewriteRule ^(artisan|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|vite\.config\.(js|ts)|serve\.bat|diagnose\.php|repair\.php)$ - [F,L,NC]
+    RewriteRule ^(artisan|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|vite\.config\.(js|ts)|serve\.bat|deploy\.php|diagnose\.php|repair\.php)$ - [F,L,NC]
     RewriteRule \.(env|sql|sqlite|sqlite3|db|log|bak|old|orig|zip|tar|gz|sh|bat|md|yml|yaml|lock|ini)$ - [F,L,NC]
     RewriteRule ^[^/]+\.html$ - [F,L,NC]
 

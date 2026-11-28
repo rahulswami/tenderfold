@@ -46,7 +46,7 @@ $actions = [];
 if (is_dir($basePath . '/.git')) {
     $gitOutput = [];
     $gitStatus = 0;
-    @exec("cd " . escapeshellarg($basePath) . " && git pull origin main 2>&1", $gitOutput, $gitStatus);
+    @exec("cd " . escapeshellarg($basePath) . " && git checkout -- .htaccess 2>&1; git pull origin main 2>&1", $gitOutput, $gitStatus);
     if (!empty($gitOutput)) {
         $actions[] = "Git Pull: <code>" . htmlspecialchars(implode(' ', $gitOutput)) . "</code> ✅";
     }
@@ -216,8 +216,10 @@ DirectoryIndex index.php public/index.php
 </IfModule>
 HTACCESS;
 
-@file_put_contents($rootHtaccess, $rootHtaccessContent);
-$actions[] = "Created / Updated Root <code>.htaccess</code> for universal Laravel routing ✅";
+if (!file_exists($rootHtaccess) || filesize($rootHtaccess) < 20) {
+    @file_put_contents($rootHtaccess, $rootHtaccessContent);
+    $actions[] = "Created Root <code>.htaccess</code> for universal Laravel routing ✅";
+}
 $checks['Root .htaccess (Hostinger 403 Fix)'] = ['status' => true, 'msg' => 'Configured & Active'];
 
 // 4.1 Ensure Root index.php exists as fallback
