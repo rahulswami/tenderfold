@@ -33,8 +33,6 @@ u709314437_smpune.sql
 *.zip
 *.tar.gz
 *.bak
-deploy.php
-public/deploy.php
 public/diagnose.php
 public/repair.php
 repair.php

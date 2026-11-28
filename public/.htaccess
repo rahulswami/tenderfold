@@ -32,7 +32,7 @@ Options -Indexes
 </IfModule>
 
 # Protect system, config, backup, and diagnostic files
-<FilesMatch "(^\.|^(composer\.(json|lock)|package(-lock)?\.json|vite\.config\.(js|ts)|deploy\.php|diagnose\.php|repair\.php)$|\.(env|sql|sqlite|sqlite3|db|log|bak|old|orig|zip|tar|gz|ini|sh|bat)$)">
+<FilesMatch "(^\.|^(composer\.(json|lock)|package(-lock)?\.json|vite\.config\.(js|ts)|diagnose\.php|repair\.php)$|\.(env|sql|sqlite|sqlite3|db|log|bak|old|orig|zip|tar|gz|ini|sh|bat)$)">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -57,7 +57,7 @@ Options -Indexes
     RewriteRule (^|/)\.(?!well-known) - [F,L,NC]
 
     # Block removed/diagnostic scripts & backup files
-    RewriteRule ^(deploy|diagnose|repair)\.php$ - [F,L,NC]
+    RewriteRule ^(diagnose|repair)\.php$ - [F,L,NC]
     RewriteRule \.(sql|sqlite|sqlite3|log|bak|old|zip|tar|gz|env|ini|sh|bat)$ - [F,L,NC]
 
     # Prevent script execution inside upload/static directories
